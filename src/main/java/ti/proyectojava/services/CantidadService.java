@@ -1,39 +1,52 @@
 package ti.proyectojava.services;
 
 import org.springframework.stereotype.Service;
-import ti.proyectojava.api.responses.ResponseListadoCategorias;
+import ti.proyectojava.api.responses.ResponseListadoCantidades;
 import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.dtos.CantidadDto;
-import ti.proyectojava.dtos.CategoriaDto;
 
-import java.util.List;
 
 @Service
 public class CantidadService {
 
     private final CantidadRepository cantidadRepository;
+    private final VentaService ventaService;
 
 
-    public CantidadService(CantidadRepository cantidadRepository) {
+    public CantidadService(CantidadRepository cantidadRepository, VentaService ventaService) {
         this.cantidadRepository = cantidadRepository;
+        this.ventaService = ventaService;
     }
 
-    public ResponseListadoCantidad listadoSocios(){
-        ResponseListadoCantidad responseListadoCantidad = new ResponseListadoCantidad();
+    public ResponseListadoCantidades listadoCantidades() {
+        ResponseListadoCantidades responseListadoCantidades = new ResponseListadoCantidades();
 
-        responseListadoCantidad.setCantidad(cantidadRepository.findAll().stream().map(this::mapToDtoCantidad).toList());
+        responseListadoCantidades.setCantidades(
+                cantidadRepository.findAll()
+                        .stream()
+                        .map(ventaService::mapToDtoCantidad)
+                        .toList()
+        );
 
-        return responseListadoCantidad;
+        return responseListadoCantidades;
     }
 
-    public String crearSocio(CantidadDto cantidad){
+    public String crearCantidad(CantidadDto cantidad){
         String response = null;
 
         if(cantidad.getId()==null){
-            response = "Socio creado nro: " + socioRepository.save(mapToEntity(socio)).getId();
+            response = "Cantidad creada nro: " + cantidadRepository.save(ventaService.mapToEntityCantidad(cantidad)).getId();
 
         }
         return  response;
     }
 
+    public String borrarCantidad(Long id) {
+        if (!cantidadRepository.existsById(id)) {
+            return "Cantidad no encontrada";
+        }
+
+        cantidadRepository.deleteById(id);
+        return "Cantidad eliminada correctamente";
+    }
 }

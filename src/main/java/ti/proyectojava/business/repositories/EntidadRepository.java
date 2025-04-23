@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ti.proyectojava.business.entities.Entidad;
 
 @Repository
-public interface PersonaRepository extends JpaRepository<Entidad, Long> {
+public interface EntidadRepository extends JpaRepository<Entidad, Long> {
 }

@@ -2,10 +2,12 @@ package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ti.proyectojava.api.responses.ResponseListadoLotes;
 import ti.proyectojava.business.entities.Lote;
 import ti.proyectojava.business.repositories.LoteRepository;
 import ti.proyectojava.dtos.LoteDto;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +18,19 @@ public class LoteService {
 
     public LoteService(LoteRepository loteRepository) {
         this.loteRepository = loteRepository;
+    }
+
+    public ResponseListadoLotes listadoLotes() {
+        ResponseListadoLotes response = new ResponseListadoLotes();
+
+        List<LoteDto> lotesActivos = loteRepository.findByActivoTrue()
+                .stream()
+                .map(this::mapToDtoLote)
+                .toList();
+
+        response.setLotes(lotesActivos);
+
+        return response;
     }
 
     public String crearLote(LoteDto loteDto) {

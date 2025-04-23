@@ -4,10 +4,13 @@ package ti.proyectojava.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import ti.proyectojava.api.responses.ResponseListadoCategorias;
+import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.ProductoRepository;
 import ti.proyectojava.dtos.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,18 @@ public class ProductoService {
         this.loteService = loteService;
     }
 
+    public ResponseListadoProductos listadoProductos() {
+        ResponseListadoProductos response = new ResponseListadoProductos();
+
+        List<ProductoDto> productosActivos = productoRepository.findByActivoTrue()
+                .stream()
+                .map(this::mapToDtoProducto)
+                .toList();
+
+        response.setProducto(productosActivos);
+
+        return response;
+    }
     public String crearProducto(ProductoDto productoDto) {
         if(productoRepository.findById(productoDto.getId()).isEmpty()){
             return "Producto creado nro: " + productoRepository.save(mapToEntityProducto(productoDto)).getId();

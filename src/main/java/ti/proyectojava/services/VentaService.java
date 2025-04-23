@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
+import ti.proyectojava.business.repositories.CreditoRepository;
 import ti.proyectojava.business.repositories.ProductoRepository;
 import ti.proyectojava.business.repositories.VentaRepository;
 import ti.proyectojava.dtos.CantidadDto;
 import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,21 +26,38 @@ public class VentaService {
     private final CantidadRepository cantidadRepository;
     private final ProductoService productoService;
     private final EntidadService entidadService;
+    private final CreditoRepository creditoRepository;
 
     @Autowired
-    private VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository, CantidadRepository cantidadRepository, @Lazy ProductoService productoService, EntidadService entidadService){
+    private VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository, CantidadRepository cantidadRepository, @Lazy ProductoService productoService, EntidadService entidadService, CreditoRepository creditoRepository){
         this.ventaRepository=ventaRepository;
         this.productoRepository=productoRepository;
         this.cantidadRepository=cantidadRepository;
         this.productoService = productoService;
         this.entidadService = entidadService;
+        this.creditoRepository = creditoRepository;
     }
 
     public String crearventa(VentaDto ventaDto) {
         if(ventaRepository.findById(ventaDto.getId()).isEmpty()){
-            return "Venta creada id: " + ventaRepository.save(mapToEntityVenta(ventaDto)).getId();
-        }
 
+            if (ventaDto.getCredito() != null) {
+                Optional<Credito> cred = creditoRepository.findById(ventaDto.getCredito().getId());
+
+                if (cred.isPresent()) {
+                    Credito credito = cred.get();
+
+                    // sumo total de la venta al crédito
+                    float nuevoPrecioTotal = credito.getPrecioTotal() + ventaDto.getTotal();
+                    credito.setPrecioTotal(nuevoPrecioTotal);
+
+                    creditoRepository.save(credito);
+                }
+            }
+
+            return "Venta creada id: " + ventaRepository.save(mapToEntityVenta(ventaDto)).getId();
+
+        }
         return null;
     }
 
@@ -65,6 +84,10 @@ public class VentaService {
         ventaRepository.save(venta);
         return venta;
     }
+
+
+    ///
+    ///
 
     public CantidadDto mapToDtoCantidad(Cantidad cantidad) {
         CantidadDto dto = new CantidadDto();
@@ -142,6 +165,8 @@ public class VentaService {
         credito.setCliente(entidadService.mapToEntityCliente(dto.getCliente()));
         return credito;
     }
+
+
 
 
 }

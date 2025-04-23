@@ -17,12 +17,12 @@ import java.util.Optional;
 @Slf4j
 public class EntidadService {
 
-    private final PersonaRepository personaRepository;
+    private final EntidadRepository entidadRepository;
     private final ClienteRepository clienteRepository;
     private final ProveedorRepository proveedorRepository;
 
-    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, PersonaRepository personaRepository){
-        this.personaRepository=personaRepository;
+    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository){
+        this.entidadRepository = entidadRepository;
         this.clienteRepository=clienteRepository;
         this.proveedorRepository=proveedorRepository;
     }
@@ -45,7 +45,7 @@ public class EntidadService {
 
     public Entidad eliminarPersona(Entidad entidad) {
         entidad.setActivo(false);
-        personaRepository.save(entidad);
+        entidadRepository.save(entidad);
         return entidad;
     }
 
