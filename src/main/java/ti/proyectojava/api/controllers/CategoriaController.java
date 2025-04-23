@@ -1,0 +1,44 @@
+package ti.proyectojava.api.controllers;
+
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ti.proyectojava.api.responses.ResponseListadoCategorias;
+import ti.proyectojava.dtos.CategoriaDto;
+import ti.proyectojava.services.CategoriaService;
+
+@RestController
+@RequestMapping(value = "api/v1/categorias")
+public class CategoriaController {
+
+    private final CategoriaService categoriaService;
+
+    public CategoriaController(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseListadoCategorias> getCategorias(){
+        ResponseListadoCategorias response = categoriaService.listadoCategorias();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping
+    @Operation(description = "Esta funcion crea una nueva categoria")
+    public ResponseEntity<String> createCategoria(@RequestBody CategoriaDto categoria){
+        String response = categoriaService.crearCategoria(categoria);
+        if (response == null){
+            return new ResponseEntity<>("Error al crear categoria", HttpStatus.BAD_REQUEST);
+        }else {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+    }
+
+    @PutMapping("/{nombre}")
+    public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre, @RequestBody CategoriaDto categoria){
+        categoriaService.borrarCategoria(nombre);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    }
+

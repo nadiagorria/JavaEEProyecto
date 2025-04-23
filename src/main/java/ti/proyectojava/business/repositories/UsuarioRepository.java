@@ -1,0 +1,16 @@
+package ti.proyectojava.business.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ti.proyectojava.business.entities.Usuario;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, String> {
+    Optional<Usuario> findByNombreAndContrasenia(String nombre, String contrasenia);
+    Optional<Usuario> findByNombre(String nombre);
+    List<Usuario> findByActivoTrue();
+
+}
