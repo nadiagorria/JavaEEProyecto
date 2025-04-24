@@ -20,7 +20,7 @@ public class NotificacionService {
 
     public String crearNotificacion(NotificacionDto notificacionDto) {
         if(notificacionRepository.findById(notificacionDto.getId()).isEmpty()){
-            return "Notificacion creada nro: " + notificacionRepository.save(mapToEntity(notificacionDto)).getId();
+            return "Notificacion creada nro: " + notificacionRepository.save(mapToEntityNotificacion(notificacionDto)).getId();
         }
 
         return null;
