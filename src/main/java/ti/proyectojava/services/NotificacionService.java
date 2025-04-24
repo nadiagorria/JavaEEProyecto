@@ -34,7 +34,7 @@ public class NotificacionService {
         return null;
     }
 
-    public Notificacion mapToEntity(NotificacionDto notificacionDto){
+    public Notificacion mapToEntityNotificacion(NotificacionDto notificacionDto){
         Notificacion notificacion = new Notificacion();
         notificacion.setId(notificacionDto.getId());
         notificacion.setMensajes(notificacionDto.getMensajes());
@@ -42,7 +42,7 @@ public class NotificacionService {
         return notificacion;
     }
 
-    public NotificacionDto mapToDto(Notificacion notificacion) {
+    public NotificacionDto mapToDtoNotificacion(Notificacion notificacion) {
 
         NotificacionDto notiDto = new NotificacionDto();
         notiDto.setId(notificacion.getId());
