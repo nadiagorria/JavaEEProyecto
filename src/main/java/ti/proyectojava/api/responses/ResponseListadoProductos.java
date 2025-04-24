@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 public class ResponseListadoProductos {
-    private List<ProductoDto> producto;
+    private List<ProductoDto> productos;
 
 }

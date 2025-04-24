@@ -38,7 +38,7 @@ public class ProductoService {
                 .map(this::mapToDtoProducto)
                 .toList();
 
-        response.setProducto(productosActivos);
+        response.setProductos(productosActivos);
 
         return response;
     }
