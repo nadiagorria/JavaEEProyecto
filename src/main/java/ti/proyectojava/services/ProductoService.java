@@ -44,7 +44,7 @@ public class ProductoService {
     }
     public String crearProducto(ProductoDto productoDto) {
         if(productoRepository.findById(productoDto.getId()).isEmpty()){
-            return "Producto creado nro: " + productoRepository.save(mapToEntityProducto(productoDto)).getId();
+            return "Producto creado. ID:" + productoRepository.save(mapToEntityProducto(productoDto)).getId();
         }
 
         return null;
@@ -90,7 +90,7 @@ public class ProductoService {
             Producto producto = productoAct.get();
             producto.setActivo(false);
             productoRepository.save(producto);
-            response = "Producto eliminado correctamente. ID: " + producto.getId();
+            response = "Producto eliminado correctamente. ID:" + producto.getId();
         }
         return response;
     }

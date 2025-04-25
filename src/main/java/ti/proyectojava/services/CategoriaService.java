@@ -39,7 +39,7 @@ public class CategoriaService {
         String response = null;
 
         if (categoria.getNombre() == null) {
-            response = "Categoria: " + categoriaRepository.save(mapToEntityCategoria(categoria)).getNombre() + " creada exitosamente.";
+            response = "Categoria creada exitosamente. NOMBRE:" + categoriaRepository.save(mapToEntityCategoria(categoria)).getNombre();
 
         }
         return response;
@@ -53,7 +53,7 @@ public class CategoriaService {
             Categoria categoria = categoriaOpt.get();
             categoria.setActivo(false);
             categoriaRepository.save(categoria);
-            response = "Categoría eliminada correctamente.";
+            response = "Categoría eliminada correctamente. NOMBRE:" + categoria.getNombre();
         }
 
         return response;

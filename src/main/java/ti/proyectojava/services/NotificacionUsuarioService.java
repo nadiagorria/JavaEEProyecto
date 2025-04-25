@@ -44,7 +44,7 @@ public class NotificacionUsuarioService {
         String response = null;
 
         if(notificacionUsuarioRepository.findById(notificacionUsuarioDto.getId()).isEmpty()){
-            response = "Producto creado nro: " + notificacionUsuarioRepository.save(mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
+            response = "Producto creado. ID: " + notificacionUsuarioRepository.save(mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
         }
 
         return  response;
@@ -58,7 +58,7 @@ public class NotificacionUsuarioService {
             NotificacionUsuario notificacionUsuario = notificacionUsuarioAct.get();
             notificacionUsuario.setActivo(false);
             notificacionUsuarioRepository.save(notificacionUsuario);
-            response = "<notificacionUsuario> eliminado correctamente.";
+            response = "notificacionUsuario eliminado correctamente. ID:" + notificacionUsuario.getId();
         }
 
         return response;

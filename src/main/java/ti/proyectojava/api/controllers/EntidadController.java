@@ -31,7 +31,7 @@ public class EntidadController {
     @Operation(description = "Esta Funcion elimina una Persona")
     public ResponseEntity<String> eliminarPersona(@RequestBody Long id) {
         Entidad entidad = entidadService.eliminarPersona(this.entidadActual);
-        return ResponseEntity.ok("Persona eliminado correctamente");
+        return ResponseEntity.ok("Persona eliminado correctamente. ID:" + entidad.getId());
     }
 
 
@@ -43,7 +43,7 @@ public class EntidadController {
         String response = entidadService.crearCliente(clienteDto);
 
         if (response == null) {
-            return new ResponseEntity<>("Error al crear Cliente", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear Cliente. ID:" + clienteDto.getId() , HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

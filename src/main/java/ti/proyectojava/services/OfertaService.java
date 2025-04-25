@@ -38,7 +38,7 @@ public class OfertaService {
             Oferta oferta = ofertaAct.get();
             oferta.setActivo(false);
             ofertaRepository.save(oferta);
-            response = "Oferta eliminado correctamente, ID:" +  oferta.getId();
+            response = "Oferta eliminado correctamente. ID:" +  oferta.getId();
         }
         return response;
     }
@@ -47,7 +47,7 @@ public class OfertaService {
 
     public String crearCombo(ComboDto comboDto) {
         if(comboRepository.findById(comboDto.getId()).isEmpty()){
-            return "Combo creado id: " + comboRepository.save(mapToEntityCombo(comboDto)).getId();
+            return "Combo creado. ID:" + comboRepository.save(mapToEntityCombo(comboDto)).getId();
         }
         return null;
     }
@@ -62,9 +62,9 @@ public class OfertaService {
             combo.setProductos(combo.getProductos());
             // No actualizamos ID ni relaciones por simplicidad
             comboRepository.save(combo);
-            return "Combo actualizado con ID: " + combo.getId();
+            return "Combo actualizado. ID:" + combo.getId();
         } else {
-            return "Combo no encontrado con ID: " + comboDto.getId();
+            return "Combo no encontrado. ID:" + comboDto.getId();
         }
     }
 
@@ -101,7 +101,7 @@ public class OfertaService {
 
     public String crearDescuento(DescuentoDto descuentoDto) {
         if (descuentoRepository.findById(descuentoDto.getId()).isEmpty()) {
-            return "Descuento creado id: " + descuentoRepository.save(mapToEntityDescuento(descuentoDto)).getId();
+            return "Descuento creado. ID:" + descuentoRepository.save(mapToEntityDescuento(descuentoDto)).getId();
         }
         return null;
     }
@@ -114,9 +114,9 @@ public class OfertaService {
             descuento.setProducto(descuento.getProducto());
             // No actualizamos ID ni relaciones por simplicidad
             descuentoRepository.save(descuento);
-            return "Descuento actualizado con ID: " + descuento.getId();
+            return "Descuento actualizado. ID:" + descuento.getId();
         } else {
-            return "Descuento no encontrado con ID: " + descuentoDto.getId();
+            return "Descuento no encontrado. ID:" + descuentoDto.getId();
         }
     }
 
@@ -142,7 +142,7 @@ public class OfertaService {
 
     public String crearPromocion(PromocionDto promocionDto) {
         if (promocionRepository.findById(promocionDto.getId()).isEmpty()) {
-            return "Promoción creada id: " + promocionRepository.save(mapToEntityPromocion(promocionDto)).getId();
+            return "Promoción creada. ID:" + promocionRepository.save(mapToEntityPromocion(promocionDto)).getId();
         }
         return null;
     }
@@ -156,9 +156,9 @@ public class OfertaService {
             promocion.setProducto(productoService.mapToEntityProducto(promocionDto.getProducto()));
             promocion.setActivo(promocionDto.getActivo());
             promocionRepository.save(promocion);
-            return "Promoción actualizada con ID: " + promocion.getId();
+            return "Promoción actualizada. ID:" + promocion.getId();
         } else {
-            return "Promoción no encontrada con ID: " + promocionDto.getId();
+            return "Promoción no encontrada. ID:" + promocionDto.getId();
         }
     }
 

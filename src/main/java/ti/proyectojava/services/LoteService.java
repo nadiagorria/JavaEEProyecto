@@ -35,7 +35,7 @@ public class LoteService {
 
     public String crearLote(LoteDto loteDto) {
         if(loteRepository.findById(loteDto.getId()).isEmpty()){
-            return "Lote creada nro: " + loteRepository.save(mapToEntityLote(loteDto)).getId();
+            return "Lote creado. ID: " + loteRepository.save(mapToEntityLote(loteDto)).getId();
         }
 
         return null;
@@ -48,7 +48,7 @@ public class LoteService {
             Lote lote = aux.get();
             lote.setActivo(false);
             loteRepository.save(lote);
-            response = "Lote eliminado exitosamente.";
+            response = "Lote eliminado exitosamente. ID:" + lote.getId();
         }
         return response;
     }

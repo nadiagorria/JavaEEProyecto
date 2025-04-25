@@ -40,7 +40,7 @@ public class EntidadService {
             return proveedor.get();
         }
         // Si no existe la persona se lanza exepcion
-        throw new NoSuchElementException("No se encontró ninguna entidad con ID: " + id);
+        throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
     }
 
     public Entidad eliminarPersona(Entidad entidad) {
@@ -54,7 +54,7 @@ public class EntidadService {
 
     public String crearCliente(ClienteDto clienteDto) {
         if(clienteRepository.findById(clienteDto.getId()).isEmpty()){
-            return "Venta creada id: " + clienteRepository.save(mapToEntityCliente(clienteDto)).getId();
+            return "Cliente creado. ID: " + clienteRepository.save(mapToEntityCliente(clienteDto)).getId();
         }
 
         return null;
@@ -68,9 +68,9 @@ public class EntidadService {
             cliente.setTelefono(clienteDto.getTelefono());
             // No actualizamos ID ni relaciones por simplicidad
             clienteRepository.save(cliente);
-            return "Cliente actualizado con ID: " + cliente.getId();
+            return "Cliente actualizado con ID:" + cliente.getId();
         } else {
-            return "Cliente no encontrado con ID: " + clienteDto.getId();
+            return "Cliente no encontrado con ID:" + clienteDto.getId();
         }
     }
 
@@ -127,7 +127,7 @@ public class EntidadService {
 
     public String crearProveedor(ProveedorDto proveedorDto) {
         if(clienteRepository.findById(proveedorDto.getId()).isEmpty()){
-            return "Proveedor creado id: " + proveedorRepository.save(mapToEntityProveedor(proveedorDto)).getId();
+            return "Proveedor creado. ID:" + proveedorRepository.save(mapToEntityProveedor(proveedorDto)).getId();
         }
         return null;
     }
@@ -140,9 +140,9 @@ public class EntidadService {
             proveedor.setTelefono(proveedorDto.getTelefono());
             // No actualizamos ID ni relaciones por simplicidad
             proveedorRepository.save(proveedor);
-            return "Cliente actualizado con ID: " + proveedor.getId();
+            return "Cliente actualizado. ID:" + proveedor.getId();
         } else {
-            return "Cliente no encontrado con ID: " + proveedorDto.getId();
+            return "Cliente no encontrado. ID:" + proveedorDto.getId();
         }
     }
 
@@ -169,7 +169,7 @@ public class EntidadService {
             Proveedor proveedor = proveedorAct.get();
             proveedor.setActivo(false);
             proveedorRepository.save(proveedor);
-            response = "Proveedor " + proveedor.getNombre() + " eliminado correctamente.";
+            response = "Proveedor eliminado correctamente. NOMBRE:" + proveedor.getNombre();
         }
         return response;
     }

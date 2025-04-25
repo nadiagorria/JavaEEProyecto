@@ -55,7 +55,7 @@ public class VentaService {
                 }
             }
 
-            return "Venta creada id: " + ventaRepository.save(mapToEntityVenta(ventaDto)).getId();
+            return "Venta creada. ID:" + ventaRepository.save(mapToEntityVenta(ventaDto)).getId();
 
         }
         return null;
@@ -63,10 +63,10 @@ public class VentaService {
 
     public void agregarProductoAVenta(Long ventaId, Long productoId, int cantidadProducto) {
         Venta venta = ventaRepository.findById(ventaId)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
 
         Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado. ID:" + productoId));
 
         Cantidad cantidad = new Cantidad();
         cantidad.setProducto(producto);

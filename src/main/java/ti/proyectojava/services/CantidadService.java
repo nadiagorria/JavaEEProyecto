@@ -35,7 +35,7 @@ public class CantidadService {
         String response = null;
 
         if(cantidad.getId()==null){
-            response = "Cantidad creada nro: " + cantidadRepository.save(ventaService.mapToEntityCantidad(cantidad)).getId();
+            response = "Cantidad creada. ID:" + cantidadRepository.save(ventaService.mapToEntityCantidad(cantidad)).getId();
 
         }
         return  response;
@@ -43,10 +43,10 @@ public class CantidadService {
 
     public String borrarCantidad(Long id) {
         if (!cantidadRepository.existsById(id)) {
-            return "Cantidad no encontrada";
+            return "Cantidad no encontrada. ID:" + id;
         }
 
         cantidadRepository.deleteById(id);
-        return "Cantidad eliminada correctamente";
+        return "Cantidad eliminada correctamente. ID:" + id;
     }
 }

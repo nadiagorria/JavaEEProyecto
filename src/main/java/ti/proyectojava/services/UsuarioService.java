@@ -36,7 +36,7 @@ public class UsuarioService {
         String response = null;
 
         if(usuario.getNombre()==null){
-            response = "Usuario: " + usuarioRepository.save(mapToEntity(usuario)).getNombre() + " creado exitosamente.";
+            response = "Usuario creado exitosamente. NOMBRE:" + usuarioRepository.save(mapToEntity(usuario)).getNombre();
 
         }
         return  response;
@@ -50,7 +50,7 @@ public class UsuarioService {
             Usuario usuario = usuarioAct.get();
             usuario.setActivo(false);
             usuarioRepository.save(usuario);
-            response = "Usuario eliminado correctamente. Nombre:" + usuario.getNombre();
+            response = "Usuario eliminado correctamente. NOMBRE:" + usuario.getNombre();
         }
         return response;
     }
@@ -64,7 +64,7 @@ public class UsuarioService {
         aux.setNombre(usuario.getNombre());
 
         usuarioRepository.save(aux);
-        response = "Usuario modificado correctamente";
+        response = "Usuario modificado correctamente. NOMBRE:" + aux.getNombre();
         return response;
     }
 

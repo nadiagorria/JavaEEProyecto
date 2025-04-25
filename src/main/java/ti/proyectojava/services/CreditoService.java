@@ -24,16 +24,16 @@ public class CreditoService {
         String response = null;
 
         if(credito.getId()==null){
-            response = "Credito: " + creditoRepository.save(mapToEntityCredito(credito)).getId() + " creado exitosamente.";
+            response = "Credito creado exitosamente. ID:" + creditoRepository.save(mapToEntityCredito(credito)).getId();
 
         }
         return  response;
     }
 
-    public String pagarCredito(Long Id, Float pago){
+    public String pagarCredito(Long id, Float pago){
         String response = null;
 
-        Credito aux = creditoRepository.findById(Id).orElseThrow(() -> new RuntimeException("Credito no existe"));
+        Credito aux = creditoRepository.findById(id).orElseThrow(() -> new RuntimeException("Credito no existe. ID:" + id));
 
         float total = pago + aux.getPagoHastaAhora();
         aux.setPagoHastaAhora(total);
@@ -42,7 +42,7 @@ public class CreditoService {
         aux.setPrecioTotal(total);
 
         creditoRepository.save(aux);
-        response = "Credito modificado correctamente";
+        response = "Credito modificado correctamente. ID:" + aux.getId();
         return response;
     }
 
