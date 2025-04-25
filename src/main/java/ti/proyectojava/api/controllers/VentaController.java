@@ -27,7 +27,7 @@ public class VentaController {
         String response = ventaService.crearventa(ventaDto);
 
         if (response == null) {
-            return new ResponseEntity<>("Error al crear Venta", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear Venta. ID:" + ventaDto.getId(), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
@@ -41,18 +41,16 @@ public class VentaController {
         this.ventaActual = null; //inchequeable
 
 
-        return new ResponseEntity<>("venta actual eliminada #" + venta.getId(), HttpStatus.OK);
+        return new ResponseEntity<>("venta actual eliminada. ID:" + venta.getId(), HttpStatus.OK);
 
     }
 
     @PutMapping("/{ventaId}/agregar-producto")
     @Operation(description = "Agrega un producto a una venta existente")
-    public ResponseEntity<String> agregarProductoAVenta(@RequestParam Long ventaId,
-                                                        @RequestParam Long productoId,
-                                                        @RequestParam int cantidad) {
+    public ResponseEntity<String> agregarProductoAVenta(@RequestParam Long ventaId, @RequestParam Long productoId,@RequestParam int cantidad) {
         try {
             ventaService.agregarProductoAVenta(ventaId, productoId, cantidad);
-            return new ResponseEntity<>("Producto agregado a la venta #" + ventaId, HttpStatus.OK);
+            return new ResponseEntity<>("Producto agregado a la venta. ID:" + ventaId, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }

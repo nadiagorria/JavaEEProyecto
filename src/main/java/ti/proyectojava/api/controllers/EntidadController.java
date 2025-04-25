@@ -63,7 +63,7 @@ public class EntidadController {
         String response = entidadService.crearProveedor(proveedorDto);
 
         if (response == null) {
-            return new ResponseEntity<>("Error al crear Proveedor", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear Proveedor. ID" + proveedorDto.getId(), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

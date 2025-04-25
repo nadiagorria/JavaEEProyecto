@@ -24,7 +24,7 @@ public class CantidadController {
     public ResponseEntity<String> createCantidad(@RequestBody CantidadDto cantidadDto){
         String response = cantidadService.crearCantidad(cantidadDto);
         if (response == null){
-            return new ResponseEntity<>("Error al crear categoria", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear cantidad. ID:" + cantidadDto.getId(), HttpStatus.BAD_REQUEST);
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

@@ -27,7 +27,7 @@ public class OfertaController {
     public ResponseEntity<String> crearCombo(@RequestBody ComboDto comboDto) {
         String response = ofertaService.crearCombo(comboDto);
         return response == null ?
-                new ResponseEntity<>("Error al crear Combo", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Error al crear Combo. ID:" + comboDto.getId(), HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -44,7 +44,7 @@ public class OfertaController {
     public ResponseEntity<String> crearDescuento(@RequestBody DescuentoDto descuentoDto) {
         String response = ofertaService.crearDescuento(descuentoDto);
         return response == null ?
-                new ResponseEntity<>("Error al crear Descuento", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Error al crear Descuento. ID:" + descuentoDto.getId(), HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -61,7 +61,7 @@ public class OfertaController {
     public ResponseEntity<String> crearPromocion(@RequestBody PromocionDto promocionDto) {
         String response = ofertaService.crearPromocion(promocionDto);
         return response == null ?
-                new ResponseEntity<>("Error al crear Promoción", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Error al crear Promoción. ID:" + promocionDto.getId(), HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

@@ -28,7 +28,7 @@ public class ProductoController {
         String response = productoService.crearProducto(productoDto);
 
         if (response == null) {
-            return new ResponseEntity<>("Error al crear producto", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear producto. ID:" + productoDto.getId(), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
@@ -40,12 +40,12 @@ public class ProductoController {
         Producto producto = productoService.buscaProducto(id);
 
         if (producto == null) {
-            return new ResponseEntity<>("No se encontró el producto #" + producto.getId(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No se encontró el producto. ID:" + producto.getId(), HttpStatus.NOT_FOUND);
         }
 
         this.productoActual = producto;
 
-        return new ResponseEntity<>("producto actual actualizado #" + producto.getId(), HttpStatus.OK);
+        return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.OK);
     }
 
 
@@ -56,7 +56,7 @@ public class ProductoController {
 
         this.productoActual = producto;
 
-        return new ResponseEntity<>("producto actual actualizado #" + producto.getId(), HttpStatus.OK);
+        return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.OK);
 
     }
 

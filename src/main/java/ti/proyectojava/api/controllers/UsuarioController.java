@@ -25,10 +25,10 @@ public class UsuarioController {
 
     @PostMapping
     @Operation(description = "Esta funcion crea un nuevo usuario")
-    public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuario){
-        String response = usuarioService.crearUsuario(usuario);
+    public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
+        String response = usuarioService.crearUsuario(usuarioDto);
         if (response == null){
-            return new ResponseEntity<>("Error al crear usuario", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
@@ -38,7 +38,7 @@ public class UsuarioController {
     public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         String response = usuarioService.modificarUsuario(nombreUsuario, usuario);
         if (response == null){
-            return new ResponseEntity<>("Error al modificar el usuario", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al modificar el usuario. NOMBRE:" + nombreUsuario, HttpStatus.BAD_REQUEST);
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

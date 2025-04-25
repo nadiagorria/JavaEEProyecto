@@ -26,10 +26,10 @@ public class CategoriaController {
 
     @PostMapping
     @Operation(description = "Esta funcion crea una nueva categoria")
-    public ResponseEntity<String> createCategoria(@RequestBody CategoriaDto categoria){
-        String response = categoriaService.crearCategoria(categoria);
+    public ResponseEntity<String> createCategoria(@RequestBody CategoriaDto categoriaDto){
+        String response = categoriaService.crearCategoria(categoriaDto);
         if (response == null){
-            return new ResponseEntity<>("Error al crear categoria", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear categoria. NOMBRE:" + categoriaDto.getNombre(), HttpStatus.BAD_REQUEST);
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

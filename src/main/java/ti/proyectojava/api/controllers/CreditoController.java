@@ -23,7 +23,7 @@ public class CreditoController {
     public ResponseEntity<String> createCantidad(@RequestBody CreditoDto creditoDto){
         String response = creditoService.crearCredito(creditoDto);
         if (response == null){
-            return new ResponseEntity<>("Error al crear credito", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear credito. ID:" + creditoDto.getId(), HttpStatus.BAD_REQUEST);
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

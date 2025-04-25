@@ -28,7 +28,7 @@ public class NotificacionController {
         String response = notificacionService.crearNotificacion(notificacionDto);
 
         if (response == null) {
-            return new ResponseEntity<>("Error al crear notificacion", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
@@ -40,11 +40,11 @@ public class NotificacionController {
         Notificacion notificacion = notificacionService.buscaNotificacion(id);
 
         if (notificacion == null) {
-            return new ResponseEntity<>("No se encontró la notificación #" + notificacion.getId(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No se encontró la notificación. ID:" + id, HttpStatus.NOT_FOUND);
         }
 
         this.notificacionActual = notificacion;
 
-        return new ResponseEntity<>("Notificación actual actualizada #" + notificacion.getId(), HttpStatus.OK);
+        return new ResponseEntity<>("Notificación actual actualizada. ID:" + notificacion.getId(), HttpStatus.OK);
     }
 }
