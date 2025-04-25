@@ -75,8 +75,9 @@ public class OfertaController {
 
     @PutMapping("/eliminar")
     @Operation(description = "Elimina (lógicamente) una Oferta")
-    public ResponseEntity<String> eliminarOferta(@RequestBody Oferta oferta) {
-        ofertaService.eliminarOferta(oferta);
-        return ResponseEntity.ok("Oferta eliminada correctamente");
+    public ResponseEntity<String> eliminarOferta(@RequestBody Long id) {
+        String response = ofertaService.eliminarOferta(id);
+
+        return ResponseEntity.ok(response);
     }
 }

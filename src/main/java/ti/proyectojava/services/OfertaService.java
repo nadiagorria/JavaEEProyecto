@@ -1,5 +1,7 @@
 package ti.proyectojava.services;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.*;
@@ -8,6 +10,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
+@Slf4j
 public class OfertaService {
 
     private final OfertaRepository ofertaRepository;
@@ -25,10 +29,18 @@ public class OfertaService {
     }
 
 
-    public Oferta eliminarOferta(Oferta oferta) {
-        oferta.setActivo(false);
-        ofertaRepository.save(oferta);
-        return oferta;
+    public String eliminarOferta(Long id) {
+
+        Optional<Oferta> ofertaAct = ofertaRepository.findById(id);
+        String response = null;
+
+        if (ofertaAct.isPresent()) {
+            Oferta oferta = ofertaAct.get();
+            oferta.setActivo(false);
+            ofertaRepository.save(oferta);
+            response = "Oferta eliminado correctamente, ID:" +  oferta.getId();
+        }
+        return response;
     }
 
     /// //////////////////////////COMBO////////////////////////////////////

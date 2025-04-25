@@ -50,7 +50,7 @@ public class UsuarioService {
             Usuario usuario = usuarioAct.get();
             usuario.setActivo(false);
             usuarioRepository.save(usuario);
-            response = "Usuario eliminado correctamente.";
+            response = "Usuario eliminado correctamente. Nombre:" + usuario.getNombre();
         }
         return response;
     }

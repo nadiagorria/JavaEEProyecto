@@ -82,10 +82,17 @@ public class ProductoService {
         return productoActual;
     }
 
-    public Producto borrarProducto(Producto producto) {
-        producto.setActivo(false);
-        productoRepository.save(producto);
-        return producto;
+    public String borrarProducto(Long id) {
+        Optional<Producto> productoAct = productoRepository.findById(id);
+        String response = null;
+
+        if (productoAct.isPresent()) {
+            Producto producto = productoAct.get();
+            producto.setActivo(false);
+            productoRepository.save(producto);
+            response = "Producto eliminado correctamente. ID: " + producto.getId();
+        }
+        return response;
     }
 
     public Producto mapToEntityProducto (ProductoDto productoDto) {

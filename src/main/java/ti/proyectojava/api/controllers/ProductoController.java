@@ -63,13 +63,11 @@ public class ProductoController {
     @PutMapping("/{id}/eliminar")
     @Operation(description = "Esta Funcion elimina un producto")
     public ResponseEntity<String> borrarProducto(/*@RequestBody Long id*/) {
-        Producto producto = productoService.borrarProducto(this.productoActual);
+        String response = productoService.borrarProducto(this.productoActual.getId());
 
         this.productoActual = null; //inchequeable
 
-        
-        return new ResponseEntity<>("producto actual eliminada #" + producto.getId(), HttpStatus.OK);
-
+        return new ResponseEntity<> (response, HttpStatus.OK);
     }
 
     @GetMapping("/listar")
