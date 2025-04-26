@@ -32,7 +32,7 @@ public class UsuarioController {
         }else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
-}
+    }
 
     @PutMapping("/{nombre}")
     public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
