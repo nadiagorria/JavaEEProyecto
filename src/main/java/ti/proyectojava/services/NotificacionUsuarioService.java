@@ -22,9 +22,11 @@ import java.util.Optional;
 public class NotificacionUsuarioService {
 
     private final NotificacionUsuarioRepository notificacionUsuarioRepository;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
-    public NotificacionUsuarioService(NotificacionUsuarioRepository notificacionUsuarioRepository) {
+    public NotificacionUsuarioService(NotificacionUsuarioRepository notificacionUsuarioRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.notificacionUsuarioRepository = notificacionUsuarioRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public ResponseListadoNotificacionUsuario listadoNotificacionUsuario(){
@@ -32,7 +34,7 @@ public class NotificacionUsuarioService {
 
         List<NotificacionUsuarioDto> notificacionUsuarioActivos = notificacionUsuarioRepository.findByActivoTrue()
                 .stream()
-                .map(this::mapToDtoNotificacionUsuario)
+                .map(mapsDtosEntityService::mapToDtoNotificacionUsuario)
                 .toList();
 
         responseListadoNotificacionUsuario.setNotificacionUsuarios(notificacionUsuarioActivos);
@@ -44,7 +46,7 @@ public class NotificacionUsuarioService {
         String response = null;
 
         if(notificacionUsuarioRepository.findById(notificacionUsuarioDto.getId()).isEmpty()){
-            response = "Producto creado. ID: " + notificacionUsuarioRepository.save(mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
+            response = "Producto creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
         }
 
         return  response;
@@ -64,112 +66,9 @@ public class NotificacionUsuarioService {
         return response;
     }
 
-    public NotificacionUsuarioDto mapToDtoNotificacionUsuario(NotificacionUsuario notificacionUsuario) {
-        NotificacionUsuarioDto notificacionUsuarioDto = new NotificacionUsuarioDto();
-
-        notificacionUsuarioDto.setId(notificacionUsuario.getId());
-        notificacionUsuarioDto.setActivo(notificacionUsuarioDto.getActivo());
-        notificacionUsuarioDto.setLeido(notificacionUsuarioDto.getLeido());
-
-        if (notificacionUsuarioDto.getUsuarios() != null) {
-            notificacionUsuarioDto.setUsuarios(
-                    notificacionUsuario.getUsuarios().stream()
-                            .map(e -> mapToDtoUsuario(e))
-                            .toList()
-            );
-        }
-
-        if (notificacionUsuarioDto.getNotificaciones() != null) {
-            notificacionUsuarioDto.setNotificaciones(
-                    notificacionUsuario.getNotificaciones().stream()
-                            .map(e -> mapToDtoNotificacion(e))
-                            .toList()
-            );
-        }
-
-        return notificacionUsuarioDto;
-    }
-
-    private NotificacionUsuario mapToEntityNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto) {
-        NotificacionUsuario notificacionUsuario= new NotificacionUsuario();
-
-        notificacionUsuario.setId(notificacionUsuarioDto.getId());
-        notificacionUsuario.setActivo(notificacionUsuarioDto.getActivo());
-        notificacionUsuario.setLeido(notificacionUsuarioDto.getLeido());
-
-        if (notificacionUsuario.getUsuarios() != null) {
-            notificacionUsuario.setUsuarios(
-                    notificacionUsuarioDto.getUsuarios().stream()
-                            .map(e -> mapToEntityUsuario(e))
-                            .toList()
-            );
-        }
-
-        if (notificacionUsuario.getNotificaciones() != null) {
-            notificacionUsuario.setNotificaciones(
-                    notificacionUsuarioDto.getNotificaciones().stream()
-                            .map(e -> mapToEntityNotificacion(e))
-                            .toList()
-            );
-        }
-
-        return notificacionUsuario;
-    }
-
-    public NotificacionDto mapToDtoNotificacion(Notificacion notificacion) {
-
-        NotificacionDto notiDto = new NotificacionDto();
-        notiDto.setId(notificacion.getId());
-        notiDto.setMensajes(notificacion.getMensajes());
-
-        return notiDto;
-    }
-
-    public Notificacion mapToEntityNotificacion(NotificacionDto notificacionDto){
-        Notificacion notificacion = new Notificacion();
-        notificacion.setId(notificacionDto.getId());
-        notificacion.setMensajes(notificacionDto.getMensajes());
-
-        return notificacion;
-    }
-
-    public UsuarioDto mapToDtoUsuario(Usuario usuario){
-        UsuarioDto usuarioDto = new UsuarioDto();
-        usuarioDto.setMail(usuario.getMail());
-        usuarioDto.setContrasenia(usuario.getContrasenia());
-        usuarioDto.setNombre(usuario.getNombre());
-        usuarioDto.setActivo(usuario.getActivo());
-        usuarioDto.setRoles(usuario.getRoles().stream().map(e -> mapToDtoRoles(e)).toList());
-        return usuarioDto;
-    }
 
 
 
-    public Usuario mapToEntityUsuario(UsuarioDto usuarioDto){
-        Usuario usuario = new Usuario();
-        usuario.setMail(usuarioDto.getMail());
-        usuario.setContrasenia(usuarioDto.getContrasenia());
-        usuario.setNombre(usuarioDto.getNombre());
-        usuario.setActivo(usuarioDto.getActivo());
-        usuario.setRoles(usuarioDto.getRoles().stream().map(e -> mapToEntityRoles(e)).toList());
-        return usuario;
-    }
-
-    public RolUsuario mapToEntityRoles(RolUsuarioDto rolDto){
-        RolUsuario rol = new RolUsuario();
-        rol.setId(rolDto.getId());
-        rol.setNombre(rolDto.getNombre());
-        rol.setUsuarios(rolDto.getUsuarios().stream().map(e -> mapToEntityUsuario(e)).toList());
-        return rol;
-    }
-
-    public RolUsuarioDto mapToDtoRoles(RolUsuario rol){
-        RolUsuarioDto rolDto = new RolUsuarioDto();
-        rolDto.setId(rol.getId());
-        rolDto.setNombre(rol.getNombre());
-        rolDto.setUsuarios(rol.getUsuarios().stream().map(e -> mapToDtoUsuario(e)).toList());
-        return rolDto;
-    }
 
 
 }

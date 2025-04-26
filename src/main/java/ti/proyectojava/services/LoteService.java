@@ -15,9 +15,11 @@ import java.util.Optional;
 public class LoteService {
 
     private final LoteRepository loteRepository;
+    private  final MapsDtosEntityService mapsDtosEntityService;
 
-    public LoteService(LoteRepository loteRepository) {
+    public LoteService(LoteRepository loteRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.loteRepository = loteRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public ResponseListadoLotes listadoLotes() {
@@ -25,7 +27,7 @@ public class LoteService {
 
         List<LoteDto> lotesActivos = loteRepository.findByActivoTrue()
                 .stream()
-                .map(this::mapToDtoLote)
+                .map(mapsDtosEntityService::mapToDtoLote)
                 .toList();
 
         response.setLotes(lotesActivos);
@@ -35,7 +37,7 @@ public class LoteService {
 
     public String crearLote(LoteDto loteDto) {
         if(loteRepository.findById(loteDto.getId()).isEmpty()){
-            return "Lote creado. ID: " + loteRepository.save(mapToEntityLote(loteDto)).getId();
+            return "Lote creado. ID: " + loteRepository.save(mapsDtosEntityService.mapToEntityLote(loteDto)).getId();
         }
 
         return null;
@@ -53,27 +55,7 @@ public class LoteService {
         return response;
     }
 
-    public LoteDto mapToDtoLote(Lote lote) {
-        LoteDto dto = new LoteDto();
-        dto.setId(lote.getId());
-        dto.setNumeLote(lote.getNumero());
-        dto.setCantidad(lote.getCantidad());
-        dto.setFechaVencimiento(lote.getFechaVencimiento());
-        dto.setPrecioCompra(lote.getPrecioCompra());
-        dto.setActivo(lote.getActivo());
-        return dto;
-    }
 
-    public Lote mapToEntityLote(LoteDto dto) {
-        Lote lote = new Lote();
-        lote.setId(dto.getId());
-        lote.setNumero(dto.getNumeLote());
-        lote.setCantidad(dto.getCantidad());
-        lote.setFechaVencimiento(dto.getFechaVencimiento());
-        lote.setPrecioCompra(dto.getPrecioCompra());
-        lote.setActivo(dto.getActivo());
-        return lote;
-    }
 
 
 

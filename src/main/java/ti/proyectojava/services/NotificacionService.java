@@ -13,14 +13,16 @@ import java.util.Optional;
 public class NotificacionService {
 
     private final NotificacionRepository notificacionRepository;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
-    public NotificacionService(NotificacionRepository notificacionRepository) {
+    public NotificacionService(NotificacionRepository notificacionRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.notificacionRepository = notificacionRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public String crearNotificacion(NotificacionDto notificacionDto) {
         if(notificacionRepository.findById(notificacionDto.getId()).isEmpty()){
-            return "Notificacion creada. ID:" + notificacionRepository.save(mapToEntityNotificacion(notificacionDto)).getId();
+            return "Notificacion creada. ID:" + notificacionRepository.save(mapsDtosEntityService.mapToEntityNotificacion(notificacionDto)).getId();
         }
 
         return null;
@@ -34,20 +36,5 @@ public class NotificacionService {
         return null;
     }
 
-    public Notificacion mapToEntityNotificacion(NotificacionDto notificacionDto){
-        Notificacion notificacion = new Notificacion();
-        notificacion.setId(notificacionDto.getId());
-        notificacion.setMensajes(notificacionDto.getMensajes());
 
-        return notificacion;
-    }
-
-    public NotificacionDto mapToDtoNotificacion(Notificacion notificacion) {
-
-        NotificacionDto notiDto = new NotificacionDto();
-        notiDto.setId(notificacion.getId());
-        notiDto.setMensajes(notificacion.getMensajes());
-
-        return notiDto;
-    }
 }

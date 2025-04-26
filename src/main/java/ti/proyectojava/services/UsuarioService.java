@@ -14,9 +14,11 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.usuarioRepository = usuarioRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public ResponseListadoUsuarios listadoUsuarios(){
@@ -24,7 +26,7 @@ public class UsuarioService {
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue()
                 .stream()
-                .map(this::mapToDtoUsuario)
+                .map(mapsDtosEntityService::mapToDtoUsuario)
                 .toList();
 
         responseListadoUsuarios.setUsuarios(usuariosActivos);
@@ -36,7 +38,7 @@ public class UsuarioService {
         String response = null;
 
         if(usuario.getNombre()==null){
-            response = "Usuario creado exitosamente. NOMBRE:" + usuarioRepository.save(mapToEntity(usuario)).getNombre();
+            response = "Usuario creado exitosamente. NOMBRE:" + usuarioRepository.save(mapsDtosEntityService.mapToEntityUsuario(usuario)).getNombre();
 
         }
         return  response;
@@ -115,44 +117,5 @@ public class UsuarioService {
     * */
 
 
-
-
-    /////////////////////
-
-
-    public RolUsuarioDto mapToDtoRoles(RolUsuario rol){
-        RolUsuarioDto rolDto = new RolUsuarioDto();
-        rolDto.setId(rol.getId());
-        rolDto.setNombre(rol.getNombre());
-        rolDto.setUsuarios(rol.getUsuarios().stream().map(e -> mapToDtoUsuario(e)).toList());
-        return rolDto;
-    }
-
-    public UsuarioDto mapToDtoUsuario(Usuario usuario){
-        UsuarioDto usuarioDto = new UsuarioDto();
-        usuarioDto.setMail(usuario.getMail());
-        usuarioDto.setContrasenia(usuario.getContrasenia());
-        usuarioDto.setNombre(usuario.getNombre());
-        usuarioDto.setActivo(usuario.getActivo());
-        usuarioDto.setRoles(usuario.getRoles().stream().map(e -> mapToDtoRoles(e)).toList());
-        return usuarioDto;
-    }
-
-    public RolUsuario mapToEntityRoles(RolUsuarioDto rolDto){
-        RolUsuario rol = new RolUsuario();
-        rol.setId(rolDto.getId());
-        rol.setNombre(rolDto.getNombre());
-        rol.setUsuarios(rolDto.getUsuarios().stream().map(e -> mapToEntity(e)).toList());
-        return rol;
-    }
-    public Usuario mapToEntity(UsuarioDto usuarioDto){
-        Usuario usuario = new Usuario();
-        usuario.setMail(usuarioDto.getMail());
-        usuario.setContrasenia(usuarioDto.getContrasenia());
-        usuario.setNombre(usuarioDto.getNombre());
-        usuario.setActivo(usuarioDto.getActivo());
-        usuario.setRoles(usuarioDto.getRoles().stream().map(e -> mapToEntityRoles(e)).toList());
-        return usuario;
-    }
 }
 

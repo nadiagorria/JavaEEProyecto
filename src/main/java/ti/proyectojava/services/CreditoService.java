@@ -14,17 +14,18 @@ import ti.proyectojava.dtos.UsuarioDto;
 public class CreditoService {
 
     private final CreditoRepository creditoRepository;
-    private final EntidadService entidadService;
-    public CreditoService(CreditoRepository creditoRepository, EntidadService entidadService) {
+    private final MapsDtosEntityService mapsDtosEntityService;
+
+    public CreditoService(CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.creditoRepository = creditoRepository;
-        this.entidadService = entidadService;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public String crearCredito(CreditoDto credito){
         String response = null;
 
         if(credito.getId()==null){
-            response = "Credito creado exitosamente. ID:" + creditoRepository.save(mapToEntityCredito(credito)).getId();
+            response = "Credito creado exitosamente. ID:" + creditoRepository.save(mapsDtosEntityService.mapToEntityCredito(credito)).getId();
 
         }
         return  response;
@@ -47,36 +48,5 @@ public class CreditoService {
     }
 
 
-    public CreditoDto mapToDtoCredito(Credito credito) {
-        CreditoDto dto = new CreditoDto();
-
-        dto.setId(credito.getId());
-        dto.setPrecioTotal(credito.getPrecioTotal());
-        dto.setMinimo(credito.getMinimo());
-        dto.setMaximo(credito.getMaximo());
-        dto.setPagoHastaAhora(credito.getPagoHastaAhora());
-
-        if (credito.getCliente() != null) {
-            dto.setCliente(entidadService.mapToDtoCliente(credito.getCliente()));
-        }
-
-        return dto;
-    }
-
-    public Credito mapToEntityCredito(CreditoDto dto) {
-        Credito credito = new Credito();
-
-        credito.setId(dto.getId());
-        credito.setPrecioTotal(dto.getPrecioTotal());
-        credito.setMinimo(dto.getMinimo());
-        credito.setMaximo(dto.getMaximo());
-        credito.setPagoHastaAhora(dto.getPagoHastaAhora());
-
-        if (dto.getCliente() != null) {
-            credito.setCliente(entidadService.mapToEntityCliente(dto.getCliente()));
-        }
-
-        return credito;
-    }
 
 }

@@ -10,12 +10,12 @@ import ti.proyectojava.dtos.CantidadDto;
 public class CantidadService {
 
     private final CantidadRepository cantidadRepository;
-    private final VentaService ventaService;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
 
-    public CantidadService(CantidadRepository cantidadRepository, VentaService ventaService) {
+    public CantidadService(CantidadRepository cantidadRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.cantidadRepository = cantidadRepository;
-        this.ventaService = ventaService;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public ResponseListadoCantidades listadoCantidades() {
@@ -24,7 +24,7 @@ public class CantidadService {
         responseListadoCantidades.setCantidades(
                 cantidadRepository.findAll()
                         .stream()
-                        .map(ventaService::mapToDtoCantidad)
+                        .map(mapsDtosEntityService::mapToDtoCantidad)
                         .toList()
         );
 
@@ -35,7 +35,7 @@ public class CantidadService {
         String response = null;
 
         if(cantidad.getId()==null){
-            response = "Cantidad creada. ID:" + cantidadRepository.save(ventaService.mapToEntityCantidad(cantidad)).getId();
+            response = "Cantidad creada. ID:" + cantidadRepository.save(mapsDtosEntityService.mapToEntityCantidad(cantidad)).getId();
 
         }
         return  response;
