@@ -10,6 +10,7 @@ import ti.proyectojava.services.CategoriaService;
 
 @RestController
 @RequestMapping(value = "api/v1/categorias")
+
 public class CategoriaController {
 
     private final CategoriaService categoriaService;

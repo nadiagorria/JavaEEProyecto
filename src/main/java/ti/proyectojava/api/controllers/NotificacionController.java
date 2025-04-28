@@ -3,6 +3,8 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +27,21 @@ public class NotificacionController {
     @PostMapping("/crear")
     @Operation(description = "Esta Funcion crea una nueva notifiacacion")
     public ResponseEntity<String> crearNotificacion(@RequestBody NotificacionDto notificacionDto){
-        String response = notificacionService.crearNotificacion(notificacionDto);
 
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+
+            String response = notificacionService.crearNotificacion(notificacionDto);
+
+            if (response == null) {
+                return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            }
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 

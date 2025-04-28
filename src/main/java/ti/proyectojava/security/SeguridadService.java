@@ -16,9 +16,9 @@ public class SeguridadService {
     private UsuarioRepository usuarioRepository;
 
     public Optional<Usuario> autenticarUsuario(String usuario,
-                                               String contrasenia) {
+                                               String password) {
         Optional<Usuario> objUsuario
-                = usuarioRepository.findByNombreAndContrasenia(usuario, contrasenia);
+                = usuarioRepository.findByNombreAndContrasenia(usuario, password);
         if (objUsuario.equals(null)) {
             return Optional.empty();
         } else if (!objUsuario.get().getActivo()) {

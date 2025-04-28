@@ -47,7 +47,7 @@ public class SeguridadController {
     }
 
     private String generarToken(Usuario usuario) {
-        String clave = "@tR8!xG5&wM9@vL2#zQ7^nB4$eY1*pF0)dH3(sK6%"; // dinamico desde la BD
+        String clave = "@Z9@vQ3!pL8#wX7^tR2&nG6*yM4$eB1(dF0)sH5%"; // dinamico desde la BD
         List<GrantedAuthority> grantedAuthorityList
                 = AuthorityUtils.createAuthorityList(
                         seguridadService.listarRolesPorUsuario(usuario)

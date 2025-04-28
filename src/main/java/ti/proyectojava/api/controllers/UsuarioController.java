@@ -3,6 +3,8 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.dtos.UsuarioDto;
@@ -19,18 +21,35 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
-        ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+            ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
     }
 
     @PostMapping
     @Operation(description = "Esta funcion crea un nuevo usuario")
     public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
-        String response = usuarioService.crearUsuario(usuarioDto);
-        if (response == null){
-            return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
-        }else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+
+            String response = usuarioService.crearUsuario(usuarioDto);
+            if (response == null) {
+                return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            }
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
 }
 

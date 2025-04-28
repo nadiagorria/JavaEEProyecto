@@ -6,31 +6,41 @@ import ti.proyectojava.business.entities.*;
 import ti.proyectojava.dtos.*;
 
 import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Slf4j
 public class MapsDtosEntityService {
 
-
     public CategoriaDto mapToDtoCategoria(Categoria categoria) {
+        return mapToDtoCategoria(categoria, new HashSet<>());
+    }
+
+    private CategoriaDto mapToDtoCategoria(Categoria categoria, Set<Categoria> processed) {
+        if (categoria == null || processed.contains(categoria)) {
+            return null;
+        }
+        processed.add(categoria);
+
         CategoriaDto catDto = new CategoriaDto();
         catDto.setNombre(categoria.getNombre());
 
         if (categoria.getProductos() != null) {
             catDto.setProductos(
                     categoria.getProductos().stream()
-                            .map(e -> mapToDtoProducto(e))
+                            .map(this::mapToDtoProducto)
                             .toList()
             );
         }
         if (categoria.getCategoriaPadre() != null) {
-            catDto.setCategoriaPadre(mapToDtoCategoria(categoria.getCategoriaPadre()));
+            catDto.setCategoriaPadre(mapToDtoCategoria(categoria.getCategoriaPadre(), processed));
         }
 
         if (categoria.getSubcategorias() != null) {
             catDto.setSubcategorias(
                     categoria.getSubcategorias().stream()
-                            .map(e -> mapToDtoCategoria(e))
+                            .map(sub -> mapToDtoCategoria(sub, processed))
                             .toList()
             );
         }
@@ -38,26 +48,34 @@ public class MapsDtosEntityService {
     }
 
     public Categoria mapToEntityCategoria(CategoriaDto catDto) {
+        return mapToEntityCategoria(catDto, new HashSet<>());
+    }
+
+    private Categoria mapToEntityCategoria(CategoriaDto catDto, Set<CategoriaDto> processed) {
+        if (catDto == null || processed.contains(catDto)) {
+            return null;
+        }
+        processed.add(catDto);
+
         Categoria categoria = new Categoria();
         categoria.setNombre(catDto.getNombre());
-
 
         if (catDto.getProductos() != null) {
             categoria.setProductos(
                     catDto.getProductos().stream()
-                            .map(e ->mapToEntityProducto(e))
+                            .map(this::mapToEntityProducto)
                             .toList()
             );
         }
 
         if (catDto.getCategoriaPadre() != null) {
-            categoria.setCategoriaPadre(mapToEntityCategoria(catDto.getCategoriaPadre()));
+            categoria.setCategoriaPadre(mapToEntityCategoria(catDto.getCategoriaPadre(), processed));
         }
 
         if (catDto.getSubcategorias() != null) {
             categoria.setSubcategorias(
                     catDto.getSubcategorias().stream()
-                            .map(e -> mapToEntityCategoria(e))
+                            .map(sub -> mapToEntityCategoria(sub, processed))
                             .toList()
             );
         }
@@ -173,42 +191,81 @@ public class MapsDtosEntityService {
         return notiDto;
     }
 
+    public UsuarioDto mapToDtoUsuario(Usuario usuario) {
+        return mapToDtoUsuario(usuario, new HashSet<>());
+    }
 
-    public UsuarioDto mapToDtoUsuario(Usuario usuario){
+    private UsuarioDto mapToDtoUsuario(Usuario usuario, Set<RolUsuario> processed) {
+        if (usuario == null) {
+            return null;
+        }
+
         UsuarioDto usuarioDto = new UsuarioDto();
         usuarioDto.setMail(usuario.getMail());
         usuarioDto.setContrasenia(usuario.getContrasenia());
         usuarioDto.setNombre(usuario.getNombre());
         usuarioDto.setActivo(usuario.getActivo());
-        usuarioDto.setRoles(usuario.getRoles().stream().map(e -> mapToDtoRoles(e)).toList());
+        usuarioDto.setRoles(usuario.getRoles().stream()
+                .map(rol -> mapToDtoRoles(rol, processed))
+                .toList());
         return usuarioDto;
     }
 
+    public Usuario mapToEntityUsuario(UsuarioDto usuarioDto) {
+        return mapToEntityUsuario(usuarioDto, new HashSet<>());
+    }
 
+    private Usuario mapToEntityUsuario(UsuarioDto usuarioDto, Set<RolUsuarioDto> processed) {
+        if (usuarioDto == null) {
+            return null;
+        }
 
-    public Usuario mapToEntityUsuario(UsuarioDto usuarioDto){
         Usuario usuario = new Usuario();
         usuario.setMail(usuarioDto.getMail());
         usuario.setContrasenia(usuarioDto.getContrasenia());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setActivo(usuarioDto.getActivo());
-        usuario.setRoles(usuarioDto.getRoles().stream().map(e -> mapToEntityRoles(e)).toList());
+        usuario.setRoles(usuarioDto.getRoles().stream()
+                .map(rolDto -> mapToEntityRoles(rolDto, processed))
+                .toList());
         return usuario;
     }
 
-    public RolUsuario mapToEntityRoles(RolUsuarioDto rolDto){
+    public RolUsuario mapToEntityRoles(RolUsuarioDto rolDto) {
+        return mapToEntityRoles(rolDto, new HashSet<>());
+    }
+
+    private RolUsuario mapToEntityRoles(RolUsuarioDto rolDto, Set<RolUsuarioDto> processed) {
+        if (rolDto == null || processed.contains(rolDto)) {
+            return null;
+        }
+        processed.add(rolDto);
+
         RolUsuario rol = new RolUsuario();
         rol.setId(rolDto.getId());
         rol.setNombre(rolDto.getNombre());
-        rol.setUsuarios(rolDto.getUsuarios().stream().map(e -> mapToEntityUsuario(e)).toList());
+        rol.setUsuarios(rolDto.getUsuarios().stream()
+                .map(userDto -> mapToEntityUsuario(userDto, processed))
+                .toList());
         return rol;
     }
 
-    public RolUsuarioDto mapToDtoRoles(RolUsuario rol){
+    public RolUsuarioDto mapToDtoRoles(RolUsuario rol) {
+        return mapToDtoRoles(rol, new HashSet<>());
+    }
+
+    private RolUsuarioDto mapToDtoRoles(RolUsuario rol, Set<RolUsuario> processed) {
+        if (rol == null || processed.contains(rol)) {
+            return null;
+        }
+        processed.add(rol);
+
         RolUsuarioDto rolDto = new RolUsuarioDto();
         rolDto.setId(rol.getId());
         rolDto.setNombre(rol.getNombre());
-        rolDto.setUsuarios(rol.getUsuarios().stream().map(e -> mapToDtoUsuario(e)).toList());
+        rolDto.setUsuarios(rol.getUsuarios().stream()
+                .map(user -> mapToDtoUsuario(user, processed))
+                .toList());
         return rolDto;
     }
 
@@ -264,7 +321,6 @@ public class MapsDtosEntityService {
         return notificacionUsuario;
     }
 
-
     public ComboDto mapToDtoCombo(Combo combo) {
         ComboDto dto = new ComboDto();
         dto.setId(combo.getId());
@@ -276,7 +332,6 @@ public class MapsDtosEntityService {
         dto.setActivo(combo.getActivo());
         return dto;
     }
-
 
     public Combo mapToEntityCombo(ComboDto comboDto) {
         Combo combo = new Combo();
