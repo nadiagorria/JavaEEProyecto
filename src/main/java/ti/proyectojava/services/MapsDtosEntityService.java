@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.dtos.*;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.HashSet;
 import java.util.Set;
@@ -244,9 +246,16 @@ public class MapsDtosEntityService {
         RolUsuario rol = new RolUsuario();
         rol.setId(rolDto.getId());
         rol.setNombre(rolDto.getNombre());
-        rol.setUsuarios(rolDto.getUsuarios().stream()
-                .map(userDto -> mapToEntityUsuario(userDto, processed))
-                .toList());
+
+
+        rol.setUsuarios(
+                Optional.ofNullable(rolDto.getUsuarios())
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(userDto -> mapToEntityUsuario(userDto, processed))
+                        .toList()
+        );
+
         return rol;
     }
 
@@ -273,10 +282,10 @@ public class MapsDtosEntityService {
         NotificacionUsuarioDto notificacionUsuarioDto = new NotificacionUsuarioDto();
 
         notificacionUsuarioDto.setId(notificacionUsuario.getId());
-        notificacionUsuarioDto.setActivo(notificacionUsuarioDto.getActivo());
-        notificacionUsuarioDto.setLeido(notificacionUsuarioDto.getLeido());
+        notificacionUsuarioDto.setActivo(notificacionUsuario.getActivo());
+        notificacionUsuarioDto.setLeido(notificacionUsuario.getLeido());
 
-        if (notificacionUsuarioDto.getUsuarios() != null) {
+        if (notificacionUsuario.getUsuarios() != null) {
             notificacionUsuarioDto.setUsuarios(
                     notificacionUsuario.getUsuarios().stream()
                             .map(e -> mapToDtoUsuario(e))
@@ -284,7 +293,7 @@ public class MapsDtosEntityService {
             );
         }
 
-        if (notificacionUsuarioDto.getNotificaciones() != null) {
+        if (notificacionUsuario.getNotificaciones() != null) {
             notificacionUsuarioDto.setNotificaciones(
                     notificacionUsuario.getNotificaciones().stream()
                             .map(e -> mapToDtoNotificacion(e))
@@ -296,13 +305,13 @@ public class MapsDtosEntityService {
     }
 
     public NotificacionUsuario mapToEntityNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto) {
-        NotificacionUsuario notificacionUsuario= new NotificacionUsuario();
+        NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
 
         notificacionUsuario.setId(notificacionUsuarioDto.getId());
         notificacionUsuario.setActivo(notificacionUsuarioDto.getActivo());
         notificacionUsuario.setLeido(notificacionUsuarioDto.getLeido());
 
-        if (notificacionUsuario.getUsuarios() != null) {
+        if (notificacionUsuarioDto.getUsuarios() != null) {
             notificacionUsuario.setUsuarios(
                     notificacionUsuarioDto.getUsuarios().stream()
                             .map(e -> mapToEntityUsuario(e))
@@ -310,7 +319,7 @@ public class MapsDtosEntityService {
             );
         }
 
-        if (notificacionUsuario.getNotificaciones() != null) {
+        if (notificacionUsuarioDto.getNotificaciones() != null) {
             notificacionUsuario.setNotificaciones(
                     notificacionUsuarioDto.getNotificaciones().stream()
                             .map(e -> mapToEntityNotificacion(e))
@@ -407,6 +416,10 @@ public class MapsDtosEntityService {
             producto.setProveedor(mapToEntityProveedor(productoDto.getProveedor()));
         }
 
+        if (productoDto.getCategoria() != null) {
+            producto.setCategoria(mapToEntityCategoria(productoDto.getCategoria()));
+        }
+
         if (productoDto.getLotes() != null) {
             producto.setLotes(
                     productoDto.getLotes().stream()
@@ -431,9 +444,6 @@ public class MapsDtosEntityService {
             );
         }
 
-        if (productoDto.getProveedor() != null) {
-            producto.setCategoria(mapToEntityCategoria(productoDto.getCategoria()));
-        }
 
         if (productoDto.getCantidades() != null) {
             producto.setCantidades(
@@ -504,6 +514,10 @@ public class MapsDtosEntityService {
                             .map(e -> mapToDtoCantidad(e))
                             .toList()
             );
+        }
+
+        if (producto.getCategoria() != null) {
+            productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria()));
         }
 
         return productoDto;

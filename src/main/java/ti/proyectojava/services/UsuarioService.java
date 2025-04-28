@@ -37,7 +37,7 @@ public class UsuarioService {
     public String crearUsuario(UsuarioDto usuario){
         String response = null;
 
-        if(usuario.getNombre()==null){
+        if(usuario.getNombre() !=null){
             response = "Usuario creado exitosamente. NOMBRE:" + usuarioRepository.save(mapsDtosEntityService.mapToEntityUsuario(usuario)).getNombre();
 
         }
