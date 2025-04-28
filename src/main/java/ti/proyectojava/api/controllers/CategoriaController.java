@@ -19,12 +19,14 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
+    // esta funcion la puede usar cualquiera
     @GetMapping
     public ResponseEntity<ResponseListadoCategorias> getCategorias(){
         ResponseListadoCategorias response = categoriaService.listadoCategorias();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // esta funcion solo la puede usar un admin
     @PostMapping
     @Operation(description = "Esta funcion crea una nueva categoria")
     public ResponseEntity<String> createCategoria(@RequestBody CategoriaDto categoriaDto){
@@ -36,6 +38,7 @@ public class CategoriaController {
         }
     }
 
+    //esta funcion solo la puede usar un admin
     @PutMapping("/{nombre}")
     public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre, @RequestBody CategoriaDto categoria){
         categoriaService.borrarCategoria(nombre);

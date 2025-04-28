@@ -17,6 +17,7 @@ public class LoteController {
         this.loteService = loteService1;
     }
 
+    //solo puede usarlo un admin
     @PostMapping("/crear")
     @Operation(description = "Esta Funcion crea una nuevo lote")
     public ResponseEntity<String> crearLote(@RequestBody LoteDto loteDto) {
@@ -28,6 +29,7 @@ public class LoteController {
         }
     }
 
+    //solo puede usarlo un admin
     @PutMapping("/{id}/eliminar")
     @Operation(description = "Esta Funcion elimina un lote")
     public ResponseEntity<String> borrarLote(@RequestBody Long id){

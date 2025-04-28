@@ -19,6 +19,7 @@ public class CantidadController {
         this.cantidadService = cantidadService;
     }
 
+    // esto se hace cuando se va creando una venta, no creo que realmente tenga un controller para si mismo
     @PostMapping
     @Operation(description = "Esta funcion crea una nueva cantidad")
     public ResponseEntity<String> createCantidad(@RequestBody CantidadDto cantidadDto){
@@ -30,12 +31,17 @@ public class CantidadController {
         }
     }
 
+    // esta funcion se usa cuando se entra a ver informacion de una venta.
+    // hay que modificarla para que se haga solo por venta
     @GetMapping
     @Operation(description = "Esta funcion lista las cantidades")
     public ResponseEntity<ResponseListadoCantidades> getCantidades(){
         ResponseListadoCantidades response = cantidadService.listadoCantidades();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    //no creo que sea necesario un controller, solo se puede borrar cuando se esta haciendo una compra
+    // y se desea borrar la linea
 
     @PutMapping("/eliminar/{id}")
     @Operation(description = "Esta funcion borra una cantidad")

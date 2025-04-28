@@ -19,6 +19,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    // esto solo la puede hacer el admin
     @GetMapping
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
 
@@ -33,13 +34,16 @@ public class UsuarioController {
         }
     }
 
+
+
+    // esto lo hace cualquiera
     @PostMapping
     @Operation(description = "Esta funcion crea un nuevo usuario")
     public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+        //if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
 
             String response = usuarioService.crearUsuario(usuarioDto);
             if (response == null) {
@@ -47,12 +51,15 @@ public class UsuarioController {
             } else {
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             }
-        }
-        else{
+        //}
+        /*else{
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        }
+        }*/
+
 }
 
+    // esto solo lo puede hacer el usuario dueño del usuario
+    @Operation(description = "Esta funcion modifica un usuario")
     @PutMapping("/{nombre}")
     public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         String response = usuarioService.modificarUsuario(nombreUsuario, usuario);
@@ -63,6 +70,8 @@ public class UsuarioController {
         }
     }
 
+    //esta funcion solo la puede hacer el admin
+    @Operation(description = "Esta funcion borra un usuario")
     @PutMapping("/eliminar/{nombre}")
     public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         usuarioService.borrarUsuario(nombreUsuario);

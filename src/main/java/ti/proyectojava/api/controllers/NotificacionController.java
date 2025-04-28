@@ -24,6 +24,8 @@ public class NotificacionController {
         this.notificacionService = notificacionService;
     }
 
+    //se crean solas en base a si es necesario (solo cuando hay menos del stock minimo
+    // o hay algun lote proximo a vencerse)
     @PostMapping("/crear")
     @Operation(description = "Esta Funcion crea una nueva notifiacacion")
     public ResponseEntity<String> crearNotificacion(@RequestBody NotificacionDto notificacionDto){
@@ -45,6 +47,7 @@ public class NotificacionController {
         }
     }
 
+    //lo usa cualquiera
     @PostMapping("/seleccionar")
     @Operation(description =  "Esta funcion selecciona una nueva notificacion")
     public ResponseEntity<String> seleccionarNotificacion(@RequestBody Long id){

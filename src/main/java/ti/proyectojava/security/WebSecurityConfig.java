@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.http.HttpMethod;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
@@ -30,11 +31,14 @@ public class WebSecurityConfig {
                 .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
-                        .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
-                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
-                        .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/api/v1/seguridad/**")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/swagger-ui.html")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/webjars/**")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/swagger-ui/**")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/v3/api-docs/**")).permitAll()
+                        .requestMatchers(antMatcher("/kioscobyf/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .anyRequest()
                         .authenticated());
 
