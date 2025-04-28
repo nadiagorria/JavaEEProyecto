@@ -549,6 +549,7 @@ public class MapsDtosEntityService {
     public VentaDto mapToDtoVenta(Venta venta) {
         VentaDto dto = new VentaDto();
 
+        dto.setFinalizada(venta.getFinalizada());
         dto.setId(venta.getId());
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setTotal(venta.getTotal());
@@ -564,6 +565,7 @@ public class MapsDtosEntityService {
     public Venta mapToEntityVenta(VentaDto dto) {
         Venta venta = new Venta();
 
+        venta.setFinalizada(dto.getFinalizada());
         venta.setId(dto.getId());
         venta.setFechaVenta(dto.getFechaVenta());
         venta.setTotal(dto.getTotal());
