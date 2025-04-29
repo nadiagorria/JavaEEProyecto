@@ -70,51 +70,7 @@ public class UsuarioService {
         return response;
     }
 
-// capaz anda capaz no
-    /*
-    * public void chequearNotificaciones() {
-    List<Producto> productos = productoRepository.findAll();
 
-    for (Producto producto : productos) {
-        int stockTotal = producto.getStockTotal();
-
-        if (stockTotal == 0) continue;
-
-        for (Lote lote : producto.getLotes()) {
-            if (lote.getStock() == 0) continue;
-
-            long diasFaltantes = ChronoUnit.DAYS.between(LocalDate.now(), lote.getFechaVencimiento());
-
-            if (diasFaltantes <= 21) {
-
-                Notificacion notificacion = new Notificacion();
-                notificacion.setFechahora(LocalDateTime.now());
-                notificacion.setMensaje("Producto " + producto.getNombre() +
-                        " (lote " + lote.getId() + ") vence en " + diasFaltantes + " días.");
-
-                notificacionRepository.save(notificacion);
-
-                // mandarla a todos los usuarios
-                List<Usuario> usuarios = usuarioRepository.findAll();
-                List<NotificacionUsuario> notisUsuario = new ArrayList<>();
-
-                for (Usuario usuario : usuarios) {
-                    NotificacionUsuario nu = new NotificacionUsuario();
-                    nu.setLeido(false);
-                    nu.setUsuario(usuario);
-                    nu.setNotificaciones(List.of(notificacion)); // o solo `setNotificacion(notificacion)` si es ManyToOne
-                    notisUsuario.add(nu);
-                }
-
-                notificacionUsuarioRepository.saveAll(notisUsuario);
-            } else {
-                break;
-            }
-        }
-    }
-}
-
-    * */
 
 
 }

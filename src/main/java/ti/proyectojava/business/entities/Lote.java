@@ -16,8 +16,8 @@ public class Lote {
     @Column(name = "LOTE_NUMERO")
     private String numero;
 
-    @Column(name = "CANTIDAD")
-    private Integer cantidad;
+    @Column(name = "STOCK")
+    private Integer stock;
 
     @Column(name = "FECHAVENCIMIENTO")
     private Date fechaVencimiento;

@@ -9,10 +9,10 @@ import lombok.Data;
 public class Promocion extends Oferta{
 
     @Column(name = "PROMOCION_DESCRIPCION")
-    String descripcion;
+    private String descripcion;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PRODUCTO_ID")
-    Producto producto;
+    private Producto producto;
 
 }
