@@ -21,11 +21,9 @@ public class NotificacionService {
     }
 
     public String crearNotificacion(NotificacionDto notificacionDto) {
-        if(notificacionRepository.findById(notificacionDto.getId()).isEmpty()){
-            return "Notificacion creada. ID:" + notificacionRepository.save(mapsDtosEntityService.mapToEntityNotificacion(notificacionDto)).getId();
-        }
 
-        return null;
+            return "Notificacion creada. ID:" + notificacionRepository.save(mapsDtosEntityService.mapToEntityNotificacion(notificacionDto)).getId();
+
     }
 
     public Notificacion buscaNotificacion(Long id) {

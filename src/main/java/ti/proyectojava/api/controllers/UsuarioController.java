@@ -3,6 +3,8 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.dtos.UsuarioDto;
@@ -17,23 +19,47 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    // esto solo la puede hacer el admin
     @GetMapping
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
-        ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
-    @PostMapping
-    @Operation(description = "Esta funcion crea un nuevo usuario")
-    public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
-        String response = usuarioService.crearUsuario(usuarioDto);
-        if (response == null){
-            return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
-        }else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+            ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 
+
+
+    // esto lo hace cualquiera
+    @PostMapping
+    @Operation(description = "Esta funcion crea un nuevo usuario")
+    public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
+
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        //if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
+
+            String response = usuarioService.crearUsuario(usuarioDto);
+            if (response == null) {
+                return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            }
+        //}
+        /*else{
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }*/
+
+}
+
+    // esto solo lo puede hacer el usuario dueño del usuario
+    @Operation(description = "Esta funcion modifica un usuario")
     @PutMapping("/{nombre}")
     public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         String response = usuarioService.modificarUsuario(nombreUsuario, usuario);
@@ -44,6 +70,8 @@ public class UsuarioController {
         }
     }
 
+    //esta funcion solo la puede hacer el admin
+    @Operation(description = "Esta funcion borra un usuario")
     @PutMapping("/eliminar/{nombre}")
     public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         usuarioService.borrarUsuario(nombreUsuario);

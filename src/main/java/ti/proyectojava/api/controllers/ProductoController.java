@@ -22,6 +22,7 @@ public class ProductoController {
         this.productoActual = null;
     }
 
+    //solo admin puede hacerlo
     @PostMapping("/crear")
     @Operation(description = "Esta Funcion crea un nuevo producto")
     public ResponseEntity<String> crearProducto(@RequestBody ProductoDto productoDto) {
@@ -34,6 +35,7 @@ public class ProductoController {
         }
     }
 
+    //cualquiera puede usarlo
     @PostMapping("/seleccionar")
     @Operation(description =  "Esta funcion selecciona un nuevo producto")
     public ResponseEntity<String> seleccionarNotificacion(@RequestBody Long id) {
@@ -49,6 +51,7 @@ public class ProductoController {
     }
 
 
+    //solo admin puede usarlo
     @PutMapping("/{id}/editar")
     @Operation(description = "Esta Funcion edita un producto")
     public ResponseEntity<String> EditarProducto(@RequestBody ProductoDto productoDto) {
@@ -60,6 +63,7 @@ public class ProductoController {
 
     }
 
+    //solo admin puede usarlo
     @PutMapping("/{id}/eliminar")
     @Operation(description = "Esta Funcion elimina un producto")
     public ResponseEntity<String> borrarProducto(/*@RequestBody Long id*/) {
@@ -70,6 +74,7 @@ public class ProductoController {
         return new ResponseEntity<> (response, HttpStatus.OK);
     }
 
+    //todos pueden usarla
     @GetMapping("/listar")
     @Operation(description = "Esta funcion lista los productos")
     public ResponseEntity<ResponseListadoProductos> getProductos() {

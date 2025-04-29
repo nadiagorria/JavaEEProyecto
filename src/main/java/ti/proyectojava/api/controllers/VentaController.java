@@ -21,6 +21,7 @@ public class VentaController {
         this.ventaActual = null;
     }
 
+    //cualquiera puede usarla
     @PostMapping("/crear")
     @Operation(description = "Esta Funcion crea una nueva Venta")
     public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto) {
@@ -33,8 +34,9 @@ public class VentaController {
         }
     }
 
+    //solo el admin puede usarla
     @PutMapping("/{id}/eliminar")
-    @Operation(description = "Esta Funcion elimina un producto")
+    @Operation(description = "Esta Funcion elimina una venta")
     public ResponseEntity<String> eliminarVenta(/*@RequestBody Long id*/) {
         Venta venta = ventaService.eliminarVenta(this.ventaActual);
 
@@ -45,6 +47,7 @@ public class VentaController {
 
     }
 
+    //cualquiera puede hacerlo
     @PutMapping("/{ventaId}/agregar-producto")
     @Operation(description = "Agrega un producto a una venta existente")
     public ResponseEntity<String> agregarProductoAVenta(@RequestParam Long ventaId, @RequestParam Long productoId,@RequestParam int cantidad) {
@@ -55,5 +58,17 @@ public class VentaController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    //cualquiera puede usarla
+    @PutMapping("/{ventaId}/finalizar")
+    @Operation(description = "Finaliza una venta existente")
+    public ResponseEntity<String> finalizarVenta(@PathVariable Long ventaId) {
+        try {
+            String response = ventaService.finalizarVenta(ventaId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -11,7 +11,7 @@ import ti.proyectojava.business.entities.Oferta;
 import ti.proyectojava.services.OfertaService;
 
 @RestController
-@RequestMapping("/oferta")
+@RequestMapping(value = "api/v1/oferta")
 public class OfertaController {
 
     private final OfertaService ofertaService;
@@ -22,6 +22,7 @@ public class OfertaController {
 
     ////////////////////// COMBO //////////////////////
 
+    //solo admin puede hacerlo
     @PostMapping("/combo")
     @Operation(description = "Crea un nuevo Combo")
     public ResponseEntity<String> crearCombo(@RequestBody ComboDto comboDto) {
@@ -31,6 +32,7 @@ public class OfertaController {
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
     @PutMapping("/editarcombo")
     @Operation(description = "Edita un Combo existente")
     public ResponseEntity<String> editarCombo(@RequestBody ComboDto comboDto) {
@@ -39,6 +41,7 @@ public class OfertaController {
 
     ////////////////////// DESCUENTO //////////////////////
 
+    //solo puede hacerlo el admin
     @PostMapping("/descuento")
     @Operation(description = "Crea un nuevo Descuento")
     public ResponseEntity<String> crearDescuento(@RequestBody DescuentoDto descuentoDto) {
@@ -48,6 +51,7 @@ public class OfertaController {
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
     @PutMapping("/editardescuento")
     @Operation(description = "Edita un Descuento existente")
     public ResponseEntity<String> editarDescuento(@RequestBody DescuentoDto descuentoDto) {
@@ -56,6 +60,7 @@ public class OfertaController {
 
     ////////////////////// PROMOCIÓN //////////////////////
 
+    //solo admin puede hacerlo
     @PostMapping("/promocion")
     @Operation(description = "Crea una nueva Promoción")
     public ResponseEntity<String> crearPromocion(@RequestBody PromocionDto promocionDto) {
@@ -65,6 +70,7 @@ public class OfertaController {
                 new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
     @PutMapping("/editarpromocion")
     @Operation(description = "Edita una Promoción existente")
     public ResponseEntity<String> editarPromocion(@RequestBody PromocionDto promocionDto) {
@@ -73,6 +79,7 @@ public class OfertaController {
 
     ////////////////////// ELIMINAR OFERTA //////////////////////
 
+    //solo admin puede hacerlo
     @PutMapping("/eliminar")
     @Operation(description = "Elimina (lógicamente) una Oferta")
     public ResponseEntity<String> eliminarOferta(@RequestBody Long id) {

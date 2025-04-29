@@ -13,4 +13,5 @@ public class VentaDto{
     private CreditoDto credito;
     private List<CantidadDto> cantidades;
     private Boolean activo;
+    private Boolean finalizada;
 }

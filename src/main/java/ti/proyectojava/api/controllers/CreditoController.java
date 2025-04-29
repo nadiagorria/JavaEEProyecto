@@ -18,6 +18,7 @@ public class CreditoController {
         this.creditoService = creditoService;
     }
 
+    //solo la puede usar un admin
     @PostMapping
     @Operation(description = "Esta funcion crea un nuevo credito")
     public ResponseEntity<String> createCantidad(@RequestBody CreditoDto creditoDto){
@@ -29,6 +30,7 @@ public class CreditoController {
         }
     }
 
+    //la puede usar cualquiera
     @PostMapping("/credito/{id}/pagar")
     public ResponseEntity<String> pagarCredito( @PathVariable("id") Long id, @RequestParam("pago") Float pago) {
         String response = creditoService.pagarCredito(id, pago);

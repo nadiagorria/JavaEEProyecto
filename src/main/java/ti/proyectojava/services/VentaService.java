@@ -38,21 +38,7 @@ public class VentaService {
 
     public String crearventa(VentaDto ventaDto) {
         if(ventaRepository.findById(ventaDto.getId()).isEmpty()){
-
-            if (ventaDto.getCredito() != null) {
-                Optional<Credito> cred = creditoRepository.findById(ventaDto.getCredito().getId());
-
-                if (cred.isPresent()) {
-                    Credito credito = cred.get();
-
-                    // sumo total de la venta al crédito
-                    float nuevoPrecioTotal = credito.getPrecioTotal() + ventaDto.getTotal();
-                    credito.setPrecioTotal(nuevoPrecioTotal);
-
-                    creditoRepository.save(credito);
-                }
-            }
-
+            ventaDto.setFinalizada(false);
             return "Venta creada. ID:" + ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto)).getId();
 
         }
@@ -73,7 +59,13 @@ public class VentaService {
 
         cantidadRepository.save(cantidad);
         venta.getCantidades().add(cantidad);
+
+        float nuevoTotal = venta.getTotal() + (producto.getPrecioVenta() * cantidadProducto);
+        venta.setTotal(nuevoTotal);
+
         ventaRepository.save(venta);
+
+
 
     }
 
@@ -83,5 +75,33 @@ public class VentaService {
         return venta;
     }
 
+    public String finalizarVenta(Long ventaId) {
+        Venta venta = ventaRepository.findById(ventaId)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
+
+        if (venta.getCantidades().isEmpty()) {
+            throw new RuntimeException("No se pueden finalizar ventas sin productos. ID:" + ventaId);
+        }
+
+        // Calcular el total
+        float totalVenta = venta.getCantidades().stream()
+                .map(cantidad -> cantidad.getProducto().getPrecioVenta() * cantidad.getCantidad())
+                .reduce(0f, Float::sum);
+
+        venta.setTotal(totalVenta);
+
+        // si está asociada a un crédito
+        if (venta.getCredito() != null) {
+            Credito credito = venta.getCredito();
+            float nuevoPrecioTotal = credito.getPrecioTotal() + totalVenta;
+            credito.setPrecioTotal(nuevoPrecioTotal);
+            creditoRepository.save(credito);
+        }
+
+        venta.setFinalizada(true); // Marcar la venta como finalizada
+        ventaRepository.save(venta);
+
+        return "Venta finalizada correctamente. ID:" + venta.getId();
+    }
 
 }
