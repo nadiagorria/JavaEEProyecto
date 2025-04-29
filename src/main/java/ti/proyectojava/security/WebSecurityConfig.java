@@ -32,11 +32,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
-                        .requestMatchers(antMatcher("/kioscobyf/swagger-ui.html")).permitAll()
-                        .requestMatchers(antMatcher("/kioscobyf/webjars/**")).permitAll()
-                        .requestMatchers(antMatcher("/kioscobyf/swagger-ui/**")).permitAll()
-                        .requestMatchers(antMatcher("/kioscobyf/v3/api-docs/**")).permitAll()
-                        .requestMatchers(antMatcher("/kioscobyf/swagger-resources/**")).permitAll()
+                        .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
+                        .requestMatchers(antMatcher("/webjars/**")).permitAll()
+                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
+                        .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
+                        .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .anyRequest()
