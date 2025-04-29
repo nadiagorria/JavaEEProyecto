@@ -25,6 +25,9 @@ public class Venta {
     @Column(name = "VENTA_ACTIVO")
     private Boolean activo;
 
+    @Column(name = "VENTA_FINALIZADA")
+    private Boolean finalizada;
+
     @ManyToOne
     @JoinColumn(name = "credito_id")
     private Credito credito;

@@ -22,11 +22,13 @@ public class EntidadController {
         this.entidadActual = null;
     }
 
+    //cualquiera lo usa
     @GetMapping("/persona/")
     public ResponseEntity<?> seleccionarEntidad(@RequestBody Long id) {
         return ResponseEntity.ok(entidadService.seleccionarEntidad(id));
     }
 
+    //solo puede usarlo un admin
     @PutMapping("/eliminar")
     @Operation(description = "Esta Funcion elimina una Persona")
     public ResponseEntity<String> eliminarPersona(@RequestBody Long id) {
@@ -37,6 +39,7 @@ public class EntidadController {
 
     //////////////////////CLIENTE////////////////////////////
 
+    //solo puede usarlo un admin
     @PostMapping("/cliente")
     @Operation(description = "Esta Funcion crea un nuevo Cliente")
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDto clienteDto) {
@@ -49,6 +52,7 @@ public class EntidadController {
         }
     }
 
+    //solo puede usarlo un admin
     @PutMapping("/editarcliente")
     public ResponseEntity<String> editarCliente(@RequestBody ClienteDto clienteDto) {
         String result = entidadService.editarCliente(clienteDto);
@@ -57,6 +61,7 @@ public class EntidadController {
 
     /////////////////////////////PROVEEDOR/////////////////////////////////
 
+    //solo puede usarlo un admin
     @PostMapping("/proveedor")
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
     public ResponseEntity<String> crearProveedor(@RequestBody ProveedorDto proveedorDto) {
@@ -69,6 +74,7 @@ public class EntidadController {
         }
     }
 
+    //solo puede usarlo un admin
     @PutMapping("/editarproveedor")
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
         String result = entidadService.editarProveedor(proveedorDto);
