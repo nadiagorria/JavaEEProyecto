@@ -11,7 +11,7 @@ import ti.proyectojava.business.entities.Oferta;
 import ti.proyectojava.services.OfertaService;
 
 @RestController
-@RequestMapping("/oferta")
+@RequestMapping(value = "api/v1/oferta")
 public class OfertaController {
 
     private final OfertaService ofertaService;
