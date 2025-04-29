@@ -20,11 +20,13 @@ public class EntidadService {
     private final EntidadRepository entidadRepository;
     private final ClienteRepository clienteRepository;
     private final ProveedorRepository proveedorRepository;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
-    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository){
+    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, MapsDtosEntityService mapsDtosEntityService){
         this.entidadRepository = entidadRepository;
         this.clienteRepository=clienteRepository;
         this.proveedorRepository=proveedorRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public Entidad seleccionarEntidad(Long id) {
@@ -54,7 +56,7 @@ public class EntidadService {
 
     public String crearCliente(ClienteDto clienteDto) {
         if(clienteRepository.findById(clienteDto.getId()).isEmpty()){
-            return "Cliente creado. ID: " + clienteRepository.save(mapToEntityCliente(clienteDto)).getId();
+            return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
         }
 
         return null;
@@ -74,51 +76,6 @@ public class EntidadService {
         }
     }
 
-   /* public String eliminarCliente(Long id) {
-        if (clienteRepository.existsById(id)) {
-            clienteRepository.deleteById(id);
-            return "Cliente eliminado con ID: " + id;
-        } else {
-            return "Cliente no encontrado con ID: " + id;
-        }
-    }
-    public String eliminarCliente(Long personaId){
-        Optional<Cliente> clienteAct = clienteRepository.findById(personaId);
-        String response = null;
-
-        if (clienteAct.isPresent()) {
-            Cliente cliente = clienteAct.get();
-            cliente.setEliminado(true);
-            clienteRepository.save(cliente);
-            response = "Cliente " + cliente.getNombre() + " eliminado correctamente.";
-        }
-        return response;
-    }*/
-
-    public Cliente eliminarCliente(Cliente cliente) {
-        cliente.setActivo(false);
-        clienteRepository.save(cliente);
-        return cliente;
-    }
-
-
-    public ClienteDto mapToDtoCliente(Cliente cliente) {
-        ClienteDto dto = new ClienteDto();
-        dto.setId(cliente.getId());
-        dto.setNombre(cliente.getNombre());
-        dto.setTelefono(cliente.getTelefono());
-        dto.setActivo(cliente.isActivo());
-        return dto;
-    }
-
-
-    public Cliente mapToEntityCliente(ClienteDto clienteDto) {
-        Cliente cliente = new Cliente();
-        cliente.setId(clienteDto.getId());
-        cliente.setNombre(clienteDto.getNombre());
-        cliente.setTelefono(clienteDto.getTelefono());
-        return cliente;
-    }
 
 
     //////////////////////////////////PROVEEDOR///////////////////////////////////
@@ -127,7 +84,7 @@ public class EntidadService {
 
     public String crearProveedor(ProveedorDto proveedorDto) {
         if(clienteRepository.findById(proveedorDto.getId()).isEmpty()){
-            return "Proveedor creado. ID:" + proveedorRepository.save(mapToEntityProveedor(proveedorDto)).getId();
+            return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
         }
         return null;
     }
@@ -146,50 +103,7 @@ public class EntidadService {
         }
     }
 
-   /* public String eliminarCliente(Long id) {
-        if (clienteRepository.existsById(id)) {
-            clienteRepository.deleteById(id);
-            return "Cliente eliminado con ID: " + id;
-        } else {
-            return "Cliente no encontrado con ID: " + id;
-        }
-    }
-
-   public Cliente eliminarCliente(Cliente cliente) {
-        cliente.setEliminado(true);
-        clienteRepository.save(cliente);
-        return cliente;
-    }*/
-
-    public String eliminarProveedor(Long personaId){
-        Optional<Proveedor> proveedorAct = proveedorRepository.findById(personaId);
-        String response = null;
-
-        if (proveedorAct.isPresent()) {
-            Proveedor proveedor = proveedorAct.get();
-            proveedor.setActivo(false);
-            proveedorRepository.save(proveedor);
-            response = "Proveedor eliminado correctamente. NOMBRE:" + proveedor.getNombre();
-        }
-        return response;
-    }
-
-    public ProveedorDto mapToDtoProveedor(Proveedor proveedor) {
-        ProveedorDto dto = new ProveedorDto();
-        dto.setId(proveedor.getId());
-        dto.setNombre(proveedor.getNombre());
-        dto.setTelefono(proveedor.getTelefono());
-        dto.setActivo(proveedor.isActivo());
-        dto.setCorreo(proveedor.getCorreo());
-        return dto;
-    }
 
 
-    public Proveedor mapToEntityProveedor(ProveedorDto proveedorDto) {
-        Proveedor proveedor = new Proveedor();
-        proveedor.setId(proveedorDto.getId());
-        proveedor.setNombre(proveedorDto.getNombre());
-        proveedor.setTelefono(proveedorDto.getTelefono());
-        return proveedor;
-    }
+
 }

@@ -18,14 +18,14 @@ public class OfertaService {
     private final ComboRepository comboRepository;
     private final DescuentoRepository descuentoRepository;
     private final PromocionRepository promocionRepository;
-    private final ProductoService productoService;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
-    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, ProductoService productoService){
+    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, MapsDtosEntityService mapsDtosEntityService){
         this.ofertaRepository = ofertaRepository;
-        this.comboRepository= comboRepository;
-        this.descuentoRepository=descuentoRepository;
-        this.promocionRepository=promocionRepository;
-        this.productoService=productoService;
+        this.comboRepository = comboRepository;
+        this.descuentoRepository = descuentoRepository;
+        this.promocionRepository = promocionRepository;
+        this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
 
@@ -47,7 +47,7 @@ public class OfertaService {
 
     public String crearCombo(ComboDto comboDto) {
         if(comboRepository.findById(comboDto.getId()).isEmpty()){
-            return "Combo creado. ID:" + comboRepository.save(mapToEntityCombo(comboDto)).getId();
+            return "Combo creado. ID:" + comboRepository.save(mapsDtosEntityService.mapToEntityCombo(comboDto)).getId();
         }
         return null;
     }
@@ -70,38 +70,11 @@ public class OfertaService {
 
 
 
-
-    public ComboDto mapToDtoCombo(Combo combo) {
-        ComboDto dto = new ComboDto();
-        dto.setId(combo.getId());
-        dto.setDescripcion(combo.getDescripcion());
-        dto.setDescuento(combo.getDescuento());
-        dto.setProductos(combo.getProductos().stream()
-                .map(productoService::mapToDtoProducto)
-                .collect(Collectors.toList()));
-        dto.setActivo(combo.getActivo());
-        return dto;
-    }
-
-
-    public Combo mapToEntityCombo(ComboDto comboDto) {
-        Combo combo = new Combo();
-        combo.setId(comboDto.getId());
-        combo.setDescuento(comboDto.getDescuento());
-        combo.setActivo(comboDto.getActivo());
-        combo.setDescripcion(comboDto.getDescripcion());
-        combo.setProductos(comboDto.getProductos().stream()
-                .map(productoService::mapToEntityProducto)
-                .collect(Collectors.toList()));
-        return combo;
-    }
-
-
     //////////////////////////////////DESCUENTO///////////////////////////////////
 
     public String crearDescuento(DescuentoDto descuentoDto) {
         if (descuentoRepository.findById(descuentoDto.getId()).isEmpty()) {
-            return "Descuento creado. ID:" + descuentoRepository.save(mapToEntityDescuento(descuentoDto)).getId();
+            return "Descuento creado. ID:" + descuentoRepository.save(mapsDtosEntityService.mapToEntityDescuento(descuentoDto)).getId();
         }
         return null;
     }
@@ -120,29 +93,13 @@ public class OfertaService {
         }
     }
 
-    public DescuentoDto mapToDtoDescuento(Descuento descuento) {
-        DescuentoDto dto = new DescuentoDto();
-        dto.setId(descuento.getId());
-        dto.setDescuento(descuento.getDescuento());
-        dto.setProducto(productoService.mapToDtoProducto(descuento.getProducto()));
-        dto.setActivo(descuento.getActivo());
-        return dto;
-    }
 
-    public Descuento mapToEntityDescuento(DescuentoDto descuentoDto) {
-        Descuento descuento = new Descuento();
-        descuento.setId(descuentoDto.getId());
-        descuento.setDescuento(descuentoDto.getDescuento());
-        descuento.setActivo(descuentoDto.getActivo());
-        descuento.setProducto(productoService.mapToEntityProducto(descuentoDto.getProducto()));
-        return descuento;
-    }
 
 //////////////////////////////////PROMOCIONES///////////////////////////////////
 
     public String crearPromocion(PromocionDto promocionDto) {
         if (promocionRepository.findById(promocionDto.getId()).isEmpty()) {
-            return "Promoción creada. ID:" + promocionRepository.save(mapToEntityPromocion(promocionDto)).getId();
+            return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
         }
         return null;
     }
@@ -153,7 +110,7 @@ public class OfertaService {
             Promocion promocion = optionalPromocion.get();
             promocion.setDescripcion(promocionDto.getDescripcion());
             promocion.setDescuento(promocionDto.getDescuento());
-            promocion.setProducto(productoService.mapToEntityProducto(promocionDto.getProducto()));
+            promocion.setProducto(mapsDtosEntityService.mapToEntityProducto(promocionDto.getProducto()));
             promocion.setActivo(promocionDto.getActivo());
             promocionRepository.save(promocion);
             return "Promoción actualizada. ID:" + promocion.getId();
@@ -162,23 +119,5 @@ public class OfertaService {
         }
     }
 
-    public PromocionDto mapToDtoPromocion(Promocion promocion) {
-        PromocionDto dto = new PromocionDto();
-        dto.setId(promocion.getId());
-        dto.setDescripcion(promocion.getDescripcion());
-        dto.setDescuento(promocion.getDescuento());
-        dto.setProducto(productoService.mapToDtoProducto(promocion.getProducto()));
-        dto.setActivo(promocion.getActivo());
-        return dto;
-    }
 
-    public Promocion mapToEntityPromocion(PromocionDto promocionDto) {
-        Promocion promocion = new Promocion();
-        promocion.setId(promocionDto.getId());
-        promocion.setDescuento(promocionDto.getDescuento());
-        promocion.setActivo(promocionDto.getActivo());
-        promocion.setDescripcion(promocionDto.getDescripcion());
-        promocion.setProducto(productoService.mapToEntityProducto(promocionDto.getProducto()));
-        return promocion;
-    }
 }
