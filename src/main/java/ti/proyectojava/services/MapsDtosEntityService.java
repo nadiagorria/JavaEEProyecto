@@ -138,7 +138,7 @@ public class MapsDtosEntityService {
         LoteDto dto = new LoteDto();
         dto.setId(lote.getId());
         dto.setNumeLote(lote.getNumero());
-        dto.setCantidad(lote.getCantidad());
+        dto.setCantidad(lote.getStock());
         dto.setFechaVencimiento(lote.getFechaVencimiento());
         dto.setPrecioCompra(lote.getPrecioCompra());
         dto.setActivo(lote.getActivo());
@@ -149,7 +149,7 @@ public class MapsDtosEntityService {
         Lote lote = new Lote();
         lote.setId(dto.getId());
         lote.setNumero(dto.getNumeLote());
-        lote.setCantidad(dto.getCantidad());
+        lote.setStock(dto.getCantidad());
         lote.setFechaVencimiento(dto.getFechaVencimiento());
         lote.setPrecioCompra(dto.getPrecioCompra());
         lote.setActivo(dto.getActivo());
