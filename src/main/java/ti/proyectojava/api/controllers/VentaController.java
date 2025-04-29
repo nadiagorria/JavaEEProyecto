@@ -59,4 +59,16 @@ public class VentaController {
         }
 
     }
+
+    //cualquiera puede usarla
+    @PutMapping("/{ventaId}/finalizar")
+    @Operation(description = "Finaliza una venta existente")
+    public ResponseEntity<String> finalizarVenta(@PathVariable Long ventaId) {
+        try {
+            String response = ventaService.finalizarVenta(ventaId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
