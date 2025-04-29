@@ -33,6 +33,7 @@ public class UsuarioController {
 
     // esto lo hace cualquiera
     @PostMapping
+    @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta funcion crea un nuevo usuario")
     public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
 

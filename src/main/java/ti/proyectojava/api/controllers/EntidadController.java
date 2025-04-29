@@ -4,6 +4,7 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.dtos.ClienteDto;
@@ -24,12 +25,14 @@ public class EntidadController {
 
     //cualquiera lo usa
     @GetMapping("/persona/")
+    @Secured({"ADMIN", "CAJERO"})
     public ResponseEntity<?> seleccionarEntidad(@RequestBody Long id) {
         return ResponseEntity.ok(entidadService.seleccionarEntidad(id));
     }
 
     //solo puede usarlo un admin
     @PutMapping("/eliminar")
+    @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una Persona")
     public ResponseEntity<String> eliminarPersona(@RequestBody Long id) {
         Entidad entidad = entidadService.eliminarPersona(this.entidadActual);
@@ -41,6 +44,7 @@ public class EntidadController {
 
     //solo puede usarlo un admin
     @PostMapping("/cliente")
+    @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Cliente")
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDto clienteDto) {
         String response = entidadService.crearCliente(clienteDto);
@@ -54,6 +58,7 @@ public class EntidadController {
 
     //solo puede usarlo un admin
     @PutMapping("/editarcliente")
+    @Secured({"ADMIN"})
     public ResponseEntity<String> editarCliente(@RequestBody ClienteDto clienteDto) {
         String result = entidadService.editarCliente(clienteDto);
         return ResponseEntity.ok(result);
@@ -63,6 +68,7 @@ public class EntidadController {
 
     //solo puede usarlo un admin
     @PostMapping("/proveedor")
+    @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
     public ResponseEntity<String> crearProveedor(@RequestBody ProveedorDto proveedorDto) {
         String response = entidadService.crearProveedor(proveedorDto);
@@ -76,6 +82,7 @@ public class EntidadController {
 
     //solo puede usarlo un admin
     @PutMapping("/editarproveedor")
+    @Secured({"ADMIN"})
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);

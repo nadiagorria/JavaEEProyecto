@@ -3,6 +3,7 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,28 +28,21 @@ public class NotificacionController {
     //se crean solas en base a si es necesario (solo cuando hay menos del stock minimo
     // o hay algun lote proximo a vencerse)
     @PostMapping("/crear")
+    @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea una nueva notifiacacion")
     public ResponseEntity<String> crearNotificacion(@RequestBody NotificacionDto notificacionDto){
+        String response = notificacionService.crearNotificacion(notificacionDto);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
-
-            String response = notificacionService.crearNotificacion(notificacionDto);
-
-            if (response == null) {
-                return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
-            } else {
-                return new ResponseEntity<>(response, HttpStatus.CREATED);
-            }
-        }
-        else{
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        if (response == null) {
+            return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
 
     //lo usa cualquiera
     @PostMapping("/seleccionar")
+    @Secured({"ADMIN", "CAJERO"})
     @Operation(description =  "Esta funcion selecciona una nueva notificacion")
     public ResponseEntity<String> seleccionarNotificacion(@RequestBody Long id){
         Notificacion notificacion = notificacionService.buscaNotificacion(id);
