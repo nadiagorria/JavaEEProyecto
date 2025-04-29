@@ -3,6 +3,7 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,11 @@ public class UsuarioController {
 
     // esto solo la puede hacer el admin
     @GetMapping
+    @Secured({"ADMIN"})
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
             ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        }
+
     }
 
 
@@ -41,26 +36,19 @@ public class UsuarioController {
     @Operation(description = "Esta funcion crea un nuevo usuario")
     public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
 
-        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        //if (!auth.getAuthorities().stream().anyMatch(p -> p.equals("ADMIN"))) {
-
             String response = usuarioService.crearUsuario(usuarioDto);
             if (response == null) {
                 return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             }
-        //}
-        /*else{
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        }*/
 
 }
 
-    // esto solo lo puede hacer el usuario dueño del usuario
+    //esto lo puede hacer el admin
     @Operation(description = "Esta funcion modifica un usuario")
     @PutMapping("/{nombre}")
+    @Secured({"ADMIN"})
     public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         String response = usuarioService.modificarUsuario(nombreUsuario, usuario);
         if (response == null){
@@ -73,6 +61,7 @@ public class UsuarioController {
     //esta funcion solo la puede hacer el admin
     @Operation(description = "Esta funcion borra un usuario")
     @PutMapping("/eliminar/{nombre}")
+    @Secured({"ADMIN"})
     public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
         usuarioService.borrarUsuario(nombreUsuario);
         return new ResponseEntity<>(HttpStatus.OK);

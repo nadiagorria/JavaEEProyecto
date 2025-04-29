@@ -8,7 +8,7 @@ import java.util.Date;
 public class LoteDto {
     private Long id;
     private String numeLote;
-    private int cantidad;
+    private int stock;
     private Date fechaVencimiento;
     private float precioCompra;
     private Boolean activo;
