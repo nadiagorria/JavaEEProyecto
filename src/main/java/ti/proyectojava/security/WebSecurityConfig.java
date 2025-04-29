@@ -31,7 +31,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(antMatcher("/kioscobyf/api/v1/seguridad/**")).permitAll()
+                        .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
                         .requestMatchers(antMatcher("/kioscobyf/swagger-ui.html")).permitAll()
                         .requestMatchers(antMatcher("/kioscobyf/webjars/**")).permitAll()
                         .requestMatchers(antMatcher("/kioscobyf/swagger-ui/**")).permitAll()
