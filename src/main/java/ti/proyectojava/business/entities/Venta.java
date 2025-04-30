@@ -35,4 +35,8 @@ public class Venta {
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<Cantidad> cantidades;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "VENTA_FORMA_PAGO")
+    private FormaDePago formaPago;
+
 }

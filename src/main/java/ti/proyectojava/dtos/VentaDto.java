@@ -1,6 +1,7 @@
 package ti.proyectojava.dtos;
 
 import lombok.Data;
+import ti.proyectojava.business.entities.FormaDePago;
 
 import java.util.Date;
 import java.util.List;
@@ -14,4 +15,5 @@ public class VentaDto{
     private List<CantidadDto> cantidades;
     private Boolean activo;
     private Boolean finalizada;
+    private FormaDePago formaPago;
 }

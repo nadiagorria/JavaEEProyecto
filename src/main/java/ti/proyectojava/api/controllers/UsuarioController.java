@@ -62,7 +62,7 @@ public class UsuarioController {
     @Operation(description = "Esta funcion borra un usuario")
     @PutMapping("/eliminar/{nombre}")
     @Secured({"ADMIN"})
-    public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
+    public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario){
         usuarioService.borrarUsuario(nombreUsuario);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -550,6 +550,7 @@ public class MapsDtosEntityService {
         VentaDto dto = new VentaDto();
 
         dto.setFinalizada(venta.getFinalizada());
+        dto.setFormaPago(venta.getFormaPago());
         dto.setId(venta.getId());
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setTotal(venta.getTotal());
@@ -566,6 +567,7 @@ public class MapsDtosEntityService {
         Venta venta = new Venta();
 
         venta.setFinalizada(dto.getFinalizada());
+        venta.setFormaPago(dto.getFormaPago());
         venta.setId(dto.getId());
         venta.setFechaVenta(dto.getFechaVenta());
         venta.setTotal(dto.getTotal());

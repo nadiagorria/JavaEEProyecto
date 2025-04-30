@@ -16,6 +16,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
 
+
     public UsuarioService(UsuarioRepository usuarioRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.usuarioRepository = usuarioRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
@@ -63,8 +64,7 @@ public class UsuarioService {
         Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
 
         aux.setMail(usuario.getMail());
-        aux.setNombre(usuario.getNombre());
-
+        aux.setContrasenia(usuario.getContrasenia());
         usuarioRepository.save(aux);
         response = "Usuario modificado correctamente. NOMBRE:" + aux.getNombre();
         return response;
