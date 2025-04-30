@@ -39,6 +39,7 @@ public class ProductoService {
 
         return response;
     }
+
     public String crearProducto(ProductoDto productoDto) {
         return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
@@ -53,7 +54,7 @@ public class ProductoService {
     }
 
     public Producto editarProducto(Producto productoActual, ProductoDto productoDto) {
-        productoActual.setId(productoDto.getId());
+
         productoActual.setPrecioCompra(productoDto.getPrecioCompra());
         productoActual.setPrecioVenta(productoDto.getPrecioVenta());
         productoActual.setCodigoDeBarra(productoDto.getCodigoDeBarra());
@@ -73,6 +74,8 @@ public class ProductoService {
 
         productoRepository.save(productoActual);
         return productoActual;
+
+
     }
 
     public String borrarProducto(Long id) {

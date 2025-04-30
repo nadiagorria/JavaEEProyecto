@@ -58,10 +58,13 @@ public class ProductoController {
     public ResponseEntity<String> EditarProducto(@RequestBody ProductoDto productoDto) {
         Producto producto = productoService.editarProducto(this.productoActual, productoDto);
 
-        this.productoActual = producto;
+        if (producto == null){
+            return new ResponseEntity<>("Error al modificar el produtcto. ID:" + producto.getId(), HttpStatus.BAD_REQUEST);
+        }else {
+            this.productoActual = producto;
 
-        return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.OK);
-
+            return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.CREATED);
+        }
     }
 
     //solo admin puede usarlo
