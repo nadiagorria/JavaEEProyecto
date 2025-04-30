@@ -69,7 +69,7 @@ public class VentaService {
 
     }
 
-        public Venta eliminarVenta(Venta venta) {
+    public Venta eliminarVenta(Venta venta) {
         venta.setActivo(false);
         ventaRepository.save(venta);
         return venta;
