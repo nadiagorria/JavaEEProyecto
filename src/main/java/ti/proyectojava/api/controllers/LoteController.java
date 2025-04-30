@@ -24,11 +24,8 @@ public class LoteController {
     @Operation(description = "Esta Funcion crea una nuevo lote")
     public ResponseEntity<String> crearLote(@RequestBody LoteDto loteDto) {
         String response = loteService.crearLote(loteDto);
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear lote. ID:" + loteDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     //solo puede usarlo un admin

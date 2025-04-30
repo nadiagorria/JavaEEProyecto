@@ -33,11 +33,8 @@ public class NotificacionController {
     public ResponseEntity<String> crearNotificacion(@RequestBody NotificacionDto notificacionDto){
         String response = notificacionService.crearNotificacion(notificacionDto);
 
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear notificacion. ID:" + notificacionDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
     }
 
     //lo usa cualquiera
