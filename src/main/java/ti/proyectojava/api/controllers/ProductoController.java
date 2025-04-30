@@ -30,11 +30,8 @@ public class ProductoController {
     public ResponseEntity<String> crearProducto(@RequestBody ProductoDto productoDto) {
         String response = productoService.crearProducto(productoDto);
 
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear producto. ID:" + productoDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
     }
 
     //cualquiera puede usarlo

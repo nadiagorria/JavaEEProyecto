@@ -40,11 +40,7 @@ public class ProductoService {
         return response;
     }
     public String crearProducto(ProductoDto productoDto) {
-        if(productoRepository.findById(productoDto.getId()).isEmpty()){
-            return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
-        }
-
-        return null;
+        return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 
     public Producto buscaProducto(Long id) {
