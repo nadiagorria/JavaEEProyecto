@@ -12,5 +12,5 @@ public class UsuarioDto{
     private Boolean activo;
     private List<RolUsuarioDto> roles;
     private List<NotificacionUsuarioDto> notificaciones;
-    private List<VentasDto> ventas;
+    private List<VentaDto> ventas;
 }

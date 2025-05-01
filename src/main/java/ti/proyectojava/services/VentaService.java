@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import ti.proyectojava.api.responses.ResponseListadoVentas;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CreditoRepository;
@@ -14,6 +15,7 @@ import ti.proyectojava.dtos.CantidadDto;
 import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
