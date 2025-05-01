@@ -3,6 +3,7 @@ package ti.proyectojava.api.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoCategorias;
 import ti.proyectojava.dtos.CategoriaDto;
@@ -21,6 +22,7 @@ public class CategoriaController {
 
     // esta funcion la puede usar cualquiera
     @GetMapping
+    @Secured({"ADMIN", "CAJERO"})
     public ResponseEntity<ResponseListadoCategorias> getCategorias(){
         ResponseListadoCategorias response = categoriaService.listadoCategorias();
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -28,6 +30,7 @@ public class CategoriaController {
 
     // esta funcion solo la puede usar un admin
     @PostMapping
+    @Secured({"ADMIN"})
     @Operation(description = "Esta funcion crea una nueva categoria")
     public ResponseEntity<String> createCategoria(@RequestBody CategoriaDto categoriaDto){
         String response = categoriaService.crearCategoria(categoriaDto);
@@ -40,6 +43,7 @@ public class CategoriaController {
 
     //esta funcion solo la puede usar un admin
     @PutMapping("/{nombre}")
+    @Secured({"ADMIN"})
     public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre, @RequestBody CategoriaDto categoria){
         categoriaService.borrarCategoria(nombre);
         return new ResponseEntity<>(HttpStatus.OK);

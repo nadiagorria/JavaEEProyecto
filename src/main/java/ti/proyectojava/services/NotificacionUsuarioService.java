@@ -53,13 +53,7 @@ public class NotificacionUsuarioService {
     }
 
     public String crearNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto){
-        String response = null;
-
-        if(notificacionUsuarioRepository.findById(notificacionUsuarioDto.getId()).isEmpty()){
-            response = "Producto creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
-        }
-
-        return  response;
+        return "Producto creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
     }
 
     public String borrarNotificacionUsuario(Long id){

@@ -21,9 +21,7 @@ public class NotificacionService {
     }
 
     public String crearNotificacion(NotificacionDto notificacionDto) {
-
             return "Notificacion creada. ID:" + notificacionRepository.save(mapsDtosEntityService.mapToEntityNotificacion(notificacionDto)).getId();
-
     }
 
     public Notificacion buscaNotificacion(Long id) {
