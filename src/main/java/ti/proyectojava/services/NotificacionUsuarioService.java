@@ -5,7 +5,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoNotificacionUsuario;
-import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.NotificacionRepository;
 import ti.proyectojava.business.repositories.NotificacionUsuarioRepository;
@@ -53,7 +52,7 @@ public class NotificacionUsuarioService {
     }
 
     public String crearNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto){
-        return "Producto creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
+        return "NotificacionUsuario creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
     }
 
     public String borrarNotificacionUsuario(Long id){
@@ -64,7 +63,7 @@ public class NotificacionUsuarioService {
             NotificacionUsuario notificacionUsuario = notificacionUsuarioAct.get();
             notificacionUsuario.setActivo(false);
             notificacionUsuarioRepository.save(notificacionUsuario);
-            response = "notificacionUsuario eliminado correctamente. ID:" + notificacionUsuario.getId();
+            response = "NotificacionUsuario eliminado correctamente. ID:" + notificacionUsuario.getId();
         }
 
         return response;

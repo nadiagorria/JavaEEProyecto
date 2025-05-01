@@ -11,6 +11,7 @@ import java.util.Date;
 public class Lote {
     @Id
     @Column(name = "LOTE_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "LOTE_NUMERO")
