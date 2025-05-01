@@ -42,9 +42,9 @@ public class CategoriaController {
     }
 
     //esta funcion solo la puede usar un admin
-    @PutMapping("/{nombre}")
+    @PutMapping("/borrar/{nombre}")
     @Secured({"ADMIN"})
-    public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre, @RequestBody CategoriaDto categoria){
+    public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre){
         categoriaService.borrarCategoria(nombre);
         return new ResponseEntity<>(HttpStatus.OK);
     }

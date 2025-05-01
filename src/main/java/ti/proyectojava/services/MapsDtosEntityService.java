@@ -24,6 +24,7 @@ public class MapsDtosEntityService {
 
         CategoriaDto catDto = new CategoriaDto();
         catDto.setNombre(categoria.getNombre());
+        catDto.setActivo(categoria.getActivo());
 
         catDto.setProductos(
                 categoria.getProductos().stream()
@@ -64,6 +65,7 @@ public class MapsDtosEntityService {
 
         Categoria categoria = new Categoria();
         categoria.setNombre(catDto.getNombre());
+        categoria.setActivo(catDto.getActivo());
 
         if (catDto.getProductos() != null) {
             categoria.setProductos(
