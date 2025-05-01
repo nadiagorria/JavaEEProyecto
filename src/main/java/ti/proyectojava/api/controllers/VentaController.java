@@ -27,13 +27,8 @@ public class VentaController {
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion crea una nueva Venta")
     public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto) {
-        String response = ventaService.crearventa(ventaDto);
-
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear Venta. ID:" + ventaDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        String response = ventaService.crearVenta(ventaDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     //solo el admin puede usarla

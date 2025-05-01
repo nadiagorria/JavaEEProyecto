@@ -38,7 +38,7 @@ public class UsuarioService {
     public String crearUsuario(UsuarioDto usuario){
         String response = null;
 
-        if(usuario.getNombre() !=null){
+        if(usuario.getNombre() != null && usuario.getMail() != null && usuario.getContrasenia() != null && usuarioRepository.findById(usuario.getNombre()).isEmpty()) {
             response = "Usuario creado exitosamente. NOMBRE:" + usuarioRepository.save(mapsDtosEntityService.mapToEntityUsuario(usuario)).getNombre();
 
         }

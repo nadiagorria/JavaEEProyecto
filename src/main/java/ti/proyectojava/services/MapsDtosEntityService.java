@@ -210,6 +210,12 @@ public class MapsDtosEntityService {
         usuarioDto.setRoles(usuario.getRoles().stream()
                 .map(rol -> mapToDtoRoles(rol, processed))
                 .toList());
+
+        if (usuario.getVentas() != null){
+            usuarioDto.setVentas(usuario.getVentas().stream()
+                    .map(venta -> mapToDtoVentas(venta, processed))
+                    .toList());
+        }
         return usuarioDto;
     }
 
@@ -555,10 +561,17 @@ public class MapsDtosEntityService {
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setTotal(venta.getTotal());
         dto.setActivo(venta.getActivo());
-        dto.setCredito(mapToDtoCredito(venta.getCredito()));
-        dto.setCantidades(venta.getCantidades().stream()
-                .map(e -> mapToDtoCantidad(e))
-                .collect(Collectors.toList()));
+        dto.setUsuario(venta.getUsuario());
+
+        if (venta.getCredito() != null) {
+            dto.setCredito(mapToDtoCredito(venta.getCredito()));
+        }
+
+        if (venta.getCantidades() != null) {
+            dto.setCantidades(venta.getCantidades().stream()
+                    .map(e -> mapToDtoCantidad(e))
+                    .collect(Collectors.toList()));
+        }
 
         return dto;
     }
@@ -572,12 +585,16 @@ public class MapsDtosEntityService {
         venta.setFechaVenta(dto.getFechaVenta());
         venta.setTotal(dto.getTotal());
         venta.setActivo(dto.getActivo());
+        venta.setUsuario(dto.getUsuario());
 
-        venta.setCredito(mapToEntityCredito(dto.getCredito()));
-        venta.setCantidades(dto.getCantidades().stream()
-                .map(c -> mapToEntityCantidad(c))
-                .collect(Collectors.toList()));
-
+        if (dto.getCredito() != null) {
+            venta.setCredito(mapToEntityCredito(dto.getCredito()));
+        }
+        if (dto.getCantidades() != null) {
+            venta.setCantidades(dto.getCantidades().stream()
+                    .map(c -> mapToEntityCantidad(c))
+                    .collect(Collectors.toList()));
+        }
         return venta;
     }
 }

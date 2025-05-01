@@ -36,13 +36,14 @@ public class VentaService {
         this.productoRepository = productoRepository;
     }
 
-    public String crearventa(VentaDto ventaDto) {
-        if(ventaRepository.findById(ventaDto.getId()).isEmpty()){
+
+
+
+    public String crearVenta(VentaDto ventaDto) {
             ventaDto.setFinalizada(false);
+
             return "Venta creada. ID:" + ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto)).getId();
 
-        }
-        return null;
     }
 
     public void agregarProductoAVenta(Long ventaId, Long productoId, int cantidadProducto) {
@@ -104,4 +105,16 @@ public class VentaService {
         return "Venta finalizada correctamente. ID:" + venta.getId();
     }
 
+    public ResponseListadoVentas listadoVentas() {
+        ResponseListadoVentas responseListadoVentas = new ResponseListadoVentas();
+
+        List<VentaDto> ventasActivas = ventaRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoVenta)
+                .toList();
+
+        responseListadoVentas.setVentas(ventasActivas);
+
+        return responseListadoVentas;
+    }
 }

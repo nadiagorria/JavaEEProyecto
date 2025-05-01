@@ -32,6 +32,10 @@ public class Venta {
     @JoinColumn(name = "credito_id")
     private Credito credito;
 
+    @ManyToOne
+    @JoinColumn(name = "USUARIO_NOMBRE")
+    private Usuario usuario;
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<Cantidad> cantidades;
 

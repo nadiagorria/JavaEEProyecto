@@ -38,5 +38,8 @@ public class Usuario {
     )
     private List<NotificacionUsuario> notificaciones;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Venta> ventas;
 
 }
+
