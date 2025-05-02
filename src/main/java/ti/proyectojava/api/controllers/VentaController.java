@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import ti.proyectojava.api.responses.ResponseListadoVentas;
 import ti.proyectojava.business.entities.Venta;
 import ti.proyectojava.dtos.VentaDto;
 import ti.proyectojava.services.VentaService;
@@ -20,6 +21,13 @@ public class VentaController {
     public VentaController(VentaService ventaService) {
         this.ventaService = ventaService;
         this.ventaActual = null;
+    }
+
+    @GetMapping()
+    @Secured({"ADMIN"})
+    public ResponseEntity<ResponseListadoVentas> listarVentas() {
+        ResponseListadoVentas response = ventaService.listadoVentas();
+        return ResponseEntity.ok(response);
     }
 
     //cualquiera puede usarla
