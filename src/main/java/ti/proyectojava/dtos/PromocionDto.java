@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class PromocionDto extends OfertaDto{
 
-    String descripcion;
+    private String descripcion;
 
-    ProductoDto producto;
+    private ProductoDto producto;
 }

@@ -2,10 +2,14 @@ package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ti.proyectojava.api.responses.ResponseListadoCombos;
+import ti.proyectojava.api.responses.ResponseListadoDescuentos;
+import ti.proyectojava.api.responses.ResponseListadoPromociones;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,15 +72,24 @@ public class OfertaService {
         }
     }
 
+    public ResponseListadoCombos listadoCombo() {
+        ResponseListadoCombos response = new ResponseListadoCombos();
+
+        List<ComboDto> combosActivos = comboRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoCombo)
+                .toList();
+
+        response.setCombos(combosActivos);
+
+        return response;
+    }
 
 
     //////////////////////////////////DESCUENTO///////////////////////////////////
 
     public String crearDescuento(DescuentoDto descuentoDto) {
-        if (descuentoRepository.findById(descuentoDto.getId()).isEmpty()) {
-            return "Descuento creado. ID:" + descuentoRepository.save(mapsDtosEntityService.mapToEntityDescuento(descuentoDto)).getId();
-        }
-        return null;
+        return "Descuento creado. ID:" + descuentoRepository.save(mapsDtosEntityService.mapToEntityDescuento(descuentoDto)).getId();
     }
 
     public String editarDescuento(DescuentoDto descuentoDto) {
@@ -93,15 +106,24 @@ public class OfertaService {
         }
     }
 
+    public ResponseListadoDescuentos listadoDescuentos() {
+        ResponseListadoDescuentos response = new ResponseListadoDescuentos();
+
+        List<DescuentoDto> descuentosActivos = descuentoRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoDescuento)
+                .toList();
+
+        response.setDescuentos(descuentosActivos);
+
+        return response;
+    }
 
 
 //////////////////////////////////PROMOCIONES///////////////////////////////////
 
     public String crearPromocion(PromocionDto promocionDto) {
-        if (promocionRepository.findById(promocionDto.getId()).isEmpty()) {
-            return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
-        }
-        return null;
+        return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
     }
 
     public String editarPromocion(PromocionDto promocionDto) {
@@ -119,5 +141,17 @@ public class OfertaService {
         }
     }
 
+    public ResponseListadoPromociones listadoPromociones() {
+        ResponseListadoPromociones response = new ResponseListadoPromociones();
+
+        List<PromocionDto> promocionesActivos = promocionRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoPromocion)
+                .toList();
+
+        response.setPromociones(promocionesActivos);
+
+        return response;
+    }
 
 }
