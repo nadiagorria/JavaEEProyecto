@@ -40,12 +40,15 @@ public class VentaService {
 
 
 
+    public Venta obtenerVentaPorId(Long ventaId) {
+        return ventaRepository.findById(ventaId)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID: " + ventaId));
+    }
 
-    public String crearVenta(VentaDto ventaDto) {
+    public Long crearVenta(VentaDto ventaDto) {
             ventaDto.setFinalizada(false);
-
-            return "Venta creada. ID:" + ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto)).getId();
-
+        Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
+        return ventaGuardada.getId();
     }
 
     public void agregarProductoAVenta(Long ventaId, Long productoId, int cantidadProducto) {
@@ -72,11 +75,42 @@ public class VentaService {
 
     }
 
-    public Venta eliminarVenta(Venta venta) {
+    public Venta eliminarVenta(Long ventaId) {
+        Venta venta = ventaRepository.findById(ventaId)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID: " + ventaId));
         venta.setActivo(false);
-        ventaRepository.save(venta);
-        return venta;
+        venta.setFinalizada(true);
+        return ventaRepository.save(venta);
     }
+
+    public String eliminarCantidadDeVenta(Long ventaId, Long cantidadId) {
+        Venta venta = ventaRepository.findById(ventaId)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
+
+        if (venta.getFinalizada() == true) {
+            throw new RuntimeException("No se puede modificar una venta finalizada. ID:" + ventaId);
+        }
+
+        Cantidad cantidad = cantidadRepository.findById(cantidadId)
+                .orElseThrow(() -> new RuntimeException("Cantidad no encontrada. ID:" + cantidadId));
+
+        if (!cantidad.getVenta().getId().equals(ventaId)) {
+            throw new RuntimeException("La cantidad no pertenece a la venta especificada.");
+        }
+
+
+        float montoRestado = cantidad.getProducto().getPrecioVenta() * cantidad.getCantidad();
+        venta.setTotal(venta.getTotal() - montoRestado);
+
+
+        venta.getCantidades().remove(cantidad);
+        cantidadRepository.delete(cantidad);
+
+        ventaRepository.save(venta);
+
+        return "Producto eliminado de la venta correctamente. ID Venta: " + ventaId;
+    }
+
 
     public String finalizarVenta(Long ventaId) {
         Venta venta = ventaRepository.findById(ventaId)

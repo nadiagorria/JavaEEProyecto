@@ -2,6 +2,7 @@ package ti.proyectojava.api.controllers;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -16,11 +17,11 @@ import ti.proyectojava.services.VentaService;
 public class VentaController {
 
     private final VentaService ventaService;
-    private Venta ventaActual;
+    //private Venta ventaActual;
 
     public VentaController(VentaService ventaService) {
         this.ventaService = ventaService;
-        this.ventaActual = null;
+        //this.ventaActual = null;
     }
 
     @GetMapping()
@@ -30,41 +31,77 @@ public class VentaController {
         return ResponseEntity.ok(response);
     }
 
+
+    @GetMapping("/activa")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Obtiene la venta activa del usuario")
+    public ResponseEntity<Venta> obtenerVentaActiva(HttpSession session) {
+        Long ventaId = (Long) session.getAttribute("ventaId");
+        if (ventaId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        Venta venta = ventaService.obtenerVentaPorId(ventaId);
+        return ResponseEntity.ok(venta);
+    }
+
+    @PutMapping("/cancelar")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Cancela la venta activa")
+    public ResponseEntity<String> cancelarVenta(HttpSession session) {
+        Long ventaId = (Long) session.getAttribute("ventaId");
+        if (ventaId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No hay venta activa");
+        }
+
+        ventaService.eliminarVenta(ventaId);
+
+        // Eliminar el ID de la venta de la sesión
+        session.removeAttribute("ventaId");
+
+        return ResponseEntity.ok("Venta cancelada correctamente");
+    }
+
     //cualquiera puede usarla
     @PostMapping("/crear")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion crea una nueva Venta")
-    public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto) {
-        String response = ventaService.crearVenta(ventaDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto, HttpSession session) {
+        Long id = ventaService.crearVenta(ventaDto);
+        session.setAttribute("ventaId", id);
+
+        return new ResponseEntity<>("Venta creada. ID: " + id, HttpStatus.CREATED);
     }
 
     //solo el admin puede usarla
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una venta")
-    public ResponseEntity<String> eliminarVenta(/*@RequestBody Long id*/) {
-        Venta venta = ventaService.eliminarVenta(this.ventaActual);
-
-        this.ventaActual = null; //inchequeable
-
-
-        return new ResponseEntity<>("venta actual eliminada. ID:" + venta.getId(), HttpStatus.OK);
-
+    public ResponseEntity<String> eliminarVenta(@RequestParam Long id, HttpSession session) {
+        Long ventaIdSesion = (Long) session.getAttribute("ventaId");
+        if (ventaIdSesion != null && ventaIdSesion.equals(id)) {
+            session.removeAttribute("ventaId");  // Eliminar el ID de la sesión si la venta actual se elimina
+        }
+        Venta venta = ventaService.eliminarVenta(id);
+        return new ResponseEntity<>("Venta eliminada. ID: " + venta.getId(), HttpStatus.OK);
     }
 
     //cualquiera puede hacerlo
-    @PutMapping("/{ventaId}/agregar-producto")
+    @PutMapping("/agregar-producto")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Agrega un producto a una venta existente")
-    public ResponseEntity<String> agregarProductoAVenta(@RequestParam Long ventaId, @RequestParam Long productoId,@RequestParam int cantidad) {
+    public ResponseEntity<String> agregarProductoAVenta(@RequestParam Long productoId, @RequestParam int cantidad, HttpSession session) {
         try {
+            Long ventaId = (Long) session.getAttribute("ventaId");
+
+            if (ventaId == null) {
+                return new ResponseEntity<>("No hay una venta activa en la sesión.", HttpStatus.BAD_REQUEST);
+            }
             ventaService.agregarProductoAVenta(ventaId, productoId, cantidad);
             return new ResponseEntity<>("Producto agregado a la venta. ID:" + ventaId, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
     }
 
     //cualquiera puede usarla
