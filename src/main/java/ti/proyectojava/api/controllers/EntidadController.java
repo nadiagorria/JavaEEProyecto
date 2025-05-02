@@ -48,12 +48,7 @@ public class EntidadController {
     @Operation(description = "Esta Funcion crea un nuevo Cliente")
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDto clienteDto) {
         String response = entidadService.crearCliente(clienteDto);
-
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear Cliente. ID:" + clienteDto.getId() , HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     //solo puede usarlo un admin
@@ -64,6 +59,15 @@ public class EntidadController {
         return ResponseEntity.ok(result);
     }
 
+    //solo admin puede usarlo
+    @PutMapping("/{id}/eliminarCliente")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta Funcion elimina un cliente")
+    public ResponseEntity<String> eliminarCliente(@RequestBody Long id) {
+        String response = entidadService.eliminarCliente(id);
+        return new ResponseEntity<> (response, HttpStatus.OK);
+    }
+
     /////////////////////////////PROVEEDOR/////////////////////////////////
 
     //solo puede usarlo un admin
@@ -72,12 +76,7 @@ public class EntidadController {
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
     public ResponseEntity<String> crearProveedor(@RequestBody ProveedorDto proveedorDto) {
         String response = entidadService.crearProveedor(proveedorDto);
-
-        if (response == null) {
-            return new ResponseEntity<>("Error al crear Proveedor. ID" + proveedorDto.getId(), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     //solo puede usarlo un admin
@@ -86,6 +85,15 @@ public class EntidadController {
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);
+    }
+
+    //solo admin puede usarlo
+    @PutMapping("/{id}/eliminarProveedor")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta Funcion elimina un proveedor")
+    public ResponseEntity<String> eliminarProveedor(@RequestBody Long id) {
+        String response = entidadService.eliminarProveedor(id);
+        return new ResponseEntity<> (response, HttpStatus.OK);
     }
 
     }
