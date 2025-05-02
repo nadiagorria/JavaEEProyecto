@@ -24,7 +24,7 @@ public class CreditoService {
     public String crearCredito(CreditoDto credito){
         String response = null;
 
-        if(credito.getId()==null){
+        if(credito.getId() == null){
             response = "Credito creado exitosamente. ID:" + creditoRepository.save(mapsDtosEntityService.mapToEntityCredito(credito)).getId();
 
         }
