@@ -137,6 +137,7 @@ public class MapsDtosEntityService {
         cliente.setId(clienteDto.getId());
         cliente.setNombre(clienteDto.getNombre());
         cliente.setTelefono(clienteDto.getTelefono());
+        cliente.setActivo(clienteDto.isActivo());
         return cliente;
     }
 
@@ -156,6 +157,7 @@ public class MapsDtosEntityService {
         proveedor.setId(proveedorDto.getId());
         proveedor.setNombre(proveedorDto.getNombre());
         proveedor.setTelefono(proveedorDto.getTelefono());
+        proveedor.setActivo(proveedorDto.isActivo());
         return proveedor;
     }
 

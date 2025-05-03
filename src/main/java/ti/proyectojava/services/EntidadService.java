@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Entidad;
+import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.ClienteDto;
@@ -55,11 +56,7 @@ public class EntidadService {
     //////////////////////////////////CLIENTE////////////////////////////////////////
 
     public String crearCliente(ClienteDto clienteDto) {
-        if(clienteRepository.findById(clienteDto.getId()).isEmpty()){
             return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
-        }
-
-        return null;
     }
 
     public String editarCliente(ClienteDto clienteDto) {
@@ -76,17 +73,35 @@ public class EntidadService {
         }
     }
 
+    public String eliminarCliente(Long id) {
+        Optional<Cliente> clienteAct = clienteRepository.findById(id);
+        String response = null;
 
+        if (clienteAct.isPresent()) {
+            Cliente cliente = clienteAct.get();
+            cliente.setActivo(false);
+            clienteRepository.save(cliente);
+            response = "Cliente eliminado correctamente. ID:" + cliente.getId();
+        }
+        return response;
+    }
+
+    public Cliente seleccionarCliente(Long id) {
+        // Compruebo si es Cliente
+        Optional<Cliente> cliente = clienteRepository.findById(id);
+        if (cliente.isPresent()) {
+            return cliente.get();
+        }
+        // Si no existe la persona se lanza exepcion
+        throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
+    }
 
     //////////////////////////////////PROVEEDOR///////////////////////////////////
 
 
 
     public String crearProveedor(ProveedorDto proveedorDto) {
-        if(clienteRepository.findById(proveedorDto.getId()).isEmpty()){
             return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
-        }
-        return null;
     }
 
     public String editarProveedor(ProveedorDto proveedorDto) {
@@ -103,7 +118,27 @@ public class EntidadService {
         }
     }
 
+    public String eliminarProveedor(Long id) {
+        Optional<Proveedor> proveedorAct = proveedorRepository.findById(id);
+        String response = null;
 
+        if (proveedorAct.isPresent()) {
+            Proveedor proveedor = proveedorAct.get();
+            proveedor.setActivo(false);
+            proveedorRepository.save(proveedor);
+            response = "Cliente eliminado correctamente. ID:" + proveedor.getId();
+        }
+        return response;
+    }
+
+    public Proveedor seleccionarProveedor(Long id) {
+        Optional<Proveedor> proveedor = proveedorRepository.findById(id);
+        if (proveedor.isPresent()) {
+            return proveedor.get();
+        }
+        // Si no existe la persona se lanza exepcion
+        throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
+    }
 
 
 }
