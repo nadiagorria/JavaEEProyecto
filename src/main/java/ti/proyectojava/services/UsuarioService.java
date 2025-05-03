@@ -71,6 +71,10 @@ public class UsuarioService {
     }
 
 
+    public UsuarioDto buscarUsuario(String nombre){
+        Usuario usuario = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
+        return mapsDtosEntityService.mapToDtoUsuario(usuario);
+    }
 
 
 }

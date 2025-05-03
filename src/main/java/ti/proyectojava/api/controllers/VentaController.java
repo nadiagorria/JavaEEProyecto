@@ -6,10 +6,14 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoVentas;
 import ti.proyectojava.business.entities.Venta;
+import ti.proyectojava.dtos.UsuarioDto;
 import ti.proyectojava.dtos.VentaDto;
+import ti.proyectojava.services.UsuarioService;
 import ti.proyectojava.services.VentaService;
 
 @RestController
@@ -17,11 +21,11 @@ import ti.proyectojava.services.VentaService;
 public class VentaController {
 
     private final VentaService ventaService;
-    //private Venta ventaActual;
+    private final UsuarioService usuarioService;
 
-    public VentaController(VentaService ventaService) {
+    public VentaController(VentaService ventaService, UsuarioService usuarioService) {
         this.ventaService = ventaService;
-        //this.ventaActual = null;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping()
@@ -65,18 +69,24 @@ public class VentaController {
     @PostMapping("/crear")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion crea una nueva Venta")
-    public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto, HttpSession session) {
-        Long id = ventaService.crearVenta(ventaDto);
-        session.setAttribute("ventaId", id);
+    public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto, HttpSession session, Authentication authentication) {
 
-        return new ResponseEntity<>("Venta creada. ID: " + id, HttpStatus.CREATED);
+        String username = authentication.getName();
+        UsuarioDto usuario = usuarioService.buscarUsuario(username);
+        ventaDto.setUsuario(usuario);
+        Long ventaId = ventaService.crearVenta(ventaDto);
+
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Collections.singletonMap("id", ventaId));
     }
 
     //solo el admin puede usarla
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una venta")
-    public ResponseEntity<String> eliminarVenta(@RequestParam Long id, HttpSession session) {
+    public ResponseEntity<String> eliminarVenta(@PathVariable Long id, HttpSession session) {
         Long ventaIdSesion = (Long) session.getAttribute("ventaId");
         if (ventaIdSesion != null && ventaIdSesion.equals(id)) {
             session.removeAttribute("ventaId");  // Eliminar el ID de la sesión si la venta actual se elimina

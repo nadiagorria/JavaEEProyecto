@@ -122,6 +122,43 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- ★ Nuevo plugin para Angular (opcional) ★ -->
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.13.3</version>
+				<executions>
+					<execution>
+						<id>install-node-and-npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v18.16.0</nodeVersion> <!-- Versión compatible con Angular 17+ -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm-install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+					<execution>
+						<id>npm-build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<workingDirectory>${project.basedir}/frontend</workingDirectory> <!-- Ruta a tu carpeta Angular -->
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
