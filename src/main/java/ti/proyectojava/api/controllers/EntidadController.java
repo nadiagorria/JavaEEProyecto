@@ -72,7 +72,7 @@ public class EntidadController {
     @GetMapping("/seleccionarCliente")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion selecciona un cliente")
-    public ResponseEntity<?> seleccionarCliente(@RequestBody Long id) {
+    public ResponseEntity<?> seleccionarCliente(@RequestParam Long id) {
         return ResponseEntity.ok(entidadService.seleccionarCliente(id));
     }
 
