@@ -86,6 +86,16 @@ public class EntidadService {
         return response;
     }
 
+    public Cliente seleccionarCliente(Long id) {
+        // Compruebo si es Cliente
+        Optional<Cliente> cliente = clienteRepository.findById(id);
+        if (cliente.isPresent()) {
+            return cliente.get();
+        }
+        // Si no existe la persona se lanza exepcion
+        throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
+    }
+
     //////////////////////////////////PROVEEDOR///////////////////////////////////
 
 
@@ -119,6 +129,15 @@ public class EntidadService {
             response = "Cliente eliminado correctamente. ID:" + proveedor.getId();
         }
         return response;
+    }
+
+    public Proveedor seleccionarProveedor(Long id) {
+        Optional<Proveedor> proveedor = proveedorRepository.findById(id);
+        if (proveedor.isPresent()) {
+            return proveedor.get();
+        }
+        // Si no existe la persona se lanza exepcion
+        throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
     }
 
 

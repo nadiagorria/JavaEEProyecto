@@ -68,6 +68,14 @@ public class EntidadController {
         return new ResponseEntity<> (response, HttpStatus.OK);
     }
 
+    //cualquiera lo usa
+    @GetMapping("/seleccionarCliente")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta Funcion selecciona un cliente")
+    public ResponseEntity<?> seleccionarCliente(@RequestBody Long id) {
+        return ResponseEntity.ok(entidadService.seleccionarCliente(id));
+    }
+
     /////////////////////////////PROVEEDOR/////////////////////////////////
 
     //solo puede usarlo un admin
@@ -94,6 +102,14 @@ public class EntidadController {
     public ResponseEntity<String> eliminarProveedor(@RequestBody Long id) {
         String response = entidadService.eliminarProveedor(id);
         return new ResponseEntity<> (response, HttpStatus.OK);
+    }
+
+    //cualquiera lo usa
+    @GetMapping("/seleccionarProveedor")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta Funcion selecciona un proveedor")
+    public ResponseEntity<?> seleccionarProveedor(@RequestParam Long id) {
+        return ResponseEntity.ok(entidadService.seleccionarProveedor(id));
     }
 
     }
