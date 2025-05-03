@@ -16,6 +16,9 @@ import ti.proyectojava.dtos.VentaDto;
 import ti.proyectojava.services.UsuarioService;
 import ti.proyectojava.services.VentaService;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "api/v1/venta")
 public class VentaController {
@@ -69,7 +72,7 @@ public class VentaController {
     @PostMapping("/crear")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion crea una nueva Venta")
-    public ResponseEntity<String> crearVenta(@RequestBody VentaDto ventaDto, HttpSession session, Authentication authentication) {
+    public ResponseEntity<Map<String, Long>> crearVenta(@RequestBody VentaDto ventaDto, HttpSession session, Authentication authentication) {
 
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
