@@ -1,0 +1,18 @@
+<header xmlns="http://www.w3.org/1999/html">
+    <nav>
+      <p-menubar [model]="items">
+        <ng-template pTemplate="start">
+          <span style="margin-right: 1rem;">Hola, {{ nombre }}</span>
+        </ng-template>
+
+        <ng-template pTemplate="end">
+          <span ></span>
+        </ng-template>
+      </p-menubar>
+
+
+      <p-dialog header="Notificaciones" [(visible)]="showModal" [modal]="true" [style]="{width: '30vw'}">
+        <p>notificaciones</p>
+      </p-dialog>
+    </nav>
+</header>
