@@ -2,6 +2,6 @@ body{
   color: white;
 }
 
-.header{
-
- }
+::ng-deep .p-menubar {
+  border-radius: 0;
+}
