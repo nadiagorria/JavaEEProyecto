@@ -1,8 +1,10 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { HeaderComponent } from './components/header.component'; // Ajusta si está en una subcarpeta
+import { LoginComponent } from './auth/pages/login/login.component';
+import { RegistroComponent } from './auth/pages/registro/registro.component';
+
 
 export const routes: Routes = [
-  { path: '', component: HeaderComponent }, // muestra por defecto
-  { path: 'header', component: HeaderComponent } // ruta explícita
+  { path: 'login', component: LoginComponent },
+  { path: 'registro', component: RegistroComponent },
+
 ];
