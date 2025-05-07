@@ -1,8 +1,10 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { ButtonDemo } from './button-demo.component'; // Ajusta si está en una subcarpeta
+import { LoginComponent } from './auth/pages/login/login.component';
+import { RegistroComponent } from './auth/pages/registro/registro.component';
+
 
 export const routes: Routes = [
-  { path: '', component: ButtonDemo }, // muestra por defecto
-  { path: 'button-demo', component: ButtonDemo } // ruta explícita
+  { path: 'login', component: LoginComponent },
+  { path: 'registro', component: RegistroComponent },
+
 ];
