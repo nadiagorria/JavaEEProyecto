@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './header.component.scss'
   })
 export class HeaderComponent {
-    nombre: string = "Felipe";
+    nombre: string = "@" + "Felipe";
     showModal: boolean = false;
 
      openNotifications() {

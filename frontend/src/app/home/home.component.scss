@@ -1,13 +1,34 @@
 
-main{
-  height: 1000px;
+main {
+  height: 100%;
 }
 
-.articleGrande{
+.articleGrande {
   height: 290px;
 }
 
-.salon{
-    height: 100%;
-    background: #232323;
+.salon {
+  height: 100%;
+  background: #232323;
+}
+
+.carteles {
+    height: 60px;
+    padding: 0;
+    margin: 0;
+    margin-top: 32px;
+    margin-bottom:16px;
+    margin-left: 5vw;
+}
+
+.cartelMini {
+  width: 22vw;
+  height: 60px;
+  padding: 0px 10px 0px 10px;
+  background: #444444;
+  color: #FFFFFF;
+  border-color: #444444;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 21px 21px 21px
 }
