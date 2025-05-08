@@ -1,9 +1,11 @@
 body{
-  color: white;
+  background: white;
 }
 
 ::ng-deep .p-menubar {
   border-radius: 0;
+  font-family: "Montserrat", sans-serif;
+  background: white;
 }
 
 .boton {
@@ -13,3 +15,13 @@ body{
 .texto {
   padding-left: 45vw;
 }
+
+.colorNegro {
+    color: black;
+}
+
+
+//font-family: "Source Sans 3", sans-serif;
+
+
+
