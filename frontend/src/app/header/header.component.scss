@@ -5,7 +5,6 @@ body{
 ::ng-deep .p-menubar {
   border-radius: 0;
   font-family: "Montserrat", sans-serif;
-  background: white;
   height: 65px;
 }
 
@@ -18,8 +17,8 @@ body{
   font-size: 18px;
 }
 
-.colorNegro {
-    color: black;
+.colorTexto {
+  color: var(--text-color);
 }
 
 
