@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
-import { HeaderComponentComponent } from './header-component/header-component.component';
+import { HeaderComponent } from './header/header.component';
+import { HomeComponent } from './home/home.component';
 
 
 export const routes: Routes = [
-  { path: 'header', component: HeaderComponentComponent }
-
+  { path: 'header', component: HeaderComponent },
+  { path: 'home', component: HomeComponent }
 ];

@@ -4,12 +4,12 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'app-header-component',
+  selector: 'app-header',
   imports: [MenubarModule, DialogModule, ButtonModule],
-  templateUrl: './header-component.component.html',
-  styleUrl: './header-component.component.scss'
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss'
   })
-export class HeaderComponentComponent {
+export class HeaderComponent {
     nombre: string = "Felipe";
     showModal: boolean = false;
 
