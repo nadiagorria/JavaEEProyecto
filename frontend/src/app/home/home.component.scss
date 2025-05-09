@@ -19,16 +19,31 @@ main {
     margin-top: 32px;
     margin-bottom:16px;
     margin-left: 5vw;
+    gap: 25vw;
 }
 
 .cartelMini {
   width: 22vw;
   height: 60px;
-  padding: 0px 10px 0px 10px;
+  padding: 0;
+  padding-left: 1vw;
+  padding-top: 10px;
+  padding-bottom: 10px;
   background: #444444;
   color: #FFFFFF;
   border-color: #444444;
   border-width: 2px;
   border-style: solid;
-  border-radius: 21px 21px 21px
+  border-radius: 21px 21px 21px;
 }
+
+.textoCartel {
+  margin-left: 0.5vw;
+  font-size: 2rem;
+}
+
+.logoCartel {
+  font-size: 2rem;
+  margin-right: 1vw;
+ }
+
