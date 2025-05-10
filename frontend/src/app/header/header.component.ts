@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './header.component.scss'
   })
 export class HeaderComponent {
-    nombre: string = "@" + "Felipe";
+    @Input() nombreUsuario: string;
     showModal: boolean = false;
 
      openNotifications() {
