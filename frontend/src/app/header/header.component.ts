@@ -9,8 +9,19 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
   })
+
 export class HeaderComponent {
-    @Input() nombreUsuario: string;
+    private _nombreUsuario = '';
+
+    @Input()
+      set nombreUsuario(valor: string) {
+        this._nombreUsuario = '@' + valor;
+      }
+
+      get nombreUsuario(): string {
+        return this._nombreUsuario;
+      }
+
     showModal: boolean = false;
 
      openNotifications() {
