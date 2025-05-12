@@ -7,13 +7,23 @@
 
         <ng-template pTemplate="end">
           <p-button icon="pi pi-user" class="p-mr-2 colorTexto" severity="secondary"></p-button>
-          <p-button icon="pi pi-bell" class="p-mr-2 boton colorTexto" severity="secondary" (click)="openNotifications()" ></p-button>
+          <p-button icon="pi pi-bell" class="p-mr-2 boton colorTexto" severity="secondary" (click)="showDialog()" ></p-button>
+          <p-dialog  header="Notificaciones" [(visible)]="visible" [modal]="true" [breakpoints]="{ '1199px': '65vw', '575px': '90vw' }" [style]="{ width: '65vw', height: '75vh'}" [draggable]="false" [resizable]="true">
+            <div class="flex divModal">
+              <div class="notifcacionesPreview w-6" >
+                <form [formGroup]="formGroup" class="card flex justify-center divLista">
+                  <p-listbox [options]="mensajes" formControlName="selectedMensaje" optionLabel="name" class="w-full md:w-56 colorTexto" />
+                </form>
+              </div>
+              <div class="notifcacionesView w-6" >
+                <div class="textoView" >{{ formGroup.get('selectedMensaje')?.value?.name || 'Selecciona un mensaje' }}</div>
+                <hr/>
+                <div class="textoView" >{{ formGroup.get('selectedMensaje')?.value?.content}}</div>
+              </div>
+            </div>
+          </p-dialog>
         </ng-template>
       </p-menubar>
 
-
-      <p-dialog header="Notificaciones" [(visible)]="showModal" [modal]="true" [style]="{width: '30vw'}">
-        <p>notificaciones</p>
-      </p-dialog>
     </nav>
 </header>
