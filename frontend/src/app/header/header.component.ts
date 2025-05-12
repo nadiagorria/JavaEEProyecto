@@ -19,17 +19,33 @@ export class HeaderComponent {
   formGroup: FormGroup;
 
   mensajes = [
-    { name: 'Mensaje1', value: 'M1' , content: 'Hola buena talde'},
-    { name: 'Rome', value: 'RM', content: ' ñeri' },
-    { name: 'London', value: 'LDN', content: 'Hola  talde' },
-    { name: 'Istanbul', value: 'IST', content: ' buena talde' },
-    { name: 'Paris', value: 'PRS',content: '  talde' }
+    { name: 'Mensaje1', value: 'M1' , content: 'Hola buena talde', leido: false},
+    { name: 'Rome', value: 'RM', content: ' ñeri', leido: false},
+    { name: 'London', value: 'LDN', content: 'Hola  talde', leido: false},
+    { name: 'Istanbul', value: 'IST', content: ' buena talde', leido: false},
+    { name: 'Paris', value: 'PRS',content: '  talde', leido: false}
   ];
 
   constructor() {
     this.formGroup = new FormGroup({
       selectedMensaje: new FormControl(null)
     });
+
+    this.formGroup.get('selectedMensaje')?.valueChanges.subscribe((selectedMensaje: any) => {
+      if (selectedMensaje) {
+        this.markAsRead(selectedMensaje);
+        }
+      });
+  }
+
+  markAsRead(selectedMensaje: any) {
+      const mensaje = this.mensajes.find(msg => msg.value === selectedMensaje.value);
+      if (mensaje) {
+        mensaje.leido = true;
+
+        console.log('Valor:', mensaje.value);
+        console.log('Leído:', mensaje.leido);
+      }
   }
 
   private _nombreUsuario = '';
