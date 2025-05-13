@@ -43,8 +43,8 @@ export class HeaderComponent {
       if (mensaje) {
         mensaje.leido = true;
 
-        console.log('Valor:', mensaje.value);
-        console.log('Leído:', mensaje.leido);
+        //console.log('Valor:', mensaje.value);
+        //console.log('Leído:', mensaje.leido);
       }
   }
 
