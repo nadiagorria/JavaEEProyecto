@@ -1,0 +1,54 @@
+html, body, main, app-header{
+  overflow-x: hidden;
+  font-family: "Montserrat", sans-serif;
+}
+
+main {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-left: 5vw;
+  padding-right: 5vw;
+}
+
+.textoNegro {
+  color: black;
+}
+
+
+.padreBotonInput {
+  gap: 10vw;
+  margin-bottom: 20px;
+}
+
+p-inputgroup {
+  display: inline-flex;
+  width: auto;
+}
+
+.boton {
+  width: 9vw;
+  height: 7px;
+}
+
+tr, td, th {
+  background: #D6D6D6;
+  color: black;
+}
+
+.paginador {
+  color: black;
+  height: 20px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  justify-content: end;
+  gap: 0.5vw;
+}
+
+.margenPaginador {
+    margin-right: 1vw;
+}
+
+.modal {
+  height: 30px;
+}
+
