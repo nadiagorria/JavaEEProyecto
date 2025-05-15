@@ -6,14 +6,11 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 
-interface ClienteCredito {
+interface ComprasCliente {
   id: number;
-  nombre: string;
-  telefono: string;
-  min: number;
-  max: number;
-  deuda: number;
-  pago: number;
+  cliente: string;
+  fechaVenta: string;
+  total: number;
 }
 
 @Component({
@@ -28,9 +25,9 @@ export class ClientePerfilComponent {
 
   pago:number = 200;
 
-  clientes: ClienteCredito[] = [
-        { id: 1, nombre: "Juan", telefono: "1231314", min: 2, max: 600, deuda: 2000, pago: 1600 },
-        { id: 2, nombre: "Ana", telefono: "9876543", min: 5, max: 400, deuda: 1000, pago: 700 }
+  compras: ComprasCliente[] = [
+            { id: 1, cliente: "Juan", fechaVenta: "12/3/5", total: 2 },
+            { id: 1, cliente: "Ana", fechaVenta: "13/8/98", total: 0 }
   ];
 
   currentPage: number = 1;

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ClientePerfilComponent } from './cliente-perfil/cliente-perfil.component'
+import { ProveedorPerfilComponent } from './proveedor-perfil/proveedor-perfil.component'
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ClientePerfilComponent],
+  imports: [RouterOutlet, ProveedorPerfilComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
