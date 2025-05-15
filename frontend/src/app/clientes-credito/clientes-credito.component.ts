@@ -38,7 +38,7 @@ export class ClientesCreditoComponent {
   clientes: ClienteCredito[] = [
       { id: 1, nombre: "Juan", telefono: "1231314", min: 2, max: 600, deuda: 2000, pago: 1600 },
       { id: 2, nombre: "Ana", telefono: "9876543", min: 5, max: 400, deuda: 1000, pago: 700 }
-    ];
+  ];
 
   visible: boolean = false;
   nombre: string = '';
