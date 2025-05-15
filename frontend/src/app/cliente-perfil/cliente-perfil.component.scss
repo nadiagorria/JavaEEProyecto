@@ -1,0 +1,94 @@
+html, body {
+  overflow-x: hidden;
+}
+
+main {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  margin-left: 10vw;
+  margin-right: 10vw;
+
+  padding-top: 10px;
+  padding-bottom: 8px;
+  padding-left: 2vw;
+  padding-right: 2vw;
+
+
+}
+
+.Tarjetas{
+
+}
+
+.tarjeta-1 {
+  color: black;
+}
+
+.titulo {
+  font-size: 2rem;
+}
+
+
+.miniCartel {
+  height: 165px;
+  width: 21vw;
+  padding-top: 20px;
+  padding-left: 1.7vw;
+  background: #444444;
+  border-color: #444444;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 16px 16px 16px;
+  margin-top: 15px;
+}
+
+.cabezaMiniCartel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.textoMiniCartel {
+  font-size: 1.11rem;
+}
+
+.logoMiniCartel {
+  margin-right: 2vw;
+  font-size: 2rem;
+}
+
+.papaNumeros {
+  height: 87px;
+}
+
+.numero1MiniCartel {
+  height: 20px;
+  margin-top: 12px;
+  font-size: 1.40rem;
+}
+
+.texito {
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+}
+
+::ng-deep .boton {
+  font-size: 0.9rem;
+}
+
+.papaBoton{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 1vw;
+}
+
+.imagen {
+  height: 280px;
+  width: 25vw;
+  margin-right: 5vw;
+}
+
+hr {
+  margin-top: 10px;
+}
+
+

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ClientesCreditoComponent } from './clientes-credito/clientes-credito.component'
+import { ClientePerfilComponent } from './cliente-perfil/cliente-perfil.component'
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ClientesCreditoComponent],
+  imports: [RouterOutlet, ClientePerfilComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

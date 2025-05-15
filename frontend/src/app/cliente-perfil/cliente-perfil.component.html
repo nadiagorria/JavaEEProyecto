@@ -1,0 +1,38 @@
+<app-header [nombreUsuario]="'flp123'"></app-header>
+<main>
+  <article class="flex">
+    <div class="w-full Tarjetas">
+      <div class="tarjeta-1">
+        <h1 class="titulo">{{ nombre }}</h1>
+        <p>Telefono: {{ telefono }}</p>
+      </div>
+
+      <div class="miniCartel">
+        <div class="w-full cabezaMiniCartel">
+          <span class="textoMiniCartel">Deuda Actual</span>
+          <span class="pi pi-dollar logoMiniCartel"></span>
+        </div>
+
+        <div class="flex flex-column w-full papaNumeros">
+          <span class="w-full numero1MiniCartel">$ 21.324</span>
+          <p class="texito">Pago hasta ahora: {{ pago }}</p>
+
+          <div class="papaBoton w-full">
+            <p-button class="boton" label="Pagar" severity="secondary"></p-button>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <img class="imagen">
+
+
+  </article>
+  <hr class="w-full">
+
+
+</main>
+<app-footer></app-footer>
