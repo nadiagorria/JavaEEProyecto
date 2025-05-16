@@ -39,7 +39,7 @@ public class CategoriaService {
         String response = null;
 
         if (categoria.getNombre() != null) {
-            response = "Categoria creada exitosamente. NOMBRE:" + categoriaRepository.save(mapsDtosEntityService.mapToEntityCategoria(categoria)).getNombre();
+            response = "Categoria creada exitosamente. NOMBRE:" + categoriaRepository.save(mapsDtosEntityService.mapToEntityCategoria(categoria)).getId();
 
         }
         return response;

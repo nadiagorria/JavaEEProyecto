@@ -6,9 +6,10 @@ import ti.proyectojava.business.entities.Categoria;
 import ti.proyectojava.business.entities.Cliente;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     List<Cliente> findByActivoTrue();
-
+    Optional<Cliente> findById(Long id);
 }

@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class NotificacionUsuarioDto {
 
-    private long id;
+    private Long id;
 
     private Boolean leido;
 

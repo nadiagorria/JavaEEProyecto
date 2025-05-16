@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -16,5 +17,5 @@ public class Combo extends Oferta{
     private String descripcion;
 
     @ManyToMany(mappedBy = "combos")
-    private List<Producto> productos;
+    private List<Producto> productos = new ArrayList<>();
 }

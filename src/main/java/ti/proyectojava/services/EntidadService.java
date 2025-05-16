@@ -65,7 +65,6 @@ public class EntidadService {
             Cliente cliente = optionalCliente.get();
             cliente.setNombre(clienteDto.getNombre());
             cliente.setTelefono(clienteDto.getTelefono());
-            // No actualizamos ID ni relaciones por simplicidad
             clienteRepository.save(cliente);
             return "Cliente actualizado con ID:" + cliente.getId();
         } else {
@@ -110,6 +109,7 @@ public class EntidadService {
             Proveedor proveedor = optionalProveedor.get();
             proveedor.setNombre(proveedorDto.getNombre());
             proveedor.setTelefono(proveedorDto.getTelefono());
+            proveedor.setCorreo(proveedorDto.getCorreo());
             // No actualizamos ID ni relaciones por simplicidad
             proveedorRepository.save(proveedor);
             return "Cliente actualizado. ID:" + proveedor.getId();

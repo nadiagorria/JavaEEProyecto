@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -20,14 +21,14 @@ public class Notificacion {
     @ElementCollection
     @CollectionTable(name = "NOTIFICACION_MENSAJES", joinColumns = @JoinColumn(name = "NOTIFICACION_ID"))
     @Column(name = "NOTIFICACION_MENSAJES")
-    private List<String> mensajes;
+    private List<String> mensajes = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "NOTIFICACION_NOTIFICACIONUSUARIO",
             joinColumns = @JoinColumn(name = "NOTIFICACION_ID"),
             inverseJoinColumns = @JoinColumn(name = "NOTIFICACIONUSUARIO_ID"))
-    private List <NotificacionUsuario> notificacionUsuarios;
+    private List <NotificacionUsuario> notificacionUsuarios = new ArrayList<>();
 
     @Column(name = "NOTIFICACION_FECHA")
     private LocalDateTime fechaHora;

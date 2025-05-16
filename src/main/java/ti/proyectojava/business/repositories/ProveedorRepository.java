@@ -6,8 +6,10 @@ import ti.proyectojava.business.entities.Categoria;
 import ti.proyectojava.business.entities.Proveedor;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
     List<Proveedor> findByActivoTrue();
+    Optional<Proveedor> findById(Long id);
 }

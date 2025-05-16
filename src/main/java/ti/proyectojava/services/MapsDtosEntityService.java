@@ -1,9 +1,12 @@
 package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.*;
+import ti.proyectojava.business.repositories.CategoriaRepository;
 import ti.proyectojava.dtos.*;
+import ti.proyectojava.business.repositories.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +14,50 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class MapsDtosEntityService {
+
+    private final CategoriaRepository categoriaRepository;
+    private final ProductoRepository productoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final RolUsuarioRepository rolUsuarioRepository;
+    private final VentaRepository ventaRepository;
+    private final ProveedorRepository proveedorRepository;
+    private final ClienteRepository clienteRepository;
+    private final ComboRepository comboRepository;
+    private final LoteRepository loteRepository;
+    private final CreditoRepository creditoRepository;
+    private final DescuentoRepository descuentoRepository;
+    private final  NotificacionRepository notificacionRepository;
+    private final NotificacionUsuarioRepository notificacionUsuarioRepository;
+    private final CantidadRepository cantidadRepository;
+    private final PromocionRepository promocionRepository;
+
+    @Autowired
+    public MapsDtosEntityService(
+            CategoriaRepository categoriaRepository,
+            ProductoRepository productoRepository,
+            UsuarioRepository usuarioRepository,
+            RolUsuarioRepository rolUsuarioRepository,
+            VentaRepository ventaRepository,
+            ProveedorRepository proveedorRepository,
+            ClienteRepository clienteRepository,
+            ComboRepository comboRepository,
+            LoteRepository loteRepository, CreditoRepository creditoRepository, DescuentoRepository descuentoRepository, NotificacionRepository notificacionRepository, NotificacionUsuarioRepository notificacionUsuarioRepository, CantidadRepository cantidadRepository, PromocionRepository promocionRepository) {
+        this.categoriaRepository = categoriaRepository;
+        this.productoRepository = productoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.rolUsuarioRepository = rolUsuarioRepository;
+        this.ventaRepository = ventaRepository;
+        this.proveedorRepository = proveedorRepository;
+        this.clienteRepository = clienteRepository;
+        this.comboRepository = comboRepository;
+        this.loteRepository = loteRepository;
+        this.creditoRepository = creditoRepository;
+        this.descuentoRepository = descuentoRepository;
+        this.notificacionRepository = notificacionRepository;
+        this.notificacionUsuarioRepository = notificacionUsuarioRepository;
+        this.cantidadRepository = cantidadRepository;
+        this.promocionRepository = promocionRepository;
+    }
 
     public CategoriaDto mapToDtoCategoria(Categoria categoria) {
         return mapToDtoCategoria(categoria, new HashSet<>());
@@ -26,18 +73,15 @@ public class MapsDtosEntityService {
         catDto.setNombre(categoria.getNombre());
         catDto.setActivo(categoria.getActivo());
 
-        catDto.setProductos(
-                categoria.getProductos().stream()
-                        .map(producto -> {
-                            if (!processed.contains(producto)) {
-                                processed.add(producto);
-                                return mapToDtoProducto(producto, processed);
-                            }
-                            return null; // Evitar ciclos
-                        })
-                        .filter(Objects::nonNull) // Eliminar nulos
-                        .toList()
-        );
+        if (categoria.getProductos() != null) {
+            catDto.setProductos(
+                    categoria.getProductos().stream()
+                            .map(producto -> mapToDtoProducto(producto, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+
+        }
 
         if (categoria.getCategoriaPadre() != null) {
             catDto.setCategoriaPadre(mapToDtoCategoria(categoria.getCategoriaPadre(), processed));
@@ -47,6 +91,7 @@ public class MapsDtosEntityService {
             catDto.setSubcategorias(
                     categoria.getSubcategorias().stream()
                             .map(sub -> mapToDtoCategoria(sub, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
         }
@@ -57,12 +102,21 @@ public class MapsDtosEntityService {
         return mapToEntityCategoria(catDto, new HashSet<>());
     }
 
-    private Categoria mapToEntityCategoria(CategoriaDto catDto, Set<CategoriaDto> processed) {
+    private Categoria mapToEntityCategoria(CategoriaDto catDto, Set<Object> processed) {
         if (catDto == null || processed.contains(catDto)) {
             return null;
         }
         processed.add(catDto);
 
+        // Si tiene id
+        if (catDto.getId() != null) {
+            Optional<Categoria> categoriaExistente = categoriaRepository.findById(catDto.getId());
+            if (categoriaExistente.isPresent()) {
+                return categoriaExistente.get();
+            }
+        }
+
+        // Si no tiene id (no existe)
         Categoria categoria = new Categoria();
         categoria.setNombre(catDto.getNombre());
         categoria.setActivo(catDto.getActivo());
@@ -70,9 +124,13 @@ public class MapsDtosEntityService {
         if (catDto.getProductos() != null) {
             categoria.setProductos(
                     catDto.getProductos().stream()
-                            .map(this::mapToEntityProducto)
+                            .map(prodDto -> mapToEntityProducto(prodDto, processed)) // Pasa el mismo Set
+                            .filter(Objects::nonNull)
                             .toList()
             );
+
+            // Mantener bidireccionalidad
+            categoria.getProductos().forEach(producto -> producto.setCategoria(categoria));
         }
 
         if (catDto.getCategoriaPadre() != null) {
@@ -82,17 +140,29 @@ public class MapsDtosEntityService {
         if (catDto.getSubcategorias() != null) {
             categoria.setSubcategorias(
                     catDto.getSubcategorias().stream()
-                            .map(sub -> mapToEntityCategoria(sub, processed))
+                            .map(subDto -> mapToEntityCategoria(subDto, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
+
+            // Mantener bidireccionalidad
+            categoria.getSubcategorias().forEach(sub -> sub.setCategoriaPadre(categoria));
         }
 
         return categoria;
     }
 
     public CreditoDto mapToDtoCredito(Credito credito) {
-        CreditoDto dto = new CreditoDto();
+        return mapToDtoCredito(credito, new HashSet<>());
+    }
 
+    private CreditoDto mapToDtoCredito(Credito credito, Set<Object> processed) {
+        if (credito == null || processed.contains(credito)) {
+            return null;
+        }
+        processed.add(credito);
+
+        CreditoDto dto = new CreditoDto();
         dto.setId(credito.getId());
         dto.setPrecioTotal(credito.getPrecioTotal());
         dto.setMinimo(credito.getMinimo());
@@ -107,8 +177,24 @@ public class MapsDtosEntityService {
     }
 
     public Credito mapToEntityCredito(CreditoDto dto) {
-        Credito credito = new Credito();
+        return mapToEntityCredito(dto, new HashSet<>());
+    }
 
+    private Credito mapToEntityCredito(CreditoDto dto, Set<Object> processed) {
+        if (dto == null || processed.contains(dto)) {
+            return null;
+        }
+        processed.add(dto);
+
+        // Si tiene id
+        if (dto.getId() != null) {
+            Optional<Credito> creditoExistente = creditoRepository.findById(dto.getId());
+            if (creditoExistente.isPresent()) {
+                return creditoExistente.get();
+            }
+        }
+
+        Credito credito = new Credito();
         credito.setId(dto.getId());
         credito.setPrecioTotal(dto.getPrecioTotal());
         credito.setMinimo(dto.getMinimo());
@@ -117,51 +203,143 @@ public class MapsDtosEntityService {
 
         if (dto.getCliente() != null) {
             credito.setCliente(mapToEntityCliente(dto.getCliente()));
+            credito.getCliente().setCredito(credito);
         }
 
         return credito;
     }
 
     public ClienteDto mapToDtoCliente(Cliente cliente) {
+        return mapToDtoCliente(cliente, new HashSet<>());
+    }
+
+    private ClienteDto mapToDtoCliente(Cliente cliente, Set<Object> processed) {
+        if (cliente == null || processed.contains(cliente)) {
+            return null;
+        }
+        processed.add(cliente);
+
         ClienteDto dto = new ClienteDto();
         dto.setId(cliente.getId());
         dto.setNombre(cliente.getNombre());
         dto.setTelefono(cliente.getTelefono());
         dto.setActivo(cliente.isActivo());
+
+        if (cliente.getCredito() != null) {
+            dto.setCredito(mapToDtoCredito(cliente.getCredito(), new HashSet<>()));
+        }
+
         return dto;
     }
 
-
     public Cliente mapToEntityCliente(ClienteDto clienteDto) {
+        return mapToEntityCliente(clienteDto, new HashSet<>());
+    }
+
+    private Cliente mapToEntityCliente(ClienteDto clienteDto, Set<Object> processed) {
+        if (clienteDto == null || processed.contains(clienteDto)) {
+            return null;
+        }
+        processed.add(clienteDto);
+
+        // Si tiene id
+        if (clienteDto.getId() != null) {
+            Optional<Cliente> clienteExistente = clienteRepository.findById(clienteDto.getId());
+            if (clienteExistente.isPresent()) {
+
+                return clienteExistente.get();
+            }
+        }
+
         Cliente cliente = new Cliente();
-        cliente.setId(clienteDto.getId());
         cliente.setNombre(clienteDto.getNombre());
         cliente.setTelefono(clienteDto.getTelefono());
         cliente.setActivo(clienteDto.isActivo());
+
+        if (clienteDto.getCredito() != null) {
+            cliente.setCredito(mapToEntityCredito(clienteDto.getCredito(), new HashSet<>()));
+        }
+
         return cliente;
     }
 
     public ProveedorDto mapToDtoProveedor(Proveedor proveedor) {
+        return mapToDtoProveedor(proveedor, new HashSet<>());
+    }
+
+    private ProveedorDto mapToDtoProveedor(Proveedor proveedor, Set<Object> processed) {
+        if (proveedor == null || processed.contains(proveedor)) {
+            return null;
+        }
+        processed.add(proveedor);
+
         ProveedorDto dto = new ProveedorDto();
         dto.setId(proveedor.getId());
         dto.setNombre(proveedor.getNombre());
         dto.setTelefono(proveedor.getTelefono());
         dto.setActivo(proveedor.isActivo());
         dto.setCorreo(proveedor.getCorreo());
+
+        if (proveedor.getProductos() != null) {
+            dto.setProductosDto(
+                    proveedor.getProductos().stream()
+                            .map(prod -> mapToDtoProducto(prod, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+        }
+
         return dto;
     }
 
 
     public Proveedor mapToEntityProveedor(ProveedorDto proveedorDto) {
+        return mapToEntityProveedor(proveedorDto, new HashSet<>());
+    }
+
+    private Proveedor mapToEntityProveedor(ProveedorDto proveedorDto, Set<Object> processed) {
+        if (proveedorDto == null || processed.contains(proveedorDto)) {
+            return null;
+        }
+        processed.add(proveedorDto);
+
+        // Si tiene id
+        if (proveedorDto.getId() != null) {
+            Optional<Proveedor> provExistente = proveedorRepository.findById(proveedorDto.getId());
+            if (provExistente.isPresent()) {
+                return provExistente.get();
+            }
+        }
+        
         Proveedor proveedor = new Proveedor();
-        proveedor.setId(proveedorDto.getId());
         proveedor.setNombre(proveedorDto.getNombre());
         proveedor.setTelefono(proveedorDto.getTelefono());
         proveedor.setActivo(proveedorDto.isActivo());
+        proveedor.setCorreo(proveedorDto.getCorreo());
+
+        if (proveedorDto.getProductosDto() != null) {
+            proveedor.setProductos(
+                    proveedorDto.getProductosDto().stream()
+                            .map(prod -> mapToEntityProducto(prod, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+            proveedor.getProductos().forEach(producto -> producto.setProveedor(proveedor));
+        }
+
         return proveedor;
     }
 
     public LoteDto mapToDtoLote(Lote lote) {
+        return mapToDtoLote(lote, new HashSet<>());
+    }
+
+    private LoteDto mapToDtoLote(Lote lote, Set<Object> processed) {
+        if (lote == null || processed.contains(lote)) {
+            return null;
+        }
+        processed.add(lote);
+
         LoteDto dto = new LoteDto();
         dto.setId(lote.getId());
         dto.setNumeLote(lote.getNumero());
@@ -169,21 +347,56 @@ public class MapsDtosEntityService {
         dto.setFechaVencimiento(lote.getFechaVencimiento());
         dto.setPrecioCompra(lote.getPrecioCompra());
         dto.setActivo(lote.getActivo());
+
+        if (lote.getProducto() != null) {
+            dto.setProducto(mapToDtoProducto(lote.getProducto(), new HashSet<>()));
+        }
+
         return dto;
     }
 
     public Lote mapToEntityLote(LoteDto dto) {
-        Lote lote = new Lote();
+        return mapToEntityLote(dto, new HashSet<>());
+    }
+
+    private Lote mapToEntityLote(LoteDto dto, Set<Object> processed) {
+        if (dto == null || processed.contains(dto)) {
+            return null;
+        }
+        processed.add(dto);
+
+        // Buscar lote existente por id
+        Lote lote = loteRepository.findById(dto.getId()).orElse(null);
+        if (lote != null) {
+            return lote;
+        }
+        lote = new Lote();
         lote.setId(dto.getId());
         lote.setNumero(dto.getNumeLote());
         lote.setStock(dto.getStock());
         lote.setFechaVencimiento(dto.getFechaVencimiento());
         lote.setPrecioCompra(dto.getPrecioCompra());
         lote.setActivo(dto.getActivo());
+
+        if (dto.getProducto() != null) {
+            lote.setProducto(mapToEntityProducto(dto.getProducto(), processed));
+        }
+
         return lote;
     }
 
+
+    // Esto no se va a usar, las notificaciones siempre son entidades.
     public Notificacion mapToEntityNotificacion(NotificacionDto notificacionDto){
+
+        // Si tiene id
+        if (notificacionDto.getId() != null) {
+            Optional<Notificacion> notiExistente = notificacionRepository.findById(notificacionDto.getId());
+            if (notiExistente.isPresent()) {
+                return notiExistente.get();
+            }
+        }
+
         Notificacion notificacion = new Notificacion();
         notificacion.setId(notificacionDto.getId());
         notificacion.setMensajes(notificacionDto.getMensajes());
@@ -205,24 +418,33 @@ public class MapsDtosEntityService {
     }
 
     private UsuarioDto mapToDtoUsuario(Usuario usuario, Set<Object> processed) {
-        if (usuario == null) {
+        if (usuario == null || processed.contains(usuario)) {
             return null;
         }
+        processed.add(usuario);
 
         UsuarioDto usuarioDto = new UsuarioDto();
         usuarioDto.setMail(usuario.getMail());
         usuarioDto.setContrasenia(usuario.getContrasenia());
         usuarioDto.setNombre(usuario.getNombre());
         usuarioDto.setActivo(usuario.getActivo());
-        usuarioDto.setRoles(usuario.getRoles().stream()
-                .map(rol -> mapToDtoRoles(rol, processed))
-                .toList());
 
-        if (usuario.getVentas() != null){
-            usuarioDto.setVentas(usuario.getVentas().stream()
-                    .map(venta -> mapToDtoVenta(venta, processed))
-                    .toList());
+        usuarioDto.setRoles(
+                usuario.getRoles().stream()
+                        .map(rol -> mapToDtoRoles(rol, processed))
+                        .filter(Objects::nonNull)
+                        .toList()
+        );
+
+        if (usuario.getVentas() != null) {
+            usuarioDto.setVentas(
+                    usuario.getVentas().stream()
+                            .map(venta -> mapToDtoVenta(venta, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
         }
+
         return usuarioDto;
     }
 
@@ -230,9 +452,18 @@ public class MapsDtosEntityService {
         return mapToEntityUsuario(usuarioDto, new HashSet<>());
     }
 
-    private Usuario mapToEntityUsuario(UsuarioDto usuarioDto, Set<RolUsuarioDto> processed) {
-        if (usuarioDto == null) {
+    private Usuario mapToEntityUsuario(UsuarioDto usuarioDto, Set<Object> processed) {
+        if (usuarioDto == null || processed.contains(usuarioDto)) {
             return null;
+        }
+        processed.add(usuarioDto);
+
+        // Si tiene username
+        if (usuarioDto.getNombre() != null) {
+            Optional<Usuario> usuarioExistente = usuarioRepository.findByNombre(usuarioDto.getNombre());
+            if (usuarioExistente.isPresent()) {
+                return usuarioExistente.get();
+            }
         }
 
         Usuario usuario = new Usuario();
@@ -240,9 +471,33 @@ public class MapsDtosEntityService {
         usuario.setContrasenia(usuarioDto.getContrasenia());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setActivo(usuarioDto.getActivo());
-        usuario.setRoles(usuarioDto.getRoles().stream()
-                .map(rolDto -> mapToEntityRoles(rolDto, processed))
-                .toList());
+
+        if (usuarioDto.getRoles() != null) {
+            usuario.setRoles(usuarioDto.getRoles().stream()
+                    .map(rolDto -> mapToEntityRoles(rolDto, processed))
+                    .filter(Objects::nonNull)
+                    .toList());
+        }
+
+        if (usuarioDto.getVentas() != null) {
+            usuario.setVentas(
+                    usuarioDto.getVentas().stream()
+                            .map(venta -> mapToEntityVenta(venta, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+            usuario.getVentas().forEach(venta -> venta.setUsuario(usuario));
+        }
+
+        if (usuarioDto.getNotificaciones() != null) {
+            usuario.setNotificaciones(
+                    usuarioDto.getNotificaciones().stream()
+                            .map(noti -> mapToEntityNotificacionUsuario(noti, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+
+        }
         return usuario;
     }
 
@@ -250,14 +505,21 @@ public class MapsDtosEntityService {
         return mapToEntityRoles(rolDto, new HashSet<>());
     }
 
-    private RolUsuario mapToEntityRoles(RolUsuarioDto rolDto, Set<RolUsuarioDto> processed) {
+    private RolUsuario mapToEntityRoles(RolUsuarioDto rolDto, Set<Object> processed) {
         if (rolDto == null || processed.contains(rolDto)) {
             return null;
         }
         processed.add(rolDto);
 
+        // Si tiene username
+        if (rolDto.getId() != null) {
+            Optional<RolUsuario> rolExistente = rolUsuarioRepository.findById(rolDto.getId());
+            if (rolExistente.isPresent()) {
+                return rolExistente.get();
+            }
+        }
+
         RolUsuario rol = new RolUsuario();
-        rol.setId(rolDto.getId());
         rol.setNombre(rolDto.getNombre());
 
 
@@ -268,6 +530,12 @@ public class MapsDtosEntityService {
                         .map(userDto -> mapToEntityUsuario(userDto, processed))
                         .toList()
         );
+        rol.getUsuarios().forEach(usuario -> {
+            if (!usuario.getRoles().contains(rol)) {
+                usuario.getRoles().add(rol);
+            }
+        });
+
 
         return rol;
     }
@@ -291,9 +559,17 @@ public class MapsDtosEntityService {
         return rolDto;
     }
 
-    public NotificacionUsuarioDto mapToDtoNotificacionUsuario(NotificacionUsuario notificacionUsuario) {
-        NotificacionUsuarioDto notificacionUsuarioDto = new NotificacionUsuarioDto();
+    public NotificacionUsuarioDto mapToDtoNotificacionUsuario (NotificacionUsuario notificacionUsuario) {
+        return mapToDtoNotificacionUsuario(notificacionUsuario, new HashSet<>());
+    }
 
+    private NotificacionUsuarioDto mapToDtoNotificacionUsuario(NotificacionUsuario notificacionUsuario, Set<Object> processed) {
+        if (notificacionUsuario == null || processed.contains(notificacionUsuario)) {
+            return null;
+        }
+        processed.add(notificacionUsuario);
+
+        NotificacionUsuarioDto notificacionUsuarioDto = new NotificacionUsuarioDto();
         notificacionUsuarioDto.setId(notificacionUsuario.getId());
         notificacionUsuarioDto.setActivo(notificacionUsuario.getActivo());
         notificacionUsuarioDto.setLeido(notificacionUsuario.getLeido());
@@ -301,7 +577,8 @@ public class MapsDtosEntityService {
         if (notificacionUsuario.getUsuarios() != null) {
             notificacionUsuarioDto.setUsuarios(
                     notificacionUsuario.getUsuarios().stream()
-                            .map(e -> mapToDtoUsuario(e))
+                            .map(e -> mapToDtoUsuario(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
         }
@@ -310,6 +587,7 @@ public class MapsDtosEntityService {
             notificacionUsuarioDto.setNotificaciones(
                     notificacionUsuario.getNotificaciones().stream()
                             .map(e -> mapToDtoNotificacion(e))
+                            .filter(Objects::nonNull)
                             .toList()
             );
         }
@@ -317,28 +595,63 @@ public class MapsDtosEntityService {
         return notificacionUsuarioDto;
     }
 
-    public NotificacionUsuario mapToEntityNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto) {
-        NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
 
+    public NotificacionUsuario mapToEntityNotificacionUsuario (NotificacionUsuarioDto notificacionUsuariodto) {
+        return mapToEntityNotificacionUsuario(notificacionUsuariodto, new HashSet<>());
+    }
+    private NotificacionUsuario mapToEntityNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto, Set<Object> processed) {
+        // Verificar si el DTO es nulo o ya fue procesado
+        if (notificacionUsuarioDto == null || processed.contains(notificacionUsuarioDto)) {
+            return null;
+        }
+
+        processed.add(notificacionUsuarioDto);
+
+        // Si tiene id, buscar entidad existente
+        if (notificacionUsuarioDto.getId() != null) {
+            Optional<NotificacionUsuario> notiExistente = notificacionUsuarioRepository.findById(notificacionUsuarioDto.getId());
+            if (notiExistente.isPresent()) {
+                return notiExistente.get();
+            }
+        }
+
+        NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
         notificacionUsuario.setId(notificacionUsuarioDto.getId());
         notificacionUsuario.setActivo(notificacionUsuarioDto.getActivo());
         notificacionUsuario.setLeido(notificacionUsuarioDto.getLeido());
 
+
         if (notificacionUsuarioDto.getUsuarios() != null) {
             notificacionUsuario.setUsuarios(
                     notificacionUsuarioDto.getUsuarios().stream()
-                            .map(e -> mapToEntityUsuario(e))
-                            .toList()
+                            .map(e -> mapToEntityUsuario(e, processed))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList())
             );
+
+
+            notificacionUsuario.getUsuarios().forEach(usuario -> {
+                if (usuario != null) {
+                    if (usuario.getNotificaciones() == null) {
+                        usuario.setNotificaciones(new ArrayList<>());
+                    }
+                    if (!usuario.getNotificaciones().contains(notificacionUsuario)) {
+                        usuario.getNotificaciones().add(notificacionUsuario);
+                    }
+                }
+            });
         }
 
+
+        /*
         if (notificacionUsuarioDto.getNotificaciones() != null) {
             notificacionUsuario.setNotificaciones(
                     notificacionUsuarioDto.getNotificaciones().stream()
-                            .map(e -> mapToEntityNotificacion(e))
-                            .toList()
+                            .map(e -> mapToEntityNotificacion(e, processed))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList())
             );
-        }
+        }*/
 
         return notificacionUsuario;
     }
@@ -365,14 +678,44 @@ public class MapsDtosEntityService {
     }
 
     public Combo mapToEntityCombo(ComboDto comboDto) {
+        return mapToEntityCombo(comboDto, new HashSet<>());
+    }
+
+    private Combo mapToEntityCombo(ComboDto comboDto, Set<Object> processed) {
+        if (comboDto == null || processed.contains(comboDto)) {
+            return null;
+        }
+        processed.add(comboDto);
+
+        // Si tiene id
+        if (comboDto.getId() != null) {
+            Optional<Combo> comboExistente = comboRepository.findById(comboDto.getId());
+            if (comboExistente.isPresent()) {
+                return comboExistente.get();
+            }
+        }
+
+
         Combo combo = new Combo();
         combo.setId(comboDto.getId());
         combo.setDescuento(comboDto.getDescuento());
         combo.setActivo(comboDto.getActivo());
         combo.setDescripcion(comboDto.getDescripcion());
-        combo.setProductos(comboDto.getProductos().stream()
-                .map(this::mapToEntityProducto)
-                .collect(Collectors.toList()));
+
+        if (comboDto.getProductos() != null) {
+            combo.setProductos(
+                    comboDto.getProductos().stream()
+                            .map(productoDto -> mapToEntityProducto(productoDto, processed))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList())
+            );
+            combo.getProductos().forEach(producto -> {
+                if (!producto.getCombos().contains(combo)) {
+                    producto.getCombos().add(combo);
+                }
+            });
+        }
+
         return combo;
     }
 
@@ -397,11 +740,32 @@ public class MapsDtosEntityService {
     }
 
     public Descuento mapToEntityDescuento(DescuentoDto descuentoDto) {
+        return mapToEntityDescuento(descuentoDto, new HashSet<>());
+    }
+
+    private Descuento mapToEntityDescuento(DescuentoDto descuentoDto, Set<Object> processed) {
+        if (descuentoDto == null || processed.contains(descuentoDto)) {
+            return null;
+        }
+        processed.add(descuentoDto);
+
+        // Si tiene id
+        if (descuentoDto.getId() != null) {
+            Optional<Descuento> descExistente = descuentoRepository.findById(descuentoDto.getId());
+            if (descExistente.isPresent()) {
+                return descExistente.get();
+            }
+        }
+
         Descuento descuento = new Descuento();
         descuento.setId(descuentoDto.getId());
         descuento.setDescuento(descuentoDto.getDescuento());
         descuento.setActivo(descuentoDto.getActivo());
-        descuento.setProducto(mapToEntityProducto(descuentoDto.getProducto()));
+
+        if (descuentoDto.getProducto() != null) {
+            descuento.setProducto(mapToEntityProducto(descuentoDto.getProducto(), processed));
+        }
+
         return descuento;
     }
 
@@ -427,18 +791,57 @@ public class MapsDtosEntityService {
     }
 
     public Promocion mapToEntityPromocion(PromocionDto promocionDto) {
+        return mapToEntityPromocion(promocionDto, new HashSet<>());
+    }
+
+    private Promocion mapToEntityPromocion(PromocionDto promocionDto, Set<Object> processed) {
+        if (promocionDto == null || processed.contains(promocionDto)) {
+            return null;
+        }
+        processed.add(promocionDto);
+
+        // Si tiene id
+        if (promocionDto.getId() != null) {
+            Optional<Promocion> promoExistente = promocionRepository.findById(promocionDto.getId());
+            if (promoExistente.isPresent()) {
+                return promoExistente.get();
+            }
+        }
+
+
         Promocion promocion = new Promocion();
         promocion.setId(promocionDto.getId());
         promocion.setDescuento(promocionDto.getDescuento());
         promocion.setActivo(promocionDto.getActivo());
         promocion.setDescripcion(promocionDto.getDescripcion());
-        promocion.setProducto(mapToEntityProducto(promocionDto.getProducto()));
+
+        if (promocionDto.getProducto() != null) {
+            promocion.setProducto(mapToEntityProducto(promocionDto.getProducto(), processed));
+        }
+
         return promocion;
     }
 
-    public Producto mapToEntityProducto (ProductoDto productoDto) {
+    public Producto mapToEntityProducto(ProductoDto productoDto) {
+        return mapToEntityProducto(productoDto, new HashSet<>());
+    }
+
+    private Producto mapToEntityProducto(ProductoDto productoDto, Set<Object> processed) {
+        if (productoDto == null || processed.contains(productoDto)) {
+            return null;
+        }
+        processed.add(productoDto);
+
+
+        // Si tiene id
+        if (productoDto.getId() != null) {
+            Optional<Producto> prodExistente = productoRepository.findById(productoDto.getId());
+            if (prodExistente.isPresent()) {
+                return prodExistente.get();
+            }
+        }
+
         Producto producto = new Producto();
-        producto.setId(productoDto.getId());
         producto.setPrecioCompra(productoDto.getPrecioCompra());
         producto.setPrecioVenta(productoDto.getPrecioVenta());
         producto.setCodigoDeBarra(productoDto.getCodigoDeBarra());
@@ -451,50 +854,73 @@ public class MapsDtosEntityService {
         if (productoDto.getCombos() != null) {
             producto.setCombos(
                     productoDto.getCombos().stream()
-                            .map(e -> mapToEntityCombo(e))
+                            .map(e -> mapToEntityCombo(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
         }
 
         if (productoDto.getProveedor() != null) {
-            producto.setProveedor(mapToEntityProveedor(productoDto.getProveedor()));
+            producto.setProveedor(mapToEntityProveedor(productoDto.getProveedor(), processed));
         }
 
         if (productoDto.getCategoria() != null) {
-            producto.setCategoria(mapToEntityCategoria(productoDto.getCategoria()));
+            producto.setCategoria(mapToEntityCategoria(productoDto.getCategoria(), processed));
+
+            if (producto.getCategoria().getProductos() == null) {
+                producto.getCategoria().setProductos(new ArrayList<>());
+            }
+
+            producto.getCategoria().getProductos().add(producto);
+
         }
 
         if (productoDto.getLotes() != null) {
             producto.setLotes(
                     productoDto.getLotes().stream()
-                            .map(e -> mapToEntityLote(e))
+                            .map(e -> mapToEntityLote(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
+
+            // Mantener bidireccionalidad
+            producto.getLotes().forEach(lote -> lote.setProducto(producto));
         }
 
         if (productoDto.getPromociones() != null) {
             producto.setPromociones(
                     productoDto.getPromociones().stream()
-                            .map(e -> mapToEntityPromocion(e))
+                            .map(e -> mapToEntityPromocion(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
+
+            // Mantener bidireccionalidad
+            producto.getPromociones().forEach(promocion -> promocion.setProducto(producto));
         }
 
         if (productoDto.getDescuentos() != null) {
             producto.setDescuentos(
                     productoDto.getDescuentos().stream()
-                            .map(e -> mapToEntityDescuento(e))
+                            .map(e -> mapToEntityDescuento(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
-        }
 
+            // Mantener bidireccionalidad
+            producto.getDescuentos().forEach(descuento -> descuento.setProducto(producto));
+        }
 
         if (productoDto.getCantidades() != null) {
             producto.setCantidades(
                     productoDto.getCantidades().stream()
-                            .map(e -> mapToEntityCantidad(e))
+                            .map(e -> mapToEntityCantidad(e, processed))
+                            .filter(Objects::nonNull)
                             .toList()
             );
+
+            // Mantener bidireccionalidad
+            producto.getCantidades().forEach(cantidad -> cantidad.setProducto(producto));
         }
 
         return producto;
@@ -531,13 +957,13 @@ public class MapsDtosEntityService {
         }
 
         if (producto.getProveedor() != null) {
-            productoDto.setProveedor(mapToDtoProveedor(producto.getProveedor()));
+            productoDto.setProveedor(mapToDtoProveedor(producto.getProveedor(), processed));
         }
 
         if (producto.getLotes() != null) {
             productoDto.setLotes(
                     producto.getLotes().stream()
-                            .map(e -> mapToDtoLote(e))
+                            .map(e -> mapToDtoLote(e, processed))
                             .toList()
             );
         }
@@ -558,9 +984,6 @@ public class MapsDtosEntityService {
             );
         }
 
-        if (producto.getProveedor() != null) {
-            productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria()));
-        }
 
         if (producto.getCantidades() != null) {
             productoDto.setCantidades(
@@ -571,7 +994,7 @@ public class MapsDtosEntityService {
         }
 
         if (producto.getCategoria() != null) {
-            productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria()));
+            productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria(), processed));
         }
 
         return productoDto;
@@ -602,12 +1025,37 @@ public class MapsDtosEntityService {
     }
 
     public Cantidad mapToEntityCantidad(CantidadDto dto) {
-        Cantidad cantidad = new Cantidad();
+        return mapToEntityCantidad(dto, new HashSet<>());
+    }
 
+
+
+    private Cantidad mapToEntityCantidad(CantidadDto dto, Set<Object> processed) {
+        if (dto == null || processed.contains(dto)) {
+            return null;
+        }
+        processed.add(dto);
+
+        //no creo que sea realmente necesario ya que solo se usa para crear las cantidades en la venta
+        // Si tiene id
+        if (dto.getId() != null) {
+            Optional<Cantidad> cantExistente = cantidadRepository.findById(dto.getId());
+            if (cantExistente.isPresent()) {
+                return cantExistente.get();
+            }
+        }
+
+        Cantidad cantidad = new Cantidad();
         cantidad.setId(dto.getId());
         cantidad.setCantidad(dto.getCantidad());
-        cantidad.setProducto(mapToEntityProducto(dto.getProducto()));
-        cantidad.setVenta(mapToEntityVenta(dto.getVenta()));
+
+        if (dto.getProducto() != null) {
+            cantidad.setProducto(mapToEntityProducto(dto.getProducto(), processed));
+        }
+
+        if (dto.getVenta() != null) {
+            cantidad.setVenta(mapToEntityVenta(dto.getVenta(), processed));
+        }
 
         return cantidad;
     }
@@ -633,7 +1081,7 @@ public class MapsDtosEntityService {
         dto.setUsuario(mapToDtoUsuario(venta.getUsuario(), processed));
 
         if (venta.getCredito() != null) {
-            dto.setCredito(mapToDtoCredito(venta.getCredito()));
+            dto.setCredito(mapToDtoCredito(venta.getCredito(), processed));
         }
 
         if (venta.getCantidades() != null) {
@@ -646,24 +1094,53 @@ public class MapsDtosEntityService {
     }
 
     public Venta mapToEntityVenta(VentaDto dto) {
-        Venta venta = new Venta();
+        return mapToEntityVenta(dto, new HashSet<>());
+    }
 
+    private Venta mapToEntityVenta(VentaDto dto, Set<Object> processed) {
+        if (dto == null || processed.contains(dto)) {
+            return null;
+        }
+        processed.add(dto);
+
+        // Si tiene id
+        if (dto.getId() != null) {
+            Optional<Venta> ventaExistente = ventaRepository.findById(dto.getId());
+            if (ventaExistente.isPresent()) {
+                return ventaExistente.get();
+            }
+        }
+
+        Venta venta = new Venta();
         venta.setFinalizada(dto.getFinalizada());
         venta.setFormaPago(dto.getFormaPago());
-        venta.setId(dto.getId());
         venta.setFechaVenta(dto.getFechaVenta());
         venta.setTotal(dto.getTotal());
         venta.setActivo(dto.getActivo());
-        venta.setUsuario(mapToEntityUsuario(dto.getUsuario()));
+
+        if (dto.getUsuario() != null) {
+            venta.setUsuario(mapToEntityUsuario(dto.getUsuario(), processed));
+
+            // Mantener bidireccionalidad
+            if (venta.getUsuario() != null) {
+                venta.getUsuario().getVentas().add(venta);
+            }
+        }
 
         if (dto.getCredito() != null) {
-            venta.setCredito(mapToEntityCredito(dto.getCredito()));
+            venta.setCredito(mapToEntityCredito(dto.getCredito(), processed));
         }
+
         if (dto.getCantidades() != null) {
             venta.setCantidades(dto.getCantidades().stream()
-                    .map(c -> mapToEntityCantidad(c))
+                    .map(c -> mapToEntityCantidad(c, processed))
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList()));
+
+            // Mantener bidireccionalidad
+            venta.getCantidades().forEach(c -> c.setVenta(venta));
         }
+
         return venta;
     }
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class CategoriaDto {
+    private Long id;
     private String nombre;
     private Boolean activo;
     private List<CategoriaDto> subcategorias;

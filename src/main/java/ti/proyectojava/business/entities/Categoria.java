@@ -2,6 +2,7 @@ package ti.proyectojava.business.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -9,7 +10,12 @@ import java.util.List;
 @Entity
 @Table(name = "CATEGORIA")
 public class Categoria {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "CATEGORIA_ID")
+    private Long id;
+
     @Column(name = "CATEGORIA_NOMBRE")
     private String nombre;
 
@@ -27,9 +33,9 @@ public class Categoria {
     private Categoria categoriaPadre;
 
     @OneToMany(mappedBy = "categoriaPadre", cascade = CascadeType.ALL)
-    private List<Categoria> subcategorias;
+    private List<Categoria> subcategorias = new ArrayList<>();
 
     @OneToMany(mappedBy = "categoria")
-    private List<Producto> productos;
+    private List<Producto> productos = new ArrayList<>();
 
 }

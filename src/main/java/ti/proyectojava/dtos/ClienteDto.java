@@ -7,4 +7,5 @@ public class ClienteDto extends EntidadDto{
     private Long id;
     private String nombre;
     private String telefono;
+    private CreditoDto credito;
 }

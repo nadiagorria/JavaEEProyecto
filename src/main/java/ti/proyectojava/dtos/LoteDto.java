@@ -12,4 +12,5 @@ public class LoteDto {
     private Date fechaVencimiento;
     private float precioCompra;
     private Boolean activo;
+    private ProductoDto producto;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -37,17 +38,17 @@ public class Producto {
     private byte[] imagen;
 
     @OneToMany(mappedBy = "producto")
-    private List<Promocion> promociones;
+    private List<Promocion> promociones = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "COMBO_PRODUCTO",
             joinColumns = @JoinColumn(name = "PRODUCTO_ID"),
             inverseJoinColumns = @JoinColumn(name = "COMBO_ID"))
-    private List<Combo> combos;
+    private List<Combo> combos = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto")
-    private List<Descuento> descuentos;
+    private List<Descuento> descuentos = new ArrayList<>();
     
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CATEGORIA_NOMBRE")
@@ -59,10 +60,10 @@ public class Producto {
 
 
     @OneToMany(mappedBy = "producto")
-    private List<Lote> lotes;
+    private List<Lote> lotes = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto")
-    private List<Cantidad> cantidades;
+    private List<Cantidad> cantidades = new ArrayList<>();
 
     @Column(name = "PRODUCTO_ACTIVO")
     private Boolean activo;

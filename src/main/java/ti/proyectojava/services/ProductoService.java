@@ -59,19 +59,10 @@ public class ProductoService {
         productoActual.setPrecioVenta(productoDto.getPrecioVenta());
         productoActual.setCodigoDeBarra(productoDto.getCodigoDeBarra());
         productoActual.setStockMin(productoDto.getStockMin());
-        productoActual.setStockTotal(productoDto.getStockTotal());
-        productoActual.setActivo(productoDto.getActivo());
-        productoActual.setCombos(mapsDtosEntityService.mapToEntityProducto(productoDto).getCombos());
         productoActual.setNombre(productoDto.getNombre());
-        productoActual.setProveedor(mapsDtosEntityService.mapToEntityProducto(productoDto).getProveedor());
-        productoActual.setLotes(mapsDtosEntityService.mapToEntityProducto(productoDto).getLotes());
-        productoActual.setPromociones(mapsDtosEntityService.mapToEntityProducto(productoDto).getPromociones());
+        productoActual.setProveedor(mapsDtosEntityService.mapToEntityProveedor(productoDto.getProveedor()));
         productoActual.setImagen(productoDto.getImagen());
-        productoActual.setDescuentos(mapsDtosEntityService.mapToEntityProducto(productoDto).getDescuentos());
-        productoActual.setCategoria(mapsDtosEntityService.mapToEntityProducto(productoDto).getCategoria());
-        productoActual.setProveedor(mapsDtosEntityService.mapToEntityProducto(productoDto).getProveedor());
-        productoActual.setCantidades(mapsDtosEntityService.mapToEntityProducto(productoDto).getCantidades());
-
+        productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
         productoRepository.save(productoActual);
         return productoActual;
 

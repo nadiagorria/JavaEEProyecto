@@ -1,0 +1,35 @@
+
+<div class="center-wrapper">
+  <div class="registro-container">
+    <h2 class="titulo">Registrar</h2>
+
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+      <p-iftalabel class="form-field">
+        <input pInputText id="username" formControlName="username" />
+        <label class="texto" for="username">Nombre de Usuario</label>
+      </p-iftalabel>
+
+      <p-iftalabel class="form-field">
+        <input pInputText id="email" formControlName="email" />
+        <label class="texto" for="email">Correo Electrónico</label>
+      </p-iftalabel>
+
+      <p-iftalabel class="form-field">
+        <p-password formControlName="password" inputId="password" [toggleMask]="true"/>
+        <label class="texto" for="password">Contraseña</label>
+      </p-iftalabel>
+
+      <div class="form-field flex align-items-center">
+        <p-checkbox class= "checkbox2" formControlName="admin" inputId="admin" [binary]="true"></p-checkbox>
+        <label for="admin" class="ml-2 texto">Permisos de Administrador</label>
+      </div>
+
+      <button pButton type="submit" label="Registrar" class="texto" severity="contrast" [raised]="true" [disabled]="formGroup.invalid"></button>
+    </form>
+    <div class="sesion"> ¿Ya tienes una cuenta?
+      <a routerLink="/login">Iniciar Sesión aquí</a>
+    </div>
+
+  </div>
+</div>

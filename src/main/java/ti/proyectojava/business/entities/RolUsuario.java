@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -22,5 +23,5 @@ public class RolUsuario implements Serializable {
 
     @JsonIgnore
     @ManyToMany (mappedBy = "roles")
-    private List<Usuario> usuarios;
+    private List<Usuario> usuarios = new ArrayList<>();
 }

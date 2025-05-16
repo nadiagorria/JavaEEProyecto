@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -18,5 +19,5 @@ public class Proveedor extends Entidad {
     private String correo;
 
     @OneToMany(mappedBy = "proveedor")
-    private List<Producto> productos;
+    private List<Producto> productos = new ArrayList<>();
 }
