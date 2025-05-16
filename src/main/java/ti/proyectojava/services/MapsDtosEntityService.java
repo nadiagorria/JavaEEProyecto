@@ -667,6 +667,8 @@ public class MapsDtosEntityService {
         processed.add(combo);
 
         ComboDto dto = new ComboDto();
+        dto.setInicio(combo.getInicio());
+        dto.setFin(combo.getFin());
         dto.setId(combo.getId());
         dto.setDescripcion(combo.getDescripcion());
         dto.setDescuento(combo.getDescuento());
@@ -697,7 +699,8 @@ public class MapsDtosEntityService {
 
 
         Combo combo = new Combo();
-        combo.setId(comboDto.getId());
+        combo.setInicio(comboDto.getInicio());
+        combo.setFin(comboDto.getFin());
         combo.setDescuento(comboDto.getDescuento());
         combo.setActivo(comboDto.getActivo());
         combo.setDescripcion(comboDto.getDescripcion());
@@ -730,6 +733,8 @@ public class MapsDtosEntityService {
         processed.add(descuento);
 
         DescuentoDto dto = new DescuentoDto();
+        dto.setInicio(descuento.getInicio());
+        dto.setFin(descuento.getFin());
         dto.setId(descuento.getId());
         dto.setDescuento(descuento.getDescuento());
         if (descuento.getProducto() != null) {
@@ -758,7 +763,8 @@ public class MapsDtosEntityService {
         }
 
         Descuento descuento = new Descuento();
-        descuento.setId(descuentoDto.getId());
+        descuento.setInicio(descuentoDto.getInicio());
+        descuento.setFin(descuentoDto.getFin());
         descuento.setDescuento(descuentoDto.getDescuento());
         descuento.setActivo(descuentoDto.getActivo());
 
@@ -781,6 +787,8 @@ public class MapsDtosEntityService {
 
         PromocionDto dto = new PromocionDto();
         dto.setId(promocion.getId());
+        dto.setInicio(promocion.getInicio());
+        dto.setFin(promocion.getFin());
         dto.setDescripcion(promocion.getDescripcion());
         dto.setDescuento(promocion.getDescuento());
         if (promocion.getProducto() != null) {
@@ -810,7 +818,8 @@ public class MapsDtosEntityService {
 
 
         Promocion promocion = new Promocion();
-        promocion.setId(promocionDto.getId());
+        promocion.setInicio(promocionDto.getInicio());
+        promocion.setFin(promocionDto.getFin());
         promocion.setDescuento(promocionDto.getDescuento());
         promocion.setActivo(promocionDto.getActivo());
         promocion.setDescripcion(promocionDto.getDescripcion());
