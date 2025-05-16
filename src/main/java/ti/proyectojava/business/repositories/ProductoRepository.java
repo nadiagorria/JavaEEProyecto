@@ -6,8 +6,10 @@ import ti.proyectojava.business.entities.Categoria;
 import ti.proyectojava.business.entities.Producto;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductoRepository extends JpaRepository <Producto, Long> {
     List<Producto> findByActivoTrue();
+    Optional<Producto> findById(Long id);
 }

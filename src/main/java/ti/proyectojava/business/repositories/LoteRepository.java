@@ -6,9 +6,11 @@ import ti.proyectojava.business.entities.Categoria;
 import ti.proyectojava.business.entities.Lote;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LoteRepository extends JpaRepository<Lote, Long> {
     List<Lote> findByActivoTrue();
+    Optional<Lote> findById(Long id);
 
 }

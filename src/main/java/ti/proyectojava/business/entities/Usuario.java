@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -28,7 +29,7 @@ public class Usuario {
     @JoinTable(name = "USUARIOS_ROLES",
             joinColumns = @JoinColumn (name = "USUARIO"),
             inverseJoinColumns = @JoinColumn (name = "ROL_ID"))
-    private List<RolUsuario> roles;
+    private List<RolUsuario> roles = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -36,10 +37,10 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "USUARIO_NOMBRE"),
             inverseJoinColumns = @JoinColumn(name = "NOTIFICACIONUSUARIO_ID")
     )
-    private List<NotificacionUsuario> notificaciones;
+    private List<NotificacionUsuario> notificaciones = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Venta> ventas;
+    private List<Venta> ventas = new ArrayList<>();
 
 }
 

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -37,7 +38,7 @@ public class Venta {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
-    private List<Cantidad> cantidades;
+    private List<Cantidad> cantidades = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "VENTA_FORMA_PAGO")

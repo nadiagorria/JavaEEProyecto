@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -13,16 +14,16 @@ public class NotificacionUsuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "NOTIFICACIONUSUARIO_ID")
-    private long id;
+    private Long id;
 
     @Column(name = "NOTIFICACIONUSUARIO_LEIDO")
     private Boolean leido;
 
     @ManyToMany(mappedBy = "notificacionUsuarios")
-    private List<Notificacion> notificaciones;
+    private List<Notificacion> notificaciones = new ArrayList<>();
 
     @ManyToMany(mappedBy = "notificaciones")
-    private List<Usuario> usuarios;
+    private List<Usuario> usuarios = new ArrayList<>();
 
     private Boolean activo;
 

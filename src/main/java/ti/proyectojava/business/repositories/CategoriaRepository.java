@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import ti.proyectojava.business.entities.Categoria;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, String> {
     List <Categoria> findByActivoTrue();
+    Optional <Categoria> findById(Long id);
 }
