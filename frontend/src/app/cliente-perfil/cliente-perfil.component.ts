@@ -5,13 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
+import { Credito } from '../../models/credito.model';
+import { Cliente } from '../../models/cliente.model';
 
-interface ComprasCliente {
-  id: number;
-  cliente: string;
-  fechaVenta: string;
-  total: number;
-}
 
 @Component({
   selector: 'app-cliente-perfil',
@@ -20,15 +16,22 @@ interface ComprasCliente {
   styleUrl: './cliente-perfil.component.scss'
 })
 export class ClientePerfilComponent {
-  nombre:string = "Hola";
-  telefono:string = "09983982";
+
+  cliente: Cliente[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private clienteService: ClienteService
+  ) {}
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.clienteService.getClientePorId(id).subscribe(data => {
+    this.cliente = data;
+    });
+  }
 
   pago:number = 200;
-
-  compras: ComprasCliente[] = [
-            { id: 1, cliente: "Juan", fechaVenta: "12/3/5", total: 2 },
-            { id: 1, cliente: "Ana", fechaVenta: "13/8/98", total: 0 }
-  ];
 
   currentPage: number = 1;
   totalPages: number = 5;

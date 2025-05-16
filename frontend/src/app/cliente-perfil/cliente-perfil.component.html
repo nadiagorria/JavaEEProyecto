@@ -1,10 +1,10 @@
 <app-header [nombreUsuario]="'flp123'"></app-header>
 <main>
-  <article class="flex">
+  <article class="flex" *ngIf="cliente">
     <div class="w-full Tarjetas">
       <div class="tarjeta-1">
-        <h1 class="titulo">{{ nombre }}</h1>
-        <p>Telefono: {{ telefono }}</p>
+        <h1 class="titulo">{{ cliente.nombre }}</h1>
+        <p>Telefono: {{ cliente.telefono }}</p>
       </div>
 
       <div class="miniCartel">
