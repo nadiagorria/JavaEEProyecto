@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Cliente } from './models/cliente.interface';  // Tu interface de cliente
+import { Cliente } from '../models/cliente.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClienteService {
 
-  private baseUrl = 'http://localhost:8080/api/v1';
+  private baseUrl = 'http://localhost:8080/kioscobyf/api/v1/entidad';
 
   constructor(private http: HttpClient) {}
 

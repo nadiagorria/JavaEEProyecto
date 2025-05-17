@@ -28,9 +28,9 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
+               // .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-
+                        .requestMatchers(antMatcher("/**")).permitAll()
                         .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                         .requestMatchers(antMatcher("/webjars/**")).permitAll()
@@ -39,9 +39,6 @@ public class WebSecurityConfig {
                         .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
-
-                        //borrar luego
-                        .requestMatchers(antMatcher("/api/v1/**")).permitAll()
 
                         .anyRequest()
                         .authenticated());

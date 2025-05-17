@@ -7,6 +7,8 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 import { Credito } from '../../models/credito.model';
 import { Cliente } from '../../models/cliente.model';
+import { ClienteService } from '../../services/cliente.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -17,7 +19,10 @@ import { Cliente } from '../../models/cliente.model';
 })
 export class ClientePerfilComponent {
 
-  cliente: Cliente[] = [];
+  cliente!: Cliente;
+
+  compras: any[] = [];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -26,8 +31,9 @@ export class ClientePerfilComponent {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.clienteService.getClientePorId(id).subscribe(data => {
+    this.clienteService.getCliente(1).subscribe(data => {
     this.cliente = data;
+    console.log(this.cliente);
     });
   }
 
