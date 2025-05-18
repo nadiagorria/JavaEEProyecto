@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { VentaDto, CantidadDto } from '@shared/dtos';
 
 @Component({
   selector: 'app-verventa',

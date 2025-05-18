@@ -6,15 +6,16 @@ import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
+import { ProductoDto, VentaDto, UsuarioDto, CantidadDto } from '@shared/dtos';
 
 
 
-interface Producto {
+/*interface Producto {
   id: number;
   nombre: string;
   codigoBarras: string;
@@ -38,7 +39,7 @@ interface VentaRequest {
 interface FormaPago {
   label: string;
   value: string;
-}
+}*/
 
 
 @Component({
@@ -61,25 +62,112 @@ interface FormaPago {
 export class NuevaventaComponent {
 
 
-  productoSeleccionado: any;
-  listaProductos: Producto[] = [];
-  productosFiltrados: Producto[] = [];
-  displayDialog: boolean = false;
-  clienteSeleccionado: Cliente | null = null;
-  formaPagoSeleccionada: string = '';
-  totalRecords: number = 0;
+  productoSeleccionado: ProductoDto | null = null;
+    cantidades: CantidadDto[] = [];
+    productosFiltrados: ProductoDto[] = [];
+    displayDialog: boolean = false;
+    clienteSeleccionado: UsuarioDto | null = null;
+    formaPagoSeleccionada: string = '';
+    totalRecords: number = 0;
+
+
   // Mock de datos
 
-  productos: Producto[] = [
-    { id: 1, nombre: 'Laptop', codigoBarras: '123456', precio: 1200, cantidad: 1 },
-    { id: 2, nombre: 'Mouse', codigoBarras: '789012', precio: 20, cantidad: 1 },
-    { id: 3, nombre: 'Teclado', codigoBarras: '345678', precio: 50, cantidad: 1 },
-    { id: 4, nombre: 'Coca cola', codigoBarras: '345687', precio: 60, cantidad: 1 },
-    { id: 5, nombre: 'Galletitas', codigoBarras: '876543', precio: 20, cantidad: 1 },
-    { id: 6, nombre: 'Colet', codigoBarras: '2456789', precio: 40, cantidad: 1 }
+ productos: ProductoDto[] = [
+     {
+       id: 1,
+       nombre: 'Laptop',
+       codigoBarras: '123456',
+       precio: 1200,
+       categoria: { id: 1, nombre: 'Electrónicos' },
+       proveedor: { id: 1, nombre: 'Tech SA' },
+       stock: 10
+     },
+     {
+       id: 2,
+       nombre: 'Mouse',
+       codigoBarras: '789012',
+       precio: 20,
+       categoria: { id: 1, nombre: 'Electrónicos' },
+       proveedor: { id: 1, nombre: 'Tech SA' },
+       stock: 15
+     },
+     {
+       id: 3,
+       nombre: 'Teclado',
+       codigoBarras: '345678',
+       precio: 50,
+       categoria: { id: 1, nombre: 'Electrónicos' },
+       proveedor: { id: 1, nombre: 'Tech SA' },
+       stock: 8
+     }
+   ];
 
-  ];
+   clientes: UsuarioDto[] = [
+     {
+       id: 1,
+       nombre: 'Juan Pérez',
+       email: 'juan@mail.com',
+       rol: { id: 2, nombre: 'CLIENTE' }
+     },
+     {
+       id: 2,
+       nombre: 'María López',
+       email: 'maria@mail.com',
+       rol: { id: 2, nombre: 'CLIENTE' }
+     },
+     {
+       id: 3,
+       nombre: 'Mostrador',
+       email: 'mostrador@mail.com',
+       rol: { id: 2, nombre: 'CLIENTE' }
+     }
+   ];
 
+   formasPago = [
+     { label: 'Efectivo', value: 'EFECTIVO' },
+     { label: 'Crédito', value: 'CREDITO' },
+     { label: 'Débito', value: 'DEBITO' },
+     { label: 'Fiado', value: 'FIADO' }
+   ];
+
+
+
+getPrecioVenta(productoId: number): number | undefined {
+  return this.productos.find(p => p.id === productoId)?.precioVenta;
+}
+
+getCodigoDeBarra(productoId: number): string | undefined {
+  return this.productos.find(p => p.id === productoId)?.codigoDeBarra;
+}
+   filtrarProductos(event: any) {
+     const query = event.query.toLowerCase();
+     this.productosFiltrados = this.productos.filter(producto =>
+       producto.codigoBarras.toLowerCase().includes(query) ||
+       producto.nombre.toLowerCase().includes(query)
+     );
+   }
+
+   agregarALista(event: { value: ProductoDto }) {
+     const producto = event.value;
+     if (!this.cantidades.some(c => c.producto.id === producto.id)) {
+       const nuevaCantidad: CantidadDto = {
+         id: 0,
+         cantidad: 1,
+         producto: producto,
+         venta: null
+       };
+       this.cantidades.push(nuevaCantidad);
+       this.totalRecords++;
+     }
+     this.productoSeleccionado = null;
+   }
+
+   calcularTotal(): number {
+     return this.cantidades.reduce((total, cantidad) =>
+       total + (cantidad.cantidad * cantidad.producto.precio), 0);
+   }
+ }
 
 
   // Filtra productos al escribir en la barra
@@ -88,7 +176,7 @@ filtrarProductos(event: any) {
 
   // coincidencias exactas en códigos
   const matchesExactos = this.productos.filter(
-    producto => producto.codigoBarras.toLowerCase() === query
+    producto => producto.codigoDeBarra.toLowerCase() === query
   );
 
   if (matchesExactos.length > 0) {
@@ -99,41 +187,37 @@ filtrarProductos(event: any) {
   //busca por inicio de código o nombre
   this.productosFiltrados = this.productos.filter(
     producto =>
-      producto.codigoBarras.toLowerCase().startsWith(query) ||
+      producto.codigoDeBarra.toLowerCase().startsWith(query) ||
       producto.nombre.toLowerCase().includes(query)
   );
 }
 
-  agregarALista(event: AutoCompleteSelectEvent) {
-    const productoSeleccionado: Producto = event.value;
-    if (!this.listaProductos.some(p => p.id === productoSeleccionado.id)) {
-      this.listaProductos.push({
-        ...productoSeleccionado,
-        cantidad: 1
-      });
-    this.totalRecords = this.totalRecords + 1;
-    }
+  agregarALista(event: { value: ProductoDto }) {
+    const producto = event.value;
+    if (!this.cantidades.some(c => c.producto.id === producto.id)) {
+      const nuevaCantidad: CantidadDto = {
+        id: 0,
+        cantidad: 1,
+        producto: {
+          id: producto.id,
+          nombre: producto.nombre
+         },
+        venta: null
+      };
+      this.cantidades.push(nuevaCantidad);
+      this.totalRecords++;
+      }
     this.productoSeleccionado = null;
   }
 
   // Elimina un producto de la lista
-  eliminarProducto(producto: Producto) {
-    this.listaProductos = this.listaProductos.filter(p => p.id !== producto.id);
+  eliminarProducto(cantidad: CantidadDto) {
+    this.cantidades = this.cantidades.filter(c => c.producto.id !== cantidad.producto.id);
+    this.totalRecords--;
   }
 
 
-  clientes: Cliente[] = [
-    { id: 1, nombre: 'Cliente 1', email: 'cliente1@example.com' },
-    { id: 2, nombre: 'Cliente 2', email: 'cliente2@example.com' },
-    { id: 3, nombre: 'Mostrador' }
-  ];
 
-  formasPago: FormaPago[] = [
-    { label: 'Efectivo', value: 'EFECTIVO' },
-    { label: 'Crédito', value: 'CREDITO' },
-    { label: 'Débito', value: 'DEBITO' },
-    { label: 'Fiado', value: 'FIADO' }
-  ];
 
 abrirDialogoFinalizar() {
   /*
@@ -188,19 +272,31 @@ constructor(
       // o armarlo bien antes de mandarlo obteniendo las cosas del back
       // (necesitaria armar basicamente todos los dtos que reciben todos controller)
 
-      const venta: VentaRequest = {
-            productos: this.listaProductos,
-            cliente: this.clienteSeleccionado || undefined,
-            formaPago: this.formaPagoSeleccionada as 'EFECTIVO' | 'CREDITO' | 'DEBITO' | 'FIADO',
-            fecha: new Date().toISOString()
+      const venta: Partial<VentaDto> = {
+            fechaVenta: new Date(),
+            total: this.calcularTotal(),
+            formaPago: this.formaPagoSeleccionada,
+            usuario: this.clienteSeleccionado ? {
+              mail: this.clienteSeleccionado.email,
+              nombre: this.clienteSeleccionado.nombre
+            } : null,
+            cantidades: this.cantidades.map(c => ({
+              id: c.id,
+              cantidad: c.cantidad
+            })),
+            activo: true,
+            finalizada: true
           };
+
+        console.log('Venta a guardar:', venta);
+        this.displayDialog = false;
 
 
   calcularTotal(): number {
-    return this.listaProductos.reduce((total, producto) => {
-      return total + (producto.precio * producto.cantidad);
-    }, 0);
-  }
+      return this.cantidades.reduce((total, cantidad) =>
+        total + (cantidad.cantidad * (this.productos.find(p => p.id === cantidad.producto.id)?.precioVenta || 0)),
+      0);
+    }
 
 
 }
