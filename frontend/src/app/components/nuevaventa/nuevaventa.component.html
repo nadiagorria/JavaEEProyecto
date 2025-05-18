@@ -25,7 +25,7 @@
       <ng-template pTemplate="body" let-cantidad>
         <tr>
           <td>{{ cantidad.producto.nombre }}</td>
-          <td>{{ getCodigoDeBarra(cantidad.producto.id) }}</td>
+          <td>{{ getCodigoDeBarra(cantidad.producto.codigoDeBarra) }}</td>
           <td>{{ getPrecioVenta(cantidad.producto.id) | currency }}</td>          <td>
             <p-inputNumber
               [(ngModel)]="cantidad.cantidad"

@@ -211,10 +211,12 @@ export class NuevaventaComponent {
       const nuevaCantidad: CantidadDto = {
         id: 0,
         cantidad: 1,
+        precioActual: producto.precioVenta,
         producto: {
           id: producto.id,
           nombre: producto.nombre,
-          precioVenta: producto.precioVenta
+          precioVenta: producto.precioVenta,
+          codigoDeBarra: producto.codigoDeBarra
         },
         venta: {
           id: 0,
@@ -309,8 +311,12 @@ confirmarVenta() {
     cantidades: this.cantidades.map(c => ({
       id: 0,
       cantidad: c.cantidad,
+      precioActual: c.precioActual,
       producto: {
-        id: c.producto.id
+        id: c.producto.id,
+        nombre: c.producto.nombre,
+        precioVenta: c.producto.precioVenta,
+        codigoDeBarra: c.producto.codigoDeBarra
       }
     })),
     activo: true,

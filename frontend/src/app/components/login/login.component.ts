@@ -6,6 +6,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { UsuarioDto } from '../../../models/usuario.dto';
+import { MessageService } from 'primeng/api';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -16,29 +19,37 @@ import { RouterLink } from '@angular/router';
             PasswordModule,
             ButtonModule,
             ReactiveFormsModule,
-            RouterLink
+            RouterLink,
+            CommonModule
             ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  //providers: [MessageService]
 })
 
 
 export class LoginComponent {
   formGroup: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder //,
+    //private http: HttpClient,
+    //private router: Router,
+    //private messageService: MessageService
+  ) {
     this.formGroup = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      contrasenia: ['', Validators.required]
     });
   }
 
   onSubmit() {
     if (this.formGroup.valid) {
-      const { username, password } = this.formGroup.value;
-      console.log('Username:', username);
-      console.log('Password:', password);
-      // aca la logica
+      const loginData = {
+        username: this.formGroup.get('username')?.value,
+        contrasenia: this.formGroup.get('contrasenia')?.value
+      };
+
+      //aca la llamada a la api
     }
   }
 }

@@ -8,7 +8,7 @@ export interface VentaDto {
     fechaVenta: Date;
     total: number;
     credito: Pick<CreditoDto, 'id' | 'precioTotal'>;
-    cantidades: Pick<CantidadDto, 'id' | 'cantidad'>[];
+    cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[];
     activo: boolean;
     finalizada: boolean;
     formaPago: string;

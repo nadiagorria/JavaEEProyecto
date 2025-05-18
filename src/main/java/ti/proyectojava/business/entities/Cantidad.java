@@ -16,6 +16,9 @@ public class Cantidad{
     @Column(name = "CANTIDAD_CANTIDAD")
     private int cantidad;
 
+    @Column(name = "CANTIDAD_PRECIO")
+    private Float precioActual;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PRODUCTO_ID")
     private Producto producto;
