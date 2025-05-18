@@ -1,0 +1,150 @@
+<div class="grid">
+
+  <!-- Lista de productos -->
+  <div class="col-12 lg:col-8 lg:order-0 order-1 my-5 p-2 md:p-4 lg:p-5">
+    <p-table
+      class="texto"
+      [value]="cantidades"
+      [paginator]="true"
+      [rows]="5"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      paginatorPosition="bottom"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
+      showGridlines
+      [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="texto">Nombre</th>
+          <th class="texto">Código</th>
+          <th class="texto">Precio</th>
+          <th class="w-10rem sm:w-8rem texto">Cantidad</th>
+          <th class="w-6rem sm:w-4rem texto">Quitar</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-cantidad>
+        <tr>
+          <td>{{ cantidad.producto.nombre }}</td>
+          <td>{{ getCodigoDeBarra(cantidad.producto.id) }}</td>
+          <td>{{ getPrecioVenta(cantidad.producto.id) | currency }}</td>          <td>
+            <p-inputNumber
+              [(ngModel)]="cantidad.cantidad"
+              [showButtons]="true"
+              [min]="1"
+              mode="decimal">
+            </p-inputNumber>
+          </td>
+          <td>
+            <button pButton icon="pi pi-trash"
+                    severity="contrast"
+                    (click)="eliminarProducto(cantidad)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
+        <tr>
+          <td colspan="2" class="text-right font-bold">Total:</td>
+          <td class="texto font-bold">{{ calcularTotal() | currency }}</td>
+          <td class="texto font-bold" colspan="2">{{ calcularCantidadTotal() }}</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">
+    <p-autoComplete
+      class="texto"
+      [(ngModel)]="productoSeleccionado"
+      [suggestions]="productosFiltrados"
+      (completeMethod)="filtrarProductos($event)"
+      field="nombre"
+      placeholder="Buscar producto..."
+      [dropdown]="true"
+      (onSelect)="agregarALista($event)">
+      <ng-template let-producto pTemplate="item">
+        <div class="texto">
+          {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+        </div>
+      </ng-template>
+    </p-autoComplete>
+
+    <div class="fixed bottom-0 right-0 p-3 lg:pr-8 lg:pb-4 z-5">
+
+      <div class="mb-3 p-3 border-round surface-card shadow-2">
+        <span class="text-xl font-bold block text-right texto">
+              Total: {{ calcularTotal() | currency }}
+        </span>
+      </div>
+
+      <button pButton
+              type="button"
+              [raised]="true"
+              severity = "contrast"
+              label="Finalizar Venta"
+              icon="pi pi-check"
+              class="p-button-success texto"
+              [disabled]="cantidades.length === 0"
+              (click)="finalizarVenta()"></button>
+    </div>
+
+  </div>
+
+  <p-dialog
+    header="Finalizar Venta"
+    class="texto"
+    [(visible)]="displayDialog"
+    [style]="{width: '50vw', height: '35vw'}"
+    [modal]="true"
+    [closable]="false"
+    [draggable]="false"
+    [resizable]="false">
+
+    <div class="grid p-fluid">
+      <div class="col-12">
+        <h5 class="texto">Cliente</h5>
+        <p-dropdown
+          class="texto"
+          [(ngModel)]="clienteSeleccionado"
+          [options]="clientes"
+          optionLabel="nombre"
+          placeholder="Seleccione un cliente"
+          [showClear]="true">
+        </p-dropdown>
+      </div>
+
+      <div class="col-12 mt-3">
+        <h5 class="texto">Forma de Pago</h5>
+        <p-dropdown
+          [(ngModel)]="formaPagoSeleccionada"
+          [options]="formasPago"
+          class="texto"
+          optionLabel="label"
+          placeholder="Seleccione forma de pago"
+          [required]="true">
+        </p-dropdown>
+      </div>
+
+      <div class="col-12 mt-5 flex justify-content-end gap-2 fixed bottom-0 right-0">
+        <button pButton
+                type="button"
+                label="Cancelar"
+                icon="pi pi-times"
+                variant="outlined"
+                severity="danger"
+                class="p-button-text texto"
+                (click)="displayDialog = false"></button>
+        <button pButton
+                type="button"
+                severity="contrast"
+                label="Confirmar"
+                icon="pi pi-check"
+                class="p-button-success texto"
+                (click)="confirmarVenta()"></button>
+      </div>
+    </div>
+  </p-dialog>
+
+</div>
