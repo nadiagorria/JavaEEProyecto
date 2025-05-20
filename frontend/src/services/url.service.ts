@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
 })
 export class UrlService {
 
-  private readonly baseUrl: string = 'http://localhost:8080/kioscobyf/api/v1/';
+  readonly baseUrl: string = 'http://localhost:8080/kioscobyf/api/v1/';
 
   constructor(private http: HttpClient) {}
 
-  public getUrl<T>(endpoint: string): Observable<T> {
-    return this.http.get<T>(this.baseUrl + endpoint);
+  public getUrl<T>(): Observable<T> {
+    return this.http.get<T>(this.baseUrl);
   }
 }
