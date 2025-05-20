@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UrlService {
 
-  readonly baseUrl: string = 'http://localhost:8080/kioscobyf/api/v1/';
+  readonly baseUrl: string = 'http://localhost:8080/kioscobyf/api/v1';
 
   constructor(private http: HttpClient) {}
 

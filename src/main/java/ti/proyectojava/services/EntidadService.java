@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Entidad;
-import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.ClienteDto;
@@ -85,11 +84,11 @@ public class EntidadService {
         return response;
     }
 
-    public Cliente seleccionarCliente(Long id) {
+    public ClienteDto seleccionarCliente(Long id) {
         // Compruebo si es Cliente
         Optional<Cliente> cliente = clienteRepository.findById(id);
         if (cliente.isPresent()) {
-            return cliente.get();
+            return mapsDtosEntityService.mapToDtoCliente(cliente.get());
         }
         // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);

@@ -74,7 +74,7 @@ export class NuevaventaComponent {
 
   // Mock de datos
 
-
+ 
   productos: ProductoDto[] = [
     {
       id: 1,
@@ -139,7 +139,8 @@ export class NuevaventaComponent {
       telefono: '555-1234',
       credito: {
         id: 1,
-        precioTotal: 0
+        precioTotal: 0,
+        pagoHastaAhora: 0
       },
       activo: true
     },
@@ -149,7 +150,8 @@ export class NuevaventaComponent {
       telefono: '555-5678',
       credito: {
         id: 2,
-        precioTotal: 0
+        precioTotal: 0,
+        pagoHastaAhora: 0
       },
       activo: true
     },
@@ -159,7 +161,8 @@ export class NuevaventaComponent {
       telefono: '555-9012',
       credito: {
         id: 3,
-        precioTotal: 0
+        precioTotal: 0,
+        pagoHastaAhora: 0
       },
       activo: true
     }

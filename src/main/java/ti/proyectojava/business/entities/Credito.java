@@ -3,6 +3,9 @@ package ti.proyectojava.business.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "CREDITO")
@@ -23,4 +26,7 @@ public class Credito {
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "credito")
+    private List<Venta> ventas = new ArrayList<>();
 }

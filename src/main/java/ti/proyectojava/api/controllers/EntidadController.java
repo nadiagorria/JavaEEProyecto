@@ -63,7 +63,7 @@ public class EntidadController {
     @PutMapping("/{id}/eliminarCliente")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina un cliente")
-    public ResponseEntity<String> eliminarCliente(@RequestBody Long id) {
+    public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
         String response = entidadService.eliminarCliente(id);
         return new ResponseEntity<> (response, HttpStatus.OK);
     }
@@ -99,7 +99,7 @@ public class EntidadController {
     @PutMapping("/{id}/eliminarProveedor")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina un proveedor")
-    public ResponseEntity<String> eliminarProveedor(@RequestBody Long id) {
+    public ResponseEntity<String> eliminarProveedor(@PathVariable Long id) {
         String response = entidadService.eliminarProveedor(id);
         return new ResponseEntity<> (response, HttpStatus.OK);
     }
