@@ -5,8 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
-import { Credito } from '../../models/credito.model';
-import { Cliente } from '../../models/cliente.model';
+import { ClienteDto } from '../../models/cliente.dto';
 import { ClienteService } from '../../services/cliente.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -19,7 +18,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ClientePerfilComponent {
 
-  cliente!: Cliente;
+  cliente!: ClienteDto;
 
   compras: any[] = [];
 
