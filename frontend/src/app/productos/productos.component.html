@@ -1,0 +1,128 @@
+<div class="producto-container">
+  <div class="producto-header">
+    <div class="busqueda-filtro">
+      <input type="text" placeholder="Buscar por nombre, código interno o de barras" />
+      <select>
+        <option value="">Filtrar por Categoría</option>
+        <!-- Más opciones aquí -->
+      </select>
+    </div>
+    <div class="acciones">
+      <button class="btn nuevo" (click)="mostrarModalAgregarProducto = true">+ Nuevo Producto</button>
+      <button class="btn categoria" (click)="mostrarModalAgregarCategoria = true">+ Nueva categoría</button>
+      <button class="btn eliminar" (click)="mostrarModalEliminarCategoria = true">- Eliminar categoría</button>
+    </div>
+  </div>
+
+  <p-dialog
+  header="Agregar Producto"
+  [(visible)]="mostrarModalAgregarProducto"
+  [modal]="true"
+  [style]="{width: '40vw'}"
+  class="texto">
+
+  <div class="form-container">
+    <form>
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="Nombre del producto"
+          [(ngModel)]="nuevoProducto.nombre"
+          name="nombreProducto"
+          required />
+      </div>
+
+      <div class="form-group">
+        <input
+          type="number"
+          placeholder="Precio de venta"
+          [(ngModel)]="nuevoProducto.precio"
+          name="precio"
+          min="0"
+          required />
+      </div>
+
+      <div class="form-group">
+        <select [(ngModel)]="nuevoProducto.categoriaId" name="categoriaProducto">
+          <option value="" disabled selected>Selecciona la categoría</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">
+            {{ categoria.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <button type="button" (click)="crearProducto()">Crear Producto</button>
+    </form>
+  </div>
+</p-dialog>
+
+
+  <p-dialog
+  header="Agregar Categoría"
+  [(visible)]="mostrarModalAgregarCategoria"
+  [modal]="true"
+  [style]="{width: '30vw'}"
+  class="texto">
+
+  <div class="form-container">
+    <form>
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="Nombre de la categoría"
+          [(ngModel)]="nombreCategoria"
+          name="nombreCategoria"
+          required />
+      </div>
+
+      <div class="form-group">
+        <select [(ngModel)]="categoriaPadre" name="categoriaPadre">
+          <option value="" disabled selected>Selecciona la categoría padre</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">
+            {{ categoria.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <button type="button" (click)="crearCategoria()">Crear</button>
+      <p class="note">Podrá utilizar la categoría al crear un nuevo producto.</p>
+    </form>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Eliminar Categoría"
+  [(visible)]="mostrarModalEliminarCategoria"
+  [modal]="true"
+  [style]="{width: '25vw'}"
+  class="texto">
+
+  <div class="form-container">
+    <form>
+      <div class="form-group">
+        <select [(ngModel)]="categoriaSeleccionada" name="categoriaSeleccionada">
+          <option value="" disabled selected>Selecciona la categoría</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">
+            {{ categoria.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <button type="button" (click)="eliminarCategoria()">Eliminar</button>
+      <p class="note">La categoría se eliminará permanentemente.</p>
+    </form>
+  </div>
+</p-dialog>
+
+
+
+  <div class="producto-grid">
+    <div class="producto-card" *ngFor="let producto of productos">
+      <div class="imagen-placeholder"></div>
+      <div class="info">
+        <p class="nombre">{{ producto.nombre }}</p>
+        <p class="precio">${{ producto.precio }}</p>
+      </div>
+    </div>
+  </div>
+</div>
