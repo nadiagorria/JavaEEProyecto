@@ -1,0 +1,26 @@
+<div class="center-wrapper">
+  <div class="login-container">
+    <h2 class="titulo">Iniciar Sesión</h2>
+
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+      <p-iftalabel class="form-field texto">
+        <input pInputText id="username" formControlName="username" />
+        <label class="texto" for="username">Nombre de Usuario</label>
+      </p-iftalabel>
+
+      <p-iftalabel class="form-field texto">
+        <p-password formControlName="contrasenia" inputId="contrasenia" [toggleMask]="true" [feedback]="false" />
+        <label class="texto" for="contrasenia">Contraseña</label>
+      </p-iftalabel>
+
+      <button pButton type="submit" label="Iniciar Sesión" class="texto" severity="contrast" [raised]="true"
+        [disabled]="formGroup.invalid">
+      </button>
+    </form>
+    <div class="registro"> ¿No tienes una cuenta?
+      <a routerLink="/registro">Crear cuenta aquí</a>
+    </div>
+
+  </div>
+</div>

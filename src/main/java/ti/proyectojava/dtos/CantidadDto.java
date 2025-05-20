@@ -13,4 +13,6 @@ public class CantidadDto {
     private ProductoDto producto;
 
     private VentaDto venta;
+
+    private Float precioActual;
 }
