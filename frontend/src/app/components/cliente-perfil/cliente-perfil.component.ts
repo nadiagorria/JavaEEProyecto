@@ -22,7 +22,6 @@ export class ClientePerfilComponent {
 
   compras: any[] = [];
 
-
   constructor(
     private route: ActivatedRoute,
     private clienteService: ClienteService
