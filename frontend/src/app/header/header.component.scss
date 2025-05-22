@@ -1,0 +1,61 @@
+::ng-deep .p-menubar {
+  border-radius: 0;
+  font-family: "Montserrat", sans-serif;
+  height: 65px;
+}
+
+.header {
+  border-radius: 0;
+}
+
+.boton {
+  margin-left: 0.5vw;
+}
+
+.texto {
+  padding-left: 45vw;
+  font-size: 1.125rem;
+}
+
+.colorTexto {
+  color: var(--text-color) !important;
+}
+
+.divModal {
+  height: 100%;
+}
+
+.notifcacionesPreview {
+  height: 100%;
+  margin-right: 2vw;
+}
+
+.divLista {
+  height: 100%;
+}
+
+.notifcacionesView {
+  height: 100%;
+  border-left: 1.5px solid rgba(68, 68, 68, 0.6);
+  background: rgba(68, 68, 68, 0.4);
+  border-radius: 5px;
+
+ }
+
+.textoView {
+    margin-left: 1vw;
+    margin-top: 0.5vw;
+}
+
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.3); /* negro con 30% de opacidad */
+  margin: 0.5rem 0;
+}
+
+
+//font-family: "Source Sans 3", sans-serif;
+
+
+

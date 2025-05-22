@@ -1,0 +1,88 @@
+html, body {
+  overflow-x: hidden;
+}
+
+main {
+  font-family: "Montserrat", sans-serif;
+}
+
+.articleGrande {
+  height: 290px;
+}
+
+.salon {
+  height: 100%;
+  background: #232323;
+}
+
+.cartelesMini {
+    padding: 0;
+    margin: 0;
+    margin-top: 40px;
+    margin-bottom:16px;
+    margin-left: 5vw;
+    gap: 10vw;
+}
+
+.cartelMini {
+  width: 19vw;
+  height: 55px;
+  padding: 0;
+  padding-left: 1vw;
+  padding-top: 13px;
+  background: #444444;
+  color: #FFFFFF;
+  border-color: #444444;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 21px 21px 21px;
+  margin-left: 13vw;
+}
+
+.logoCartel {
+  font-size: 1.6rem;
+  margin-right: 1vw;
+ }
+
+.textoCartel {
+  margin-left: 0.5vw;
+  font-size: 2rem;
+}
+
+.cartelesGrandes {
+  margin-left: 12.8vw;
+  gap: 2vw;
+}
+
+.cartelGrande {
+  width: 22.5vw;
+  height: 240px;
+  padding: 8px 8px 8px 8px;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF;
+  border-radius: 24px 24px 24px 24px;
+  color: black;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.iconos {
+  font-size: 2.2rem;
+  margin-top: 40px;
+  margin-bottom: 15px;
+}
+
+.tituloCartel {
+  margin-top: 3px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.textoCartel {
+  margin-top: 3px;
+  font-size: 1rem;
+  font-family: "Source Sans 3", sans-serif;
+}
+

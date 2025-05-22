@@ -1,0 +1,29 @@
+<header xmlns="http://www.w3.org/1999/html" class="w-full">
+    <nav class="w-full">
+      <p-menubar class="header w-full">
+        <ng-template pTemplate="start">
+          <span style="margin-right: 1rem;" class="texto colorTexto" >¡Hola, {{ nombreUsuario }}!</span>
+        </ng-template>
+
+        <ng-template pTemplate="end">
+          <p-button icon="pi pi-user" class="p-mr-2 colorTexto" severity="secondary"></p-button>
+          <p-button icon="pi pi-bell" class="p-mr-2 boton colorTexto" severity="secondary" (click)="showDialog()" ></p-button>
+          <p-dialog  header="Notificaciones" [(visible)]="visible" [modal]="true" [breakpoints]="{ '1199px': '65vw', '575px': '90vw' }" [style]="{ width: '65vw', height: '75vh'}" [draggable]="false" [resizable]="true">
+            <div class="flex divModal">
+              <div class="notifcacionesPreview w-6" >
+                <form [formGroup]="formGroup" class="card flex justify-center divLista">
+                  <p-listbox [options]="mensajes" formControlName="selectedMensaje" optionLabel="name" class="w-full md:w-56 colorTexto" />
+                </form>
+              </div>
+              <div class="notifcacionesView w-6" >
+                <div class="textoView" >{{ formGroup.get('selectedMensaje')?.value?.name || 'Selecciona un mensaje' }}</div>
+                <hr/>
+                <div class="textoView" >{{ formGroup.get('selectedMensaje')?.value?.content}}</div>
+              </div>
+            </div>
+          </p-dialog>
+        </ng-template>
+      </p-menubar>
+
+    </nav>
+</header>

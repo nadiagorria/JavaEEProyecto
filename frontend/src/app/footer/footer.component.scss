@@ -1,0 +1,50 @@
+footer{
+  height: 350px;
+  margin-top: 10px;
+  color: black;
+  background: white;
+  font-family: "Montserrat", sans-serif;
+}
+
+.margen {
+  margin-left: 13vw;
+  margin-top: 65px;
+  gap: 7vw;
+}
+
+.papa {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* o center si querés centrar el contenido */
+}
+
+.titulos {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.botones {
+
+}
+
+.textos {
+  font-family: "Source Sans 3", sans-serif;
+  margin-bottom: 15px;
+}
+
+a i {
+  color: #27272a;
+}
+
+a:hover i{
+  transition: color 0.3s ease;
+  color: #3f3f46;
+}
+
+.redesIconos {
+  display: flex;
+  gap: 1vw;
+}
+
+

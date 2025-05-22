@@ -1,0 +1,79 @@
+html, body {
+  overflow-x: hidden;
+}
+
+main {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  margin-left: 10vw;
+  margin-right: 10vw;
+
+  padding-top: 10px;
+  padding-bottom: 8px;
+  padding-left: 2vw;
+  padding-right: 2vw;
+
+
+}
+
+.Tarjetas{
+
+}
+
+.tarjeta-1 {
+  color: black;
+}
+
+.titulo {
+  font-size: 2rem;
+}
+
+.papaNumeros {
+  height: 87px;
+}
+
+
+.texito {
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+}
+
+
+.papaBoton{
+  margin-top: 40px;
+}
+
+.imagen {
+  height: 280px;
+  width: 25vw;
+  margin-right: 5vw;
+}
+
+.tablaMargen {
+  margin-top: 50px;
+  margin-bottom: 15px;
+}
+
+.tituloTabla {
+  color: black;
+}
+
+tr, td, th {
+  background: #D6D6D6;
+  color: black;
+}
+
+.paginador {
+  color: black;
+  height: 20px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  justify-content: end;
+  gap: 0.5vw;
+}
+
+.margenPaginador {
+    margin-right: 1vw;
+}
+
+
