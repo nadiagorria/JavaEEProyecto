@@ -9,5 +9,5 @@ export interface CreditoDto {
     maximo: number;
     pagoHastaAhora: number;
     cliente: Pick<ClienteDto, 'id' | 'nombre'>;
-    venta: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>;
+    venta: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[];
 }
