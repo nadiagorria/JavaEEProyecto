@@ -1,9 +1,9 @@
 // src/app/services/credito.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Credito } from '../models/credito.model';
+import { CreditoDto } from '../models/credito.dto';
 import { Observable } from 'rxjs';
-import { UrlService } from 'url.service';
+import { UrlService } from '../services/url.service';
 
 @Injectable(
   { providedIn: 'root' }
@@ -15,11 +15,11 @@ export class CreditoService {
     private urlService: UrlService
   ) {}
 
-  getCredito(id: number): Observable<Credito> {
-      return this.http.get<Credito>(`${this.urlService.baseUrl}/${id}`);
+  getCredito(id: number): Observable<CreditoDto> {
+      return this.http.get<CreditoDto>(`${this.urlService.baseUrl}/${id}`);
   }
 
-  crearCredito(credito: Credito): Observable<Credito> {
-    return this.http.post<Credito>(this.urlService.baseUrl, credito);
+  crearCredito(credito: CreditoDto): Observable<CreditoDto> {
+    return this.http.post<CreditoDto>(this.urlService.baseUrl, credito);
   }
 }
