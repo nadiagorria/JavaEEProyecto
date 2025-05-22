@@ -32,7 +32,7 @@ public class LoteController {
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina un lote")
-    public ResponseEntity<String> borrarLote(@RequestBody Long id){
+    public ResponseEntity<String> borrarLote(@PathVariable Long id){
         String lote = loteService.borrarLote(id);
 
         if (lote == null) {

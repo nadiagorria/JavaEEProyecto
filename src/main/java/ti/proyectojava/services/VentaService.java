@@ -71,8 +71,6 @@ public class VentaService {
 
         ventaRepository.save(venta);
 
-
-
     }
 
     public Venta eliminarVenta(Long ventaId) {
@@ -87,7 +85,7 @@ public class VentaService {
         Venta venta = ventaRepository.findById(ventaId)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
 
-        if (venta.getFinalizada() == true) {
+        if (venta.getFinalizada()) {
             throw new RuntimeException("No se puede modificar una venta finalizada. ID:" + ventaId);
         }
 

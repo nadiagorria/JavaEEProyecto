@@ -1,0 +1,65 @@
+.producto-info {
+  .imagen-producto {
+    img {
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+  .info-producto {
+    h2 {
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .detalles {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+
+        strong {
+          color: #555;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+
+    .precio-total {
+      .precio {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+    }
+
+    button {
+      margin-top: 1rem;
+    }
+  }
+}
+
+/* Ajustes para la tabla y paginador PrimeNG */
+.p-table {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+
+  th {
+    background-color: #f3f3f3;
+    text-align: left;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+  }
+
+  td {
+    padding: 0.6rem 1rem;
+  }
+
+  .p-paginator {
+    font-size: 0.85rem;
+  }
+}

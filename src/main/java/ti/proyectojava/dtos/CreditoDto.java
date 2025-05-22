@@ -2,6 +2,8 @@ package ti.proyectojava.dtos;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreditoDto{
 
@@ -16,4 +18,6 @@ public class CreditoDto{
     private float pagoHastaAhora;
 
     private ClienteDto cliente;
+
+    private List<VentaDto> ventas;
 }

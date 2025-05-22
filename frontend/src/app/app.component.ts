@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ProveedorPerfilComponent } from './proveedor-perfil/proveedor-perfil.component'
-
+import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
 
 @Component({
   selector: 'app-root',

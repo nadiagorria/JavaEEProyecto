@@ -1,6 +1,6 @@
 <app-header [nombreUsuario]="'flp123'"></app-header>
-<main>
-  <article class="flex" *ngIf="cliente">
+<main *ngIf="cliente">
+  <article class="flex" >
     <div class="w-full Tarjetas">
       <div class="tarjeta-1">
         <h1 class="titulo">{{ cliente.nombre }}</h1>
@@ -14,8 +14,8 @@
         </div>
 
         <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">$ 21.324</span>
-          <p class="texito">Pago hasta ahora: {{ pago }}</p>
+          <span class="w-full numero1MiniCartel">$ {{ cliente.credito.precioTotal }}</span>
+          <p class="texito">Pago hasta ahora: {{ cliente.credito.pagoHastaAhora }}</p>
 
           <div class="papaBoton w-full">
             <p-button class="boton" label="Pagar" severity="secondary"></p-button>
@@ -34,7 +34,7 @@
 
   <article class="w-full tablaMargen">
     <h1 class="tituloTabla">Compras</h1>
-    <p-table class="tabla" [value]="compras" [tableStyle]="{ 'min-width': '20rem' }">
+    <p-table class="tabla" [value]="cliente.credito.ventas" [tableStyle]="{ 'min-width': '20rem' }">
       <ng-template #header>
         <tr>
           <th>Id</th>
@@ -43,12 +43,12 @@
           <th>Total</th>
         </tr>
       </ng-template>
-      <ng-template #body let-compra>
+      <ng-template #body >
         <tr>
-          <td>{{ compra.id }}</td>
-          <td>{{ compra.cliente }}</td>
-          <td>{{ compra.fechaVenta }}</td>
-          <td>{{ compra.total }}</td>
+          <td>{{ venta.id }}</td>
+          <td>{{ cliente.id }}</td>
+          <td>'dd/MM/yyyy'</td>
+          <td>{{ venta.precioTotal }}</td>
         </tr>
       </ng-template>
     </p-table>

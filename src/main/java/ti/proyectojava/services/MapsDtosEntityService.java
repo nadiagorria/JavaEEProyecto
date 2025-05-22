@@ -169,8 +169,17 @@ public class MapsDtosEntityService {
         dto.setMaximo(credito.getMaximo());
         dto.setPagoHastaAhora(credito.getPagoHastaAhora());
 
+        if (credito.getVentas() != null) {
+            dto.setVentas(
+                    credito.getVentas().stream()
+                            .map(venta -> mapToDtoVenta(venta, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+        }
+
         if (credito.getCliente() != null) {
-            dto.setCliente(mapToDtoCliente(credito.getCliente()));
+            dto.setCliente(mapToDtoCliente(credito.getCliente(), processed));
         }
 
         return dto;
@@ -201,8 +210,20 @@ public class MapsDtosEntityService {
         credito.setMaximo(dto.getMaximo());
         credito.setPagoHastaAhora(dto.getPagoHastaAhora());
 
+        if (dto.getVentas() != null) {
+            credito.setVentas(
+                    dto.getVentas().stream()
+                            .map(ventaDto -> mapToEntityVenta(ventaDto, processed))
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
+
+            // Mantener bidireccionalidad
+            credito.getVentas().forEach(venta -> venta.setCredito(credito));
+        }
+
         if (dto.getCliente() != null) {
-            credito.setCliente(mapToEntityCliente(dto.getCliente()));
+            credito.setCliente(mapToEntityCliente(dto.getCliente(), processed));
             credito.getCliente().setCredito(credito);
         }
 
@@ -226,7 +247,7 @@ public class MapsDtosEntityService {
         dto.setActivo(cliente.isActivo());
 
         if (cliente.getCredito() != null) {
-            dto.setCredito(mapToDtoCredito(cliente.getCredito(), new HashSet<>()));
+            dto.setCredito(mapToDtoCredito(cliente.getCredito(), processed));
         }
 
         return dto;
@@ -257,7 +278,7 @@ public class MapsDtosEntityService {
         cliente.setActivo(clienteDto.isActivo());
 
         if (clienteDto.getCredito() != null) {
-            cliente.setCredito(mapToEntityCredito(clienteDto.getCredito(), new HashSet<>()));
+            cliente.setCredito(mapToEntityCredito(clienteDto.getCredito(), processed));
         }
 
         return cliente;
@@ -349,7 +370,7 @@ public class MapsDtosEntityService {
         dto.setActivo(lote.getActivo());
 
         if (lote.getProducto() != null) {
-            dto.setProducto(mapToDtoProducto(lote.getProducto(), new HashSet<>()));
+            dto.setProducto(mapToDtoProducto(lote.getProducto(), processed));
         }
 
         return dto;

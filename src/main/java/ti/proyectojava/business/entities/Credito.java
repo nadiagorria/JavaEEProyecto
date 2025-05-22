@@ -1,7 +1,12 @@
 package ti.proyectojava.business.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -23,4 +28,20 @@ public class Credito {
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "credito")
+    private List<Venta> ventas = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Credito credito = (Credito) o;
+        return Objects.equals(id, credito.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -5,24 +5,21 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
-import { Credito } from '../../models/credito.model';
-import { Cliente } from '../../models/cliente.model';
-import { ClienteService } from '../../services/cliente.service';
+import { ClienteDto } from 'src/models/cliente.dto'; 
+import { ClienteService } from 'src/services/cliente.service';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-cliente-perfil',
-  imports: [HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule],
+  imports: [HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, CommonModule],
   templateUrl: './cliente-perfil.component.html',
   styleUrl: './cliente-perfil.component.scss'
 })
 export class ClientePerfilComponent {
 
-  cliente!: Cliente;
-
-  compras: any[] = [];
-
+  cliente!: ClienteDto;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,10 +31,10 @@ export class ClientePerfilComponent {
     this.clienteService.getCliente(1).subscribe(data => {
     this.cliente = data;
     console.log(this.cliente);
+    console.log('-----------------------------------');
+    console.log(this.cliente.credito);
     });
   }
-
-  pago:number = 200;
 
   currentPage: number = 1;
   totalPages: number = 5;

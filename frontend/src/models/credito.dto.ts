@@ -1,5 +1,6 @@
 
 import { ClienteDto } from './cliente.dto';
+import { VentaDto } from './venta.dto';
 
 export interface CreditoDto {
     id: number;
@@ -8,4 +9,5 @@ export interface CreditoDto {
     maximo: number;
     pagoHastaAhora: number;
     cliente: Pick<ClienteDto, 'id' | 'nombre'>;
+    venta: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>;
 }
