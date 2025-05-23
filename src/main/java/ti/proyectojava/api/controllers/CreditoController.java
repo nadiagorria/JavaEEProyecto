@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import ti.proyectojava.api.responses.ResponseListadoCreditos;
 import ti.proyectojava.business.entities.Credito;
 import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.services.CreditoService;
@@ -32,6 +33,7 @@ public class CreditoController {
         }
     }
 
+
     //la puede usar cualquiera
     @PostMapping("/credito/{id}/pagar")
     @Secured({"ADMIN", "CAJERO"})
@@ -39,6 +41,14 @@ public class CreditoController {
         String response = creditoService.pagarCredito(id, pago);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/listar")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta función lista todos los créditos activos")
+    public ResponseEntity<ResponseListadoCreditos> listarCreditos() {
+        ResponseListadoCreditos response = creditoService.listarCreditos();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

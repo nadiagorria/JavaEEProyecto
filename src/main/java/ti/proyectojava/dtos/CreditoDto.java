@@ -17,6 +17,8 @@ public class CreditoDto{
 
     private float pagoHastaAhora;
 
+    private Boolean activo;
+
     private ClienteDto cliente;
 
     private List<VentaDto> ventas;

@@ -25,6 +25,9 @@ public class Credito {
     @Column(name = "CREDITO_PAGO_HASTA_AHORA")
     private float pagoHastaAhora;
 
+    @Column(name = "CREDITO_ACTIVO")
+    private Boolean activo;
+
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;

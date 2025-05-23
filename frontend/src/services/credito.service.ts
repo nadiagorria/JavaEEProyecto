@@ -9,6 +9,7 @@ import { UrlService } from '../services/url.service';
   { providedIn: 'root' }
 )
 export class CreditoService {
+  private endpoint: string = '/creditos';
 
   constructor(
     private http: HttpClient,
@@ -21,5 +22,9 @@ export class CreditoService {
 
   crearCredito(credito: CreditoDto): Observable<CreditoDto> {
     return this.http.post<CreditoDto>(this.urlService.baseUrl, credito);
+  }
+
+  listarCreditos(): Observable<{creditos: CreditoDto[]}> {
+    return this.http.get<{creditos: CreditoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listar`);
   }
 }

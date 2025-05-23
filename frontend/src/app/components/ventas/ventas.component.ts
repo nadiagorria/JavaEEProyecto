@@ -6,6 +6,9 @@ import { CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { VentaService } from '../../../services/venta.service';
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
+
 
 @Component({
   selector: 'app-ventas',

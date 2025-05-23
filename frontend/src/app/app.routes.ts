@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'header', component: HeaderComponent },
   { path: 'home', component: HomeComponent },
   { path: 'footer', component: FooterComponent },
-  { path: 'stats', component: StatsComponent } //,
+  { path: 'stats', component: StatsComponent },
   { path: 'cliente', component: ClientePerfilComponent }
 ]
 
