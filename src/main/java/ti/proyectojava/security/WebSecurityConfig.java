@@ -41,6 +41,7 @@ public class WebSecurityConfig {
                         .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        .requestMatchers(antMatcher("/api/v1/entidad/**")).permitAll()
 
                         .anyRequest()
                         .authenticated());
