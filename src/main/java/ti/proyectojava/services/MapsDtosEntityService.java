@@ -152,6 +152,18 @@ public class MapsDtosEntityService {
         return categoria;
     }
 
+    private VentaDto mapToDtoVentaPlano(Venta venta) {
+        if (venta == null) return null;
+        VentaDto dto = new VentaDto();
+        dto.setId(venta.getId());
+        dto.setTotal(venta.getTotal());
+        dto.setFechaVenta(venta.getFechaVenta());
+        dto.setActivo(venta.getActivo());
+        dto.setFinalizada(venta.getFinalizada());
+
+        return dto;
+    }
+
     public CreditoDto mapToDtoCredito(Credito credito) {
         return mapToDtoCredito(credito, new HashSet<>());
     }
@@ -172,7 +184,7 @@ public class MapsDtosEntityService {
 
         if (credito.getVentas() != null) {
             dto.setVentas(credito.getVentas().stream()
-                        .map(venta -> mapToDtoVenta(venta, processed))
+                        .map(venta -> mapToDtoVentaPlano(venta))
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList())
             );
