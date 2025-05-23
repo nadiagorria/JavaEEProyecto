@@ -28,11 +28,11 @@ export class ClientePerfilComponent {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.clienteService.getCliente(1).subscribe(data => {
-    this.cliente = data;
-    console.log(this.cliente);
-    console.log('-----------------------------------');
-    console.log(this.cliente.credito);
+    this.clienteService.getCliente(id).subscribe(data => {
+      this.cliente = data;
+      console.log(this.cliente);
+      console.log('-----------------------------------');
+      console.log(this.cliente.credito);
     });
   }
 

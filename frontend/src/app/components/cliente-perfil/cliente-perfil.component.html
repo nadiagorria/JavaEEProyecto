@@ -34,7 +34,7 @@
 
   <article class="w-full tablaMargen">
     <h1 class="tituloTabla">Compras</h1>
-    <p-table class="tabla" [value]="cliente.credito.venta" [tableStyle]="{ 'min-width': '20rem' }">
+    <p-table class="tabla" [value]="cliente.credito.ventas || []" [tableStyle]="{ 'min-width': '20rem' }">
       <ng-template #header>
         <tr>
           <th>Id</th>
@@ -43,12 +43,12 @@
           <th>Total</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-venta>
+      <ng-template pTemplate="body" let-ventas>
         <tr>
-          <td>{{ venta.id }}</td>
+          <td>{{ ventas.id }}</td>
           <td>{{ cliente.id }}</td>
-          <td>{{ venta.fechaVenta | date:'dd/MM/yyyy' }}</td>
-          <td>{{ venta.precioTotal }}</td>
+          <td>{{ ventas.fechaVenta | date:'dd/MM/yyyy' }}</td>
+          <td>{{ ventas.total }}</td>
         </tr>
       </ng-template>
     </p-table>

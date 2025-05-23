@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ProveedorPerfilComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

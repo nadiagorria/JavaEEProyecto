@@ -46,7 +46,7 @@ public class VentaService {
     }
 
     public Long crearVenta(VentaDto ventaDto) {
-            ventaDto.setFinalizada(false);
+        ventaDto.setFinalizada(false);
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
         return ventaGuardada.getId();
     }
