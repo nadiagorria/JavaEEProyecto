@@ -20,6 +20,8 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'footer', component: FooterComponent },
   { path: 'stats', component: StatsComponent },
-  { path: 'cliente', component: ClientePerfilComponent }
+  { path: 'cliente', component: ClientePerfilComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Add this line
+  { path: '**', redirectTo: '/login' }
 ]
 

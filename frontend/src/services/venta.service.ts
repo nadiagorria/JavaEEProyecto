@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VentaDto } from '../models';
 import { UrlService } from './url.service';
@@ -15,6 +15,11 @@ export class VentaService {
     private urlService: UrlService
   ) { }
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+  
   crearVenta(venta: VentaDto): Observable<{id: number}> {
     return this.http.post<{id: number}>(`${this.urlService.baseUrl}${this.endpoint}/crear`, venta);
   }

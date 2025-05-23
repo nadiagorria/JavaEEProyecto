@@ -6,10 +6,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
-import { UsuarioDto } from '../../../models/usuario.dto';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
-
+import { SecurityService } from '../../../services/security.service';
 
 @Component({
   selector: 'app-login',
@@ -20,21 +20,22 @@ import { HttpClient } from '@angular/common/http';
             ButtonModule,
             ReactiveFormsModule,
             RouterLink,
-            CommonModule
+            CommonModule,
             ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
-  //providers: [MessageService]
+  providers: [MessageService]
 })
 
 
 export class LoginComponent {
   formGroup: FormGroup;
 
-  constructor(private fb: FormBuilder //,
-    //private http: HttpClient,
-    //private router: Router,
-    //private messageService: MessageService
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private messageService: MessageService,
+    private securityService: SecurityService
   ) {
     this.formGroup = this.fb.group({
       username: ['', Validators.required],
@@ -43,13 +44,44 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.formGroup.valid) {
-      const loginData = {
-        username: this.formGroup.get('username')?.value,
-        contrasenia: this.formGroup.get('contrasenia')?.value
-      };
+  if (this.formGroup.valid) {
+    const { username, contrasenia } = this.formGroup.value;
+    
+    this.securityService.login(username, contrasenia).subscribe({
+      next: (response) => {
+        // Store token
+        localStorage.setItem('token', response.token);
+        
+        // Store user info
+        const userStr = JSON.stringify({
+          nombreUsuario: response.usuario,
+          roles: response.roles
+        });
+        const encryptedUser = this.securityService.convertText('encrypt', userStr);
+        localStorage.setItem('USER', encryptedUser);
+        
+        // Update service user
+        this.securityService.user = {
+          nombreUsuario: response.usuario,
+          roles: response.roles
+        };
 
-      //aca la llamada a la api
-    }
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Login exitoso'
+        });
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        console.error('Error en login:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.message || 'Error al intentar iniciar sesión'
+        });
+      }
+    });
   }
+}
 }

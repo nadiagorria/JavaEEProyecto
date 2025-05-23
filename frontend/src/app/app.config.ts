@@ -11,13 +11,19 @@ import {
 import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
+import { ErrorInterceptor } from 'src/interceptors/error.interceptor';
+import { NetworkInterceptor } from 'src/interceptors/network.interceptor';
+import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
               provideZoneChangeDetection({ eventCoalescing: true }),
               provideHttpClient(
                     withFetch(),
-                    //withInterceptors([ErrorInterceptor, NetworkInterceptor])
+                    withInterceptors([
+                      AuthInterceptor, 
+                      ErrorInterceptor, 
+                      NetworkInterceptor])
               ),
               provideRouter(routes),
               provideAnimationsAsync(),
