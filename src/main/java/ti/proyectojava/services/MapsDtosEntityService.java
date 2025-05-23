@@ -1045,6 +1045,7 @@ public class MapsDtosEntityService {
         CantidadDto dto = new CantidadDto();
 
         dto.setId(cantidad.getId());
+        dto.setPrecioActual(cantidad.getPrecioActual());
         dto.setCantidad(cantidad.getCantidad());
         if (cantidad.getProducto() != null) {
             dto.setProducto(mapToDtoProducto(cantidad.getProducto(), processed));
@@ -1078,6 +1079,7 @@ public class MapsDtosEntityService {
         }
 
         Cantidad cantidad = new Cantidad();
+        cantidad.setPrecioActual(dto.getPrecioActual());
         cantidad.setId(dto.getId());
         cantidad.setCantidad(dto.getCantidad());
 

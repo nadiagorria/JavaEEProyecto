@@ -151,7 +151,7 @@ export class NuevaventaComponent {
     const producto = event.value;
     if (!this.cantidades.some(c => c.producto.id === producto.id)) {
       const nuevaCantidad: CantidadDto = {
-        id: 0,
+        id: null,
         cantidad: 1,
         precioActual: producto.precioVenta,
         producto: {
@@ -161,7 +161,7 @@ export class NuevaventaComponent {
           codigoDeBarra: producto.codigoDeBarra
         },
         venta: {
-          id: 0,
+          id: null,
           fechaVenta: new Date()
         }
       };
@@ -195,8 +195,8 @@ export class NuevaventaComponent {
 
   finalizarVenta() {
 
-    /*
-    if (this.listaProductos.length === 0) {
+    
+    if (this.cantidades.length === 0) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
@@ -205,7 +205,7 @@ export class NuevaventaComponent {
       return;
     }
   
-  */
+  
     this.displayDialog = true;
 
   }
@@ -239,9 +239,9 @@ export class NuevaventaComponent {
         precioTotal: this.calcularTotal()
       } : undefined,
       cantidades: this.cantidades.map(c => ({
-        id: 0,
+        id: null,
         cantidad: c.cantidad,
-        precioActual: c.producto.precioVenta,
+        precioActual: c.precioActual ?? c.producto.precioVenta,
         producto: {
           id: c.producto.id,
           nombre: c.producto.nombre,

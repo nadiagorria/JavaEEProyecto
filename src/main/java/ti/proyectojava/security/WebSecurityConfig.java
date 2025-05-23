@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import org.springframework.security.config.Customizer;
 /**
  * @author Usuario
  */
@@ -27,10 +28,11 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-               // .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
+        http    .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(antMatcher("/**")).permitAll()
+                        //.requestMatchers(antMatcher("/**")).permitAll()
                         .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                         .requestMatchers(antMatcher("/webjars/**")).permitAll()
@@ -47,18 +49,17 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public WebMvcConfigurer configurarCorsGlobal(){
+    public WebMvcConfigurer configurarCorsGlobal() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry){
+            public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        // .allowCredentials(true) //solo si usan cookies
-                        .allowedMethods("GET","POST")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        //.allowedOrigins("http://localhost:4200", "");
-                        .allowedOriginPatterns("http://localhost*");
-            }
-        };
+                        .allowCredentials(true);
+        }
+    };
     }
 
 }
