@@ -43,6 +43,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(antMatcher("/api/v1/entidad/**")).permitAll()
 
+
                         .anyRequest()
                         .authenticated());
 
