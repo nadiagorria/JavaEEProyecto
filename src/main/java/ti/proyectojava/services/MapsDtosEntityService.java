@@ -170,11 +170,10 @@ public class MapsDtosEntityService {
         dto.setPagoHastaAhora(credito.getPagoHastaAhora());
 
         if (credito.getVentas() != null) {
-            dto.setVentas(
-                    credito.getVentas().stream()
-                            .map(venta -> mapToDtoVenta(venta, processed))
-                            .filter(Objects::nonNull)
-                            .toList()
+            dto.setVentas(credito.getVentas().stream()
+                        .map(venta -> mapToDtoVenta(venta, processed))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
             );
         }
 

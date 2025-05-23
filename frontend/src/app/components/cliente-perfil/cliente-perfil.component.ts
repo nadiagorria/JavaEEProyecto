@@ -33,6 +33,8 @@ export class ClientePerfilComponent {
       console.log(this.cliente);
       console.log('-----------------------------------');
       console.log(this.cliente.credito);
+      console.log('-----------------------------------');
+      console.log(this.cliente.credito.ventas);
     });
   }
 
