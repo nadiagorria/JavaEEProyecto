@@ -163,6 +163,7 @@ public class MapsDtosEntityService {
         processed.add(credito);
 
         CreditoDto dto = new CreditoDto();
+        dto.setActivo(credito.getActivo());
         dto.setId(credito.getId());
         dto.setPrecioTotal(credito.getPrecioTotal());
         dto.setMinimo(credito.getMinimo());
@@ -204,6 +205,7 @@ public class MapsDtosEntityService {
 
         Credito credito = new Credito();
         credito.setId(dto.getId());
+        credito.setActivo(dto.getActivo());
         credito.setPrecioTotal(dto.getPrecioTotal());
         credito.setMinimo(dto.getMinimo());
         credito.setMaximo(dto.getMaximo());
@@ -1042,6 +1044,7 @@ public class MapsDtosEntityService {
         CantidadDto dto = new CantidadDto();
 
         dto.setId(cantidad.getId());
+        dto.setPrecioActual(cantidad.getPrecioActual());
         dto.setCantidad(cantidad.getCantidad());
         if (cantidad.getProducto() != null) {
             dto.setProducto(mapToDtoProducto(cantidad.getProducto(), processed));
@@ -1075,6 +1078,7 @@ public class MapsDtosEntityService {
         }
 
         Cantidad cantidad = new Cantidad();
+        cantidad.setPrecioActual(dto.getPrecioActual());
         cantidad.setId(dto.getId());
         cantidad.setCantidad(dto.getCantidad());
 

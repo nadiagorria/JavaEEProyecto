@@ -89,16 +89,12 @@ public class VentaController {
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una venta")
-    public ResponseEntity<String> eliminarVenta(@PathVariable Long id, HttpSession session) {
-        Long ventaIdSesion = (Long) session.getAttribute("ventaId");
-        if (ventaIdSesion != null && ventaIdSesion.equals(id)) {
-            session.removeAttribute("ventaId");  // Eliminar el ID de la sesión si la venta actual se elimina
-        }
+    public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
         Venta venta = ventaService.eliminarVenta(id);
         return new ResponseEntity<>("Venta eliminada. ID: " + venta.getId(), HttpStatus.OK);
     }
 
-    //cualquiera puede hacerlo
+    /*//cualquiera puede hacerlo
     @PutMapping("/agregar-producto")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Agrega un producto a una venta existente")
@@ -115,7 +111,7 @@ public class VentaController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
 
     //cualquiera puede usarla
     @PutMapping("/{ventaId}/finalizar")

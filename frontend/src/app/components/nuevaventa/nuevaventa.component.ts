@@ -11,35 +11,13 @@ import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
-import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto } from 'src/models';
-
-
-
-/*interface Producto {
-  id: number;
-  nombre: string;
-  codigoBarras: string;
-  precio: number;
-  cantidad: number;
-}
-
-interface Cliente {
-  id: number;
-  nombre: string;
-  email?: string;
-}
-
-interface VentaRequest {
-  productos: Producto[];
-  cliente?: Cliente;
-  formaPago: 'EFECTIVO' | 'CREDITO' | 'DEBITO' | 'FIADO';
-  fecha: string;
-}
-
-interface FormaPago {
-  label: string;
-  value: string;
-}*/
+import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto } from 'src/models';
+import { ProductoService } from '../../../services/producto.service';
+import { VentaService } from '../../../services/venta.service';
+import { ClienteService } from '../../../services/cliente.service';
+import { CreditoService } from 'src/services/credito.service';
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
 
 
 @Component({
@@ -54,7 +32,9 @@ interface FormaPago {
     DialogModule,
     DropdownModule,
     PaginatorModule,
-    CommonModule
+    CommonModule,
+    FooterComponent,
+    HeaderComponent
   ],
   templateUrl: './nuevaventa.component.html',
   styleUrl: './nuevaventa.component.scss',
@@ -66,107 +46,13 @@ export class NuevaventaComponent {
   productoSeleccionado: ProductoDto | null = null;
   cantidades: CantidadDto[] = [];
   productosFiltrados: ProductoDto[] = [];
+  productos: ProductoDto[] = [];
   displayDialog: boolean = false;
   clienteSeleccionado: UsuarioDto | null = null;
+  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'> | null = null;
+  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'>[] = [];
   formaPagoSeleccionada: string = '';
   totalRecords: number = 0;
-
-
-  // Mock de datos
-
- 
-  productos: ProductoDto[] = [
-    {
-      id: 1,
-      precioCompra: 12,
-      precioVenta: 23,
-      nombre: 'Laptop',
-      codigoDeBarra: '123456',
-      stockMin: 4,
-      stockTotal: 10,
-      imagen: '',
-      categoria: { id: 1, nombre: 'Electrónicos' },
-      proveedor: { id: 1, nombre: 'Tech SA' },
-      promociones: [],
-      combos: [],
-      descuentos: [],
-      lotes: [],
-      cantidades: [],
-      activo: true
-    },
-    {
-      id: 2,
-      precioCompra: 10,
-      precioVenta: 20,
-      nombre: 'Mouse',
-      codigoDeBarra: '789012',
-      stockMin: 5,
-      stockTotal: 15,
-      imagen: '',
-      categoria: { id: 1, nombre: 'Electrónicos' },
-      proveedor: { id: 1, nombre: 'Tech SA' },
-      promociones: [],
-      combos: [],
-      descuentos: [],
-      lotes: [],
-      cantidades: [],
-      activo: true
-    },
-    {
-      id: 3,
-      precioCompra: 25,
-      precioVenta: 50,
-      nombre: 'Teclado',
-      codigoDeBarra: '345678',
-      stockMin: 3,
-      stockTotal: 8,
-      imagen: '',
-      categoria: { id: 1, nombre: 'Electrónicos' },
-      proveedor: { id: 1, nombre: 'Tech SA' },
-      promociones: [],
-      combos: [],
-      descuentos: [],
-      lotes: [],
-      cantidades: [],
-      activo: true
-    }
-  ];
-
-  clientes: ClienteDto[] = [
-    {
-      id: 1,
-      nombre: 'Juan Pérez',
-      telefono: '555-1234',
-      credito: {
-        id: 1,
-        precioTotal: 0,
-        pagoHastaAhora: 0
-      },
-      activo: true
-    },
-    {
-      id: 2,
-      nombre: 'María López',
-      telefono: '555-5678',
-      credito: {
-        id: 2,
-        precioTotal: 0,
-        pagoHastaAhora: 0
-      },
-      activo: true
-    },
-    {
-      id: 3,
-      nombre: 'Mostrador',
-      telefono: '555-9012',
-      credito: {
-        id: 3,
-        precioTotal: 0,
-        pagoHastaAhora: 0
-      },
-      activo: true
-    }
-  ];
 
   formasPago = [
     { label: 'Efectivo', value: 'EFECTIVO' },
@@ -174,6 +60,59 @@ export class NuevaventaComponent {
     { label: 'Débito', value: 'DEBITO' },
     { label: 'Fiado', value: 'FIADO' }
   ];
+
+  constructor(
+    private productoService: ProductoService,
+    private ventaService: VentaService,
+    private creditoService: CreditoService,
+    private messageService: MessageService
+  ) { }
+
+  ngOnInit() {
+    this.cargarProductos();
+  }
+
+  cargarCreditos() {
+    this.creditoService.listarCreditos().subscribe({
+      next: (response) => {
+        this.creditos = response.creditos;
+      },
+      error: (error) => {
+        console.error('Error al cargar créditos:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar los créditos'
+        });
+      }
+    });
+  }
+
+  onFormaPagoChange() {
+    if (this.formaPagoSeleccionada === 'FIADO') {
+      this.cargarCreditos();
+    } else {
+      this.creditoSeleccionado = null;
+    }
+  }
+
+  cargarProductos() {
+    this.productoService.listarProductos().subscribe({
+      next: (response) => {
+        this.productos = response.productos;
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar los productos'
+        });
+      }
+    });
+  }
+
+  
 
 
 
@@ -212,7 +151,7 @@ export class NuevaventaComponent {
     const producto = event.value;
     if (!this.cantidades.some(c => c.producto.id === producto.id)) {
       const nuevaCantidad: CantidadDto = {
-        id: 0,
+        id: null,
         cantidad: 1,
         precioActual: producto.precioVenta,
         producto: {
@@ -222,7 +161,7 @@ export class NuevaventaComponent {
           codigoDeBarra: producto.codigoDeBarra
         },
         venta: {
-          id: 0,
+          id: null,
           fechaVenta: new Date()
         }
       };
@@ -233,8 +172,8 @@ export class NuevaventaComponent {
   }
 
   calcularCantidadTotal(): number {
-  return this.cantidades.reduce((sum, c) => sum + c.cantidad, 0);
-}
+    return this.cantidades.reduce((sum, c) => sum + c.cantidad, 0);
+  }
 
   calcularTotal(): number {
     return this.cantidades.reduce((total, cantidad) =>
@@ -243,91 +182,107 @@ export class NuevaventaComponent {
 
 
 
-// Elimina un producto de la lista
-eliminarProducto(cantidad: CantidadDto) {
-  const index = this.cantidades.findIndex(c => c.producto.id === cantidad.producto.id);
-  if (index !== -1) {
-    this.cantidades = this.cantidades.filter((_, i) => i !== index);
-    this.totalRecords--;
-  }
-}
-
-
-/*
-constructor(
-      private http: HttpClient,
-      private messageService: MessageService
-    ) {}
-  */
-
-finalizarVenta() {
-
-  /*
-  if (this.listaProductos.length === 0) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Advertencia',
-      detail: 'No hay productos en la venta'
-    });
-    return;
+  // Elimina un producto de la lista
+  eliminarProducto(cantidad: CantidadDto) {
+    const index = this.cantidades.findIndex(c => c.producto.id === cantidad.producto.id);
+    if (index !== -1) {
+      this.cantidades = this.cantidades.filter((_, i) => i !== index);
+      this.totalRecords--;
+    }
   }
 
-*/
-  this.displayDialog = true;
 
-}
 
-confirmarVenta() {
-  /*
-  if (!this.formaPagoSeleccionada) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Debe seleccionar una forma de pago'
-    });
-    return;
+  finalizarVenta() {
+
+    
+    if (this.cantidades.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay productos en la venta'
+      });
+      return;
+    }
+  
+  
+    this.displayDialog = true;
+
+  }
+
+  confirmarVenta() {
+
+    if (!this.formaPagoSeleccionada) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar una forma de pago'
+      });
+      return;
+    }
 
     if (this.cantidades.length === 0) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Advertencia',
-      detail: 'No hay productos en la venta'
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay productos en la venta'
+      });
+      return;
+    }
+
+    const venta: Partial<VentaDto> = {
+      fechaVenta: new Date(),
+      total: this.calcularTotal(),
+      formaPago: this.formaPagoSeleccionada,
+      credito: this.formaPagoSeleccionada === 'FIADO' ? {
+        id: this.creditoSeleccionado!.id,
+        precioTotal: this.calcularTotal()
+      } : undefined,
+      cantidades: this.cantidades.map(c => ({
+        id: null,
+        cantidad: c.cantidad,
+        precioActual: c.precioActual ?? c.producto.precioVenta,
+        producto: {
+          id: c.producto.id,
+          nombre: c.producto.nombre,
+          precioVenta: c.producto.precioVenta,
+          codigoDeBarra: c.producto.codigoDeBarra
+        }
+      })),
+      activo: true,
+      finalizada: true
+    };
+
+    this.ventaService.crearVenta(venta as VentaDto).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Venta creada correctamente'
+        });
+        this.displayDialog = false;
+        this.limpiarVenta();
+      },
+      error: (error) => {
+        console.error('Error al crear la venta:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear la venta'
+        });
+      }
     });
-    return;
+
   }
 
-    */
+  limpiarVenta() {
+    this.cantidades = [];
+    this.totalRecords = 0;
+    this.creditoSeleccionado = null;
+    this.formaPagoSeleccionada = '';
+    this.productoSeleccionado = null;
+}
 
-
-  // Aca tengo que cambiar lo que recibe el controller
-  // o armarlo bien antes de mandarlo obteniendo las cosas del back
-  // (necesitaria armar basicamente todos los dtos que reciben todos controller)
-
-  const venta: Partial<VentaDto> = {
-    fechaVenta: new Date(),
-    total: this.calcularTotal(),
-    formaPago: this.formaPagoSeleccionada,
-    usuario: this.clienteSeleccionado ? {
-      nombre: this.clienteSeleccionado.nombre,
-      mail: this.clienteSeleccionado.mail
-    } : undefined,
-    cantidades: this.cantidades.map(c => ({
-      id: 0,
-      cantidad: c.cantidad,
-      precioActual: c.precioActual,
-      producto: {
-        id: c.producto.id,
-        nombre: c.producto.nombre,
-        precioVenta: c.producto.precioVenta,
-        codigoDeBarra: c.producto.codigoDeBarra
-      }
-    })),
-    activo: true,
-    finalizada: true
-  };
-
-  console.log('Venta a guardar:', venta);
-  this.displayDialog = false;
 
 }
-}
+

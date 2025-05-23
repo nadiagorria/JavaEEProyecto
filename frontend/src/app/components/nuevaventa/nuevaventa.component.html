@@ -1,3 +1,5 @@
+<app-header [nombreUsuario]="'nombreusuario'"></app-header>
+
 <div class="grid">
 
   <!-- Lista de productos -->
@@ -107,24 +109,31 @@
         <h5 class="texto">Cliente</h5>
         <p-dropdown
           class="texto"
-          [(ngModel)]="clienteSeleccionado"
-          [options]="clientes"
-          optionLabel="nombre"
+          [(ngModel)]="creditoSeleccionado"
+          [options]="creditos"
+          optionLabel="cliente.nombre"
           placeholder="Seleccione un cliente"
-          [showClear]="true">
-        </p-dropdown>
+          [required]="true">
+          <ng-template let-credito pTemplate="item">
+            <div class="texto">
+              {{credito.cliente.nombre}} - Disponible: {{credito.precioTotal - credito.pagoHastaAhora | currency}}
+            </div>
+          </ng-template>
+    </p-dropdown>
       </div>
 
       <div class="col-12 mt-3">
         <h5 class="texto">Forma de Pago</h5>
         <p-dropdown
-          [(ngModel)]="formaPagoSeleccionada"
-          [options]="formasPago"
-          class="texto"
-          optionLabel="label"
-          placeholder="Seleccione forma de pago"
-          [required]="true">
-        </p-dropdown>
+        [(ngModel)]="formaPagoSeleccionada"
+        [options]="formasPago"
+        class="texto"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Seleccione forma de pago"
+        (onChange)="onFormaPagoChange()"
+        [required]="true">
+    </p-dropdown>
       </div>
 
       <div class="col-12 mt-5 flex justify-content-end gap-2 fixed bottom-0 right-0">

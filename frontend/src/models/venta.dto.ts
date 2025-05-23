@@ -4,7 +4,7 @@ import { CantidadDto } from './cantidad.dto';
 import { UsuarioDto } from './usuario.dto';
 
 export interface VentaDto {
-    id: number;
+    id: number | null;
     fechaVenta: Date;
     total: number;
     credito: Pick<CreditoDto, 'id' | 'precioTotal'>;

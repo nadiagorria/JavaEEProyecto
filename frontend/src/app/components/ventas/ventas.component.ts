@@ -5,6 +5,10 @@ import { TableModule } from 'primeng/table';
 import { CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { VentaService } from '../../../services/venta.service';
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
+
 
 @Component({
   selector: 'app-ventas',
@@ -24,9 +28,9 @@ export class VentasComponent implements OnInit {
   totalRecords: number = 0;
   selectedVenta: VentaDto | null = null;
 
-  constructor() {
+  constructor(private ventaService: VentaService) {
     // Mock de ventas
-    this.ventas = [
+    /*this.ventas = [
       {
         id: 1,
         fechaVenta: new Date('2024-06-01T10:00:00'),
@@ -49,12 +53,24 @@ export class VentasComponent implements OnInit {
         activo: true,
         finalizada: true
       }
-    ];
+    ];*/
     this.totalRecords = this.ventas.length;
   }
 
   ngOnInit() {
-    // aca cargar las ventas desde un servicio
+    this.cargarVentas();
+  }
+
+  cargarVentas() {
+    this.ventaService.listarVentas().subscribe({
+      next: (response) => {
+        this.ventas = response.ventas;
+        this.totalRecords = this.ventas.length;
+      },
+      error: (error) => {
+        console.error('Error al cargar ventas:', error);
+      }
+    });
   }
 
   abrirVentaEnNuevaPestania(id: number) {
