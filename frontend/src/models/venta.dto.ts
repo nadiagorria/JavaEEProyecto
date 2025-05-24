@@ -12,5 +12,16 @@ export interface VentaDto {
     activo: boolean;
     finalizada: boolean;
     formaPago: string;
-    usuario: Pick<UsuarioDto, 'mail' | 'nombre'>;
+    usuario: string;
+}
+
+export interface VentaSimpleDto {
+    id: number | null;
+    fechaVenta: Date;
+    total: number;
+    cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[];
+    activo: boolean;
+    finalizada: boolean;
+    formaPago: string;
+    usuario: string;
 }

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { VentaDto, CantidadDto } from 'src/models';
+import { VentaSimpleDto, CantidadDto } from 'src/models';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { VentaService } from 'src/services/venta.service';
 
 @Component({
   selector: 'app-verventa',
@@ -19,84 +20,67 @@ import { Router } from '@angular/router';
   styleUrl: './verventa.component.scss'
 })
 export class VerventaComponent implements OnInit {
-  venta!: VentaDto;
-  cantidades: CantidadDto[] = [];
+  venta!: VentaSimpleDto;
+  cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[] = [];
   totalRecords: number = 0;
+  loading: boolean = true;
+  error: string = '';
 
-  constructor() {
-    // Mock data
-    this.venta = {
-      id: 1,
-      fechaVenta: new Date(),
-      total: 93,
-      formaPago: 'EFECTIVO',
-      usuario: {
-        nombre: 'Juan Pérez',
-        mail: 'juan@mail.com'
-      },
-      cantidades: [
-        {
-          id: 1,
-          cantidad: 2,
-          precioActual: 23,
-        
-        producto: {
-            id: 1,
-            nombre: 'Laptop',
-            precioVenta: 23,
-            codigoDeBarra: '987654321'
-          },
-        },
-        {
-          id: 2,
-          cantidad: 7,
-          precioActual: 8,
-        
-        producto: {
-            id: 3,
-            nombre: 'Juan',
-            precioVenta: 80,
-            codigoDeBarra: '123456789'
-          },
-        }
-      ],
-      credito: {
-        id: 0,
-        precioTotal: 0
-      },
-      activo: true,
-      finalizada: true
-    };
-
-    this.cantidades = this.venta.cantidades.map(c => ({
-      id: c.id,
-      cantidad: c.cantidad,
-      precioActual: c.precioActual,
-      producto: c.producto,
-      venta: {
-        id: this.venta.id,
-        fechaVenta: this.venta.fechaVenta
-      }
-    }));
-    this.totalRecords = this.cantidades.length;
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private ventaService: VentaService) {
   }
-
 
   ngOnInit() {
-    // Aquí cargarías la venta seleccionada
-    // this.ventaService.getVenta(id).subscribe(venta => {
-    //   this.venta = venta;
-    //   this.cantidades = venta.cantidades;
-    //   this.totalRecords = this.cantidades.length;
-    // });
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    
+    if (id && !isNaN(id)) {
+      this.cargarVenta(id);
+    } else {
+      this.error = 'ID de venta inválido';
+      this.loading = false;
+    }
   }
-
+  
+  cargarVenta(id: number) {
+    console.log('Cargando venta con ID:', id);
+    this.loading = true;
+    
+    this.ventaService.obtenerVenta(id).subscribe({
+      next: (venta) => {
+        console.log('Respuesta del backend:', venta);
+        this.venta = venta;
+        
+        // Usar directamente las cantidades del DTO sin mapeo
+        if (venta.cantidades && Array.isArray(venta.cantidades)) {
+          this.cantidades = venta.cantidades;
+        } else {
+          console.warn('No se encontraron cantidades en la respuesta');
+          this.cantidades = [];
+        }
+        
+        this.totalRecords = this.cantidades.length;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error completo:', error);
+        this.error = `Error al cargar los datos de la venta. Status: ${error.status}`;
+        this.loading = false;
+      }
+    });
+  }
+  
   calcularTotal(): number {
-    return this.cantidades.reduce((total, cantidad) =>
-      total + (cantidad.cantidad * cantidad.producto.precioVenta), 0);
-  }
+  return this.cantidades.reduce((total, cantidad) =>
+    total + (cantidad.cantidad * cantidad.precioActual), 0);
+}
 
   calcularCantidadTotal(): number {
     return this.cantidades.reduce((sum, c) => sum + c.cantidad, 0);
+  }
+
+  volver() {
+    this.router.navigate(['/ventas']);
   }
 }

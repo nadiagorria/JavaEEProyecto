@@ -39,16 +39,16 @@ public class VentaController {
     }
 
 
-    @GetMapping("/activa")
+    @GetMapping("/{id}")
     @Secured({"ADMIN", "CAJERO"})
-    @Operation(description = "Obtiene la venta activa del usuario")
-    public ResponseEntity<Venta> obtenerVentaActiva(HttpSession session) {
-        Long ventaId = (Long) session.getAttribute("ventaId");
-        if (ventaId == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    @Operation(description = "Obtiene una venta específica por su ID")
+    public ResponseEntity<VentaDto> obtenerVentaEspecifica(@PathVariable Long id) {
+        try {
+            VentaDto venta = ventaService.obtenerVentaPorId(id);
+            return ResponseEntity.ok(venta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        Venta venta = ventaService.obtenerVentaPorId(ventaId);
-        return ResponseEntity.ok(venta);
     }
 
     @PutMapping("/cancelar")
@@ -76,7 +76,7 @@ public class VentaController {
 
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
-        ventaDto.setUsuario(usuario);
+        ventaDto.setUsuario(usuario.getNombre());
         Long ventaId = ventaService.crearVenta(ventaDto);
 
 

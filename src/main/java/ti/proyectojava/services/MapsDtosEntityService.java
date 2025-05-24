@@ -152,7 +152,7 @@ public class MapsDtosEntityService {
         return categoria;
     }
 
-    private VentaDto mapToDtoVentaPlano(Venta venta) {
+    public VentaDto mapToDtoVentaPlano(Venta venta) {
         if (venta == null) return null;
         VentaDto dto = new VentaDto();
         dto.setId(venta.getId());
@@ -160,9 +160,22 @@ public class MapsDtosEntityService {
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setActivo(venta.getActivo());
         dto.setFinalizada(venta.getFinalizada());
+        dto.setFormaPago(venta.getFormaPago());
 
+        if (venta.getUsuario() != null) {
+            dto.setUsuario(venta.getUsuario().getNombre());
+        }
+
+        if (venta.getCantidades() != null) {
+            dto.setCantidades(venta.getCantidades().stream()
+                    .map(cantidad -> mapToDtoCantidadSimple(cantidad))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())
+            );
+        }
         return dto;
     }
+
 
     public CreditoDto mapToDtoCredito(Credito credito) {
         return mapToDtoCredito(credito, new HashSet<>());
@@ -1044,6 +1057,39 @@ public class MapsDtosEntityService {
 
     }
 
+
+
+
+    public ProductoDto mapToDtoProductoSimple(Producto producto) {
+        if (producto == null) {
+            return null;
+        }
+
+        ProductoDto dto = new ProductoDto();
+
+        dto.setId(producto.getId());
+        dto.setCodigoDeBarra(producto.getCodigoDeBarra());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecioCompra(producto.getPrecioCompra());
+        return dto;
+    }
+
+    public CantidadDto mapToDtoCantidadSimple(Cantidad cantidad) {
+        if (cantidad == null) {
+            return null;
+        }
+
+        CantidadDto dto = new CantidadDto();
+        dto.setId(cantidad.getId());
+        dto.setPrecioActual(cantidad.getPrecioActual());
+        dto.setCantidad(cantidad.getCantidad());
+        if (cantidad.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(cantidad.getProducto()));
+        }
+    return dto;
+    }
+
+
     public CantidadDto mapToDtoCantidad(Cantidad cantidad) {
         return mapToDtoCantidad(cantidad, new HashSet<>());
     }
@@ -1123,7 +1169,7 @@ public class MapsDtosEntityService {
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setTotal(venta.getTotal());
         dto.setActivo(venta.getActivo());
-        dto.setUsuario(mapToDtoUsuario(venta.getUsuario(), processed));
+        dto.setUsuario(venta.getUsuario() != null ? venta.getUsuario().getNombre() : null);
 
         if (venta.getCredito() != null) {
             dto.setCredito(mapToDtoCredito(venta.getCredito(), processed));
@@ -1164,8 +1210,8 @@ public class MapsDtosEntityService {
         venta.setActivo(dto.getActivo());
 
         if (dto.getUsuario() != null) {
-            venta.setUsuario(mapToEntityUsuario(dto.getUsuario(), processed));
 
+            venta.setUsuario(usuarioRepository.findByNombre(dto.getUsuario()).orElse(null));
             // Mantener bidireccionalidad
             if (venta.getUsuario() != null) {
                 venta.getUsuario().getVentas().add(venta);

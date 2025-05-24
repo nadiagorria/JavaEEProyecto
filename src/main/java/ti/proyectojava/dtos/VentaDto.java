@@ -16,5 +16,5 @@ public class VentaDto{
     private Boolean activo;
     private Boolean finalizada;
     private FormaDePago formaPago;
-    private UsuarioDto usuario;
+    private String usuario;
 }

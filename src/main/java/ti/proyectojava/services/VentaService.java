@@ -16,6 +16,7 @@ import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,9 @@ public class VentaService {
 
 
 
-    public Venta obtenerVentaPorId(Long ventaId) {
-        return ventaRepository.findById(ventaId)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID: " + ventaId));
+    public VentaDto obtenerVentaPorId(Long ventaId) {
+        Venta venta = ventaRepository.findById(ventaId).orElseThrow(() -> new RuntimeException("Venta no existe"));
+        return mapsDtosEntityService.mapToDtoVentaPlano(venta);
     }
 
     public Long crearVenta(VentaDto ventaDto) {

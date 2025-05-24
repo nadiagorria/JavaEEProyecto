@@ -3,9 +3,9 @@
     <!-- Información de la venta -->
     <div class="col-12 mb-3 pl-5">
       <h2 class="texto">Detalles de la Venta</h2>
-      <p class="texto">Fecha: {{venta?.fechaVenta | date:'medium'}}</p>
-      <p class="texto">Cliente: {{venta?.usuario?.nombre}}</p>
-      <p class="texto">Forma de Pago: {{venta?.formaPago}}</p>
+      <p class="texto">Fecha: {{venta.fechaVenta | date:'medium'}}</p>
+      <p class="texto">Usuario: {{venta.usuario}}</p>
+      <p class="texto">Forma de Pago: {{venta.formaPago}}</p>
     </div>
 
     <div class="col-12 flex justify-content-center">
@@ -37,9 +37,9 @@
         <tr>
           <td>{{cantidad.producto.nombre}}</td>
           <td>{{cantidad.producto.codigoDeBarra}}</td>
-          <td>{{cantidad.producto.precioVenta | currency}}</td>
+          <td>{{cantidad.precioActual | currency}}</td>
           <td>{{cantidad.cantidad}}</td>
-          <td>{{cantidad.cantidad * cantidad.producto.precioVenta | currency}}</td>
+          <td>{{cantidad.cantidad * cantidad.precioActual | currency}}</td>
         </tr>
       </ng-template>
       

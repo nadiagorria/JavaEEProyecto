@@ -14,10 +14,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto } from 'src/models';
 import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
-import { ClienteService } from '../../../services/cliente.service';
 import { CreditoService } from 'src/services/credito.service';
 import { HeaderComponent } from '../header/header.component';
-import { FooterComponent } from '../footer/footer.component';
 
 
 @Component({
@@ -33,7 +31,6 @@ import { FooterComponent } from '../footer/footer.component';
     DropdownModule,
     PaginatorModule,
     CommonModule,
-    FooterComponent,
     HeaderComponent
   ],
   templateUrl: './nuevaventa.component.html',
@@ -48,7 +45,6 @@ export class NuevaventaComponent {
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
   displayDialog: boolean = false;
-  clienteSeleccionado: UsuarioDto | null = null;
   creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'> | null = null;
   creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'>[] = [];
   formaPagoSeleccionada: string = '';
