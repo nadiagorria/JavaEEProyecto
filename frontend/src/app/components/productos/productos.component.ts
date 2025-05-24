@@ -5,6 +5,9 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { ProductoService } from '../../../services/producto.service';
+import { CategoriaService } from '../../../services/categoria.service';
+import { ProductoDto } from 'src/models/producto.dto';
 
 @Component({
   selector: 'app-productos',
@@ -21,14 +24,34 @@ import { InputTextModule } from 'primeng/inputtext';
   styleUrl: './productos.component.scss'
 })
 export class ProductosComponent {
-  productos: any[] = [
-    { nombre: 'Producto 1', precio: 10 },
-    { nombre: 'Producto 2', precio: 20 }
-  ];
+
+
+  constructor(
+      private productoService: ProductoService,
+      private categoriaService: CategoriaService
+    ) { }
+
+  productos: ProductoDto[] = [];
+
   categorias: any[] = [
     { id: 1, nombre: 'Electrónica' },
     { id: 2, nombre: 'Ropa' }
   ];
+
+  ngOnInit() {
+    this.cargarProductos();
+  }
+
+  cargarProductos() {
+    this.productoService.listarProductos().subscribe({
+      next: (response) => {
+        this.productos = response.productos;
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+      }
+    });
+  }
 
   // Modales
   mostrarModalAgregarCategoria: boolean = false;
@@ -57,15 +80,33 @@ export class ProductosComponent {
 
   crearCategoria() {
     if (!this.nombreCategoria) return;
-    const nueva = {
-      id: this.categorias.length + 1,
+
+    const nuevaCategoria = {
+      id: 0, // El backend debe asignar el ID
       nombre: this.nombreCategoria,
-      padre: this.categoriaPadre
+      activo: true,
+      subcategorias: [],
+      categoriaPadre: this.categoriaPadre
+        ? { id: this.categoriaPadre, nombre: '' }
+        : null,
+      productos: []
     };
-    this.categorias.push(nueva);
-    this.nombreCategoria = '';
-    this.categoriaPadre = null;
-    this.mostrarModalAgregarCategoria = false;
+
+    this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
+      next: () => {
+        this.categoriaService.listarCategorias().subscribe({
+          next: (response) => {
+            this.categorias = response.categorias;
+          }
+        });
+        this.nombreCategoria = '';
+        this.categoriaPadre = null;
+        this.mostrarModalAgregarCategoria = false;
+      },
+      error: (error) => {
+        console.error('Error al crear categoría:', error);
+      }
+    });
   }
 
   eliminarCategoria() {
@@ -76,12 +117,37 @@ export class ProductosComponent {
   }
 
   crearProducto() {
-    const nuevo = {
+    if (this.nuevoProducto.categoriaId == null) {
+      console.error('Debes seleccionar una categoría');
+      return;
+    }
+    const nuevo: ProductoDto = {
+      id: 0, // El backend lo ignora al crear
       nombre: this.nuevoProducto.nombre,
-      precio: this.nuevoProducto.precio
+      precioVenta: this.nuevoProducto.precio,
+      precioCompra: 0, // Ajusta si tienes este dato en el formulario
+      codigoDeBarra: '', // Ajusta si tienes este dato en el formulario
+      stockMin: 0,
+      stockTotal: 0,
+      imagen: '', // O una URL por defecto
+      promociones: [],
+      combos: [],
+      descuentos: [],
+      categoria: { id: this.nuevoProducto.categoriaId, nombre: '' },
+      proveedor: { id: 0, nombre: '' }, // Ajusta si tienes proveedor en el formulario
+      lotes: [],
+      cantidades: [],
+      activo: true
     };
-    this.productos.push(nuevo);
-    this.nuevoProducto = { nombre: '', precio: 0, categoriaId: null };
-    this.mostrarModalAgregarProducto = false;
+    this.productoService.crearProducto(nuevo).subscribe({
+      next: () => {
+        this.cargarProductos();
+        this.nuevoProducto = { nombre: '', precio: 0, categoriaId: null };
+        this.mostrarModalAgregarProducto = false;
+      },
+      error: (error) => {
+        console.error('Error al crear producto:', error);
+      }
+    });
   }
 }
