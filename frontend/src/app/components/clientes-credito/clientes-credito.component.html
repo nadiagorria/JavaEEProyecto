@@ -15,38 +15,48 @@
     <p-dialog header="Añadir nuevo cliente a credito" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
       <div class="flex items-center gap-4 mb-4">
         <label for="username" class="font-semibold w-24 modal">Nombre</label>
-        <input pInputText id="username" class="flex-auto modal" autocomplete="off" />
+        <input pInputText class="flex-auto modal" [(ngModel)]="nombre" autocomplete="off" />
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="telefono" class="font-semibold w-24 modal">Telefono</label>
-        <input pInputText id="telefono" class="flex-auto modal" autocomplete="off" />
+        <input pInputText class="flex-auto modal" [(ngModel)]="telefono" autocomplete="off" />
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="min" class="font-semibold w-24 modal">Min</label>
-        <input pInputText id="min" class="flex-auto modal" autocomplete="off" />
+        <input pInputTex class="flex-auto modal" [(ngModel)]="minimo" autocomplete="off" type="number" />
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="max" class="font-semibold w-24 modal">Max</label>
-        <input pInputText id="max" class="flex-auto modal" autocomplete="off" />
+        <input pInputText class="flex-auto modal" [(ngModel)]="maximo" autocomplete="off" type="number"/>
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="deuda" class="font-semibold w-24 modal">Deuda</label>
-        <input pInputText id="deuda" class="flex-auto modal" autocomplete="off" />
+        <input pInputText class="flex-auto modal" [(ngModel)]="deuda" autocomplete="off" type="number" />
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="pago" class="font-semibold w-24 modal">Pago</label>
-        <input pInputText id="pago" class="flex-auto modal" autocomplete="off" />
+        <input pInputText class="flex-auto modal" [(ngModel)]="pago" autocomplete="off" type="number"/>
       </div>
       <div class="flex justify-end gap-2">
-        <p-button label="Cancel" severity="secondary" (click)="visible = false" />
-        <p-button label="Save" (click)="visible = false" />
+        <p-button label="Confirmar" severity="secondary" (click)="saveCliente()" />
       </div>
     </p-dialog>
 
   </article>
   <article class="w-full">
-    <p-table class="tabla" [value]="creditos" [tableStyle]="{ 'min-width': '20rem' }">
-      <ng-template #header>
+    <p-table
+      class="texto"
+      [value]="creditos || []"
+      [paginator]="true"
+      [rows]="5"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      paginatorPosition="bottom"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} compras"
+      showGridlines
+      [responsive]="true">
+
+      <ng-template pTemplate="header">
         <tr>
           <th>Id</th>
           <th>Nombre</th>
@@ -57,26 +67,20 @@
           <th>Pago hasta ahora</th>
         </tr>
       </ng-template>
-      <ng-template #body let-credito>
+
+      <ng-template pTemplate="body" let-credito>
         <tr>
-          <td>{{ credito.id }}</td>
-          <td>{{ credito.nombre }}</td>
-          <td>{{ credito.telefono }}</td>
-          <td>{{ credito.min }}</td>
-          <td>{{ credito.max }}</td>
-          <td>{{ credito.deuda }}</td>
-          <td>{{ credito.pago }}</td>
+          <td>{{ credito.cliente.id }}</td>
+          <td>{{ credito.cliente.nombre }}</td>
+          <td>{{ credito.cliente.telefono }}</td>
+          <td>{{ credito.minimo }}</td>
+          <td>{{ credito.maximo }}</td>
+          <td>{{ credito.precioTotal }}</td>
+          <td>{{ credito.pagoHastaAhora }}</td>
 
         </tr>
       </ng-template>
     </p-table>
-  </article>
-
-  <article class="paginador w-full flex">
-    <!-- Contenido de la paginación -->
-    <p class="margenPaginador">{{ currentRange }} de {{ totalRecords }}</p>
-    <p-button icon="pi pi-angle-left" (click)="prevPage()" [disabled]="currentPage === 1" severity="secondary"></p-button>
-    <p-button icon="pi pi-angle-right" (click)="nextPage()" [disabled]="currentPage === totalPages" severity="secondary"></p-button>
   </article>
 
 </main>

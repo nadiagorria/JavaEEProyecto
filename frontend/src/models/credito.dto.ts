@@ -7,6 +7,6 @@ export interface CreditoDto {
     minimo: number;
     maximo: number;
     pagoHastaAhora: number;
-    cliente: Pick<ClienteDto, 'id' | 'nombre'>;
-    ventas?: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[]; 
+    cliente: Pick<ClienteDto, 'id' | 'nombre' | 'telefono'>;
+    ventas?: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[];
 }
