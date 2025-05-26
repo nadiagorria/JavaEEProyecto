@@ -27,4 +27,12 @@ export class CreditoService {
   listarCreditos(): Observable<{creditos: CreditoDto[]}> {
     return this.http.get<{creditos: CreditoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listar`);
   }
-}
+
+  pagarCredito(id: number, pago: number): Observable<any> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/credito/${id}/pagar?pago=${pago}`,
+      null,
+      { responseType: 'text' }
+    );
+  }
+}   

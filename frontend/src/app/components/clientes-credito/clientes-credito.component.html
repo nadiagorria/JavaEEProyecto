@@ -3,10 +3,9 @@
   <h1 class="w-full textoNegro">Clientes a Crédito</h1>
   <article class="w-full flex padreBotonInput">
     <p-inputgroup>
-      <input pInputText placeholder="Buscar" />
+      <input pInputText placeholder="Buscar por nombre" />
         <p-inputgroup-addon>
 
-        <!-- falta (click) -->
         <p-button icon="pi pi-search" severity="secondary" variant="text"  />
 
       </p-inputgroup-addon>
@@ -46,7 +45,7 @@
 
   </article>
   <article class="w-full">
-    <p-table class="tabla" [value]="clientes" [tableStyle]="{ 'min-width': '20rem' }">
+    <p-table class="tabla" [value]="creditos" [tableStyle]="{ 'min-width': '20rem' }">
       <ng-template #header>
         <tr>
           <th>Id</th>
@@ -58,15 +57,15 @@
           <th>Pago hasta ahora</th>
         </tr>
       </ng-template>
-      <ng-template #body let-cliente>
+      <ng-template #body let-credito>
         <tr>
-          <td>{{ cliente.id }}</td>
-          <td>{{ cliente.nombre }}</td>
-          <td>{{ cliente.telefono }}</td>
-          <td>{{ cliente.min }}</td>
-          <td>{{ cliente.max }}</td>
-          <td>{{ cliente.deuda }}</td>
-          <td>{{ cliente.pago }}</td>
+          <td>{{ credito.id }}</td>
+          <td>{{ credito.nombre }}</td>
+          <td>{{ credito.telefono }}</td>
+          <td>{{ credito.min }}</td>
+          <td>{{ credito.max }}</td>
+          <td>{{ credito.deuda }}</td>
+          <td>{{ credito.pago }}</td>
 
         </tr>
       </ng-template>

@@ -96,10 +96,6 @@ main {
   color: black;
 }
 
-tr, td, th {
-  background: #D6D6D6;
-  color: black;
-}
 
 .paginador {
   color: black;
@@ -113,5 +109,10 @@ tr, td, th {
 .margenPaginador {
     margin-right: 1vw;
 }
+
+.border-right {
+  border-right: none !important;
+}
+
 
 

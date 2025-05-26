@@ -7,7 +7,7 @@ import { VentasComponent } from './components/ventas/ventas.component';
 import { ClientePerfilComponent } from './components/cliente-perfil/cliente-perfil.component';
 import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { ClientesCreditoComponent } from './components/clientes-credito/clientes-credito.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +18,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'stats', component: StatsComponent},
   { path: 'cliente/:id', component: ClientePerfilComponent},
+  { path: 'credito', component: ClientesCreditoComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

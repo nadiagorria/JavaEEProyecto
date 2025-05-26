@@ -5,15 +5,25 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
-import { ClienteDto } from 'src/models/cliente.dto'; 
+import { ClienteDto } from 'src/models/cliente.dto';
 import { ClienteService } from 'src/services/cliente.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { DialogModule } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
+import { CreditoService } from 'src/services/credito.service';
 
 @Component({
   selector: 'app-cliente-perfil',
-  imports: [HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, CommonModule],
+  imports: [FormsModule, 
+    HeaderComponent, 
+    FooterComponent, 
+    ButtonModule, 
+    InputGroupModule, 
+    InputGroupAddonModule, 
+    TableModule, 
+    DialogModule, 
+    CommonModule],
   templateUrl: './cliente-perfil.component.html',
   styleUrl: './cliente-perfil.component.scss'
 })
@@ -21,38 +31,41 @@ export class ClientePerfilComponent {
 
   cliente!: ClienteDto;
 
+  totalRecords: number = 0;
+
   constructor(
     private route: ActivatedRoute,
-    private clienteService: ClienteService
+    private clienteService: ClienteService,
+    private creditoService: CreditoService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.clienteService.getCliente(id).subscribe(data => {
       this.cliente = data;
-      console.log(this.cliente);
-      console.log('-----------------------------------');
-      console.log(this.cliente.credito);
-      console.log('-----------------------------------');
-      console.log(this.cliente.credito.ventas);
     });
   }
 
-  currentPage: number = 1;
-  totalPages: number = 5;
-  totalRecords: number = 2;
-  currentRange: number = 0;
+  visible: boolean = false;
 
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
+    showDialog() {
+       this.visible = true;
     }
-  }
 
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-    }
-  }
+  pago : number = 0;
 
+  pagoButton() {
+    console.log(this.pago, "aaa", this.cliente.credito.id);
+    this.creditoService.pagarCredito(this.cliente.credito.id, this.pago).subscribe(
+      response => {
+        // Manejar respuesta si es necesario
+        console.log('Pago realizado', response);
+      },
+      error => {
+        // Manejar error si ocurre
+        console.error('Error al pagar', error);
+      }
+    );
+    this.visible = false;
+  }
 }

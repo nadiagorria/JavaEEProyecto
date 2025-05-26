@@ -8,6 +8,9 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { CreditoDto } from 'src/models/credito.dto'; 
+import { CreditoService } from 'src/services/credito.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface ClienteCredito {
   id: number;
@@ -35,10 +38,20 @@ interface ClienteCredito {
 })
 
 export class ClientesCreditoComponent {
-  clientes: ClienteCredito[] = [
-      { id: 1, nombre: "Juan", telefono: "1231314", min: 2, max: 600, deuda: 2000, pago: 1600 },
-      { id: 2, nombre: "Ana", telefono: "9876543", min: 5, max: 400, deuda: 1000, pago: 700 }
-  ];
+
+  creditos: CreditoDto[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private creditoService: CreditoService
+  ) {}
+
+  ngOnInit(): void {
+    this.creditoService.listarCreditos().subscribe(data => {
+      this.creditos = data.creditos;
+      console.log(this.creditos);
+    });
+  }
 
   visible: boolean = false;
   nombre: string = '';

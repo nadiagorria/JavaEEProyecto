@@ -8,5 +8,5 @@ export interface CreditoDto {
     maximo: number;
     pagoHastaAhora: number;
     cliente: Pick<ClienteDto, 'id' | 'nombre'>;
-    ventas?: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[]; // Made optional
+    ventas?: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[]; 
 }
