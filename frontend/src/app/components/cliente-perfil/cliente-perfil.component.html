@@ -38,15 +38,13 @@
       <ng-template #header>
         <tr>
           <th>Id</th>
-          <th>Cliente</th>
-          <th>Fecha Venta</th>
+          <th>Fecha</th>
           <th>Total</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-ventas>
         <tr>
           <td>{{ ventas.id }}</td>
-          <td>{{ cliente.id }}</td>
           <td>{{ ventas.fechaVenta | date:'dd/MM/yyyy' }}</td>
           <td>{{ ventas.total }}</td>
         </tr>
