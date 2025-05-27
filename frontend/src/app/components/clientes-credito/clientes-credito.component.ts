@@ -8,8 +8,8 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
-import { CreditoDto } from 'src/models/credito.dto'; 
-import { ClienteDto } from 'src/models/cliente.dto';
+import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
+import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
 import { ClienteService } from 'src/services/cliente.service';
 import { ActivatedRoute } from '@angular/router';
@@ -83,48 +83,36 @@ export class ClientesCreditoComponent {
 
   saveCliente() {
 
-  const cliente: ClienteDto = {
-    id: 0,
-    nombre: this.nombre,
-    telefono: this.telefono,
-    activo: true,
-    credito: {
-      id: 0,
-      precioTotal: 0,
-      pagoHastaAhora: 0,
-      ventas: []
-    },
-  };
-
-  this.clienteService.crearCliente(cliente).subscribe({
-    next: (mensaje: String) => {
-      const credito: CreditoDto = {
-        id: 0,
+    const clienteCreditoDto: clienteCreditoDto = {
+      cliente: {
+        nombre: this.nombre,
+        telefono: this.telefono
+      },
+      credito: {
         precioTotal: this.deuda,
         pagoHastaAhora: this.pago,
         minimo: this.minimo,
         maximo: this.maximo,
-        ventas: [],
-        cliente: null as any
-      };
+      }
+    };
 
-      this.creditoService.crearCredito(credito).subscribe({
-        next: (creditoCreado: CreditoDto) => {
-          alert('Cliente y crédito creados correctamente');
-          this.ngOnInit(); // Refresca la lista
-        },
-        error: (err: any) => {
-          console.error('Error al crear crédito:', err);
-          alert('Error al crear crédito: ' + (err.message || err.status));
-        }
-      });
-    },
-    error: (err: any) => {
-      console.error('Error al crear cliente:', err);
-      alert('Error al crear cliente: ' + (err.message || err.status));
-    }
-  });
-}
+    this.clienteService.crearClienteCredito(clienteCreditoDto).subscribe({
+      next: (data: any) => {
+        this.creditos.push(data.credito);
+        this.visible = false;
+        this.nombre = '';
+        this.telefono = '';
+        this.minimo = 0;
+        this.maximo = 0;
+        this.deuda = 0;
+        this.pago = 0;
+      },
+      error: (err: any) => {
+        console.error('Error al crear cliente y crédito:', err);
+        alert('Error al crear cliente y crédito: ' + (err.message || err.status));
+      }
+    });
+  }
 
   busqueda: string = '';
 

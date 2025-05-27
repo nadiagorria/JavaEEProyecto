@@ -7,7 +7,9 @@ import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
+import ti.proyectojava.dtos.ClienteCreditoDto;
 import ti.proyectojava.dtos.ClienteDto;
+import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.ProveedorDto;
 
 import java.util.NoSuchElementException;
@@ -19,13 +21,15 @@ public class EntidadService {
 
     private final EntidadRepository entidadRepository;
     private final ClienteRepository clienteRepository;
+    private final CreditoRepository creditoRepository;
     private final ProveedorRepository proveedorRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
 
-    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, MapsDtosEntityService mapsDtosEntityService){
+    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService){
         this.entidadRepository = entidadRepository;
         this.clienteRepository=clienteRepository;
         this.proveedorRepository=proveedorRepository;
+        this.creditoRepository = creditoRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
@@ -57,6 +61,30 @@ public class EntidadService {
     public String crearCliente(ClienteDto clienteDto) {
             return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
     }
+
+    public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
+        String response = "";
+
+        ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setNombre(clienteCreditoDto.getNombre());
+        clienteDto.setTelefono(clienteCreditoDto.getTelefono());
+
+
+        CreditoDto creditoDto = new CreditoDto();
+        creditoDto.setPrecioTotal(clienteCreditoDto.getPrecioTotal());
+        creditoDto.setMinimo(clienteCreditoDto.getMinimo());
+        creditoDto.setMaximo(clienteCreditoDto.getMaximo());
+        creditoDto.setPagoHastaAhora(clienteCreditoDto.getPagoHastaAhora());
+
+        clienteDto.setCredito(creditoDto);
+        creditoDto.setCliente(clienteDto);
+
+        response = "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
+        response += ", Credito creado. ID: " + creditoRepository.save(mapsDtosEntityService.mapToEntityCredito(creditoDto)).getId();
+
+        return response;
+    }
+
 
     public String editarCliente(ClienteDto clienteDto) {
         Optional<Cliente> optionalCliente = clienteRepository.findById(clienteDto.getId());
@@ -138,6 +166,7 @@ public class EntidadService {
         // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
     }
+
 
 
 }

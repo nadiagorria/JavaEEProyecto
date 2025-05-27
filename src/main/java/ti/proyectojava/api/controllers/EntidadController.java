@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.business.entities.Entidad;
+import ti.proyectojava.dtos.ClienteCreditoDto;
 import ti.proyectojava.dtos.ClienteDto;
+import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.ProveedorDto;
 import ti.proyectojava.services.EntidadService;
 
@@ -49,6 +51,18 @@ public class EntidadController {
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDto clienteDto) {
         String response = entidadService.crearCliente(clienteDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/clienteCredito")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta Funcion crea un nuevo Cliente y su Credito")
+    public ResponseEntity<String> crearClienteCredito(@RequestBody ClienteCreditoDto clienteCreditoDto) {
+        String response = entidadService.crearClienteCredito(clienteCreditoDto);
+        if (response == null) {
+            return new ResponseEntity<>("Error al crear cliente o credito", HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
     }
 
     //solo puede usarlo un admin
