@@ -21,8 +21,8 @@ export class ClienteService {
       return this.http.get<ClienteDto>(`${this.urlService.baseUrl}${this.endpoint}/seleccionarCliente`, { params });
   }
 
-  crearCliente(cliente: ClienteDto): Observable<ClienteDto> {
-    return this.http.post<ClienteDto>(`${this.urlService.baseUrl}${this.endpoint}/cliente`, cliente);
+  crearCliente(cliente: ClienteDto): Observable<String> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/cliente`, cliente, { responseType: 'text' });
   }
 
 }

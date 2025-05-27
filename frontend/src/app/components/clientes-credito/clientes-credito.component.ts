@@ -81,55 +81,50 @@ export class ClientesCreditoComponent {
   deuda: number = 0;
   pago: number = 0;
 
-  saveCliente(){
+  saveCliente() {
 
-    const cliente: ClienteDto = {
+  const cliente: ClienteDto = {
+    id: 0,
+    nombre: this.nombre,
+    telefono: this.telefono,
+    activo: true,
+    credito: {
       id: 0,
-      nombre: this.nombre,
-      telefono: this.telefono,
-      activo: true, 
-      credito: null as any,       
-    };
+      precioTotal: 0,
+      pagoHastaAhora: 0,
+      ventas: []
+    },
+  };
 
-    const credito: CreditoDto = {
-      id: 0,
-      precioTotal: this.deuda,
-      pagoHastaAhora: this.pago,
-      minimo: this.minimo,
-      maximo: this.maximo,
-      ventas: [],
-      cliente: null as any
-    };
-    
-    this.clienteService.crearCliente(cliente).subscribe({
-      next: (resp) => {
-        this.creditoService.listarCreditos().subscribe(listado => {
-          this.creditos = listado.creditos;
-          this.nombre  = '';
-          this.telefono = '';
-          this.minimo  = 0;
-          this.maximo  = 0;
-          this.deuda = 0;
-          this.pago = 0;
-          this.visible = false;  
-        });
-      },
-      error: (err) => {
-        console.error('Error al crear cliente:', err);
-        alert('Error al crear cliente: ' + (err.message || err.status));
-      }
-    }); 
+  this.clienteService.crearCliente(cliente).subscribe({
+    next: (mensaje: String) => {
+      const credito: CreditoDto = {
+        id: 0,
+        precioTotal: this.deuda,
+        pagoHastaAhora: this.pago,
+        minimo: this.minimo,
+        maximo: this.maximo,
+        ventas: [],
+        cliente: null as any
+      };
 
-    this.creditoService.crearCredito(credito).subscribe({
-      next: (resp) => {
-        console.log('Credito creado exitosamente', resp);
-      },
-      error: (err) => {
-        console.error('Error al crear crédito:', err);
-        alert('Error al crear crédito: ' + (err.message || err.status));
-      }
-    });
-  }
+      this.creditoService.crearCredito(credito).subscribe({
+        next: (creditoCreado: CreditoDto) => {
+          alert('Cliente y crédito creados correctamente');
+          this.ngOnInit(); // Refresca la lista
+        },
+        error: (err: any) => {
+          console.error('Error al crear crédito:', err);
+          alert('Error al crear crédito: ' + (err.message || err.status));
+        }
+      });
+    },
+    error: (err: any) => {
+      console.error('Error al crear cliente:', err);
+      alert('Error al crear cliente: ' + (err.message || err.status));
+    }
+  });
+}
 
   busqueda: string = '';
 
