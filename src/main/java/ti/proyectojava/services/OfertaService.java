@@ -85,6 +85,18 @@ public class OfertaService {
         return response;
     }
 
+    public ResponseListadoCombos getCombosByProducto(Long productoId) {
+        ResponseListadoCombos response = new ResponseListadoCombos();
+
+        List<ComboDto> combos = comboRepository.findByProductos_Id(productoId)
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoComboSimple)
+                .collect(Collectors.toList());
+
+        response.setCombos(combos);
+        return response;
+    }
+
 
     //////////////////////////////////DESCUENTO///////////////////////////////////
 
@@ -116,6 +128,18 @@ public class OfertaService {
 
         response.setDescuentos(descuentosActivos);
 
+        return response;
+    }
+
+    public ResponseListadoDescuentos getDescuentosByProducto(Long productoId) {
+        ResponseListadoDescuentos response = new ResponseListadoDescuentos();
+
+        List<DescuentoDto> descuentos = descuentoRepository.findByProducto_Id(productoId)
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoDescuentoSimple)
+                .collect(Collectors.toList());
+
+        response.setDescuentos(descuentos);
         return response;
     }
 
@@ -151,6 +175,18 @@ public class OfertaService {
 
         response.setPromociones(promocionesActivos);
 
+        return response;
+    }
+
+    public ResponseListadoPromociones getPromocionesByProducto(Long productoId) {
+        ResponseListadoPromociones response = new ResponseListadoPromociones();
+
+        List<PromocionDto> promociones = promocionRepository.findByProducto_Id(productoId)
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoPromocionSimple)
+                .collect(Collectors.toList());
+
+        response.setPromociones(promociones);
         return response;
     }
 

@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface DescuentoRepository extends JpaRepository<Descuento, Long> {
     List<Descuento> findByActivoTrue();
     Optional<Descuento> findById(Long id);
+    List<Descuento> findByProducto_Id(Long productoId);
 }

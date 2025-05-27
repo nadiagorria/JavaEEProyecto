@@ -23,12 +23,11 @@
           <th class="w-10rem sm:w-8rem texto">Cantidad</th>
           <th class="w-6rem sm:w-4rem texto">Quitar</th>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-cantidad>
+      </ng-template>      <ng-template pTemplate="body" let-cantidad>
         <tr>
           <td>{{ cantidad.producto.nombre }}</td>
-          <td>{{ getCodigoDeBarra(cantidad.producto.codigoDeBarra) }}</td>
-          <td>{{ getPrecioVenta(cantidad.producto.id) | currency }}</td>          <td>
+          <td>{{ cantidad.producto.codigoDeBarra }}</td>
+          <td>{{ getPrecioVenta(cantidad.producto.id) | currency }}</td><td>
             <p-inputNumber
               [(ngModel)]="cantidad.cantidad"
               [showButtons]="true"

@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface PromocionRepository extends JpaRepository<Promocion, Long> {
     List<Promocion> findByActivoTrue();
     Optional<Promocion> findById(Long id);
+    List<Promocion> findByProducto_Id(Long productoId);
 }

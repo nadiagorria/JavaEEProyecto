@@ -111,13 +111,8 @@ export class NuevaventaComponent {
   
 
 
-
   getPrecioVenta(productoId: number): number | undefined {
     return this.productos.find(p => p.id === productoId)?.precioVenta;
-  }
-
-  getCodigoDeBarra(productoId: number): string | undefined {
-    return this.productos.find(p => p.id === productoId)?.codigoDeBarra;
   }
 
   filtrarProductos(event: { query: string }) {

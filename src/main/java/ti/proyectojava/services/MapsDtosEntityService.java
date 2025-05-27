@@ -1059,6 +1059,64 @@ public class MapsDtosEntityService {
 
 
 
+    public ComboDto mapToDtoComboSimple(Combo combo) {
+        if (combo == null) {
+            return null;
+        }
+
+        ComboDto dto = new ComboDto();
+        dto.setId(combo.getId());
+        dto.setDescripcion(combo.getDescripcion());
+        dto.setDescuento(combo.getDescuento());
+        dto.setActivo(combo.getActivo());
+        dto.setInicio(combo.getInicio());
+        dto.setFin(combo.getFin());
+
+        if (combo.getProductos() != null) {
+            dto.setProductos(combo.getProductos().stream()
+                    .map(this::mapToDtoProductoSimple)
+                    .collect(Collectors.toList()));
+        }
+        return dto;
+    }
+
+    public PromocionDto mapToDtoPromocionSimple(Promocion promocion){
+        if (promocion == null) {
+            return null;
+        }
+
+        PromocionDto dto = new PromocionDto();
+        dto.setId(promocion.getId());
+        dto.setDescripcion(promocion.getDescripcion());
+        dto.setDescuento(promocion.getDescuento());
+        dto.setActivo(promocion.getActivo());
+        dto.setInicio(promocion.getInicio());
+        dto.setFin(promocion.getFin());
+
+        if (promocion.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(promocion.getProducto()));
+        }
+        return dto;
+    }
+
+    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
+        if (descuento == null) {
+            return null;
+        }
+
+        DescuentoDto dto = new DescuentoDto();
+        dto.setId(descuento.getId());
+        dto.setDescuento(descuento.getDescuento());
+        dto.setActivo(descuento.getActivo());
+        dto.setInicio(descuento.getInicio());
+        dto.setFin(descuento.getFin());
+
+        if (descuento.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(descuento.getProducto()));
+        }
+
+        return dto;
+    }
 
     public ProductoDto mapToDtoProductoSimple(Producto producto) {
         if (producto == null) {
