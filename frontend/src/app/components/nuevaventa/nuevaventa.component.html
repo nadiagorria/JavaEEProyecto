@@ -14,8 +14,7 @@
       paginatorPosition="bottom"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
       showGridlines
-      [responsive]="true">
-      <ng-template pTemplate="header">
+      [responsive]="true">      <ng-template pTemplate="header">
         <tr>
           <th class="texto">Nombre</th>
           <th class="texto">Código</th>
@@ -23,16 +22,40 @@
           <th class="w-10rem sm:w-8rem texto">Cantidad</th>
           <th class="w-6rem sm:w-4rem texto">Quitar</th>
         </tr>
-      </ng-template>      <ng-template pTemplate="body" let-cantidad>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-cantidad>
         <tr>
-          <td>{{ cantidad.producto.nombre }}</td>
+          <td>
+            <div>{{ cantidad.producto.nombre }}</div>
+            <div *ngIf="cantidad.tieneOferta" class="text-sm text-green-600 font-semibold">
+              <i class="pi pi-tag mr-1"></i>{{ cantidad.nombreOferta }}
+            </div>
+          </td>
           <td>{{ cantidad.producto.codigoDeBarra }}</td>
-          <td>{{ getPrecioVenta(cantidad.producto.id) | currency }}</td><td>
+          <td>
+            <div *ngIf="cantidad.tieneOferta; else sinOferta">
+              <div class="text-sm text-500 line-through">
+                {{ cantidad.precioOriginal | currency }}
+              </div>
+              <div class="text-green-600 font-semibold">
+                {{ getPrecioFinal(cantidad) | currency }}
+              </div>
+              <div class="text-xs text-green-500">
+                Ahorro: {{ (cantidad.precioOriginal - getPrecioFinal(cantidad)) | currency }}
+              </div>
+            </div>
+            <ng-template #sinOferta>
+              <div>{{ getPrecioFinal(cantidad) | currency }}</div>
+            </ng-template>
+          </td>
+          <td>
             <p-inputNumber
               [(ngModel)]="cantidad.cantidad"
               [showButtons]="true"
               [min]="1"
-              mode="decimal">
+              mode="decimal"
+              (onInput)="aplicarOfertas()">
             </p-inputNumber>
           </td>
           <td>
@@ -42,10 +65,14 @@
             </button>
           </td>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
+      </ng-template>      <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
         <tr>
-          <td colspan="2" class="text-right font-bold">Total:</td>
+          <td colspan="2" class="text-right font-bold">
+            <div *ngIf="getTotalAhorro() > 0" class="text-sm text-green-600 mb-1">
+              Total ahorrado: {{ getTotalAhorro() | currency }}
+            </div>
+            <div>Total:</div>
+          </td>
           <td class="texto font-bold">{{ calcularTotal() | currency }}</td>
           <td class="texto font-bold" colspan="2">{{ calcularCantidadTotal() }}</td>
         </tr>
@@ -72,9 +99,10 @@
       </ng-template>
     </p-autoComplete>
 
-    <div class="fixed bottom-0 right-0 p-3 lg:pr-8 lg:pb-4 z-5">
-
-      <div class="mb-3 p-3 border-round surface-card shadow-2">
+    <div class="fixed bottom-0 right-0 p-3 lg:pr-8 lg:pb-4 z-5">      <div class="mb-3 p-3 border-round surface-card shadow-2">
+        <div *ngIf="getTotalAhorro() > 0" class="text-sm text-green-600 mb-1 text-right">
+          <i class="pi pi-tag mr-1"></i>Ahorrado: {{ getTotalAhorro() | currency }}
+        </div>
         <span class="text-xl font-bold block text-right texto">
               Total: {{ calcularTotal() | currency }}
         </span>
