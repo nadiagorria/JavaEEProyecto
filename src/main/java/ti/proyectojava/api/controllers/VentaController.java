@@ -11,24 +11,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoVentas;
 import ti.proyectojava.business.entities.Venta;
+import ti.proyectojava.business.entities.FormaDePago;
 import ti.proyectojava.dtos.UsuarioDto;
 import ti.proyectojava.dtos.VentaDto;
 import ti.proyectojava.services.UsuarioService;
 import ti.proyectojava.services.VentaService;
+import ti.proyectojava.services.CreditoService;
 
 import java.util.Collections;
 import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/venta")
-public class VentaController {
-
-    private final VentaService ventaService;
+public class VentaController {    private final VentaService ventaService;
     private final UsuarioService usuarioService;
+    private final CreditoService creditoService;
 
-    public VentaController(VentaService ventaService, UsuarioService usuarioService) {
+    public VentaController(VentaService ventaService, UsuarioService usuarioService, CreditoService creditoService) {
         this.ventaService = ventaService;
         this.usuarioService = usuarioService;
+        this.creditoService = creditoService;
     }
 
     @GetMapping()
@@ -77,8 +79,29 @@ public class VentaController {
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
         ventaDto.setUsuario(usuario.getNombre());
-        Long ventaId = ventaService.crearVenta(ventaDto);
 
+        // Validación para pagos FIADO: verificar límites de crédito
+        if (ventaDto.getFormaPago() == FormaDePago.FIADO) {
+            if (ventaDto.getCredito() == null || ventaDto.getCredito().getId() == null) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("error", -1L));
+            }
+
+            // Verificar que el cliente no exceda su límite de crédito
+            Long creditoId = ventaDto.getCredito().getId();
+            float totalVenta = ventaDto.getTotal();
+            
+            if (!creditoService.puedeRealizarCompra(creditoId, totalVenta)) {
+                float dineroDisponible = creditoService.calcularDineroDisponible(creditoId);
+                // Retornar error con información específica
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("error", -2L)); // Código especial para límite excedido
+            }
+        }
+
+        Long ventaId = ventaService.crearVenta(ventaDto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -44,11 +44,17 @@ public class VentaService {
     public VentaDto obtenerVentaPorId(Long ventaId) {
         Venta venta = ventaRepository.findById(ventaId).orElseThrow(() -> new RuntimeException("Venta no existe"));
         return mapsDtosEntityService.mapToDtoVentaPlano(venta);
-    }
-
-    public Long crearVenta(VentaDto ventaDto) {
+    }    public Long crearVenta(VentaDto ventaDto) {
         ventaDto.setFinalizada(true);
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
+        
+        if (ventaGuardada.getFormaPago() == FormaDePago.FIADO && ventaGuardada.getCredito() != null) {
+            Credito credito = ventaGuardada.getCredito();
+            float nuevoPrecioTotal = credito.getPrecioTotal() + ventaGuardada.getTotal();
+            credito.setPrecioTotal(nuevoPrecioTotal);
+            creditoRepository.save(credito);
+        }
+        
         return ventaGuardada.getId();
     }
 

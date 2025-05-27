@@ -294,7 +294,7 @@ export class NuevaventaComponent {
    * Calcula el dinero disponible que puede gastar un cliente
    */
   calcularDineroDisponible(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): number {
-    const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
+    const deudaActual = credito.precioTotal;
     return Math.max(0, credito.maximo - deudaActual);
   }
 
@@ -487,10 +487,27 @@ export class NuevaventaComponent {
       })),
       activo: true,
       finalizada: true
-    };
-
-    this.ventaService.crearVenta(venta as VentaDto).subscribe({
+    };    this.ventaService.crearVenta(venta as VentaDto).subscribe({
       next: (response) => {
+        // Verificar si la respuesta contiene un error
+        if (response && typeof response === 'object' && 'error' in response) {
+          const errorCode = response.error;
+          if (errorCode === -1) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Debe seleccionar un cliente válido para el pago fiado'
+            });
+          } else if (errorCode === -2) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Límite de crédito excedido',
+              detail: 'El cliente no puede realizar esta compra. Límite de crédito excedido'
+            });
+          }
+          return;
+        }
+        
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -501,11 +518,35 @@ export class NuevaventaComponent {
       },
       error: (error) => {
         console.error('Error al crear la venta:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al crear la venta'
-        });
+        
+        // Manejar errores HTTP específicos
+        if (error.status === 400 && error.error && typeof error.error === 'object') {
+          if (error.error.error === -1) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Debe seleccionar un cliente válido para el pago fiado'
+            });
+          } else if (error.error.error === -2) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Límite de crédito excedido',
+              detail: 'El cliente no puede realizar esta compra. El monto excede el límite de crédito disponible'
+            });
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al crear la venta'
+            });
+          }
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al crear la venta'
+          });
+        }
       }
     });
   }
