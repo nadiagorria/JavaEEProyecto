@@ -19,7 +19,7 @@ public class SeguridadService {
                                                String password) {
         Optional<Usuario> objUsuario
                 = usuarioRepository.findByNombreAndContrasenia(usuario, password);
-        if (objUsuario.equals(null)) {
+        if (objUsuario.isEmpty()) {
             return Optional.empty();
         } else if (!objUsuario.get().getActivo()) {
             return Optional.empty();
@@ -33,6 +33,10 @@ public class SeguridadService {
             lisRoles[i] = usuario.getRoles().get(i).getNombre();
         }
         return lisRoles;
+    }
+
+    public boolean existeUsuario(String nombreUsuario) {
+        return usuarioRepository.findByNombre(nombreUsuario).isPresent();
     }
 
 }

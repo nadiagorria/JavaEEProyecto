@@ -32,7 +32,27 @@ export class SecurityService {
       { headers /*, withCredentials: true*/ }
     );
   }
+  register(username: string, email: string, password: string, isAdmin: boolean = false): Observable<any> {
+    const registrationData = new URLSearchParams();
+    registrationData.set('username', username);
+    registrationData.set('email', email);
+    registrationData.set('password', password);
+    registrationData.set('admin', isAdmin.toString());
 
+    const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/registro`,
+      registrationData.toString(), 
+      { headers }
+    );
+  }
+
+  checkUsername(username: string): Observable<any> {
+    return this.http.get(
+      `${this.urlService.baseUrl}${this.endpoint}/verificar-usuario/${username}`
+    );
+  }
 
   obtenerRoles(): Observable<any> {
     return this.http.get(

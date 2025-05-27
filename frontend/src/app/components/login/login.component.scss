@@ -298,22 +298,8 @@ button[pButton] {
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-}
-
 .login-container {
   animation: fadeInUp 0.6s ease-out;
-}
-
-/* Focus within container effect */
-.login-container:focus-within {
-  animation: pulse 2s ease-in-out infinite;
 }
 
 /* Responsive improvements */
