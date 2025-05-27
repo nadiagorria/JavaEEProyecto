@@ -17,6 +17,7 @@ import { VentaService } from '../../../services/venta.service';
 import { CreditoService } from 'src/services/credito.service';
 import { OfertaService, ResponseListadoCombos } from 'src/services/oferta.service';
 import { HeaderComponent } from '../header/header.component';
+import { forkJoin } from 'rxjs';
 
 // Interfaz para los items de la venta con información de ofertas
 interface ItemVenta extends CantidadDto {
@@ -58,10 +59,10 @@ export class NuevaventaComponent {
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
-  
-  displayDialog: boolean = false;
-  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'> | null = null;
-  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente'>[] = [];
+    displayDialog: boolean = false;
+  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'> | null = null;
+  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
+  creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
   formaPagoSeleccionada: string = '';
   totalRecords: number = 0;
 
@@ -273,9 +274,53 @@ export class NuevaventaComponent {
   getPrecioVenta(productoId: number): number | undefined {
     return this.productos.find(p => p.id === productoId)?.precioVenta;
   }
-
   getPrecioFinal(item: ItemVenta): number {
     return item.tieneOferta ? item.precioConDescuento : item.producto.precioVenta * item.cantidad;
+  }
+
+  // ==================== LÓGICA DE CRÉDITOS ====================
+
+  /**
+   * Filtra los clientes basándose en el texto de búsqueda
+   */
+  filtrarClientes(event: { query: string }) {
+    const query = event.query.toLowerCase();
+    this.creditosFiltrados = this.creditos.filter(credito =>
+      credito.cliente.nombre.toLowerCase().includes(query)
+    );
+  }
+
+  /**
+   * Calcula el dinero disponible que puede gastar un cliente
+   */
+  calcularDineroDisponible(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): number {
+    const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
+    return Math.max(0, credito.maximo - deudaActual);
+  }
+
+  /**
+   * Verifica si el cliente puede realizar la compra sin superar su límite de crédito
+   */
+  puedeRealizarCompra(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
+    const totalVenta = this.calcularTotal();
+    const dineroDisponible = this.calcularDineroDisponible(credito);
+    return totalVenta <= dineroDisponible;
+  }
+
+  /**
+   * Obtiene el texto descriptivo del crédito disponible para mostrar en el dropdown
+   */
+  getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): string {
+    const dineroDisponible = this.calcularDineroDisponible(credito);
+    const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
+    return `${credito.cliente.nombre} - Disponible: $${dineroDisponible.toFixed(2)} (Deuda: $${deudaActual.toFixed(2)})`;
+  }
+
+  /**
+   * Verifica si la forma de pago es FIADO
+   */
+  esPagoFiado(): boolean {
+    return this.formaPagoSeleccionada === 'FIADO';
   }
 
   filtrarProductos(event: { query: string }) {
@@ -376,8 +421,8 @@ export class NuevaventaComponent {
     }
     this.displayDialog = true;
   }
-
   confirmarVenta() {
+    // Validación de forma de pago
     if (!this.formaPagoSeleccionada) {
       this.messageService.add({
         severity: 'error',
@@ -387,6 +432,7 @@ export class NuevaventaComponent {
       return;
     }
 
+    // Validación de productos en la venta
     if (this.cantidades.length === 0) {
       this.messageService.add({
         severity: 'warn',
@@ -394,6 +440,30 @@ export class NuevaventaComponent {
         detail: 'No hay productos en la venta'
       });
       return;
+    }
+
+    // Validaciones específicas para pago FIADO
+    if (this.formaPagoSeleccionada === 'FIADO') {
+      if (!this.creditoSeleccionado) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Debe seleccionar un cliente para el pago fiado'
+        });
+        return;
+      }
+
+      // Verificar que el cliente puede realizar la compra sin superar su límite
+      if (!this.puedeRealizarCompra(this.creditoSeleccionado)) {
+        const dineroDisponible = this.calcularDineroDisponible(this.creditoSeleccionado);
+        const totalVenta = this.calcularTotal();
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Límite de crédito excedido',
+          detail: `El cliente ${this.creditoSeleccionado.cliente.nombre} solo puede gastar $${dineroDisponible.toFixed(2)} pero el total de la venta es $${totalVenta.toFixed(2)}`
+        });
+        return;
+      }
     }
 
     const venta: Partial<VentaDto> = {

@@ -129,26 +129,7 @@
     [modal]="true"
     [closable]="false"
     [draggable]="false"
-    [resizable]="false">
-
-    <div class="grid p-fluid">
-      <div class="col-12">
-        <h5 class="texto">Cliente</h5>
-        <p-dropdown
-          class="texto"
-          [(ngModel)]="creditoSeleccionado"
-          [options]="creditos"
-          optionLabel="cliente.nombre"
-          placeholder="Seleccione un cliente"
-          [required]="true">
-          <ng-template let-credito pTemplate="item">
-            <div class="texto">
-              {{credito.cliente.nombre}} - Disponible: {{credito.precioTotal - credito.pagoHastaAhora | currency}}
-            </div>
-          </ng-template>
-    </p-dropdown>
-      </div>
-
+    [resizable]="false">    <div class="grid p-fluid">
       <div class="col-12 mt-3">
         <h5 class="texto">Forma de Pago</h5>
         <p-dropdown
@@ -163,7 +144,51 @@
     </p-dropdown>
       </div>
 
-      <div class="col-12 mt-5 flex justify-content-end gap-2 fixed bottom-0 right-0">
+      <div class="col-12" *ngIf="esPagoFiado()">
+        <h5 class="texto">Cliente</h5>
+        <p-autoComplete
+          class="texto"
+          [(ngModel)]="creditoSeleccionado"
+          [suggestions]="creditosFiltrados"
+          (completeMethod)="filtrarClientes($event)"
+          field="cliente.nombre"
+          placeholder="Buscar cliente..."
+          [dropdown]="true"
+          [required]="true">
+          <ng-template let-credito pTemplate="item">
+            <div class="texto">
+              <div class="font-semibold">{{credito.cliente.nombre}}</div>
+              <div class="text-sm text-500">
+                Disponible: {{calcularDineroDisponible(credito) | currency}}
+                <span [class]="puedeRealizarCompra(credito) ? 'text-green-600' : 'text-red-600'">
+                  {{puedeRealizarCompra(credito) ? '✓ Puede comprar' : '✗ Excede límite'}}
+                </span>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template let-credito pTemplate="selectedItem">
+            <div class="texto" *ngIf="credito">
+              {{credito.cliente.nombre}} - Disponible: {{calcularDineroDisponible(credito) | currency}}
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        
+        <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
+        <div *ngIf="creditoSeleccionado && !puedeRealizarCompra(creditoSeleccionado)" 
+             class="mt-2 p-2 border-round bg-red-50 text-red-800 text-sm">
+          <i class="pi pi-exclamation-triangle mr-2"></i>
+          El cliente no puede realizar esta compra. Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}.
+        </div>
+        
+        <!-- Información del crédito del cliente seleccionado -->
+        <div *ngIf="creditoSeleccionado" class="mt-2 p-2 border-round bg-blue-50 text-blue-800 text-sm">
+          <div><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
+          <div><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>
+          <div><strong>Deuda actual:</strong> {{(creditoSeleccionado.precioTotal - creditoSeleccionado.pagoHastaAhora) | currency}}</div>
+          <div><strong>Disponible:</strong> {{calcularDineroDisponible(creditoSeleccionado) | currency}}</div>
+          <div><strong>Total de esta venta:</strong> {{calcularTotal() | currency}}</div>
+        </div>
+      </div>      <div class="col-12 mt-5 flex justify-content-end gap-2 fixed bottom-0 right-0">
         <button pButton
                 type="button"
                 label="Cancelar"
@@ -178,6 +203,7 @@
                 label="Confirmar"
                 icon="pi pi-check"
                 class="p-button-success texto"
+                [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeRealizarCompra(creditoSeleccionado))"
                 (click)="confirmarVenta()"></button>
       </div>
     </div>
