@@ -3,10 +3,10 @@
   <h1 class="w-full textoNegro">Clientes a Crédito</h1>
   <article class="w-full flex padreBotonInput">
     <p-inputgroup>
-      <input pInputText placeholder="Buscar por nombre" />
+      <input pInputText placeholder="Buscar por nombre" [(ngModel)]="busqueda"/>
         <p-inputgroup-addon>
 
-        <p-button icon="pi pi-search" severity="secondary" variant="text"  />
+        <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="buscarCliente()"/>
 
       </p-inputgroup-addon>
     </p-inputgroup>

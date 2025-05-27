@@ -11,6 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { CreditoDto } from 'src/models/credito.dto'; 
 import { ClienteDto } from 'src/models/cliente.dto';
 import { CreditoService } from 'src/services/credito.service';
+import { ClienteService } from 'src/services/cliente.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -48,7 +49,8 @@ export class ClientesCreditoComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private creditoService: CreditoService
+    private creditoService: CreditoService,
+    private clienteService: ClienteService
   ) {}
 
   ngOnInit(): void {
@@ -61,8 +63,6 @@ export class ClientesCreditoComponent {
         alert('Error al listar créditos: ' + (err.message || err.status));
       }
     });
-
-    console.log('Creditos:', this.creditos);
   }
 
   visible: boolean = false;
@@ -70,7 +70,6 @@ export class ClientesCreditoComponent {
   mostarModal(){
     this.visible = true;
   }
-  
 
   //Cliente
   nombre: string = '';
@@ -82,26 +81,81 @@ export class ClientesCreditoComponent {
   deuda: number = 0;
   pago: number = 0;
 
-
   saveCliente(){
-    console.log(`Nombre: ${this.nombre}, Teléfono: ${this.telefono}`);
 
     const cliente: ClienteDto = {
       id: 0,
       nombre: this.nombre,
       telefono: this.telefono,
       activo: true, 
-      credito: {
-        id: 0,
-        precioTotal: this.deuda, 
-        pagoHastaAhora: this.pago, 
-        ventas: [] 
-      }
+      credito: null as any,       
+    };
+
+    const credito: CreditoDto = {
+      id: 0,
+      precioTotal: this.deuda,
+      pagoHastaAhora: this.pago,
+      minimo: this.minimo,
+      maximo: this.maximo,
+      ventas: [],
+      cliente: null as any
     };
     
+    this.clienteService.crearCliente(cliente).subscribe({
+      next: (resp) => {
+        this.creditoService.listarCreditos().subscribe(listado => {
+          this.creditos = listado.creditos;
+          this.nombre  = '';
+          this.telefono = '';
+          this.minimo  = 0;
+          this.maximo  = 0;
+          this.deuda = 0;
+          this.pago = 0;
+          this.visible = false;  
+        });
+      },
+      error: (err) => {
+        console.error('Error al crear cliente:', err);
+        alert('Error al crear cliente: ' + (err.message || err.status));
+      }
+    }); 
 
-    this.visible = false;  
+    this.creditoService.crearCredito(credito).subscribe({
+      next: (resp) => {
+        console.log('Credito creado exitosamente', resp);
+      },
+      error: (err) => {
+        console.error('Error al crear crédito:', err);
+        alert('Error al crear crédito: ' + (err.message || err.status));
+      }
+    });
   }
-  
 
+  busqueda: string = '';
+
+  buscarCliente() {
+    if (this.busqueda.trim() === '') {
+      this.creditoService.listarCreditos().subscribe({
+        next: (data: any) => {
+          this.creditos = data.creditos;
+        },
+        error: (err: any) => {
+          console.error('Error al listar créditos:', err);
+          alert('Error al listar créditos: ' + (err.message || err.status));
+        }
+      });
+    } else {
+      this.creditoService.listarCreditos().subscribe({
+        next: (data: any) => {
+          this.creditos = data.creditos.filter((credito: CreditoDto) =>
+            credito.cliente.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
+          );
+        },
+        error: (err: any) => {
+          console.error('Error al buscar créditos:', err);
+          alert('Error al buscar créditos: ' + (err.message || err.status));
+        }
+      });
+    }
+  }
 }
