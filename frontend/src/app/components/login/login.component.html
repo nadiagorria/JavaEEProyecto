@@ -1,26 +1,96 @@
 <div class="center-wrapper">
   <div class="login-container">
-    <h2 class="titulo">Iniciar Sesión</h2>
-
-    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
-      <p-iftalabel class="form-field texto">
-        <input pInputText id="username" formControlName="username" />
-        <label class="texto" for="username">Nombre de Usuario</label>
-      </p-iftalabel>
-
-      <p-iftalabel class="form-field texto">
-        <p-password formControlName="contrasenia" inputId="contrasenia" [toggleMask]="true" [feedback]="false" />
-        <label class="texto" for="contrasenia">Contraseña</label>
-      </p-iftalabel>
-
-      <button pButton type="submit" label="Iniciar Sesión" class="texto" severity="contrast" [raised]="true"
-        [disabled]="formGroup.invalid">
-      </button>
-    </form>
-    <div class="registro"> ¿No tienes una cuenta?
-      <a routerLink="/registro">Crear cuenta aquí</a>
+    <!-- Logo/Icon -->
+    <div class="logo-section">
+      <i class="pi pi-user-plus logo-icon"></i>
+      <h1 class="titulo">Iniciar Sesión</h1>
+      <p class="subtitle">Bienvenido de vuelta</p>
     </div>
 
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-field">
+        <p-iftalabel>
+          <input 
+            pInputText 
+            id="username" 
+            formControlName="username" 
+            placeholder=" "
+            autocomplete="username"
+            class="styled-input"
+          />
+          <label for="username">
+            <i class="pi pi-user field-icon"></i>
+            Nombre de Usuario
+          </label>
+        </p-iftalabel>
+        <div class="field-error" *ngIf="formGroup.get('username')?.invalid && formGroup.get('username')?.touched">
+          <small *ngIf="formGroup.get('username')?.errors?.['required']">
+            El nombre de usuario es requerido
+          </small>
+          <small *ngIf="formGroup.get('username')?.errors?.['minlength']">
+            Mínimo 3 caracteres
+          </small>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <p-iftalabel>
+          <p-password 
+            formControlName="contrasenia" 
+            inputId="contrasenia" 
+            [toggleMask]="true" 
+            [feedback]="false"
+            placeholder=" "
+            autocomplete="current-password"
+            styleClass="styled-password"
+          />
+          <label for="contrasenia">
+            <i class="pi pi-lock field-icon"></i>
+            Contraseña
+          </label>
+        </p-iftalabel>
+        <div class="field-error" *ngIf="formGroup.get('contrasenia')?.invalid && formGroup.get('contrasenia')?.touched">
+          <small *ngIf="formGroup.get('contrasenia')?.errors?.['required']">
+            La contraseña es requerida
+          </small>
+          <small *ngIf="formGroup.get('contrasenia')?.errors?.['minlength']">
+            Mínimo 6 caracteres
+          </small>
+        </div>
+      </div>
+
+      <div class="button-section">
+        <button 
+          pButton 
+          type="submit" 
+          [loading]="isLoading"
+          [disabled]="formGroup.invalid || isLoading"
+          class="login-button"
+        >
+          <span *ngIf="!isLoading" class="button-content">
+            <i class="pi pi-sign-in"></i>
+            Iniciar Sesión
+          </span>
+          <span *ngIf="isLoading" class="button-content">
+            <i class="pi pi-spin pi-spinner"></i>
+            Autenticando...
+          </span>
+        </button>
+      </div>
+    </form>
+    
+    <div class="divider">
+      <span>o</span>
+    </div>
+    
+    <div class="registro">
+      ¿No tienes una cuenta?
+      <a routerLink="/registro" class="register-link">
+        <i class="pi pi-user-plus"></i>
+        Crear cuenta aquí
+      </a>
+    </div>
   </div>
 </div>
+
+<p-toast position="top-right" [life]="5000"></p-toast>

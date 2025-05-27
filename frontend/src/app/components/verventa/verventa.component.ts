@@ -8,7 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { VentaService } from 'src/services/venta.service';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
 @Component({
   selector: 'app-verventa',
   standalone: true,
@@ -18,7 +19,9 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     CurrencyPipe,
     TagModule,
-    TooltipModule
+    TooltipModule,
+    HeaderComponent,
+    FooterComponent
   ],
   templateUrl: './verventa.component.html',
   styleUrl: './verventa.component.scss'

@@ -18,7 +18,9 @@ import { FooterComponent } from '../footer/footer.component';
     TableModule,
     CurrencyPipe,
     RouterModule,
-    ButtonModule
+    ButtonModule,
+    HeaderComponent,
+    FooterComponent
   ],
   templateUrl: './ventas.component.html',
   styleUrl: './ventas.component.scss'
