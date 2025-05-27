@@ -1057,8 +1057,6 @@ public class MapsDtosEntityService {
 
     }
 
-
-
     public ComboDto mapToDtoComboSimple(Combo combo) {
         if (combo == null) {
             return null;
@@ -1077,6 +1075,22 @@ public class MapsDtosEntityService {
                     .map(this::mapToDtoProductoSimple)
                     .collect(Collectors.toList()));
         }
+        return dto;
+    }
+
+    // combo sin productos
+    public ComboDto mapToDtoComboSinProductos(Combo combo) {
+        if (combo == null) {
+            return null;
+        }
+
+        ComboDto dto = new ComboDto();
+        dto.setId(combo.getId());
+        dto.setDescripcion(combo.getDescripcion());
+        dto.setDescuento(combo.getDescuento());
+        dto.setActivo(combo.getActivo());
+        dto.setInicio(combo.getInicio());
+        dto.setFin(combo.getFin());
         return dto;
     }
 
@@ -1099,6 +1113,22 @@ public class MapsDtosEntityService {
         return dto;
     }
 
+    // promoción sin producto
+    public PromocionDto mapToDtoPromocionSinProducto(Promocion promocion){
+        if (promocion == null) {
+            return null;
+        }
+
+        PromocionDto dto = new PromocionDto();
+        dto.setId(promocion.getId());
+        dto.setDescripcion(promocion.getDescripcion());
+        dto.setDescuento(promocion.getDescuento());
+        dto.setActivo(promocion.getActivo());
+        dto.setInicio(promocion.getInicio());
+        dto.setFin(promocion.getFin());
+        return dto;
+    }
+
     public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
         if (descuento == null) {
             return null;
@@ -1118,6 +1148,22 @@ public class MapsDtosEntityService {
         return dto;
     }
 
+    // descuento sin producto
+    public DescuentoDto mapToDtoDescuentoSinProducto(Descuento descuento){
+        if (descuento == null) {
+            return null;
+        }
+
+        DescuentoDto dto = new DescuentoDto();
+        dto.setId(descuento.getId());
+        dto.setDescuento(descuento.getDescuento());
+        dto.setActivo(descuento.getActivo());
+        dto.setInicio(descuento.getInicio());
+        dto.setFin(descuento.getFin());
+        // NO incluir producto para evitar referencias circulares
+        return dto;
+    }
+
     public ProductoDto mapToDtoProductoSimple(Producto producto) {
         if (producto == null) {
             return null;
@@ -1129,9 +1175,34 @@ public class MapsDtosEntityService {
         dto.setCodigoDeBarra(producto.getCodigoDeBarra());
         dto.setNombre(producto.getNombre());
         dto.setPrecioCompra(producto.getPrecioCompra());
+        dto.setPrecioVenta(producto.getPrecioVenta());
+
+        // ofertas sin productos
+        if (producto.getCombos() != null) {
+            dto.setCombos(producto.getCombos().stream()
+                    .map(this::mapToDtoComboSinProductos)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        if (producto.getPromociones() != null) {
+            dto.setPromociones(producto.getPromociones().stream()
+                    .map(this::mapToDtoPromocionSinProducto)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        if (producto.getDescuentos() != null) {
+            dto.setDescuentos(producto.getDescuentos().stream()
+                    .map(this::mapToDtoDescuentoSinProducto)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
         return dto;
     }
 
+    
     public CantidadDto mapToDtoCantidadSimple(Cantidad cantidad) {
         if (cantidad == null) {
             return null;

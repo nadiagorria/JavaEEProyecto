@@ -1,11 +1,33 @@
 <div class="grid">
-  
     <!-- Información de la venta -->
     <div class="col-12 mb-3 pl-5">
       <h2 class="texto">Detalles de la Venta</h2>
-      <p class="texto">Fecha: {{venta.fechaVenta | date:'medium'}}</p>
-      <p class="texto">Usuario: {{venta.usuario}}</p>
-      <p class="texto">Forma de Pago: {{venta.formaPago}}</p>
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <p class="texto">Fecha: {{venta.fechaVenta | date:'medium'}}</p>
+          <p class="texto">Usuario: {{venta.usuario}}</p>
+          <p class="texto">Forma de Pago: {{venta.formaPago}}</p>
+        </div>
+        <div class="col-12 md:col-6">
+          <div *ngIf="venta.cantidades">
+            <p class="texto font-semibold mb-2">Ofertas aplicadas en esta venta:</p>
+            <div class="flex flex-wrap gap-2">
+              <ng-container *ngFor="let cantidad of venta.cantidades">
+                <div *ngIf="tieneOfertasVigentes(cantidad.producto)">
+                  <p-tag 
+                    [value]="cantidad.producto.nombre"
+                    [severity]="getSeveridadOferta(cantidad.producto)"
+                    [pTooltip]="getTextoOfertas(cantidad.producto)"
+                    tooltipPosition="bottom"
+                    class="mr-1 mb-1">
+                  </p-tag>
+                </div>
+              </ng-container>
+            </div>
+            <p *ngIf="!tieneAlgunaOferta()" class="text-muted text-sm">No se aplicaron ofertas en esta venta</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col-12 flex justify-content-center">
@@ -22,30 +44,42 @@
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
       showGridlines
       [responsive]="true">
-      
-      <ng-template pTemplate="header">
+        <ng-template pTemplate="header">
         <tr>
           <th class="texto">Nombre</th>
           <th class="texto">Código</th>
           <th class="texto">Precio</th>
           <th class="texto">Cantidad</th>
           <th class="texto">Subtotal</th>
+          <th class="texto">Ofertas Aplicadas</th>
         </tr>
       </ng-template>
-      
-      <ng-template pTemplate="body" let-cantidad>
+        <ng-template pTemplate="body" let-cantidad>
         <tr>
           <td>{{cantidad.producto.nombre}}</td>
           <td>{{cantidad.producto.codigoDeBarra}}</td>
           <td>{{cantidad.precioActual | currency}}</td>
           <td>{{cantidad.cantidad}}</td>
           <td>{{cantidad.cantidad * cantidad.precioActual | currency}}</td>
+          <td>
+            <div *ngIf="tieneOfertasVigentes(cantidad.producto); else sinOfertas">
+              <p-tag 
+                [value]="'Con descuento'"
+                [severity]="getSeveridadOferta(cantidad.producto)"
+                [pTooltip]="getTextoOfertas(cantidad.producto)"
+                tooltipPosition="top"
+                icon="pi pi-tag">
+              </p-tag>
+            </div>
+            <ng-template #sinOfertas>
+              <span class="text-muted text-sm">Sin ofertas</span>
+            </ng-template>
+          </td>
         </tr>
       </ng-template>
-      
-      <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
+        <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
         <tr>
-          <td colspan="3" class="text-right font-bold">Totales:</td>
+          <td colspan="4" class="text-right font-bold">Totales:</td>
           <td class="texto font-bold">{{calcularCantidadTotal()}}</td>
           <td class="texto font-bold">{{calcularTotal() | currency}}</td>
         </tr>
