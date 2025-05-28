@@ -503,11 +503,9 @@ public class MapsDtosEntityService {
         if (usuarioDto == null || processed.contains(usuarioDto)) {
             return null;
         }
-        processed.add(usuarioDto);
-
-        // Si tiene username
+        processed.add(usuarioDto);        // Si tiene username
         if (usuarioDto.getNombre() != null) {
-            Optional<Usuario> usuarioExistente = usuarioRepository.findByNombre(usuarioDto.getNombre());
+            Optional<Usuario> usuarioExistente = usuarioRepository.findByNombreIgnoreCase(usuarioDto.getNombre());
             if (usuarioExistente.isPresent()) {
                 return usuarioExistente.get();
             }

@@ -82,16 +82,15 @@ public class SeguridadController {
                 return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"CONTRASENIA_CORTA\", \"message\": \"La contraseña debe tener al menos 6 caracteres\"}");
-            }
-
-            // Crear DTO del usuario
+            }            // Crear DTO del usuario
             UsuarioDto usuarioDto = new UsuarioDto();
             usuarioDto.setNombre(username);
             usuarioDto.setMail(email);
             usuarioDto.setContrasenia(password);
+            usuarioDto.setActivo(true); // Establecer usuario como activo al registrarse
             
-            // Intentar crear el usuario
-            String resultado = usuarioService.crearUsuario(usuarioDto);
+            // Intentar crear el usuario con rol asignado
+            String resultado = usuarioService.crearUsuario(usuarioDto, isAdmin);
             
             if (resultado != null) {
                 return ResponseEntity

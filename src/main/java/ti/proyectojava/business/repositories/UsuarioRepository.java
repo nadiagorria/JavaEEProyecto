@@ -12,6 +12,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     Optional<Usuario> findByNombreAndContrasenia(String nombre, String contrasenia);
     Optional<Usuario> findByNombre(String nombre);
     List<Usuario> findByActivoTrue();
-
-
+    
+    // Métodos insensibles a mayúsculas y minúsculas
+    Optional<Usuario> findByNombreIgnoreCaseAndContrasenia(String nombre, String contrasenia);
+    Optional<Usuario> findByNombreIgnoreCase(String nombre);
 }
