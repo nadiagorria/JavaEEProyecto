@@ -65,11 +65,10 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
-  
-  displayDialog: boolean = false;
-  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'> | null = null;
-  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
-  creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
+    displayDialog: boolean = false;
+  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'> | null = null;
+  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
+  creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
   formaPagoSeleccionada: string = '';
   totalRecords: number = 0;
 
@@ -311,7 +310,6 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
     const deudaActual = credito.precioTotal;
     return Math.max(0, credito.maximo - deudaActual);
   }
-
   /**
    * Verifica si el cliente puede realizar la compra sin superar su límite de crédito
    */
@@ -322,9 +320,23 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Verifica si el total de la venta supera el crédito mínimo requerido
+   */
+  superaCreditoMinimo(credito: Pick<CreditoDto, 'minimo'>): boolean {
+    const totalVenta = this.calcularTotal();
+    return totalVenta >= credito.minimo;
+  }
+
+  /**
+   * Verifica si el cliente puede realizar la compra (supera mínimo y no excede máximo)
+   */
+  puedeComprarConCredito(credito: Pick<CreditoDto, 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
+    return this.puedeRealizarCompra(credito) && this.superaCreditoMinimo(credito);
+  }
+  /**
    * Obtiene el texto descriptivo del crédito disponible para mostrar en el dropdown
    */
-  getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): string {
+  getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): string {
     const dineroDisponible = this.calcularDineroDisponible(credito);
     const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
     return `${credito.cliente.nombre} - Disponible: $${dineroDisponible.toFixed(2)} (Deuda: $${deudaActual.toFixed(2)})`;
@@ -454,15 +466,23 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
         detail: 'No hay productos en la venta'
       });
       return;
-    }
-
-    // Validaciones específicas para pago FIADO
+    }    // Validaciones específicas para pago FIADO
     if (this.formaPagoSeleccionada === 'FIADO') {
       if (!this.creditoSeleccionado) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Debe seleccionar un cliente para el pago fiado'
+        });
+        return;
+      }
+
+      // Verificar que el total supere el crédito mínimo
+      if (!this.superaCreditoMinimo(this.creditoSeleccionado)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Monto insuficiente',
+          detail: `El total de la venta ($${this.calcularTotal().toFixed(2)}) debe ser mayor a $${this.creditoSeleccionado.minimo.toFixed(2)} para compras fiadas`
         });
         return;
       }
@@ -532,8 +552,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al crear la venta:', error);
-        
-        // Manejar errores HTTP específicos
+          // Manejar errores HTTP específicos
         if (error.status === 400 && error.error && typeof error.error === 'object') {
           if (error.error.error === -1) {
             this.messageService.add({
@@ -546,6 +565,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
               severity: 'error',
               summary: 'Límite de crédito excedido',
               detail: 'El cliente no puede realizar esta compra. El monto excede el límite de crédito disponible'
+            });
+          } else if (error.error.error === -3) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Monto insuficiente',
+              detail: 'El total de la venta no supera el mínimo requerido para compras fiadas'
             });
           } else {
             this.messageService.add({

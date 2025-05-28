@@ -82,35 +82,35 @@
   </div>
 
   <!-- Barra de búsqueda -->
-  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">
-    
-    <!-- Controles de búsqueda y escáner -->
+  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">      <!-- Controles de búsqueda y escáner -->
     <div class="w-full">
-      <div class="flex gap-2 mb-3 align-items-center">
-        <p-autoComplete
-          class="texto flex-1"
-          [(ngModel)]="productoSeleccionado"
-          [suggestions]="productosFiltrados"
-          (completeMethod)="filtrarProductos($event)"
-          field="nombre"
-          placeholder="Buscar producto..."
-          [dropdown]="false"
-          (onSelect)="agregarALista($event)">
-          <ng-template let-producto pTemplate="item">
-            <div class="texto">
-              {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
-            </div>
-          </ng-template>
-        </p-autoComplete>
-          <!-- Botón del escáner físico -->
+      <div class="flex mb-3 align-items-stretch" style="gap: 0.25rem;">
+        <div class="flex-1">
+          <p-autoComplete
+            class="texto w-full"
+            [(ngModel)]="productoSeleccionado"
+            [suggestions]="productosFiltrados"
+            (completeMethod)="filtrarProductos($event)"
+            field="nombre"
+            placeholder="Buscar producto..."
+            [dropdown]="false"
+            (onSelect)="agregarALista($event)">
+            <ng-template let-producto pTemplate="item">
+              <div class="texto">
+                {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
+        <!-- Botón del escáner físico -->
         <button 
           pButton 
           type="button" 
           [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
-          [label]="escanerActivo ? 'Detener' : 'Escanear'"
           [severity]="escanerActivo ? 'danger' : 'info'"
           [outlined]="!escanerActivo"
-          class="scanner-btn"
+          class="scanner-btn flex-shrink-0"
+          style="height: 42px; width: 42px; margin-left: 0.25rem;"
           (click)="toggleEscanerFisico()"
           pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
           tooltipPosition="bottom">
@@ -183,15 +183,17 @@
           field="cliente.nombre"
           placeholder="Buscar cliente..."
           [dropdown]="true"
-          [required]="true">
-          <ng-template let-credito pTemplate="item">
+          [required]="true">          <ng-template let-credito pTemplate="item">
             <div class="texto">
               <div class="font-semibold">{{credito.cliente.nombre}}</div>
               <div class="text-sm text-500">
                 Disponible: {{calcularDineroDisponible(credito) | currency}}
-                <span [class]="puedeRealizarCompra(credito) ? 'text-green-600' : 'text-red-600'">
-                  {{puedeRealizarCompra(credito) ? '✓ Puede comprar' : '✗ Excede límite'}}
+                <span [class]="puedeComprarConCredito(credito) ? 'text-green-600' : 'text-red-600'">
+                  {{puedeComprarConCredito(credito) ? '✓ Puede comprar' : '✗ No puede comprar'}}
                 </span>
+              </div>
+              <div class="text-xs text-500">
+                Mínimo: {{credito.minimo | currency}} | Máximo: {{credito.maximo | currency}}
               </div>
             </div>
           </ng-template>
@@ -201,17 +203,21 @@
             </div>
           </ng-template>
         </p-autoComplete>
-        
-        <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
-        <div *ngIf="creditoSeleccionado && !puedeRealizarCompra(creditoSeleccionado)" 
+          <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
+        <div *ngIf="creditoSeleccionado && !puedeComprarConCredito(creditoSeleccionado)" 
              class="mt-2 p-2 border-round bg-red-50 text-red-800 text-sm">
           <i class="pi pi-exclamation-triangle mr-2"></i>
-          El cliente no puede realizar esta compra. Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}.
+          <div *ngIf="!superaCreditoMinimo(creditoSeleccionado)">
+            El total de la venta ({{calcularTotal() | currency}}) debe superar el mínimo de {{creditoSeleccionado.minimo | currency}} para compras fiadas.
+          </div>
+          <div *ngIf="superaCreditoMinimo(creditoSeleccionado) && !puedeRealizarCompra(creditoSeleccionado)">
+            El cliente no puede realizar esta compra. Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}.
+          </div>
         </div>
-        
-        <!-- Información del crédito del cliente seleccionado -->
+          <!-- Información del crédito del cliente seleccionado -->
         <div *ngIf="creditoSeleccionado" class="mt-2 p-2 border-round bg-blue-50 text-blue-800 text-sm">
           <div><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
+          <div><strong>Límite mínimo:</strong> {{creditoSeleccionado.minimo | currency}}</div>
           <div><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>
           <div><strong>Deuda actual:</strong> {{(creditoSeleccionado.precioTotal - creditoSeleccionado.pagoHastaAhora) | currency}}</div>
           <div><strong>Disponible:</strong> {{calcularDineroDisponible(creditoSeleccionado) | currency}}</div>
@@ -225,14 +231,13 @@
                 variant="outlined"
                 severity="danger"
                 class="p-button-text texto"
-                (click)="displayDialog = false"></button>
-        <button pButton
+                (click)="displayDialog = false"></button>        <button pButton
                 type="button"
                 severity="contrast"
                 label="Confirmar"
                 icon="pi pi-check"
                 class="p-button-success texto"
-                [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeRealizarCompra(creditoSeleccionado))"
+                [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado))"
                 (click)="confirmarVenta()"></button>
       </div>
     </div>  </p-dialog>
