@@ -68,28 +68,39 @@ export class SecurityService {
     else {
       return CryptoJS.AES.decrypt(cadena.trim(), '@BYF2025').toString(CryptoJS.enc.Utf8);
     }
-  }
-  getUserName() {
+  }  getUserName() {
+    console.log('getUserName llamado, usuario actual:', this.user);
+    
     if (this.user && this.user.nombreUsuario) {
+      console.log('Devolviendo nombreUsuario:', this.user.nombreUsuario);
       return this.user.nombreUsuario;
     }
+    
     // Si no hay usuario, intentar cargar desde localStorage
+    console.log('Usuario no encontrado, intentando cargar desde localStorage...');
     if (this.isLoggedIn() && this.user && this.user.nombreUsuario) {
+      console.log('Usuario cargado desde localStorage:', this.user.nombreUsuario);
       return this.user.nombreUsuario;
     }
+    
+    console.log('No se pudo obtener el nombre de usuario');
     return null;
   }
 
   getUserRoles() {
     return this.user.roles;
-  }
-  public isLoggedIn() {
+  }  public isLoggedIn() {
+    console.log('isLoggedIn llamado');
+    
     if (localStorage.getItem('USER') !== null) {
+      console.log('USER encontrado en localStorage');
       let item = localStorage.getItem('USER')?.toString();
       const cadena: string = item !== undefined ? item : '';
       try {
         const decryptedData = this.convertText("decrypt", cadena);
+        console.log('Datos desencriptados:', decryptedData);
         this.user = JSON.parse(decryptedData || "{}");
+        console.log('Usuario parseado:', this.user);
         return true;
       } catch (error) {
         console.error('Error al desencriptar datos del usuario:', error);
@@ -99,6 +110,7 @@ export class SecurityService {
         return false;
       }
     } else {
+      console.log('No hay USER en localStorage');
       return false;
     }
   }

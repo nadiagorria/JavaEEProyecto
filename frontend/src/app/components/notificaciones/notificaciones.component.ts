@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
 import { DialogModule } from 'primeng/dialog';
 import { NotificacionService } from '../../../services/notificacion.service';
+import { SecurityService } from '../../../services/security.service';
 import { NotificacionUsuarioDto } from '../../../models/notificacion-usuario.dto';
 import { Subscription } from 'rxjs';
 
@@ -22,11 +23,19 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   // Propiedades para el modal
   mostrarDialog: boolean = false;
   notificacionSeleccionada: NotificacionUsuarioDto | null = null;
-  
-  private subscriptions: Subscription = new Subscription();
+    private subscriptions: Subscription = new Subscription();
 
-  constructor(private notificacionService: NotificacionService) {}
+  constructor(
+    private notificacionService: NotificacionService,
+    private securityService: SecurityService
+  ) {}
+
   ngOnInit(): void {
+    // Solo inicializar si el usuario está autenticado
+    if (!this.securityService.isLoggedIn()) {
+      return;
+    }
+
     // Suscribirse a las notificaciones
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((notificaciones: NotificacionUsuarioDto[]) => {
@@ -47,6 +56,13 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  /**
+   * Verifica si el usuario está autenticado
+   */
+  get estaAutenticado(): boolean {
+    return this.securityService.isLoggedIn();
   }
 
   toggleDropdown(): void {
