@@ -12,13 +12,18 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto, ComboDto, PromocionDto, DescuentoDto } from 'src/models';
 import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
 import { CreditoService } from 'src/services/credito.service';
 import { OfertaService, ResponseListadoCombos } from 'src/services/oferta.service';
 import { HeaderComponent } from '../header/header.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
+import { Router, NavigationStart } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
+import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 
 // Interfaz para los items de la venta con información de ofertas
 interface ItemVenta extends CantidadDto {
@@ -31,7 +36,8 @@ interface ItemVenta extends CantidadDto {
 }
 
 @Component({
-  selector: 'app-nuevaventa',  imports: [
+  selector: 'app-nuevaventa',  
+  imports: [
     FormsModule,
     AutoCompleteModule,
     TableModule,
@@ -41,19 +47,25 @@ interface ItemVenta extends CantidadDto {
     DialogModule,
     DropdownModule,
     PaginatorModule,
-    TooltipModule,    CommonModule,
-    HeaderComponent
+    TooltipModule,
+    CommonModule,
+    HeaderComponent,
+    ConfirmDialogModule
   ],
   templateUrl: './nuevaventa.component.html',
   styleUrl: './nuevaventa.component.scss',
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
-export class NuevaventaComponent implements OnInit, OnDestroy {
-
+export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   productoSeleccionado: ProductoDto | null = null;
   cantidades: ItemVenta[] = [];
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
+  
+  // Control de navegación y confirmación
+  mostrarDialogoConfirmacion: boolean = false;
+  rutaNavegacionPendiente: string | null = null;
+  navigationSubscription: Subscription | null = null;
   
   // Escáner físico USB
   escanerActivo: boolean = false;
@@ -77,20 +89,79 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
     { label: 'Crédito', value: 'CREDITO' },
     { label: 'Débito', value: 'DEBITO' },
     { label: 'Fiado', value: 'FIADO' }
-  ];
-  constructor(
+  ];  constructor(
     private productoService: ProductoService,
     private ventaService: VentaService,
     private creditoService: CreditoService,
     private ofertaService: OfertaService,
-    private messageService: MessageService
-  ) { }  ngOnInit() {
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private router: Router
+  ) { }ngOnInit() {
     this.cargarProductos();
     this.cargarOfertas();
   }
 
   ngOnDestroy() {
     // Limpieza si es necesaria
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+  }
+
+  // Implementación del guard de navegación
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.hayProductosEnVenta()) {
+      return new Promise<boolean>((resolve) => {
+        this.confirmationService.confirm({
+          message: '¿Está seguro que desea salir? Si sale de esta página, perderá todos los productos agregados a la venta actual.',
+          header: 'Confirmar salida',
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: 'Sí, salir',
+          rejectLabel: 'No, quedarme',
+          closable: false,
+          defaultFocus: 'reject',
+          accept: () => {
+            resolve(true);
+          },
+          reject: () => {
+            resolve(false);
+          }
+        });
+      });
+    }
+    return true;
+  }
+
+  // Detector de cierre de ventana
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.hayProductosEnVenta()) {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    }
+    return undefined;
+  }
+
+  // Método para verificar si hay productos en la venta actual
+  hayProductosEnVenta(): boolean {
+    return this.cantidades.length > 0;
+  }
+
+  // Método para confirmar la navegación
+  confirmarNavegacion() {
+    this.mostrarDialogoConfirmacion = false;
+    if (this.rutaNavegacionPendiente) {
+      this.router.navigateByUrl(this.rutaNavegacionPendiente);
+      this.rutaNavegacionPendiente = null;
+    }
+  }
+
+  // Método para cancelar la navegación
+  cancelarNavegacion() {
+    this.mostrarDialogoConfirmacion = false;
+    this.rutaNavegacionPendiente = null;
   }
 
   // ==================== CARGA DE DATOS ====================
