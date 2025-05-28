@@ -9,7 +9,8 @@ import java.util.List;
 public class NotificacionDto {
 
     private Long id;
-    private List<String> mensajes;
+    private String titulo;
+    private String mensaje;
     private LocalDateTime fechaHora;
 
 }

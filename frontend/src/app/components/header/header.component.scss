@@ -30,6 +30,25 @@
   margin-right: 2vw;
 }
 
+// Estilos para la integración del componente de notificaciones en el header
+::ng-deep .p-menubar .p-menubar-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Asegurar que el componente de notificaciones se vea bien en el header
+app-notificaciones {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .divLista {
   height: 100%;
 }
