@@ -56,10 +56,9 @@ export class LoginComponent {
           
           // Store token
           localStorage.setItem('token', response.token);
-          
-          // Store user info
+            // Store user info
           const userStr = JSON.stringify({
-            nombreUsuario: response.usuario,
+            nombreUsuario: response.nombreUsuario,
             roles: response.roles
           });
           const encryptedUser = this.securityService.convertText('encrypt', userStr);
@@ -67,14 +66,14 @@ export class LoginComponent {
           
           // Update service user
           this.securityService.user = {
-            nombreUsuario: response.usuario,
+            nombreUsuario: response.nombreUsuario,
             roles: response.roles
           };
 
           this.messageService.add({
             severity: 'success',
             summary: 'Bienvenido',
-            detail: `¡Hola ${response.usuario}! Has iniciado sesión correctamente`,
+            detail: `¡Hola ${response.nombreUsuario}! Has iniciado sesión correctamente`,
             life: 3000
           });
           

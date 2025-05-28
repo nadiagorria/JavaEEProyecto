@@ -522,8 +522,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
       activo: true,
       finalizada: true
     };    this.ventaService.crearVenta(venta as VentaDto).subscribe({
-      next: (response) => {
-        // Verificar si la respuesta contiene un error
+      next: (response) => {        // Verificar si la respuesta contiene un error
         if (response && typeof response === 'object' && 'error' in response) {
           const errorCode = response.error;
           if (errorCode === -1) {
@@ -537,6 +536,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy {
               severity: 'error',
               summary: 'Límite de crédito excedido',
               detail: 'El cliente no puede realizar esta compra. Límite de crédito excedido'
+            });
+          } else if (errorCode === -3) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Monto insuficiente',
+              detail: 'El total de la venta no supera el mínimo requerido para compras fiadas'
             });
           }
           return;

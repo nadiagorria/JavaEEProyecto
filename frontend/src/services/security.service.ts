@@ -69,22 +69,35 @@ export class SecurityService {
       return CryptoJS.AES.decrypt(cadena.trim(), '@BYF2025').toString(CryptoJS.enc.Utf8);
     }
   }
-
   getUserName() {
-    return this.user.nombreUsuario;
+    if (this.user && this.user.nombreUsuario) {
+      return this.user.nombreUsuario;
+    }
+    // Si no hay usuario, intentar cargar desde localStorage
+    if (this.isLoggedIn() && this.user && this.user.nombreUsuario) {
+      return this.user.nombreUsuario;
+    }
+    return null;
   }
 
   getUserRoles() {
     return this.user.roles;
   }
-
   public isLoggedIn() {
     if (localStorage.getItem('USER') !== null) {
       let item = localStorage.getItem('USER')?.toString();
       const cadena: string = item !== undefined ? item : '';
-      this.user = JSON.parse(
-        this.convertText("", cadena) || "");
-      return true;
+      try {
+        const decryptedData = this.convertText("decrypt", cadena);
+        this.user = JSON.parse(decryptedData || "{}");
+        return true;
+      } catch (error) {
+        console.error('Error al desencriptar datos del usuario:', error);
+        // Si hay error, limpiar localStorage
+        localStorage.removeItem('USER');
+        localStorage.removeItem('token');
+        return false;
+      }
     } else {
       return false;
     }
