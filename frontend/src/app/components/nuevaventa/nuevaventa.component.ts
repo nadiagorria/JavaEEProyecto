@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
+import { TooltipModule } from 'primeng/tooltip';
 import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto, ComboDto, PromocionDto, DescuentoDto } from 'src/models';
 import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
@@ -30,8 +31,7 @@ interface ItemVenta extends CantidadDto {
 }
 
 @Component({
-  selector: 'app-nuevaventa',
-  imports: [
+  selector: 'app-nuevaventa',  imports: [
     FormsModule,
     AutoCompleteModule,
     TableModule,
@@ -41,25 +41,32 @@ interface ItemVenta extends CantidadDto {
     DialogModule,
     DropdownModule,
     PaginatorModule,
-    CommonModule,
+    TooltipModule,    CommonModule,
     HeaderComponent
   ],
   templateUrl: './nuevaventa.component.html',
   styleUrl: './nuevaventa.component.scss',
   providers: [MessageService]
 })
-export class NuevaventaComponent {
+export class NuevaventaComponent implements OnInit, OnDestroy {
 
   productoSeleccionado: ProductoDto | null = null;
   cantidades: ItemVenta[] = [];
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
   
+  // Escáner físico USB
+  escanerActivo: boolean = false;
+  codigoBarrasBuffer: string = '';
+  ultimoTiempo: number = 0;
+  private readonly TIEMPO_LIMITE_CARACTER = 50; // ms entre caracteres del escáner
+  
   // Ofertas disponibles
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
-    displayDialog: boolean = false;
+  
+  displayDialog: boolean = false;
   creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'> | null = null;
   creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
   creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'pagoHastaAhora'>[] = [];
@@ -72,18 +79,19 @@ export class NuevaventaComponent {
     { label: 'Débito', value: 'DEBITO' },
     { label: 'Fiado', value: 'FIADO' }
   ];
-
   constructor(
     private productoService: ProductoService,
     private ventaService: VentaService,
     private creditoService: CreditoService,
     private ofertaService: OfertaService,
     private messageService: MessageService
-  ) { }
-
-  ngOnInit() {
+  ) { }  ngOnInit() {
     this.cargarProductos();
     this.cargarOfertas();
+  }
+
+  ngOnDestroy() {
+    // Limpieza si es necesaria
   }
 
   // ==================== CARGA DE DATOS ====================
@@ -186,15 +194,21 @@ export class NuevaventaComponent {
       }
     });
   }
-
   aplicarPromociones() {
     this.promociones.forEach(promocion => {
       const itemsPromocion = this.cantidades.filter(item => item.producto.id === promocion.producto.id);
       
       itemsPromocion.forEach(item => {
         if (item.cantidad >= promocion.descuento) {
-          const itemsGratis = Math.floor(item.cantidad / promocion.descuento) * (promocion.descuento - 1);
-          const precioPromo = (item.cantidad - itemsGratis) * item.producto.precioVenta;
+          // Número de grupos completos de la promoción (ej: para 3x2, cuántos grupos de 3 hay)
+          const gruposCompletos = Math.floor(item.cantidad / promocion.descuento);
+          // Productos sueltos que no forman un grupo completo
+          const productosRestantes = item.cantidad % promocion.descuento;
+          
+          // En cada grupo completo, cobras (promocion.descuento - 1) productos
+          // Ejemplo: en 3x2, por cada grupo de 3 cobras 2
+          const productosCobrados = (gruposCompletos * (promocion.descuento - 1)) + productosRestantes;
+          const precioPromo = productosCobrados * item.producto.precioVenta;
           
           item.precioOriginal = item.producto.precioVenta * item.cantidad;
           item.precioConDescuento = precioPromo;
@@ -204,7 +218,7 @@ export class NuevaventaComponent {
         }
       });
     });
-  }  aplicarCombos() {
+  }aplicarCombos() {
     // Obtener productos únicos en la venta
     const productosUnicos = [...new Set(this.cantidades.map(item => item.producto.id!))];
     
@@ -558,5 +572,91 @@ export class NuevaventaComponent {
     this.formaPagoSeleccionada = '';
     this.productoSeleccionado = null;
   }
+  // ==================== ESCÁNER FÍSICO USB ====================
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (!this.escanerActivo) return;
+
+    const tiempoActual = Date.now();
+    
+    // Si el tiempo entre caracteres es muy largo, reiniciar el buffer
+    if (tiempoActual - this.ultimoTiempo > this.TIEMPO_LIMITE_CARACTER) {
+      this.codigoBarrasBuffer = '';
+    }
+    
+    this.ultimoTiempo = tiempoActual;
+
+    // Si es Enter, procesar el código de barras
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.codigoBarrasBuffer.length > 0) {
+        this.procesarCodigoBarras(this.codigoBarrasBuffer.trim());
+        this.codigoBarrasBuffer = '';
+      }
+      return;
+    }
+
+    // Agregar caracteres alfanuméricos al buffer
+    if (event.key.length === 1 && /[a-zA-Z0-9]/.test(event.key)) {
+      event.preventDefault();
+      this.codigoBarrasBuffer += event.key;
+    }
+  }
+
+  toggleEscanerFisico() {
+    this.escanerActivo = !this.escanerActivo;
+    
+    if (this.escanerActivo) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Escáner Activado',
+        detail: 'Escanee productos con su lector de códigos',
+        life: 3000
+      });
+    } else {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Escáner Desactivado',
+        detail: 'Modo escáner desactivado',
+        life: 3000
+      });
+      this.codigoBarrasBuffer = '';
+    }
+  }
+
+  private procesarCodigoBarras(codigoBarras: string) {
+    this.productoService.buscarPorCodigoBarras(codigoBarras).subscribe({
+      next: (producto) => {
+        if (producto) {
+          this.agregarALista({ value: producto });
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Producto Agregado',
+            detail: `${producto.nombre} agregado a la venta`,
+            life: 2000
+          });
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Producto No Encontrado',
+            detail: `No se encontró producto con código: ${codigoBarras}`,
+            life: 4000
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar producto:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al buscar el producto escaneado',
+          life: 4000
+        });
+      }
+    });
+  }
+
 }
 

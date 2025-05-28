@@ -82,6 +82,13 @@ public class ProductoService {
         return response;
     }
 
+    public ProductoDto buscarPorCodigoBarras(String codigoBarras) {
+        Optional<Producto> producto = productoRepository.findByCodigoDeBarraAndActivoTrue(codigoBarras);
+        if (producto.isPresent()) {
+            return mapsDtosEntityService.mapToDtoProductoSimple(producto.get());
+        }
+        return null;
+    }
 
 }
 

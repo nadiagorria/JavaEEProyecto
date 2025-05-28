@@ -83,21 +83,50 @@
 
   <!-- Barra de búsqueda -->
   <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">
-    <p-autoComplete
-      class="texto"
-      [(ngModel)]="productoSeleccionado"
-      [suggestions]="productosFiltrados"
-      (completeMethod)="filtrarProductos($event)"
-      field="nombre"
-      placeholder="Buscar producto..."
-      [dropdown]="false"
-      (onSelect)="agregarALista($event)">
-      <ng-template let-producto pTemplate="item">
-        <div class="texto">
-          {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+    
+    <!-- Controles de búsqueda y escáner -->
+    <div class="w-full">
+      <div class="flex gap-2 mb-3 align-items-center">
+        <p-autoComplete
+          class="texto flex-1"
+          [(ngModel)]="productoSeleccionado"
+          [suggestions]="productosFiltrados"
+          (completeMethod)="filtrarProductos($event)"
+          field="nombre"
+          placeholder="Buscar producto..."
+          [dropdown]="false"
+          (onSelect)="agregarALista($event)">
+          <ng-template let-producto pTemplate="item">
+            <div class="texto">
+              {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+            </div>
+          </ng-template>
+        </p-autoComplete>
+          <!-- Botón del escáner físico -->
+        <button 
+          pButton 
+          type="button" 
+          [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
+          [label]="escanerActivo ? 'Detener' : 'Escanear'"
+          [severity]="escanerActivo ? 'danger' : 'info'"
+          [outlined]="!escanerActivo"
+          class="scanner-btn"
+          (click)="toggleEscanerFisico()"
+          pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
+          tooltipPosition="bottom">
+        </button>
+      </div>
+      
+      <!-- Indicador de estado del escáner -->
+      <div *ngIf="escanerActivo" class="scanner-status p-2 border-round mb-3">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-qrcode text-blue-500 scanner-pulse"></i>
+          <span class="text-sm text-blue-700 font-medium">
+            Modo escáner activo - Use su lector USB
+          </span>
         </div>
-      </ng-template>
-    </p-autoComplete>
+      </div>
+    </div>
 
     <div class="fixed bottom-0 right-0 p-3 lg:pr-8 lg:pb-4 z-5">      <div class="mb-3 p-3 border-round surface-card shadow-2">
         <div *ngIf="getTotalAhorro() > 0" class="text-sm text-green-600 mb-1 text-right">
@@ -206,7 +235,6 @@
                 [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeRealizarCompra(creditoSeleccionado))"
                 (click)="confirmarVenta()"></button>
       </div>
-    </div>
-  </p-dialog>
+    </div>  </p-dialog>
 
 </div>
