@@ -12,9 +12,11 @@ public class ClienteCreditoDto {
 
     private float precioTotal;
 
+    private float pagoHastaAhora;
+
     private float minimo;
 
     private float maximo;
 
-    private float pagoHastaAhora;
+
 }

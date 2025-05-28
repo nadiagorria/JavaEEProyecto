@@ -4,6 +4,7 @@ package ti.proyectojava.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.Cliente;
+import ti.proyectojava.business.entities.Credito;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
@@ -12,6 +13,7 @@ import ti.proyectojava.dtos.ClienteDto;
 import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.ProveedorDto;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -63,26 +65,31 @@ public class EntidadService {
     }
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
-        String response = "";
 
         ClienteDto clienteDto = new ClienteDto();
         clienteDto.setNombre(clienteCreditoDto.getNombre());
         clienteDto.setTelefono(clienteCreditoDto.getTelefono());
+        clienteDto.setActivo(true);
 
+        Cliente cliente = mapsDtosEntityService.mapToEntityCliente(clienteDto);
 
         CreditoDto creditoDto = new CreditoDto();
-        creditoDto.setPrecioTotal(clienteCreditoDto.getPrecioTotal());
+        creditoDto.setActivo(true);
         creditoDto.setMinimo(clienteCreditoDto.getMinimo());
         creditoDto.setMaximo(clienteCreditoDto.getMaximo());
         creditoDto.setPagoHastaAhora(clienteCreditoDto.getPagoHastaAhora());
+        creditoDto.setPrecioTotal(clienteCreditoDto.getPrecioTotal());
+        creditoDto.setVentas(new ArrayList<>());
 
-        clienteDto.setCredito(creditoDto);
-        creditoDto.setCliente(clienteDto);
+        Credito credito = mapsDtosEntityService.mapToEntityCredito(creditoDto);
 
-        response = "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
-        response += ", Credito creado. ID: " + creditoRepository.save(mapsDtosEntityService.mapToEntityCredito(creditoDto)).getId();
+        credito.setCliente(cliente);
 
-        return response;
+        cliente.setCredito(credito);
+
+        creditoRepository.save(credito);
+
+        return "Cliente creado. ID: " + cliente.getId() + ", Credito creado. ID: " + credito.getId();
     }
 
 

@@ -84,16 +84,12 @@ export class ClientesCreditoComponent {
   saveCliente() {
 
     const clienteCreditoDto: clienteCreditoDto = {
-      cliente: {
-        nombre: this.nombre,
-        telefono: this.telefono
-      },
-      credito: {
-        precioTotal: this.deuda,
-        pagoHastaAhora: this.pago,
-        minimo: this.minimo,
-        maximo: this.maximo,
-      }
+      nombre: this.nombre,
+      telefono: this.telefono,
+      precioTotal: this.deuda,
+      pagoHastaAhora: this.pago,
+      minimo: this.minimo,
+      maximo: this.maximo,
     };
 
     this.clienteService.crearClienteCredito(clienteCreditoDto).subscribe({
@@ -106,6 +102,7 @@ export class ClientesCreditoComponent {
         this.maximo = 0;
         this.deuda = 0;
         this.pago = 0;
+        window.location.reload();
       },
       error: (err: any) => {
         console.error('Error al crear cliente y crédito:', err);

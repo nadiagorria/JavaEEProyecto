@@ -1,7 +1,9 @@
-import { CreditoDto } from './credito.dto';
-import { ClienteDto } from './cliente.dto';
 
 export interface clienteCreditoDto {
-    cliente: Pick<ClienteDto, 'nombre' | 'telefono'>;
-    credito: Pick<CreditoDto, 'precioTotal' | 'pagoHastaAhora' | 'minimo' | 'maximo'>;
+    nombre: string;
+    telefono: string;
+    precioTotal: number;
+    pagoHastaAhora: number;
+    minimo: number;
+    maximo: number;
 }

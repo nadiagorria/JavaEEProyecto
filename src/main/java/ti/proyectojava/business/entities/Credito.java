@@ -28,7 +28,7 @@ public class Credito {
     @Column(name = "CREDITO_ACTIVO")
     private Boolean activo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
