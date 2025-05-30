@@ -39,13 +39,12 @@ public class ProductoController {
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description =  "Esta funcion selecciona un nuevo producto")
     public ResponseEntity<String> seleccionarNotificacion(@RequestBody Long id) {
-        Producto producto = productoService.buscaProducto(id);
+        ProductoDto producto = productoService.buscaProducto(id);
 
         if (producto == null) {
             return new ResponseEntity<>("No se encontró el producto. ID:" + producto.getId(), HttpStatus.NOT_FOUND);
         }
 
-        this.productoActual = producto;
 
         return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.OK);
     }
@@ -56,7 +55,7 @@ public class ProductoController {
     @Operation(description = "Esta Funcion obtiene un producto por su ID")
     public ResponseEntity<ProductoDto> obtenerProducto(@PathVariable Long id) {
        try {
-            ProductoDto producto = productoService.buscarProducto(id);
+            ProductoDto producto = productoService.buscaProducto(id);
             return ResponseEntity.ok(producto);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

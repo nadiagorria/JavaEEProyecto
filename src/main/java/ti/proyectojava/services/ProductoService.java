@@ -44,13 +44,12 @@ public class ProductoService {
         return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 
-    public Producto buscaProducto(Long id) {
+    public ProductoDto buscaProducto(Long id) {
         Optional<Producto> aux = productoRepository.findById(id);
         if(aux.isPresent()){
-            return aux.get();
+            return mapsDtosEntityService.mapToDtoProducto(aux.get());
         }
         return null;
-
     }
 
     public Producto editarProducto(Producto productoActual, ProductoDto productoDto) {
