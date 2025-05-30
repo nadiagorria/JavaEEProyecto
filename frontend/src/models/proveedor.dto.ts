@@ -7,5 +7,5 @@ export interface ProveedorDto extends EntidadDto {
     nombre: string;
     telefono: string;
     correo: string;
-    productosDto: Pick<ProductoDto, 'id' | 'nombre'>[];
+    productosDto: Pick<ProductoDto, 'id' | 'nombre'| 'codigoDeBarra' | 'stockTotal'>[];
 }

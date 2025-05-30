@@ -9,6 +9,7 @@ import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CanDeactivateGuard } from './guards/can-deactivate.guard';
+import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'stats', component: StatsComponent},
   { path: 'cliente/:id', component: ClientePerfilComponent},
+  { path: 'proveedor/:id', component: ProveedorPerfilComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

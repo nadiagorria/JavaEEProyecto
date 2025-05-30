@@ -45,10 +45,10 @@
 
       <ng-template pTemplate="body" let-producto>
         <tr>
-          <td>{{ producto.id }}</td>
-          <td>{{ producto.codigoBarras }}</td>
-          <td>{{ producto.nombre }}</td>
-          <td>{{ producto.stock }}</td>
+          <td>{{ producto.id || null }}</td>
+          <td>{{ producto.codigoDeBarra  || null }}</td>
+          <td>{{ producto.nombre || null }}</td>
+          <td>{{ producto.stockTotal || null }}</td>
         </tr>
       </ng-template>
     </p-table>
