@@ -8,6 +8,7 @@ import { ClientePerfilComponent } from './components/cliente-perfil/cliente-perf
 import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { ClientesCreditoComponent } from './components/clientes-credito/clientes-credito.component';
+import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'stats', component: StatsComponent},
   { path: 'cliente/:id', component: ClientePerfilComponent},
+  { path: 'proveedor/:id', component: ProveedorPerfilComponent},
   { path: 'credito', component: ClientesCreditoComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },

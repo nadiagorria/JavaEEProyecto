@@ -3,9 +3,9 @@
   <article class="flex">
     <div class="w-full Tarjetas">
       <div class="tarjeta-1">
-        <h1 class="titulo">{{ nombre }}</h1>
-        <p>Telefono: {{ telefono }}</p>
-        <p>Email: {{ email }}</p>
+        <h1 class="titulo">{{ proveedor.nombre }}</h1>
+        <p>Telefono: {{ proveedor.telefono }}</p>
+        <p>Email: {{ proveedor.correo }}</p>
       </div>
 
       <div class="papaBoton">
@@ -21,8 +21,20 @@
 
   <article class="w-full tablaMargen">
     <h1 class="tituloTabla">Productos</h1>
-    <p-table class="tabla" [value]="productos" [tableStyle]="{ 'min-width': '20rem' }">
-      <ng-template #header>
+  
+    <p-table
+      class="tituloTabla"
+      [value]="proveedor.productosDto || []"
+      [paginator]="true"
+      [rows]="5"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      paginatorPosition="bottom"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} compras"
+      showGridlines
+      [responsive]="true">
+
+      <ng-template pTemplate="header">
         <tr>
           <th>Id</th>
           <th>Codigo de Barras</th>
@@ -30,7 +42,8 @@
           <th>Stock</th>
         </tr>
       </ng-template>
-      <ng-template #body let-producto>
+
+      <ng-template pTemplate="body" let-producto>
         <tr>
           <td>{{ producto.id }}</td>
           <td>{{ producto.codigoBarras }}</td>
@@ -40,14 +53,6 @@
       </ng-template>
     </p-table>
   </article>
-
-  <article class="paginador w-full flex">
-    <!-- Contenido de la paginación -->
-    <p class="margenPaginador">{{ currentRange }} de {{ totalRecords }}</p>
-    <p-button icon="pi pi-angle-left" (click)="prevPage()" [disabled]="currentPage === 1" severity="secondary"></p-button>
-    <p-button icon="pi pi-angle-right" (click)="nextPage()" [disabled]="currentPage === totalPages" severity="secondary"></p-button>
-  </article>
-
 
 </main>
 <app-footer></app-footer>
