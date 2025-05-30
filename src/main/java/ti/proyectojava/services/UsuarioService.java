@@ -57,8 +57,7 @@ public class UsuarioService {
             
             // Guardar usuario con roles
             Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
-            response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();
-        }
+            response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();        }
         return response;
     }
 

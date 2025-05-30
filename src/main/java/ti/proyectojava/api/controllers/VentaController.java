@@ -78,9 +78,7 @@ public class VentaController {    private final VentaService ventaService;
 
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
-        ventaDto.setUsuario(usuario.getNombre());
-
-        // Validación para pagos FIADO: verificar límites de crédito
+        ventaDto.setUsuario(usuario.getNombre());        // Validación para pagos FIADO: verificar límites de crédito
         if (ventaDto.getFormaPago() == FormaDePago.FIADO) {
             if (ventaDto.getCredito() == null || ventaDto.getCredito().getId() == null) {
                 return ResponseEntity
@@ -88,13 +86,18 @@ public class VentaController {    private final VentaService ventaService;
                         .body(Collections.singletonMap("error", -1L));
             }
 
-            // Verificar que el cliente no exceda su límite de crédito
             Long creditoId = ventaDto.getCredito().getId();
             float totalVenta = ventaDto.getTotal();
             
+            // Verificar que el total supere el crédito mínimo requerido
+            if (!creditoService.superaCreditoMinimo(creditoId, totalVenta)) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("error", -3L)); // Código especial para no superar crédito mínimo
+            }
+
+            // Verificar que el cliente no exceda su límite de crédito
             if (!creditoService.puedeRealizarCompra(creditoId, totalVenta)) {
-                float dineroDisponible = creditoService.calcularDineroDisponible(creditoId);
-                // Retornar error con información específica
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(Collections.singletonMap("error", -2L)); // Código especial para límite excedido

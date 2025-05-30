@@ -25,28 +25,7 @@ public class UsuarioController {
     @Secured({"ADMIN"})
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
             ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-    }
-
-
-
-    // esto lo hace cualquiera
-    @PostMapping
-    @Secured({"ADMIN", "CAJERO"})
-    @Operation(description = "Esta funcion crea un nuevo usuario")
-    public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
-
-            boolean esAdmin = false;
-
-            String response = usuarioService.crearUsuario(usuarioDto, esAdmin);
-            if (response == null) {
-                return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
-            } else {
-                return new ResponseEntity<>(response, HttpStatus.CREATED);
-            }
-
-}
+            return new ResponseEntity<>(response, HttpStatus.OK);    }
 
     //esto lo puede hacer el admin
     @Operation(description = "Esta funcion modifica un usuario")

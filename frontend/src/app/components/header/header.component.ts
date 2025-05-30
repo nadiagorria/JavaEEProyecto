@@ -1,68 +1,128 @@
-import { Component, Input } from '@angular/core';
-import { NgModule } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { ListboxModule } from 'primeng/listbox';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormGroup, FormControl } from '@angular/forms';
-
+import { NotificacionesComponent } from '../notificaciones/notificaciones.component';
+import { SecurityService } from '../../../services/security.service';
+import { Router } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TooltipModule } from 'primeng/tooltip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [MenubarModule, DialogModule, ButtonModule, ListboxModule, ReactiveFormsModule],
+  imports: [MenubarModule, ButtonModule, NotificacionesComponent, MenuModule, OverlayPanelModule, TooltipModule, CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
-  })
-
-export class HeaderComponent {
-  formGroup: FormGroup;
-
-  mensajes = [
-    { name: 'Mensaje1', value: 'M1' , content: 'Hola buena talde', leido: false},
-    { name: 'Rome', value: 'RM', content: ' ñeri', leido: false},
-    { name: 'London', value: 'LDN', content: 'Hola  talde', leido: false},
-    { name: 'Istanbul', value: 'IST', content: ' buena talde', leido: false},
-    { name: 'Paris', value: 'PRS',content: '  talde', leido: false}
-  ];
-
-  constructor() {
-    this.formGroup = new FormGroup({
-      selectedMensaje: new FormControl(null)
-    });
-
-    this.formGroup.get('selectedMensaje')?.valueChanges.subscribe((selectedMensaje: any) => {
-      if (selectedMensaje) {
-        this.markAsRead(selectedMensaje);
-        }
-      });
-  }
-
-  markAsRead(selectedMensaje: any) {
-      const mensaje = this.mensajes.find(msg => msg.value === selectedMensaje.value);
-      if (mensaje) {
-        mensaje.leido = true;
-
-        //console.log('Valor:', mensaje.value);
-        //console.log('Leído:', mensaje.leido);
-      }
-  }
-
+})
+export class HeaderComponent implements OnInit {
   private _nombreUsuario = '';
+  menuItems: MenuItem[] = [];
+
+  constructor(
+    private securityService: SecurityService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.cargarUsuarioActual();
+    this.configurarMenuItems();
+  }
 
   @Input()
-    set nombreUsuario(valor: string) {
-      this._nombreUsuario = '@' + valor;
-    }
-
-    get nombreUsuario(): string {
-      return this._nombreUsuario;
-    }
-
-  visible: boolean = false;
-
-  showDialog() {
-     this.visible = true;
+  set nombreUsuario(valor: string) {
+    this._nombreUsuario = '@' + valor;
+  }
+  get nombreUsuario(): string {
+    console.log('🔍 getter nombreUsuario llamado, valor:', this._nombreUsuario);
+    return this._nombreUsuario;
   }
 
+  get estaAutenticado(): boolean {
+    return this.securityService.isLoggedIn();
+  }
+  private cargarUsuarioActual() {
+    console.log('🔍 cargarUsuarioActual llamado');
+    console.log('🔍 isLoggedIn:', this.securityService.isLoggedIn());
+    
+    if (this.securityService.isLoggedIn()) {
+      console.log('🔍 Usuario está logueado');
+      const nombreUsuario = this.securityService.getUserName();
+      console.log('🔍 Nombre usuario obtenido:', nombreUsuario);
+      
+      if (nombreUsuario && nombreUsuario.trim() !== '') {
+        this._nombreUsuario = '@' + nombreUsuario;
+        console.log('🔍 _nombreUsuario establecido:', this._nombreUsuario);
+      } else {
+        console.log('❌ nombreUsuario está vacío o undefined');
+        this._nombreUsuario = '@Usuario';
+      }
+    } else {
+      console.log('❌ Usuario no está logueado');
+      this._nombreUsuario = '';
+    }
+    
+    console.log('🔍 Nombre usuario final:', this._nombreUsuario);
+  }
+  private configurarMenuItems() {
+    this.menuItems = [
+      {
+        label: 'Inicio',
+        icon: 'pi pi-home',
+        command: () => this.router.navigate(['/home'])
+      },
+      {
+        label: 'Ventas',
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigate(['/ventas'])
+      },
+      {
+        label: 'Nueva Venta',
+        icon: 'pi pi-plus',
+        command: () => this.router.navigate(['/nuevaventa'])
+      },
+      {
+        label: 'Estadísticas',
+        icon: 'pi pi-chart-bar',
+        command: () => this.router.navigate(['/stats'])
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Productos',
+        icon: 'pi pi-box',
+        command: () => this.mostrarMensaje('Productos')
+      },
+      {
+        label: 'Clientes',
+        icon: 'pi pi-users',
+        command: () => this.mostrarMensaje('Clientes')
+      },
+      {
+        label: 'Proveedores',
+        icon: 'pi pi-truck',
+        command: () => this.mostrarMensaje('Proveedores')
+      },
+      {
+        label: 'Ofertas',
+        icon: 'pi pi-percentage',
+        command: () => this.mostrarMensaje('Ofertas')
+      },
+      {
+        label: 'Créditos',
+        icon: 'pi pi-credit-card',
+        command: () => this.mostrarMensaje('Créditos')
+      }
+    ];
+  }
+
+  mostrarMensaje(seccion: string) {
+    alert(`La sección "${seccion}" estará disponible próximamente.`);
+  }
+
+  cerrarSesion() {
+    this.securityService.logout();
+  }
 }

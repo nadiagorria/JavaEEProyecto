@@ -433,7 +433,9 @@ public class MapsDtosEntityService {
     }
 
 
+
     // Esto no se va a usar, las notificaciones siempre son entidades.
+
     public Notificacion mapToEntityNotificacion(NotificacionDto notificacionDto){
 
         // Si tiene id
@@ -446,7 +448,8 @@ public class MapsDtosEntityService {
 
         Notificacion notificacion = new Notificacion();
         notificacion.setId(notificacionDto.getId());
-        notificacion.setMensajes(notificacionDto.getMensajes());
+        notificacion.setTitulo(notificacionDto.getTitulo());
+        notificacion.setMensaje(notificacionDto.getMensaje());
 
         return notificacion;
     }
@@ -455,7 +458,9 @@ public class MapsDtosEntityService {
 
         NotificacionDto notiDto = new NotificacionDto();
         notiDto.setId(notificacion.getId());
-        notiDto.setMensajes(notificacion.getMensajes());
+        notiDto.setMensaje(notificacion.getMensaje());
+        notiDto.setTitulo(notificacion.getTitulo());
+        notiDto.setFechaHora(notificacion.getFechaHora());
 
         return notiDto;
     }
@@ -604,6 +609,8 @@ public class MapsDtosEntityService {
         return rolDto;
     }
 
+
+
     public NotificacionUsuarioDto mapToDtoNotificacionUsuario (NotificacionUsuario notificacionUsuario) {
         return mapToDtoNotificacionUsuario(notificacionUsuario, new HashSet<>());
     }
@@ -619,14 +626,14 @@ public class MapsDtosEntityService {
         notificacionUsuarioDto.setActivo(notificacionUsuario.getActivo());
         notificacionUsuarioDto.setLeido(notificacionUsuario.getLeido());
 
-        if (notificacionUsuario.getUsuarios() != null) {
+        /*if (notificacionUsuario.getUsuarios() != null) {
             notificacionUsuarioDto.setUsuarios(
                     notificacionUsuario.getUsuarios().stream()
                             .map(e -> mapToDtoUsuario(e, processed))
                             .filter(Objects::nonNull)
                             .toList()
             );
-        }
+        }*/
 
         if (notificacionUsuario.getNotificaciones() != null) {
             notificacionUsuarioDto.setNotificaciones(

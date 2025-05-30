@@ -73,9 +73,7 @@ public class CreditoService {
         float dineroDisponible = Math.max(0, credito.getMaximo() - deudaActual);
         
         return montoVenta <= dineroDisponible;
-    }
-
-    /**
+    }    /**
      * Calcula el dinero disponible que puede gastar un cliente
      * @param creditoId ID del crédito del cliente
      * @return monto disponible para gastar
@@ -86,6 +84,29 @@ public class CreditoService {
         
         float deudaActual = credito.getPrecioTotal();
         return Math.max(0, credito.getMaximo() - deudaActual);
+    }
+
+    /**
+     * Verifica si el monto de la venta supera el crédito mínimo requerido
+     * @param creditoId ID del crédito del cliente
+     * @param montoVenta Monto total de la venta
+     * @return true si el monto supera el mínimo requerido, false en caso contrario
+     */
+    public boolean superaCreditoMinimo(Long creditoId, float montoVenta) {
+        Credito credito = creditoRepository.findById(creditoId)
+                .orElseThrow(() -> new RuntimeException("Crédito no encontrado. ID: " + creditoId));
+        
+        return montoVenta >= credito.getMinimo();
+    }
+
+    /**
+     * Valida si un cliente puede realizar una compra fiada (supera mínimo y no excede máximo)
+     * @param creditoId ID del crédito del cliente
+     * @param montoVenta Monto total de la venta
+     * @return true si puede realizar la compra fiada, false en caso contrario
+     */
+    public boolean puedeComprarConCredito(Long creditoId, float montoVenta) {
+        return superaCreditoMinimo(creditoId, montoVenta) && puedeRealizarCompra(creditoId, montoVenta);
     }
 
 }

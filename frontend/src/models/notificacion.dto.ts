@@ -1,5 +1,6 @@
 export interface NotificacionDto {
     id: number;
-    mensajes: string[];
+    titulo: string;
+    mensaje: string;
     fechaHora: string;
 }

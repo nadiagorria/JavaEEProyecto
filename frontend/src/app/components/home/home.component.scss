@@ -19,17 +19,16 @@ main {
     padding: 0;
     margin: 0;
     margin-top: 40px;
-    margin-bottom:16px;
+    margin-bottom: 16px;
     margin-left: 5vw;
     gap: 10vw;
+    display: flex;
 }
 
 .cartelMini {
   width: 19vw;
-  height: 55px;
+  height: 45px;
   padding: 0;
-  padding-left: 1vw;
-  padding-top: 13px;
   background: #444444;
   color: #FFFFFF;
   border-color: #444444;
@@ -37,16 +36,35 @@ main {
   border-style: solid;
   border-radius: 21px 21px 21px;
   margin-left: 13vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenido-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoCartel {
-  font-size: 1.6rem;
-  margin-right: 1vw;
+  font-size: 1.2rem;
+  margin-right: 0.5vw;
  }
 
+.textoCartelMini {
+  font-size: 1.2rem;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.2;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .textoCartel {
-  margin-left: 0.5vw;
-  font-size: 2rem;
+  margin-top: 3px;
+  font-size: 1rem;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.2;
 }
 
 .cartelesGrandes {
@@ -78,11 +96,61 @@ main {
   margin-top: 3px;
   font-size: 1.4rem;
   font-weight: bold;
+  font-family: "Montserrat", sans-serif;
 }
 
-.textoCartel {
-  margin-top: 3px;
-  font-size: 1rem;
-  font-family: "Source Sans 3", sans-serif;
+/* Nueva sección para botones animados */
+.boton-animado {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.boton-animado::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+  z-index: 0;
+}
+
+.boton-animado:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.boton-animado:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.boton-animado:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.cartelMini.boton-animado:hover {
+  background: #555555;
+}
+
+.cartelGrande.boton-animado:hover {
+  border-color: #444444;
+}
+
+.cartelMini:focus, .cartelGrande:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.contenido-boton, .logoCartel, .textoCartelMini, .tituloCartel, .textoCartel, .iconos {
+  position: relative;
+  z-index: 1;
 }
 
