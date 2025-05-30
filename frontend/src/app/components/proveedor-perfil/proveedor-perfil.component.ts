@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
-import { ProveedorService } from 'src/services/proveedor.service';
+import { EntidadService } from 'src/services/entidad.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProveedorDto } from 'src/models';
 

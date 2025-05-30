@@ -11,7 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
-import { ClienteService } from 'src/services/cliente.service';
+import { ClienteService } from 'src/services/entidad.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 

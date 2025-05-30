@@ -14,7 +14,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto } from 'src/models';
 import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
-import { ClienteService } from '../../../services/cliente.service';
+import { ClienteService } from '../../../services/entidad.service';
 import { CreditoService } from 'src/services/credito.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';

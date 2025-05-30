@@ -6,7 +6,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 import { ClienteDto } from 'src/models/cliente.dto';
-import { ClienteService } from 'src/services/cliente.service';
+import { EntidadService } from 'src/services/entidad.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
@@ -35,13 +35,13 @@ export class ClientePerfilComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private clienteService: ClienteService,
+    private entidadService: EntidadService,
     private creditoService: CreditoService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.clienteService.getCliente(id).subscribe(data => {
+    this.entidadService.getCliente(id).subscribe(data => {
       this.cliente = data;
     });
   }

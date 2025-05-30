@@ -119,11 +119,11 @@ public class EntidadController {
     }
 
     //cualquiera lo usa
-    @GetMapping("/seleccionarProveedor")
+    @GetMapping("{id}/seleccionarProveedor/")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion selecciona un proveedor")
-    public ResponseEntity<?> seleccionarProveedor(@RequestParam Long id) {
+    public ResponseEntity<?> seleccionarProveedor(@PathVariable Long id) {
         return ResponseEntity.ok(entidadService.seleccionarProveedor(id));
     }
 
-    }
+}
