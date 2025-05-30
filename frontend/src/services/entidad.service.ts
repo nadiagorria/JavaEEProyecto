@@ -1,0 +1,49 @@
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ClienteDto } from '../models/cliente.dto';
+import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
+import { UrlService } from 'src/services/url.service';
+import { ProveedorDto } from 'src/models/proveedor.dto';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EntidadService {
+
+  private endpoint: string = '/entidad';
+
+  constructor(
+    private http: HttpClient,
+    private urlService: UrlService,
+  ) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  getCliente(id: number): Observable<ClienteDto> {
+      const params = new HttpParams().set('id', id.toString());
+      return this.http.get<ClienteDto>(`${this.urlService.baseUrl}${this.endpoint}/seleccionarCliente`, 
+        { params },);
+  }
+
+  crearCliente(cliente: ClienteDto): Observable<String> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/cliente`, cliente, 
+      { responseType: 'text' });
+  }
+
+  crearClienteCredito(clienteCreditoDto: clienteCreditoDto): Observable<String> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/clienteCredito`, 
+      clienteCreditoDto,
+      { responseType: 'text'}, 
+    );
+  }
+  getProveedor(id: number): Observable<ProveedorDto> {
+      return this.http.get<ProveedorDto>(
+        `${this.urlService.baseUrl}${this.endpoint}/${id}/seleccionarProveedor`,
+      );
+  }
+
+}
