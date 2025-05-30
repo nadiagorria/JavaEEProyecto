@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'stats', component: StatsComponent},
   { path: 'cliente/:id', component: ClientePerfilComponent},
-  { path: 'proveedor/:id', component: ProveedorPerfilComponent},
+  { path: 'proveedor/:id', component: ProveedorPerfilComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

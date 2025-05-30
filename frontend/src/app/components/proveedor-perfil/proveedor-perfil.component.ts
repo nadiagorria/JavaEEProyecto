@@ -24,7 +24,14 @@ interface ComprasCliente {
 })
 export class ProveedorPerfilComponent {
 
-  proveedor!: ProveedorDto;
+  proveedor: ProveedorDto = {
+    id: 0,
+    nombre: '',
+    telefono: '',
+    correo: '',
+    productosDto: [],
+    activo: true,
+  };
 
   totalRecords: number = 0;
 
