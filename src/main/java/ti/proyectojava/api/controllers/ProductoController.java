@@ -99,6 +99,17 @@ public class ProductoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
+    //todos pueden usarla
+    @GetMapping("/buscar/codigo/{codigoBarras}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta funcion busca un producto por su código de barras")
+    public ResponseEntity<ProductoDto> buscarPorCodigoBarras(@PathVariable String codigoBarras) {
+        ProductoDto producto = productoService.buscarPorCodigoBarras(codigoBarras);
+        if (producto != null) {
+            return new ResponseEntity<>(producto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

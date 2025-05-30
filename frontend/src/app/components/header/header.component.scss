@@ -13,12 +13,37 @@
 }
 
 .texto {
-  padding-left: 45vw;
+  padding-left: 0; // Remover el padding excesivo
   font-size: 1.125rem;
+  font-weight: 500;
 }
 
 .colorTexto {
   color: var(--text-color) !important;
+}
+
+// Estilos para el saludo centrado
+::ng-deep .p-menubar .p-menubar-root-list {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.header-container {
+  position: relative;
+  width: 100%;
+}
+
+.saludo-centrado {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none; // Para que no interfiera con clicks
 }
 
 .divModal {
@@ -28,6 +53,25 @@
 .notifcacionesPreview {
   height: 100%;
   margin-right: 2vw;
+}
+
+// Estilos para la integración del componente de notificaciones en el header
+::ng-deep .p-menubar .p-menubar-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Asegurar que el componente de notificaciones se vea bien en el header
+app-notificaciones {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; // Reducir gap para mejor espacio
 }
 
 .divLista {
@@ -54,6 +98,85 @@ hr {
   margin: 0.5rem 0;
 }
 
+// Estilos para el menú hamburguesa y navegación
+::ng-deep .p-overlaypanel {
+  .p-overlaypanel-content {
+    padding: 0;
+  }
+}
+
+::ng-deep .p-menu {
+  .p-menu-list {
+    padding: 0.5rem 0;
+  }
+  
+  .p-menuitem {
+    .p-menuitem-link {
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: var(--surface-hover);
+        color: var(--primary-color);
+      }
+      
+      .p-menuitem-icon {
+        margin-right: 0.5rem;
+        font-size: 1rem;
+      }
+      
+      .p-menuitem-text {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Mejorar el diseño del header
+.texto {
+  padding-left: 0; // Remover el padding excesivo
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; // Reducir gap para mejor espacio
+}
+
+// Estilos para botones del header
+::ng-deep .p-button.p-button-text {
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+}
+
+// Hacer que el menubar use flexbox para permitir centrado
+::ng-deep .p-menubar .p-menubar-root-list {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+// Centrar el saludo del usuario
+::ng-deep .p-menubar .p-menubar-start {
+  flex: 0 0 auto;
+}
+
+::ng-deep .p-menubar .p-menubar-end {
+  flex: 0 0 auto;
+}
+
+// Asegurar que el contenido central tenga espacio para centrarse
+.flex-1 {
+  flex: 1;
+}
 
 //font-family: "Source Sans 3", sans-serif;
 

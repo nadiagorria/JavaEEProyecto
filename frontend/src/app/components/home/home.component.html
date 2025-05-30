@@ -1,53 +1,54 @@
 <body>
-  <app-header [nombreUsuario]="'flp123'"></app-header>
+  <app-header></app-header>
   <main class="w-full">
     <article class="articleGrande w-full">
       <div class="w-full salon">insertar imagen</div>
-    </article>
-    <article class="w-full cartelesMini flex ">
-      <div class="cartelMini flex justify-content-center">
-        <span class="logoCartel pi pi-plus"></span>
-        <span class="textoCartel">Nueva Venta</span>
+    </article>    <article class="w-full cartelesMini flex ">
+      <div class="cartelMini flex justify-content-center align-items-center boton-animado" (click)="navegarA('/nuevaventa')" tabindex="0">
+        <div class="contenido-boton flex align-items-center">
+          <span class="logoCartel pi pi-plus"></span>
+          <span class="textoCartelMini">Nueva Venta</span>
+        </div>
       </div>
-      <div class="cartelMini flex justify-content-center">
-        <span class="logoCartel pi pi-plus"></span>
-        <span class="textoCartel">Nueva Producto</span>
+      <div class="cartelMini flex justify-content-center align-items-center boton-animado" (click)="navegarA('/productos')" tabindex="0">
+        <div class="contenido-boton flex align-items-center">
+          <span class="logoCartel pi pi-plus"></span>
+          <span class="textoCartelMini">Nuevo Producto</span>
+        </div>
       </div>
-    </article>
-    <article class="w-full cartelesGrandes flex">
-      <div class="cartelGrande">
+    </article>    <article class="w-full cartelesGrandes flex">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/ventas')" tabindex="0">
         <span class="pi pi-shopping-cart iconos w-full"></span>
         <span class="tituloCartel w-full">Ventas</span>
-        <p class="textoCartel ">Visualización y eliminación de ventas.</p>
+        <p class="textoCartel">Visualización y eliminación de ventas.</p>
       </div>
-      <div class="cartelGrande">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/clientes')" tabindex="0">
         <span class="pi pi-users iconos w-full"></span>
         <span class="tituloCartel w-full">Clientes</span>
-        <p class="textoCartel ">Visualización de clientes y pago de deudas.</p>
+        <p class="textoCartel">Visualización de clientes y pago de deudas.</p>
       </div>
-      <div class="cartelGrande">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/proveedores')" tabindex="0">
         <span class="pi pi-truck iconos w-full"></span>
         <span class="tituloCartel w-full">Proveedores</span>
-        <p class="textoCartel ">Visualización y modificación de proveedores.</p>
+        <p class="textoCartel">Visualización y modificación de proveedores.</p>
       </div>
-    </article>
-    <article class="w-full cartelesGrandes flex">
-      <div class="cartelGrande">
+    </article>    <article class="w-full cartelesGrandes flex">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/stats')" tabindex="0">
         <span class="pi pi-chart-bar iconos w-full"></span>
         <span class="tituloCartel w-full">Estadísticas</span>
-        <p class="textoCartel ">Acceso a estadísticas de ventas.</p>
+        <p class="textoCartel">Acceso a estadísticas de ventas.</p>
       </div>
-      <div class="cartelGrande">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/productos')" tabindex="0">
         <span class="pi pi-shopping-bag iconos w-full"></span>
         <span class="tituloCartel w-full">Productos</span>
-        <p class="textoCartel ">Acceso a lista de productos.
+        <p class="textoCartel">Acceso a lista de productos.
           Acceso a detalles individuales de cada uno.
         </p>
       </div>
-      <div class="cartelGrande">
+      <div class="cartelGrande boton-animado" (click)="navegarA('/ofertas')" tabindex="0">
         <span class="pi pi-dollar iconos w-full"></span>
         <span class="tituloCartel w-full">Ofertas</span>
-        <p class="textoCartel ">Acceso a lista de ofertas.</p>
+        <p class="textoCartel">Acceso a lista de ofertas.</p>
       </div>
     </article>
   </main>

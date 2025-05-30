@@ -18,10 +18,11 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ElementCollection
-    @CollectionTable(name = "NOTIFICACION_MENSAJES", joinColumns = @JoinColumn(name = "NOTIFICACION_ID"))
-    @Column(name = "NOTIFICACION_MENSAJES")
-    private List<String> mensajes = new ArrayList<>();
+    @Column(name= "TITULO")
+    private String titulo;
+
+    @Column(name = "NOTIFICACION_MENSAJE")
+    private String mensaje;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
