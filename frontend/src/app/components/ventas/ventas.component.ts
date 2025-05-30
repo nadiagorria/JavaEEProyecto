@@ -18,7 +18,9 @@ import { FooterComponent } from '../footer/footer.component';
     TableModule,
     CurrencyPipe,
     RouterModule,
-    ButtonModule
+    ButtonModule,
+    HeaderComponent,
+    FooterComponent
   ],
   templateUrl: './ventas.component.html',
   styleUrl: './ventas.component.scss'
@@ -29,31 +31,7 @@ export class VentasComponent implements OnInit {
   selectedVenta: VentaDto | null = null;
 
   constructor(private ventaService: VentaService) {
-    // Mock de ventas
-    /*this.ventas = [
-      {
-        id: 1,
-        fechaVenta: new Date('2024-06-01T10:00:00'),
-        total: 100,
-        formaPago: 'EFECTIVO',
-        usuario: { nombre: 'Juan Pérez', mail: 'juan@mail.com' },
-        cantidades: [],
-        credito: { id: 1, precioTotal: 0 },
-        activo: true,
-        finalizada: true
-      },
-      {
-        id: 2,
-        fechaVenta: new Date('2024-06-02T15:30:00'),
-        total: 250,
-        formaPago: 'TARJETA',
-        usuario: { nombre: 'Ana Gómez', mail: 'ana@mail.com' },
-        cantidades: [],
-        credito: { id: 2, precioTotal: 0 },
-        activo: true,
-        finalizada: true
-      }
-    ];*/
+    
     this.totalRecords = this.ventas.length;
   }
 
@@ -65,6 +43,12 @@ export class VentasComponent implements OnInit {
     this.ventaService.listarVentas().subscribe({
       next: (response) => {
         this.ventas = response.ventas;
+        // Ordenar por fecha descendente (más nueva primero)
+        this.ventas.sort((a, b) => {
+          const fechaA = new Date(a.fechaVenta);
+          const fechaB = new Date(b.fechaVenta);
+          return fechaB.getTime() - fechaA.getTime();
+        });
         this.totalRecords = this.ventas.length;
       },
       error: (error) => {

@@ -1,35 +1,89 @@
 
 <div class="center-wrapper">
   <div class="registro-container">
-    <h2 class="titulo">Registrar</h2>
+    <h1 class="titulo">Crear Cuenta</h1>
 
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
-      <p-iftalabel class="form-field">
-        <input pInputText id="username" formControlName="username" />
-        <label class="texto" for="username">Nombre de Usuario</label>
-      </p-iftalabel>
-
-      <p-iftalabel class="form-field">
-        <input pInputText id="email" formControlName="email" />
-        <label class="texto" for="email">Correo Electrónico</label>
-      </p-iftalabel>
-
-      <p-iftalabel class="form-field">
-        <p-password formControlName="password" inputId="password" [toggleMask]="true"/>
-        <label class="texto" for="password">Contraseña</label>
-      </p-iftalabel>
-
-      <div class="form-field flex align-items-center">
-        <p-checkbox class= "checkbox2" formControlName="admin" inputId="admin" [binary]="true"></p-checkbox>
-        <label for="admin" class="ml-2 texto">Permisos de Administrador</label>
+      <div class="form-field">
+        <p-iftalabel>
+          <input 
+            pInputText 
+            id="username" 
+            formControlName="username" 
+            placeholder=" "
+            autocomplete="username"
+            [class.invalid]="usernameExists"
+          />
+          <label for="username">Nombre de Usuario</label>
+        </p-iftalabel>
+        <div class="username-validation" *ngIf="formGroup.get('username')?.value?.length >= 3">
+          <span *ngIf="isCheckingUsername" class="checking">
+            <i class="pi pi-spin pi-spinner"></i> Verificando...
+          </span>
+          <span *ngIf="!isCheckingUsername && usernameExists" class="username-taken">
+            <i class="pi pi-times-circle"></i> Este nombre de usuario ya está en uso
+          </span>
+          <span *ngIf="!isCheckingUsername && !usernameExists" class="username-available">
+            <i class="pi pi-check-circle"></i> Nombre de usuario disponible
+          </span>
+        </div>
       </div>
 
-      <button pButton type="submit" label="Registrar" class="texto" severity="contrast" [raised]="true" [disabled]="formGroup.invalid"></button>
+      <div class="form-field">
+        <p-iftalabel>
+          <input 
+            pInputText 
+            id="email" 
+            formControlName="email" 
+            placeholder=" "
+            autocomplete="email"
+          />
+          <label for="email">Correo Electrónico</label>
+        </p-iftalabel>
+      </div>      <div class="form-field">
+        <p-iftalabel>
+          <p-password 
+            formControlName="password" 
+            inputId="password" 
+            [toggleMask]="true"
+            [feedback]="true"
+            placeholder=" "
+            autocomplete="new-password"
+          />
+          <label for="password">Contraseña</label>
+        </p-iftalabel>
+        <div class="password-validation" *ngIf="formGroup.get('password')?.value && formGroup.get('password')?.value.length > 0">
+          <span *ngIf="formGroup.get('password')?.value.length < 6" class="password-weak">
+            <i class="pi pi-exclamation-triangle"></i> La contraseña debe tener al menos 6 caracteres
+          </span>
+          <span *ngIf="formGroup.get('password')?.value.length >= 6" class="password-valid">
+            <i class="pi pi-check-circle"></i> Contraseña válida
+          </span>
+        </div>
+      </div><div class="form-field checkbox-field">
+        <p-checkbox 
+          formControlName="admin" 
+          inputId="admin" 
+          [binary]="true"
+        ></p-checkbox>
+        <label for="admin" class="checkbox-label">Permisos de Administrador</label>
+      </div><button 
+        pButton 
+        type="submit" 
+        label="Registrar" 
+        [loading]="isLoading"
+        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername"
+        icon="pi pi-user-plus"
+        iconPos="right"
+      >
+      </button>
     </form>
-    <div class="sesion"> ¿Ya tienes una cuenta?
+    
+    <div class="login-link">
+      ¿Ya tienes una cuenta?
       <a routerLink="/login">Iniciar Sesión aquí</a>
     </div>
-
   </div>
 </div>
+
+<p-toast position="top-right" [life]="5000"></p-toast>

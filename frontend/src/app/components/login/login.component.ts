@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { SecurityService } from '../../../services/security.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ import { SecurityService } from '../../../services/security.service';
             ReactiveFormsModule,
             RouterLink,
             CommonModule,
+            ToastModule,
             ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -30,6 +32,7 @@ import { SecurityService } from '../../../services/security.service';
 
 export class LoginComponent {
   formGroup: FormGroup;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,50 +41,101 @@ export class LoginComponent {
     private securityService: SecurityService
   ) {
     this.formGroup = this.fb.group({
-      username: ['', Validators.required],
-      contrasenia: ['', Validators.required]
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      contrasenia: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
-
   onSubmit() {
-  if (this.formGroup.valid) {
-    const { username, contrasenia } = this.formGroup.value;
-    
-    this.securityService.login(username, contrasenia).subscribe({
-      next: (response) => {
-        // Store token
-        localStorage.setItem('token', response.token);
-        
-        // Store user info
-        const userStr = JSON.stringify({
-          nombreUsuario: response.usuario,
-          roles: response.roles
-        });
-        const encryptedUser = this.securityService.convertText('encrypt', userStr);
-        localStorage.setItem('USER', encryptedUser);
-        
-        // Update service user
-        this.securityService.user = {
-          nombreUsuario: response.usuario,
-          roles: response.roles
-        };
+    if (this.formGroup.valid && !this.isLoading) {
+      this.isLoading = true;
+      const { username, contrasenia } = this.formGroup.value;
+      
+      this.securityService.login(username, contrasenia).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          
+          // Store token
+          localStorage.setItem('token', response.token);
+          
+          // Store user info
+          const userStr = JSON.stringify({
+            nombreUsuario: response.usuario,
+            roles: response.roles
+          });
+          const encryptedUser = this.securityService.convertText('encrypt', userStr);
+          localStorage.setItem('USER', encryptedUser);
+          
+          // Update service user
+          this.securityService.user = {
+            nombreUsuario: response.usuario,
+            roles: response.roles
+          };
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Login exitoso'
-        });
-        this.router.navigate(['/home']);
-      },
-      error: (error) => {
-        console.error('Error en login:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.error?.message || 'Error al intentar iniciar sesión'
-        });
-      }
-    });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Bienvenido',
+            detail: `¡Hola ${response.usuario}! Has iniciado sesión correctamente`,
+            life: 3000
+          });
+          
+          // Delay navigation slightly to show success message
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 1000);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error en login:', error);
+          
+          let mensaje = 'Error al intentar iniciar sesión';
+          let severidad = 'error';
+          
+          // Verificar si el error tiene información específica
+          if (error.error) {
+            try {
+              const errorData = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
+              
+              switch (errorData.error) {
+                case 'USUARIO_INCORRECTO':
+                  mensaje = 'El nombre de usuario no existe';
+                  break;
+                case 'CONTRASENIA_INCORRECTA':
+                  mensaje = 'La contraseña es incorrecta';
+                  break;
+                case 'ERROR_SERVIDOR':
+                  mensaje = 'Error interno del servidor. Intente nuevamente.';
+                  break;
+                default:
+                  mensaje = errorData.message || mensaje;
+                  break;
+              }
+            } catch (e) {
+              // Si no se puede parsear el error, usar el mensaje por defecto
+              mensaje = error.error?.message || mensaje;
+            }
+          }
+          
+          this.messageService.add({
+            severity: severidad,
+            summary: 'Error de Autenticación',
+            detail: mensaje,
+            life: 4000
+          });
+          
+          // Reset password field on error
+          this.formGroup.get('contrasenia')?.setValue('');
+        }
+      });
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.formGroup.markAllAsTouched();
+      
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario incompleto',
+        detail: 'Por favor completa todos los campos requeridos',
+        life: 3000
+      });
+    }
   }
-}
 }

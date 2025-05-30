@@ -8,13 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.business.entities.Usuario;
+import ti.proyectojava.dtos.UsuarioDto;
 import ti.proyectojava.dtos.UsuarioSecurityDto;
 import ti.proyectojava.security.SeguridadService;
+import ti.proyectojava.services.UsuarioService;
 
 
 import java.util.Date;
@@ -26,9 +25,11 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "api/v1/seguridad")
 public class SeguridadController {
 
-    
     @Autowired
     private SeguridadService seguridadService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/autenticacion")
     @Transactional(readOnly = true)
@@ -66,6 +67,59 @@ public class SeguridadController {
                 .signWith(SignatureAlgorithm.HS512, clave.getBytes())
                 .compact();
         return token;
+    }
+
+    @PostMapping("/registro")
+    public ResponseEntity<?> registrarUsuario(
+            @RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
+    ) {
+        try {
+            // Validar longitud mínima de contraseña
+            if (password.length() < 6) {
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"CONTRASENIA_CORTA\", \"message\": \"La contraseña debe tener al menos 6 caracteres\"}");
+            }            // Crear DTO del usuario
+            UsuarioDto usuarioDto = new UsuarioDto();
+            usuarioDto.setNombre(username);
+            usuarioDto.setMail(email);
+            usuarioDto.setContrasenia(password);
+            usuarioDto.setActivo(true); // Establecer usuario como activo al registrarse
+            
+            // Intentar crear el usuario con rol asignado
+            String resultado = usuarioService.crearUsuario(usuarioDto, isAdmin);
+            
+            if (resultado != null) {
+                return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body("{\"success\": true, \"message\": \"Usuario registrado exitosamente\", \"username\": \"" + username + "\"}");
+            } else {
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"USUARIO_EXISTENTE\", \"message\": \"El nombre de usuario ya está en uso\"}");
+            }
+            
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error interno del servidor\"}");
+        }
+    }
+
+    @GetMapping("/verificar-usuario/{username}")
+    public ResponseEntity<?> verificarUsuario(@PathVariable String username) {
+        try {
+            boolean existe = seguridadService.existeUsuario(username);
+            return ResponseEntity.ok()
+                .body("{\"existe\": " + existe + "}");
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar usuario\"}");
+        }
     }
 
 }

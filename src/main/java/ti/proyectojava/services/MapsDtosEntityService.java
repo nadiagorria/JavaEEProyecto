@@ -152,7 +152,7 @@ public class MapsDtosEntityService {
         return categoria;
     }
 
-    private VentaDto mapToDtoVentaPlano(Venta venta) {
+    public VentaDto mapToDtoVentaPlano(Venta venta) {
         if (venta == null) return null;
         VentaDto dto = new VentaDto();
         dto.setId(venta.getId());
@@ -160,9 +160,22 @@ public class MapsDtosEntityService {
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setActivo(venta.getActivo());
         dto.setFinalizada(venta.getFinalizada());
+        dto.setFormaPago(venta.getFormaPago());
 
+        if (venta.getUsuario() != null) {
+            dto.setUsuario(venta.getUsuario().getNombre());
+        }
+
+        if (venta.getCantidades() != null) {
+            dto.setCantidades(venta.getCantidades().stream()
+                    .map(cantidad -> mapToDtoCantidadSimple(cantidad))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())
+            );
+        }
         return dto;
     }
+
 
     public CreditoDto mapToDtoCredito(Credito credito) {
         return mapToDtoCredito(credito, new HashSet<>());
@@ -490,11 +503,9 @@ public class MapsDtosEntityService {
         if (usuarioDto == null || processed.contains(usuarioDto)) {
             return null;
         }
-        processed.add(usuarioDto);
-
-        // Si tiene username
+        processed.add(usuarioDto);        // Si tiene username
         if (usuarioDto.getNombre() != null) {
-            Optional<Usuario> usuarioExistente = usuarioRepository.findByNombre(usuarioDto.getNombre());
+            Optional<Usuario> usuarioExistente = usuarioRepository.findByNombreIgnoreCase(usuarioDto.getNombre());
             if (usuarioExistente.isPresent()) {
                 return usuarioExistente.get();
             }
@@ -1044,6 +1055,168 @@ public class MapsDtosEntityService {
 
     }
 
+    public ComboDto mapToDtoComboSimple(Combo combo) {
+        if (combo == null) {
+            return null;
+        }
+
+        ComboDto dto = new ComboDto();
+        dto.setId(combo.getId());
+        dto.setDescripcion(combo.getDescripcion());
+        dto.setDescuento(combo.getDescuento());
+        dto.setActivo(combo.getActivo());
+        dto.setInicio(combo.getInicio());
+        dto.setFin(combo.getFin());
+
+        if (combo.getProductos() != null) {
+            dto.setProductos(combo.getProductos().stream()
+                    .map(this::mapToDtoProductoSimple)
+                    .collect(Collectors.toList()));
+        }
+        return dto;
+    }
+
+    // combo sin productos
+    public ComboDto mapToDtoComboSinProductos(Combo combo) {
+        if (combo == null) {
+            return null;
+        }
+
+        ComboDto dto = new ComboDto();
+        dto.setId(combo.getId());
+        dto.setDescripcion(combo.getDescripcion());
+        dto.setDescuento(combo.getDescuento());
+        dto.setActivo(combo.getActivo());
+        dto.setInicio(combo.getInicio());
+        dto.setFin(combo.getFin());
+        return dto;
+    }
+
+    public PromocionDto mapToDtoPromocionSimple(Promocion promocion){
+        if (promocion == null) {
+            return null;
+        }
+
+        PromocionDto dto = new PromocionDto();
+        dto.setId(promocion.getId());
+        dto.setDescripcion(promocion.getDescripcion());
+        dto.setDescuento(promocion.getDescuento());
+        dto.setActivo(promocion.getActivo());
+        dto.setInicio(promocion.getInicio());
+        dto.setFin(promocion.getFin());
+
+        if (promocion.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(promocion.getProducto()));
+        }
+        return dto;
+    }
+
+    // promoción sin producto
+    public PromocionDto mapToDtoPromocionSinProducto(Promocion promocion){
+        if (promocion == null) {
+            return null;
+        }
+
+        PromocionDto dto = new PromocionDto();
+        dto.setId(promocion.getId());
+        dto.setDescripcion(promocion.getDescripcion());
+        dto.setDescuento(promocion.getDescuento());
+        dto.setActivo(promocion.getActivo());
+        dto.setInicio(promocion.getInicio());
+        dto.setFin(promocion.getFin());
+        return dto;
+    }
+
+    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
+        if (descuento == null) {
+            return null;
+        }
+
+        DescuentoDto dto = new DescuentoDto();
+        dto.setId(descuento.getId());
+        dto.setDescuento(descuento.getDescuento());
+        dto.setActivo(descuento.getActivo());
+        dto.setInicio(descuento.getInicio());
+        dto.setFin(descuento.getFin());
+
+        if (descuento.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(descuento.getProducto()));
+        }
+
+        return dto;
+    }
+
+    // descuento sin producto
+    public DescuentoDto mapToDtoDescuentoSinProducto(Descuento descuento){
+        if (descuento == null) {
+            return null;
+        }
+
+        DescuentoDto dto = new DescuentoDto();
+        dto.setId(descuento.getId());
+        dto.setDescuento(descuento.getDescuento());
+        dto.setActivo(descuento.getActivo());
+        dto.setInicio(descuento.getInicio());
+        dto.setFin(descuento.getFin());
+        // NO incluir producto para evitar referencias circulares
+        return dto;
+    }
+
+    public ProductoDto mapToDtoProductoSimple(Producto producto) {
+        if (producto == null) {
+            return null;
+        }
+
+        ProductoDto dto = new ProductoDto();
+
+        dto.setId(producto.getId());
+        dto.setCodigoDeBarra(producto.getCodigoDeBarra());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecioCompra(producto.getPrecioCompra());
+        dto.setPrecioVenta(producto.getPrecioVenta());
+
+        // ofertas sin productos
+        if (producto.getCombos() != null) {
+            dto.setCombos(producto.getCombos().stream()
+                    .map(this::mapToDtoComboSinProductos)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        if (producto.getPromociones() != null) {
+            dto.setPromociones(producto.getPromociones().stream()
+                    .map(this::mapToDtoPromocionSinProducto)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        if (producto.getDescuentos() != null) {
+            dto.setDescuentos(producto.getDescuentos().stream()
+                    .map(this::mapToDtoDescuentoSinProducto)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    
+    public CantidadDto mapToDtoCantidadSimple(Cantidad cantidad) {
+        if (cantidad == null) {
+            return null;
+        }
+
+        CantidadDto dto = new CantidadDto();
+        dto.setId(cantidad.getId());
+        dto.setPrecioActual(cantidad.getPrecioActual());
+        dto.setCantidad(cantidad.getCantidad());
+        if (cantidad.getProducto() != null) {
+            dto.setProducto(mapToDtoProductoSimple(cantidad.getProducto()));
+        }
+    return dto;
+    }
+
+
     public CantidadDto mapToDtoCantidad(Cantidad cantidad) {
         return mapToDtoCantidad(cantidad, new HashSet<>());
     }
@@ -1123,7 +1296,7 @@ public class MapsDtosEntityService {
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setTotal(venta.getTotal());
         dto.setActivo(venta.getActivo());
-        dto.setUsuario(mapToDtoUsuario(venta.getUsuario(), processed));
+        dto.setUsuario(venta.getUsuario() != null ? venta.getUsuario().getNombre() : null);
 
         if (venta.getCredito() != null) {
             dto.setCredito(mapToDtoCredito(venta.getCredito(), processed));
@@ -1164,8 +1337,8 @@ public class MapsDtosEntityService {
         venta.setActivo(dto.getActivo());
 
         if (dto.getUsuario() != null) {
-            venta.setUsuario(mapToEntityUsuario(dto.getUsuario(), processed));
 
+            venta.setUsuario(usuarioRepository.findByNombre(dto.getUsuario()).orElse(null));
             // Mantener bidireccionalidad
             if (venta.getUsuario() != null) {
                 venta.getUsuario().getVentas().add(venta);

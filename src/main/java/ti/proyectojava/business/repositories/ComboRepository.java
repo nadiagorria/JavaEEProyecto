@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface ComboRepository extends JpaRepository<Combo, Long> {
     List<Combo> findByActivoTrue();
     Optional<Combo> findById(Long id);
+    List<Combo> findByProductos_Id(Long productoId);
 }
