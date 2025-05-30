@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -23,7 +24,7 @@ import { ProductoDto } from 'src/models/producto.dto';
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss'
 })
-export class ProductosComponent {
+export class ProductosComponent implements OnInit {
 
 
   constructor(
@@ -39,7 +40,7 @@ export class ProductosComponent {
   ];
 
   ngOnInit() {
-    this.cargarProductos();
+   
   }
 
   cargarProductos() {

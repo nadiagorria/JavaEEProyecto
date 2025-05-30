@@ -2,6 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';   // necesario para pipes
 import { TableModule } from 'primeng/table';      // necesario para p-table
 import { ButtonModule } from 'primeng/button';    // necesario para botones pButton
+import { ProductoService } from 'src/services/producto.service';
+
+import { ProductoDto } from 'src/models/producto.dto';
+import { LoteDto } from 'src/models/lote.dto';
+import { ActivatedRoute, Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-producto-info',
@@ -11,7 +17,41 @@ import { ButtonModule } from 'primeng/button';    // necesario para botones pBut
   styleUrls: ['./producto-info.component.scss']
 })
 export class ProductoInfoComponent {
-  producto = {
+
+  constructor(
+        private productoService: ProductoService,
+        private route: ActivatedRoute,
+        private router: Router
+      ) { }
+
+  producto?: ProductoDto;
+  error: string = '';
+  loading: boolean = true;
+
+  ngOnInit() {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    
+    if (id && !isNaN(id)) {
+      this.cargarProducto(id);
+    } else {
+      this.error = 'ID de producto inválido';
+      this.loading = false;
+    }
+  }
+
+  cargarProducto(id: number) {
+    this.productoService.obtenerProducto(id).subscribe({
+      next: (response) => {
+        console.log('Respuesta del backend:', response);
+        this.producto = response;
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+      }
+    });
+  }
+
+  /*producto = {
     nombre: 'Nombre Producto',
     codigoInterno: '12345',
     codigoBarras: 'ABC123',
@@ -52,5 +92,5 @@ export class ProductoInfoComponent {
       stock: 10
     };
     this.producto.lotes = [...this.producto.lotes, nuevoLote];
-  }
+  }*/
 }

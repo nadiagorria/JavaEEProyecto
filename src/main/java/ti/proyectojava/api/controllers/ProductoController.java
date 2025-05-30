@@ -51,6 +51,18 @@ public class ProductoController {
     }
 
 
+    @GetMapping("/{id}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta Funcion obtiene un producto por su ID")
+    public ResponseEntity<ProductoDto> obtenerProducto(@PathVariable Long id) {
+       try {
+            ProductoDto producto = productoService.buscarProducto(id);
+            return ResponseEntity.ok(producto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     //solo admin puede usarlo
     @PutMapping("/{id}/editar")
     @Secured({"ADMIN"})
