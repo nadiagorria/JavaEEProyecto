@@ -59,6 +59,33 @@ public class CreditoService {
         return response;
     }
 
+    /**
+     * Valida si un cliente puede realizar una compra sin exceder su límite de crédito
+     * @param creditoId ID del crédito del cliente
+     * @param montoVenta Monto total de la venta
+     * @return true si puede realizar la compra, false si excede el límite
+     */
+    public boolean puedeRealizarCompra(Long creditoId, float montoVenta) {
+        Credito credito = creditoRepository.findById(creditoId)
+                .orElseThrow(() -> new RuntimeException("Crédito no encontrado. ID: " + creditoId));
+        
+        float deudaActual = credito.getPrecioTotal();
+        float dineroDisponible = Math.max(0, credito.getMaximo() - deudaActual);
+        
+        return montoVenta <= dineroDisponible;
+    }
 
+    /**
+     * Calcula el dinero disponible que puede gastar un cliente
+     * @param creditoId ID del crédito del cliente
+     * @return monto disponible para gastar
+     */
+    public float calcularDineroDisponible(Long creditoId) {
+        Credito credito = creditoRepository.findById(creditoId)
+                .orElseThrow(() -> new RuntimeException("Crédito no encontrado. ID: " + creditoId));
+        
+        float deudaActual = credito.getPrecioTotal();
+        return Math.max(0, credito.getMaximo() - deudaActual);
+    }
 
 }

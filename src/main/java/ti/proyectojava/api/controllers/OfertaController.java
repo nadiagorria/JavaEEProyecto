@@ -55,6 +55,15 @@ public class OfertaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //todos pueden usarla
+    @GetMapping("/combos/producto/{productoId}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta funcion lista los combos que contienen un producto específico")
+    public ResponseEntity<ResponseListadoCombos> getCombosByProducto(@PathVariable Long productoId) {
+        ResponseListadoCombos response = ofertaService.getCombosByProducto(productoId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     ////////////////////// DESCUENTO //////////////////////
 
     //solo puede hacerlo el admin
@@ -83,6 +92,15 @@ public class OfertaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //todos pueden usarla
+    @GetMapping("/descuentos/producto/{productoId}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta funcion lista los descuentos de un producto específico")
+    public ResponseEntity<ResponseListadoDescuentos> getDescuentosByProducto(@PathVariable Long productoId) {
+        ResponseListadoDescuentos response = ofertaService.getDescuentosByProducto(productoId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     ////////////////////// PROMOCIÓN //////////////////////
 
     //solo admin puede hacerlo
@@ -108,6 +126,15 @@ public class OfertaController {
     @Operation(description = "Esta funcion lista las promociones")
     public ResponseEntity<ResponseListadoPromociones> getPromociones() {
         ResponseListadoPromociones response = ofertaService.listadoPromociones();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //todos pueden usarla
+    @GetMapping("/promociones/producto/{productoId}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta funcion lista las promociones de un producto específico")
+    public ResponseEntity<ResponseListadoPromociones> getPromocionesByProducto(@PathVariable Long productoId) {
+        ResponseListadoPromociones response = ofertaService.getPromocionesByProducto(productoId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

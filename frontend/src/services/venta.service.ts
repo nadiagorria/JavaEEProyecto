@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VentaDto } from '../models';
+import { VentaDto, VentaSimpleDto } from '../models';
 import { UrlService } from './url.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,5 +31,9 @@ export class VentaService {
 
   listarVentas(): Observable<any> {
     return this.http.get<any>(`${this.urlService.baseUrl}${this.endpoint}`);
+  }
+
+  obtenerVenta(id: number): Observable<VentaSimpleDto> {
+    return this.http.get<VentaSimpleDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
   }
 }
