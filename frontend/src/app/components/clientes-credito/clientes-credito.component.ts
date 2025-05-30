@@ -11,7 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
-import { ClienteService } from 'src/services/entidad.service';
+import { EntidadService } from 'src/services/entidad.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -50,7 +50,7 @@ export class ClientesCreditoComponent {
   constructor(
     private route: ActivatedRoute,
     private creditoService: CreditoService,
-    private clienteService: ClienteService
+    private entidadService: EntidadService
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +92,7 @@ export class ClientesCreditoComponent {
       maximo: this.maximo,
     };
 
-    this.clienteService.crearClienteCredito(clienteCreditoDto).subscribe({
+    this.entidadService.crearClienteCredito(clienteCreditoDto).subscribe({
       next: (data: any) => {
         this.creditos.push(data.credito);
         this.visible = false;

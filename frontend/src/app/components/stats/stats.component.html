@@ -11,8 +11,7 @@
         </div>
 
         <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">21.324</span>
-          <span class="w-full numero2MiniCartel">+2.031</span>
+          <span class="w-full numero1MiniCartel">{{ ventasTotales }}</span>
         </div>
       </div>
 
@@ -23,8 +22,7 @@
         </div>
 
         <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">21.324</span>
-          <span class="w-full numero2MiniCartel">+2.031</span>
+          <span class="w-full numero1MiniCartel">{{ usuariosTotales }}</span>
         </div>
       </div>
 
@@ -36,8 +34,9 @@
 
         <div class="flex flex-column w-full papaNumeros">
           <ul>
-            <li class="margenBullet">Coca</li>
-            <li>papas</li>
+            <li class="margenBullet">{{ productosMasPopulares[0] || null }}</li>
+            <li>{{ productosMasPopulares[1] || null}}</li>
+            <li>{{ productosMasPopulares[2] || null}}</li>
           </ul>
         </div>
       </div>
@@ -50,8 +49,9 @@
 
         <div class="flex flex-column w-full papaNumeros">
           <ul>
-            <li class="margenBullet">Bebidas</li>
-            <li>Comidas</li>
+            <li class="margenBullet">{{ categoriasMasPopulares[0] || null}}</li>
+            <li>{{ categoriasMasPopulares[1] || null}}</li>
+            <li>{{ categoriasMasPopulares[2] || null}}</li>
           </ul>
         </div>
       </div>
@@ -63,7 +63,7 @@
         <div class="cabezaCartel">
           <div class="flex flex-column textoCartel">
             <strong class="margenTextoCartel">Ganancias</strong>
-            <span>$2131241</span>
+            <span>{{ ganancias }}</span>
           </div>
           <span class="pi pi-dollar logoCartel"></span>
         </div>

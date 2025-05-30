@@ -11,4 +11,14 @@ import { FooterComponent } from '../footer/footer.component';
 })
 export class StatsComponent {
 
+  ventasTotales: number = 0;
+
+  usuariosTotales: number = 0;
+
+  productosMasPopulares: any[] = [];
+  
+  categoriasMasPopulares: any[] = [];
+
+  ganancias: number = 0;
+
 }

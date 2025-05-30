@@ -330,7 +330,7 @@ public class MapsDtosEntityService {
         if (proveedor.getProductos() != null) {
             dto.setProductosDto(
                     proveedor.getProductos().stream()
-                            .map(prod -> mapToDtoProducto(prod, processed))
+                            .map(prod -> mapToDtoProductoSimple(prod))
                             .filter(Objects::nonNull)
                             .toList()
             );

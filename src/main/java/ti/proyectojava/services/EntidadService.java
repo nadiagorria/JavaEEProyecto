@@ -165,10 +165,10 @@ public class EntidadService {
         return response;
     }
 
-    public Proveedor seleccionarProveedor(Long id) {
+    public ProveedorDto seleccionarProveedor(Long id) {
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
-            return proveedor.get();
+            return mapsDtosEntityService.mapToDtoProveedor(proveedor.get());
         }
         // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);

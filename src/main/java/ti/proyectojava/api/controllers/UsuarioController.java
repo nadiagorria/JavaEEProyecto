@@ -37,7 +37,9 @@ public class UsuarioController {
     @Operation(description = "Esta funcion crea un nuevo usuario")
     public ResponseEntity<String> createUsuario(@RequestBody UsuarioDto usuarioDto){
 
-            String response = usuarioService.crearUsuario(usuarioDto);
+            boolean esAdmin = false;
+
+            String response = usuarioService.crearUsuario(usuarioDto, esAdmin);
             if (response == null) {
                 return new ResponseEntity<>("Error al crear usuario. NOMBRE:" + usuarioDto.getNombre(), HttpStatus.BAD_REQUEST);
             } else {

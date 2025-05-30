@@ -30,12 +30,12 @@ export class ProveedorPerfilComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private proveedorService: ProveedorService,
+    private entidadService: EntidadService,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.proveedorService.getProveedor(id).subscribe(data => {
+    this.entidadService.getProveedor(id).subscribe(data => {
       this.proveedor = data;
     });
   }
