@@ -87,7 +87,7 @@ export class ProductoInfoComponent {
     if (!this.producto) return;
     const lote: LoteDto = {
       ...this.nuevoLote,
-      id: 0, // El backend asigna el id
+      id: null, // El backend asigna el id
       activo: true,
       producto: { id: this.producto.id, nombre: this.producto.nombre }
     } as LoteDto;

@@ -2,7 +2,7 @@
 import { ProductoDto } from './producto.dto';
 
 export interface LoteDto {
-    id: number;
+    id: number | null;
     numeLote: string;
     stock: number;
     fechaVencimiento: Date;

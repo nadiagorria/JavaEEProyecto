@@ -8,7 +8,7 @@ import { UrlService } from './url.service';
   providedIn: 'root'
 })
 export class CategoriaService {
-  private endpoint: string = '/categoria';
+  private endpoint: string = '/categorias';
 
   constructor(
     private http: HttpClient,
@@ -16,7 +16,7 @@ export class CategoriaService {
   ) {}
 
   crearCategoria(categoria: CategoriaDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, categoria);
+    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}`, categoria);
   }
 
   editarCategoria(categoria: CategoriaDto): Observable<string> {
