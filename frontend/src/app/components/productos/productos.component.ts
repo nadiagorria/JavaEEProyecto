@@ -29,7 +29,9 @@ export class ProductosComponent implements OnInit {
 
   constructor(
       private productoService: ProductoService,
-      private categoriaService: CategoriaService
+      private categoriaService: CategoriaService,
+      private router: Router,
+      private route: ActivatedRoute
     ) { }
 
   productos: ProductoDto[] = [];
@@ -40,7 +42,7 @@ export class ProductosComponent implements OnInit {
   ];
 
   ngOnInit() {
-   
+   this.cargarProductos();
   }
 
   cargarProductos() {
@@ -52,6 +54,10 @@ export class ProductosComponent implements OnInit {
         console.error('Error al cargar productos:', error);
       }
     });
+  }
+
+  verProducto(id: number) {
+  this.router.navigate(['/producto', id]);
   }
 
   // Modales
@@ -112,9 +118,22 @@ export class ProductosComponent implements OnInit {
 
   eliminarCategoria() {
     if (this.categoriaSeleccionada == null) return;
-    this.categorias = this.categorias.filter(c => c.id !== this.categoriaSeleccionada);
-    this.categoriaSeleccionada = null;
-    this.mostrarModalEliminarCategoria = false;
+    this.categoriaService.eliminarCategoria(this.categoriaSeleccionada).subscribe({
+      next: () => {
+        // Actualiza la lista de categorías tras eliminar
+        this.categoriaService.listarCategorias().subscribe({
+          next: (response) => {
+            this.categorias = response.categorias;
+          }
+        });
+        this.categoriaSeleccionada = null;
+        this.mostrarModalEliminarCategoria = false;
+      },
+      error: (error) => {
+        alert('Error al eliminar la categoría');
+        console.error('Error al eliminar categoría:', error);
+      }
+    });
   }
 
   crearProducto() {

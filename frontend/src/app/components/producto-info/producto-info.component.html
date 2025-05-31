@@ -2,7 +2,7 @@
 
   <!-- Información del producto -->
   <div class="imagen-producto col-12 md:col-4 flex justify-content-center align-items-center">
-    <img src="https://via.placeholder.com/300x200?text=Imagen+Producto" alt="Imagen producto" />
+    <img [src]="producto?.imagen || 'https://via.placeholder.com/300x200?text=Imagen+Producto'" alt="Imagen producto" />
   </div>
 
   <div class="info-producto col-12 md:col-8 p-3">
@@ -26,6 +26,7 @@
 
   <!-- Tabla de lotes con paginación -->
   <div class="col-12 mt-5">
+    <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true"></button>
     <p-table
       [value]="producto?.lotes || []"
       [paginator]="true"
@@ -48,13 +49,13 @@
 
       <ng-template pTemplate="body" let-lote>
         <tr>
-          <td>{{ lote.numero }}</td>
+          <td>{{ lote.numeLote }}</td>
           <td>{{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
           <td>{{ lote.precioCompra | currency }}</td>
           <td>{{ lote.stock }}</td>
           <td>
-           <!-- <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
-                    (click)="eliminarLote(lote.id)" aria-label="Eliminar lote"></button> -->
+           <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                    (click)="eliminarLote(lote.id)" aria-label="Eliminar lote"></button>
           </td>
         </tr>
       </ng-template>
@@ -63,3 +64,51 @@
   </div>
 
 </div>
+
+<p-dialog
+  header="Agregar Lote"
+  [(visible)]="mostrarModalAgregarLote"
+  [modal]="true"
+  [style]="{width: '30vw'}"
+  class="texto">
+
+  <div class="form-container">
+    <form>
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="N° Lote"
+          [(ngModel)]="nuevoLote.numeLote"
+          name="numeLote"
+          required />
+      </div>
+      <div class="form-group">
+        <input
+          type="number"
+          placeholder="Stock"
+          [(ngModel)]="nuevoLote.stock"
+          name="stock"
+          min="0"
+          required />
+      </div>
+      <div class="form-group">
+        <input
+          type="date"
+          placeholder="Fecha de Vencimiento"
+          [(ngModel)]="nuevoLote.fechaVencimiento"
+          name="fechaVencimiento"
+          required />
+      </div>
+      <div class="form-group">
+        <input
+          type="number"
+          placeholder="Precio de Compra"
+          [(ngModel)]="nuevoLote.precioCompra"
+          name="precioCompra"
+          min="0"
+          required />
+      </div>
+      <button type="button" (click)="agregarLote()">Agregar Lote</button>
+    </form>
+  </div>
+</p-dialog>

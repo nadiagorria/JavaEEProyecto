@@ -21,7 +21,7 @@ export interface ProductoDto {
     descuentos : Pick<DescuentoDto, 'id'>[];
     categoria: Pick<CategoriaDto, 'id' | 'nombre'>;
     proveedor: Pick<ProveedorDto, 'id' | 'nombre'>;
-    lotes: Pick<LoteDto, 'id' | 'numeLote'>[];
+    lotes: Pick<LoteDto, 'id' | 'numeLote' | 'fechaVencimiento' | 'precioCompra' | 'stock' | 'activo'>[];
     cantidades: Pick<CantidadDto, 'id' | 'cantidad'>[];
     activo: boolean;
 }

@@ -1024,6 +1024,7 @@ public class MapsDtosEntityService {
         if (producto.getLotes() != null) {
             productoDto.setLotes(
                     producto.getLotes().stream()
+                            .filter(lote -> lote.getActivo())
                             .map(e -> mapToDtoLote(e, processed))
                             .toList()
             );
