@@ -39,11 +39,22 @@ export class ProveedorPerfilComponent {
     private route: ActivatedRoute,
     private entidadService: EntidadService,
   ) {}
-
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.entidadService.getProveedor(id).subscribe(data => {
-      this.proveedor = data;
+    this.entidadService.getProveedor(id).subscribe({
+      next: (data) => {
+        this.proveedor = data;
+      },
+      error: (error) => {
+        console.error('Error al cargar proveedor:', error);
+        if (error.status === 403) {
+          alert('No tienes permisos para ver este proveedor');
+        } else if (error.status === 404) {
+          alert('Proveedor no encontrado');
+        } else {
+          alert('Error al cargar los datos del proveedor');
+        }
+      }
     });
   }
 

@@ -9,14 +9,20 @@ import { SecurityService } from '../services/security.service';
 })
 export class AuthGuard implements CanActivate {
   constructor(private authService: SecurityService,
-    private router: Router) { }
-  canActivate(
+    private router: Router) { }  canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     if (this.authService.isLoggedIn()) {
       const userRoles = this.authService.getUserRoles();
       const routeRoles = route.data['roles'];
-      const hasRequiredRole = userRoles.some((userRole: any) => routeRoles.includes(userRole));
+      
+      // Si no se especifican roles requeridos, permitir acceso solo con autenticación
+      if (!routeRoles || routeRoles.length === 0) {
+        return true;
+      }
+      
+      // Verificar si el usuario tiene los roles requeridos
+      const hasRequiredRole = userRoles && userRoles.some((userRole: any) => routeRoles.includes(userRole));
       if (hasRequiredRole) {
         return true;
       } else {
@@ -28,10 +34,6 @@ export class AuthGuard implements CanActivate {
       this.router.navigateByUrl('/login');
       return false;
     }
-
-
-
-
   }
 
 }

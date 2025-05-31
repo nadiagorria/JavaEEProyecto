@@ -14,17 +14,48 @@ import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedo
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
+  
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  
   { 
     path: 'nuevaventa', 
     component: NuevaventaComponent,
-    canDeactivate: [CanDeactivateGuard]
+    canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] }
   },
-  { path: 'verventa/:id', component: VerventaComponent },
-  { path: 'ventas', component: VentasComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'stats', component: StatsComponent},
-  { path: 'cliente/:id', component: ClientePerfilComponent},
-  { path: 'proveedor/:id', component: ProveedorPerfilComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'verventa/:id', 
+    component: VerventaComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] } // cajero ve si es suya, admin ve todas
+  },
+  { 
+    path: 'ventas', 
+    component: VentasComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] } //cajero solo ve las suyas, admin ve todas
+  }, 
+  { 
+    path: 'stats', 
+    component: StatsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  { 
+    path: 'proveedor/:id', 
+    component: ProveedorPerfilComponent, 
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  
+  { 
+    path: 'cliente/:id', 
+    component: ClientePerfilComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] }
+  },
+  
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

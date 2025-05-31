@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.business.entities.Entidad;
-import ti.proyectojava.dtos.ClienteCreditoDto;
-import ti.proyectojava.dtos.ClienteDto;
-import ti.proyectojava.dtos.CreditoDto;
-import ti.proyectojava.dtos.ProveedorDto;
+import ti.proyectojava.dtos.*;
 import ti.proyectojava.services.EntidadService;
 
 @RestController
@@ -122,8 +119,12 @@ public class EntidadController {
     @GetMapping("{id}/seleccionarProveedor/")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion selecciona un proveedor")
-    public ResponseEntity<?> seleccionarProveedor(@PathVariable Long id) {
-        return ResponseEntity.ok(entidadService.seleccionarProveedor(id));
-    }
+    public ResponseEntity<ProveedorDto> seleccionarProveedor(@PathVariable Long id) {
+        try {
+            ProveedorDto provee = entidadService.seleccionarProveedor(id);
+            return ResponseEntity.ok(provee);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }}
 
 }
