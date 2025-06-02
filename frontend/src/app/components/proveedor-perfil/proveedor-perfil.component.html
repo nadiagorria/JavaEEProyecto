@@ -42,13 +42,12 @@
           <th>Stock</th>
         </tr>
       </ng-template>
-
       <ng-template pTemplate="body" let-producto>
         <tr>
-          <td>{{ producto.id || null }}</td>
-          <td>{{ producto.codigoDeBarra  || null }}</td>
-          <td>{{ producto.nombre || null }}</td>
-          <td>{{ producto.stockTotal || null }}</td>
+          <td>{{ producto.id || 'N/A' }}</td>
+          <td>{{ producto.codigoDeBarra || 'N/A' }}</td>
+          <td>{{ producto.nombre || 'N/A' }}</td>
+          <td>{{ producto.stockTotal !== undefined && producto.stockTotal !== null ? producto.stockTotal : 'N/A' }}</td>
         </tr>
       </ng-template>
     </p-table>

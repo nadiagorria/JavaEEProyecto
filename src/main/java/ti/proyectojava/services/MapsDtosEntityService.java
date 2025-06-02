@@ -63,6 +63,20 @@ public class MapsDtosEntityService {
         return mapToDtoCategoria(categoria, new HashSet<>());
     }
 
+    private CategoriaDto mapToDtoCategoriaSimple(Categoria categoria) {
+        if (categoria == null) {
+            return null;
+        }
+
+        CategoriaDto catDto = new CategoriaDto();
+        catDto.setNombre(categoria.getNombre());
+        catDto.setActivo(categoria.getActivo());
+        catDto.setProductos(null);
+        catDto.setCategoriaPadre(null);
+        catDto.setSubcategorias(null);
+        return catDto;
+    }
+
     private CategoriaDto mapToDtoCategoria(Categoria categoria, Set<Object> processed) {
         if (categoria == null || processed.contains(categoria)) {
             return null;
@@ -97,6 +111,8 @@ public class MapsDtosEntityService {
         }
         return catDto;
     }
+
+
 
     public Categoria mapToEntityCategoria(CategoriaDto catDto) {
         return mapToEntityCategoria(catDto, new HashSet<>());
@@ -326,6 +342,7 @@ public class MapsDtosEntityService {
         dto.setTelefono(proveedor.getTelefono());
         dto.setActivo(proveedor.isActivo());
         dto.setCorreo(proveedor.getCorreo());
+        
 
         if (proveedor.getProductos() != null) {
             dto.setProductosDto(
@@ -1181,6 +1198,8 @@ public class MapsDtosEntityService {
         dto.setNombre(producto.getNombre());
         dto.setPrecioCompra(producto.getPrecioCompra());
         dto.setPrecioVenta(producto.getPrecioVenta());
+        dto.setStockMin(producto.getStockMin());
+        dto.setStockTotal(producto.getStockTotal());
 
         // ofertas sin productos
         if (producto.getCombos() != null) {
@@ -1202,6 +1221,36 @@ public class MapsDtosEntityService {
                     .map(this::mapToDtoDescuentoSinProducto)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    public ProductoDto mapToDtoProductoCategoria(Producto producto) {
+        if (producto == null) {
+            return null;
+        }
+
+        ProductoDto dto = new ProductoDto();
+
+        dto.setId(producto.getId());
+        dto.setCodigoDeBarra(producto.getCodigoDeBarra());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecioCompra(producto.getPrecioCompra());
+        dto.setPrecioVenta(producto.getPrecioVenta());
+        dto.setCombos(null);
+        dto.setPromociones(null);
+        dto.setDescuentos(null);
+
+        if(dto.getCantidades() != null){
+            dto.setCantidades(producto.getCantidades().stream()
+                    .map(this::mapToDtoCantidadSimple)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+
+        if (producto.getCategoria() != null) {
+            dto.setCategoria(mapToDtoCategoriaSimple(producto.getCategoria()));
         }
 
         return dto;

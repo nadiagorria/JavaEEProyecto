@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoCategorias;
 import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.business.entities.*;
+import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.ProductoRepository;
 import ti.proyectojava.dtos.*;
 
@@ -19,12 +20,13 @@ import java.util.stream.Collectors;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final CantidadRepository cantidadRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
 
-    public ProductoService(ProductoRepository productoRepository, MapsDtosEntityService mapsDtosEntityService) {
+    public ProductoService(ProductoRepository productoRepository, CantidadRepository cantidadRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.productoRepository = productoRepository;
+        this.cantidadRepository = cantidadRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
-
     }
 
     public ResponseListadoProductos listadoProductos() {
@@ -36,6 +38,23 @@ public class ProductoService {
                 .toList();
 
         response.setProductos(productosActivos);
+
+        return response;
+    }   
+      public ResponseListadoProductos listadoProductosCategorias(long n) {
+        ResponseListadoProductos response = new ResponseListadoProductos();
+
+        // Obtener los top n productos más vendidos con sus categorías
+        List<Object[]> topResults = cantidadRepository.findTopBestSellingProducts();
+        List<ProductoDto> topMasVendidos = topResults.stream()
+                .limit(n)
+                .map(result -> {
+                    Producto producto = (Producto) result[0];
+                    return mapsDtosEntityService.mapToDtoProductoCategoria(producto);
+                })
+                .collect(Collectors.toList());
+
+        response.setProductos(topMasVendidos);
 
         return response;
     }

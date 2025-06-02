@@ -38,4 +38,8 @@ export class ProductoService {
   buscarPorCodigoBarras(codigoBarras: string): Observable<ProductoDto | null> {
     return this.http.get<ProductoDto>(`${this.urlService.baseUrl}${this.endpoint}/buscar/codigo/${codigoBarras}`);
   }
+
+  buscarTopNProductos(n: number): Observable<ProductoDto[]> {
+    return this.http.get<ProductoDto[]>(`${this.urlService.baseUrl}${this.endpoint}/listarCategorias${n}`);
+  }
 }
