@@ -104,7 +104,7 @@ public class ProductoController {
     @GetMapping("/listarCategorias")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta funcion lista los top N productos más vendidos con sus categorías")
-    public ResponseEntity<ResponseListadoProductos> getProductosCategorias(@RequestParam long n) {
+    public ResponseEntity<ResponseListadoProductos> getProductosCategorias(@RequestParam int n) {
         ResponseListadoProductos response = productoService.listadoProductosCategorias(n);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

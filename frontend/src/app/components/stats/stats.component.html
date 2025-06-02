@@ -30,13 +30,10 @@
         <div class="w-full cabezaMiniCartel">
           <span class="textoMiniCartel">Productos Populares</span>
           <span class="pi pi-objects-column logoMiniCartel"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
+        </div>        <div class="flex flex-column w-full papaNumeros">
           <ul>
-            <li class="margenBullet">{{ productosMasPopulares[0] || null }}</li>
-            <li>{{ productosMasPopulares[1] || null}}</li>
-            <li>{{ productosMasPopulares[2] || null}}</li>
+            <li *ngFor="let producto of productosMasPopulares; let i = index" 
+                [class.margenBullet]="i === 0">{{ producto?.nombre || null }}</li>
           </ul>
         </div>
       </div>
@@ -45,13 +42,10 @@
         <div class="w-full cabezaMiniCartel">
           <span class="textoMiniCartel">Categorías Populares</span>
           <span class="pi pi-objects-column logoMiniCartel"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
+        </div>        <div class="flex flex-column w-full papaNumeros">
           <ul>
-            <li class="margenBullet">{{ categoriasMasPopulares[0] || null}}</li>
-            <li>{{ categoriasMasPopulares[1] || null}}</li>
-            <li>{{ categoriasMasPopulares[2] || null}}</li>
+            <li *ngFor="let categoria of categoriasMasPopulares; let i = index" 
+                [class.margenBullet]="i === 0">{{ categoria?.nombre || null }}</li>
           </ul>
         </div>
       </div>

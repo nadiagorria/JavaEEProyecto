@@ -41,7 +41,7 @@ public class ProductoService {
 
         return response;
     }   
-      public ResponseListadoProductos listadoProductosCategorias(long n) {
+      public ResponseListadoProductos listadoProductosCategorias(int n) {
         ResponseListadoProductos response = new ResponseListadoProductos();
 
         // Obtener los top n productos más vendidos con sus categorías
