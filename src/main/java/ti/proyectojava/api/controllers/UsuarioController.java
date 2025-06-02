@@ -25,7 +25,8 @@ public class UsuarioController {
     @Secured({"ADMIN"})
     public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
             ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
-            return new ResponseEntity<>(response, HttpStatus.OK);    }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     //esto lo puede hacer el admin
     @Operation(description = "Esta funcion modifica un usuario")
@@ -47,7 +48,13 @@ public class UsuarioController {
     public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario){
         usuarioService.borrarUsuario(nombreUsuario);
         return new ResponseEntity<>(HttpStatus.OK);
+    }    
+    
+    @Operation(description = "Obtiene el número total de usuarios registrados")
+    @GetMapping("/cantidadUsuarios")
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<Integer> getUsuariosTotales(){
+        Integer response = usuarioService.listadoUsuariosTotales();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    // controller de chequear notificaciones
 }

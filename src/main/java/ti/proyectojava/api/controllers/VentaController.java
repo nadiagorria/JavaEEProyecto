@@ -151,4 +151,12 @@ public class VentaController {    private final VentaService ventaService;
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Operation(description = "Obtiene el número total de ventas registradas")
+    @GetMapping("/cantidadVentas")
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<Integer> getVentasTotales(){
+        Integer response = ventaService.listadoVentasTotales();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

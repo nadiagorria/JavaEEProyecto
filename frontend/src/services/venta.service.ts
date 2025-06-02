@@ -36,4 +36,8 @@ export class VentaService {
   obtenerVenta(id: number): Observable<VentaSimpleDto> {
     return this.http.get<VentaSimpleDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
   }
+
+  getVentasTotales(): Observable<number> {
+    return this.http.get<number>(`${this.urlService.baseUrl}${this.endpoint}/cantidadVentas`);
+  }
 }

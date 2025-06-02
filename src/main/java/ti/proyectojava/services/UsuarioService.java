@@ -37,7 +37,13 @@ public class UsuarioService {
         responseListadoUsuarios.setUsuarios(usuariosActivos);
 
         return responseListadoUsuarios;
-    }    public String crearUsuario(UsuarioDto usuario, boolean isAdmin){
+    }
+
+    public Integer listadoUsuariosTotales(){
+        return  usuarioRepository.cantidadUsuarios();
+    }
+
+    public String crearUsuario(UsuarioDto usuario, boolean isAdmin){
         String response = null;
 
         if(usuario.getNombre() != null && usuario.getMail() != null && usuario.getContrasenia() != null && usuarioRepository.findByNombreIgnoreCase(usuario.getNombre()).isEmpty()) {

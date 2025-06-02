@@ -5,6 +5,8 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { ProductoService } from 'src/services/producto.service';
 import { CategoriaDto, ProductoDto } from 'src/models';
+import { VentaService } from 'src/services/venta.service';
+import { UsuarioService } from 'src/services/usuario.service';
 
 
 @Component({
@@ -27,11 +29,21 @@ export class StatsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private productoservice: ProductoService
+    private productoservice: ProductoService,
+    private ventaservice: VentaService,
+    private usuarioservice: UsuarioService
   ) {}
 
   n = 3; //de cuanto es el top N de productos que se quiere obtener
   ngOnInit(): void {
+    this.ventaservice.getVentasTotales().subscribe(data => {
+      this.ventasTotales = data;
+    });
+
+    this.usuarioservice.getUsuariosTotales().subscribe(data => {
+      this.usuariosTotales = data;
+    });
+
     this.productoservice.buscarTopNProductos(this.n).subscribe(data => {
       console.log('Respuesta completa:', data);
       this.productosMasPopulares = data.productos;

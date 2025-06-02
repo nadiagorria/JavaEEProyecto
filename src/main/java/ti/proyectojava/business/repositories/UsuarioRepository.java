@@ -1,6 +1,7 @@
 package ti.proyectojava.business.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ti.proyectojava.business.entities.Usuario;
 
@@ -17,4 +18,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     // Métodos insensibles a mayúsculas y minúsculas
     Optional<Usuario> findByNombreIgnoreCaseAndContrasenia(String nombre, String contrasenia);
     Optional<Usuario> findByNombreIgnoreCase(String nombre);
+
+    @Query("SELECT COUNT(u.id) as usuariosTotales FROM Usuario u")
+    int cantidadUsuarios();
 }

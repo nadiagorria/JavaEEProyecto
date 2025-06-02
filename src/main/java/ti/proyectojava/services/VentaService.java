@@ -158,4 +158,8 @@ public class VentaService {
 
         return responseListadoVentas;
     }
+
+    public Integer listadoVentasTotales() {
+        return ventaRepository.cantidadVentas();
+    }
 }
