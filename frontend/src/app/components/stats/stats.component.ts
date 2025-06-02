@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { ProductoService } from 'src/services/producto.service';
-import { CategoriaDto, ProductoDto } from 'src/models';
+import { CategoriaDto, ProductoDto, VentaDto} from 'src/models';
 import { VentaService } from 'src/services/venta.service';
 import { UsuarioService } from 'src/services/usuario.service';
 
@@ -18,14 +18,18 @@ import { UsuarioService } from 'src/services/usuario.service';
 export class StatsComponent implements OnInit {
 
   ventasTotales: number = 0;
-
   usuariosTotales: number = 0;
-
-  productosMasPopulares: ProductoDto[] = [];
   
+  productosMasPopulares: ProductoDto[] = [];
   categoriasMasPopulares: Pick<CategoriaDto, "id" | "nombre">[] = [];
+  ventas: VentaDto[] = [];
 
   ganancias: number = 0;
+
+  debito: number = 0;
+  credito: number = 0;
+  efectivo: number = 0;
+  creditolocal: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,8 +61,30 @@ export class StatsComponent implements OnInit {
           this.categoriasMasPopulares.push(producto.categoria);
         }
       });
-      
-      console.log('Categorías más populares:', this.categoriasMasPopulares);
+        this.ventaservice.listarVentas().subscribe(data => {
+
+        this.ventas = data.ventas || [];
+
+        this.debito = 0;
+        this.credito = 0;
+        this.efectivo = 0;
+        this.creditolocal = 0;
+
+        for (const venta of this.ventas) {
+         
+          if (venta.formaPago === 'DEBITO') {
+            this.debito += venta.total;
+          } else if (venta.formaPago === 'CREDITO') { 
+            this.credito += venta.total;
+          } 
+          else if (venta.formaPago === 'EFECTIVO') {
+            this.efectivo += venta.total;
+          } else if (venta.formaPago === 'FIADO') {
+            this.creditolocal += venta.total;
+          }
+        }
+        this.ganancias = this.debito + this.credito + this.efectivo + this.creditolocal;
+      });
     });
   }
 
