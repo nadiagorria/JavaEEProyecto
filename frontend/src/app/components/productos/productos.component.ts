@@ -35,14 +35,22 @@ export class ProductosComponent implements OnInit {
     ) { }
 
   productos: ProductoDto[] = [];
-
-  categorias: any[] = [
-    { id: 1, nombre: 'Electrónica' },
-    { id: 2, nombre: 'Ropa' }
-  ];
+  categorias: any[] = [];
 
   ngOnInit() {
-   this.cargarProductos();
+    this.cargarProductos();
+    this.cargarCategorias();
+  }
+
+  cargarCategorias() {
+    this.categoriaService.listarCategorias().subscribe({
+      next: (response) => {
+        this.categorias = response.categorias;
+      },
+      error: (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    });
   }
 
   cargarProductos() {
@@ -84,7 +92,7 @@ export class ProductosComponent implements OnInit {
     if (tipo === 'eliminar') this.mostrarModalEliminarCategoria = true;
     if (tipo === 'producto') this.mostrarModalAgregarProducto = true;
   }
-
+  
   crearCategoria() {
     if (!this.nombreCategoria) return;
 
@@ -97,21 +105,32 @@ export class ProductosComponent implements OnInit {
         ? { id: this.categoriaPadre, nombre: '' }
         : null,
       productos: []
-    };
-
-    this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
-      next: () => {
-        this.categoriaService.listarCategorias().subscribe({
-          next: (response) => {
-            this.categorias = response.categorias;
-          }
-        });
+    };    this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
+      next: (response) => {
+        console.log('Categoría creada exitosamente:', response);
+        // Primero cerramos el modal y limpiamos el formulario
         this.nombreCategoria = '';
         this.categoriaPadre = null;
         this.mostrarModalAgregarCategoria = false;
+        
+        // Luego actualizamos la lista de categorías
+        this.categoriaService.listarCategorias().subscribe({
+          next: (response) => {
+            console.log('Categorías actualizadas:', response);
+            this.categorias = response.categorias;
+          },
+          error: (error) => {
+            console.error('Error al listar categorías:', error);
+          }
+        });
       },
       error: (error) => {
         console.error('Error al crear categoría:', error);
+        // Cerramos el modal y limpiamos aunque haya error
+        this.nombreCategoria = '';
+        this.categoriaPadre = null;
+        this.mostrarModalAgregarCategoria = false;
+        alert('Error al crear la categoría');
       }
     });
   }
@@ -135,38 +154,52 @@ export class ProductosComponent implements OnInit {
       }
     });
   }
-
   crearProducto() {
-    if (this.nuevoProducto.categoriaId == null) {
-      console.error('Debes seleccionar una categoría');
+    if (!this.nuevoProducto.nombre) {
+      alert('Por favor ingrese el nombre del producto');
       return;
     }
+    if (this.nuevoProducto.precio <= 0) {
+      alert('El precio debe ser mayor a 0');
+      return;
+    }
+    if (this.nuevoProducto.categoriaId == null) {
+      alert('Por favor seleccione una categoría');
+      return;
+    }
+
     const nuevo: ProductoDto = {
-      id: 0, // El backend lo ignora al crear
+      id: 0,
       nombre: this.nuevoProducto.nombre,
       precioVenta: this.nuevoProducto.precio,
-      precioCompra: 0, // Ajusta si tienes este dato en el formulario
-      codigoDeBarra: '', // Ajusta si tienes este dato en el formulario
+      precioCompra: 0,
+      codigoDeBarra: '',
       stockMin: 0,
       stockTotal: 0,
-      imagen: '', // O una URL por defecto
+      imagen: '',
       promociones: [],
       combos: [],
       descuentos: [],
       categoria: { id: this.nuevoProducto.categoriaId, nombre: '' },
-      proveedor: { id: 0, nombre: '' }, // Ajusta si tienes proveedor en el formulario
+      proveedor: { id: 0, nombre: '' },
       lotes: [],
       cantidades: [],
       activo: true
     };
+
+    console.log('Intentando crear producto:', nuevo);
     this.productoService.crearProducto(nuevo).subscribe({
-      next: () => {
-        this.cargarProductos();
+      next: (response) => {
+        console.log('Producto creado exitosamente:', response);
+        // Primero cerramos el modal y limpiamos el formulario
         this.nuevoProducto = { nombre: '', precio: 0, categoriaId: null };
         this.mostrarModalAgregarProducto = false;
+        // Luego actualizamos la lista de productos
+        this.cargarProductos();
       },
       error: (error) => {
         console.error('Error al crear producto:', error);
+        alert('Error al crear el producto');
       }
     });
   }

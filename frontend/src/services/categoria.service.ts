@@ -14,21 +14,20 @@ export class CategoriaService {
     private http: HttpClient,
     private urlService: UrlService
   ) {}
-
   crearCategoria(categoria: CategoriaDto): Observable<string> {
     return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}`, categoria);
   }
 
   editarCategoria(categoria: CategoriaDto): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${categoria.id}/editar`, categoria);
+    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/editar`, categoria);
   }
 
   eliminarCategoria(id: number): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {});
+    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/borrar/${id}`, {});
   }
 
   listarCategorias(): Observable<{categorias: CategoriaDto[]}> {
-    return this.http.get<{categorias: CategoriaDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listar`);
+    return this.http.get<{categorias: CategoriaDto[]}>(`${this.urlService.baseUrl}${this.endpoint}`);
   }
 
   seleccionarCategoria(id: number): Observable<CategoriaDto> {
