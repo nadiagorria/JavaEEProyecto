@@ -11,6 +11,7 @@ import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CanDeactivateGuard } from './guards/can-deactivate.guard';
+import { PerfilComponent } from './components/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'cliente/:id', component: ClientePerfilComponent},
   { path: 'productos', component: ProductosComponent },
   { path: 'producto/:id', component: ProductoInfoComponent },
+  { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN', 'CAJERO'] } },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

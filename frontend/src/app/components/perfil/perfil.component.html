@@ -1,51 +1,68 @@
-<div class="perfil-container">
-  <div class="perfil-header">
-    <div class="perfil-info">
-      <h2>Nombre usuario</h2>
-      <p>Tipo de cuenta</p>
-      <p>Email</p>
-      <div class="perfil-actions">
-        <button class="btn btn-dark">Editar cuenta</button>
-        <button class="btn btn-outline">Cerrar sesión</button>
-      </div>
-    </div>
-    <div class="perfil-avatar">
-      <img src="https://via.placeholder.com/120" alt="Foto de perfil" />
-    </div>
-  </div>
+<app-header></app-header>
 
-  <div class="ventas-section">
-    <h3>Mis ventas</h3>
-    <table class="ventas-table">
-      <thead>
-      <tr>
-        <th>Id</th>
-        <th>Cliente</th>
-        <th>Fecha de Venta</th>
-        <th>Total</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><a href="#">IN/1001/23</a></td>
-        <td>ACME</td>
-        <td>2022-01-23</td>
-        <td>$2,350.00</td>
-      </tr>
-      <tr>
-        <td><a href="#">IN/1002/23</a></td>
-        <td>John Doe Ltd.</td>
-        <td>2022-01-09</td>
-        <td>$1,500.00</td>
-      </tr>
-      <!-- más filas si es necesario -->
-      </tbody>
-    </table>
+<div class="container mx-auto p-4">
+  <div class="grid">
+    <!-- Perfil Card -->
+    <div class="col-12 md:col-4 lg:col-3">
+      <p-card>
+        <div class="flex flex-column align-items-center text-center">
+          <p-avatar [image]="usuario.avatar" styleClass="mb-3" size="xlarge" shape="circle" />
+          <h2 class="text-xl font-semibold mb-2">{{usuario.nombreUsuario}}</h2>
+          <div class="mb-3">
+            <p-tag *ngFor="let role of usuario.roles" 
+                   [value]="role" 
+                   [severity]="getRoleSeverity(role)"
+                   class="mr-2">
+            </p-tag>
+          </div>
+          <p class="text-gray-600 mb-4">{{usuario.email}}</p>
+          <div class="flex gap-2">
+            <p-button icon="pi pi-user-edit" 
+                     (click)="editarCuenta()" 
+                     label="Editar" 
+                     [outlined]="true">
+            </p-button>
+            <p-button icon="pi pi-sign-out" 
+                     (click)="cerrarSesion()" 
+                     severity="danger" 
+                     label="Salir" 
+                     [outlined]="true">
+            </p-button>
+          </div>
+        </div>
+      </p-card>
+    </div>
 
-    <div class="pagination">
-      <span>1 - 10 of 406</span>
-      <button>&lt;</button>
-      <button>&gt;</button>
+    <!-- Ventas Table -->
+    <div class="col-12 md:col-8 lg:col-9">
+      <p-card header="Mis Ventas">
+        <p-table [value]="ventas" 
+                 [paginator]="true" 
+                 [rows]="10" 
+                 [totalRecords]="totalVentas"
+                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} ventas"
+                 [showCurrentPageReport]="true"
+                 [tableStyle]="{ 'min-width': '50rem' }">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Total</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-venta>
+            <tr>
+              <td>{{venta.id}}</td>
+              <td>{{venta.cliente}}</td>
+              <td>{{venta.fecha}}</td>
+              <td>{{venta.total}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
     </div>
   </div>
 </div>
+
+<app-footer></app-footer>

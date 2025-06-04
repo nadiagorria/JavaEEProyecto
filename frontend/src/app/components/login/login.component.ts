@@ -55,11 +55,11 @@ export class LoginComponent {
           this.isLoading = false;
           
           // Store token
-          localStorage.setItem('token', response.token);
-            // Store user info
+          localStorage.setItem('token', response.token);          // Store user info
           const userStr = JSON.stringify({
             nombreUsuario: response.nombreUsuario,
-            roles: response.roles
+            roles: response.roles,
+            email: response.email // Incluir el email en los datos guardados
           });
           const encryptedUser = this.securityService.convertText('encrypt', userStr);
           localStorage.setItem('USER', encryptedUser);
@@ -67,7 +67,8 @@ export class LoginComponent {
           // Update service user
           this.securityService.user = {
             nombreUsuario: response.nombreUsuario,
-            roles: response.roles
+            roles: response.roles,
+            email: response.email // Incluir el email en el objeto user del servicio
           };
 
           this.messageService.add({
