@@ -428,14 +428,15 @@ public class MapsDtosEntityService {
             return null;
         }
         processed.add(dto);
-
+        Lote lote = null;
+        if (dto.getId() != null){
+            lote = loteRepository.findById(dto.getId()).orElse(null);
+        }
         // Buscar lote existente por id
-        Lote lote = loteRepository.findById(dto.getId()).orElse(null);
         if (lote != null) {
             return lote;
         }
         lote = new Lote();
-        lote.setId(dto.getId());
         lote.setNumero(dto.getNumeLote());
         lote.setStock(dto.getStock());
         lote.setFechaVencimiento(dto.getFechaVencimiento());
@@ -1041,6 +1042,7 @@ public class MapsDtosEntityService {
         if (producto.getLotes() != null) {
             productoDto.setLotes(
                     producto.getLotes().stream()
+                            .filter(lote -> lote.getActivo())
                             .map(e -> mapToDtoLote(e, processed))
                             .toList()
             );

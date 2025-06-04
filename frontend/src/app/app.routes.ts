@@ -5,11 +5,17 @@ import { NuevaventaComponent } from './components/nuevaventa/nuevaventa.componen
 import { VerventaComponent } from './components/verventa/verventa.component';
 import { VentasComponent } from './components/ventas/ventas.component';
 import { ClientePerfilComponent } from './components/cliente-perfil/cliente-perfil.component';
+import { ProductosComponent } from './components/productos/productos.component';
+import { ProductoInfoComponent } from './components/producto-info/producto-info.component';
 import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CanDeactivateGuard } from './guards/can-deactivate.guard';
+
 import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
+
+import { PerfilComponent } from './components/perfil/perfil.component';
+
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -24,6 +30,7 @@ export const routes: Routes = [
     canDeactivate: [CanDeactivateGuard],
     data: { roles: ['CAJERO', 'ADMIN'] }
   },
+
   { 
     path: 'verventa/:id', 
     component: VerventaComponent,
@@ -56,6 +63,11 @@ export const routes: Routes = [
     data: { roles: ['CAJERO', 'ADMIN'] }
   },
   
+
+  { path: 'productos', component: ProductosComponent },
+  { path: 'producto/:id', component: ProductoInfoComponent },
+  { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN', 'CAJERO'] } },
+
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

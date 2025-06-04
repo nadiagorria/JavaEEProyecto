@@ -19,8 +19,8 @@ export class ProductoService {
     return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, producto);
   }
 
-  seleccionarProducto(id: number): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/seleccionar`, id);
+  obtenerProducto(id: number): Observable<ProductoDto> {
+    return this.http.get<ProductoDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
   }
 
   editarProducto(producto: ProductoDto): Observable<string> {

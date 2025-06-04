@@ -114,14 +114,12 @@
   </div>
 </p-dialog>
 
-
-
   <div class="producto-grid">
-    <div class="producto-card" *ngFor="let producto of productos">
+    <div class="producto-card" *ngFor="let producto of productos" (click)="verProducto(producto.id)" style="cursor:pointer">
       <div class="imagen-placeholder"></div>
       <div class="info">
         <p class="nombre">{{ producto.nombre }}</p>
-        <p class="precio">${{ producto.precio }}</p>
+        <p class="precio">${{ producto.precioVenta }}</p>
       </div>
     </div>
   </div>
