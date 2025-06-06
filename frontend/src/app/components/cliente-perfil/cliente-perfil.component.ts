@@ -47,10 +47,15 @@ export class ClientePerfilComponent {
   }
 
   visible: boolean = false;
+  visibleEditar: boolean = false;
 
-    showDialog() {
-       this.visible = true;
-    }
+  showDialog() {
+    this.visible = true;
+  }
+
+  showDialogEditar() {
+    this.visibleEditar = true;
+  }
 
   pago : number = 0;
 
@@ -68,4 +73,31 @@ export class ClientePerfilComponent {
     );
     this.visible = false;
   }
+
+  nombreEdicion: string = '';
+  telefonoEdicion: string = '';
+
+
+  editarCliente() {
+    if (!this.nombreEdicion && !this.telefonoEdicion) {
+      alert('Debe ingresar al menos un campo para editar.');
+      return;
+    }
+
+    this.cliente.nombre = this.nombreEdicion;
+    
+    this.cliente.telefono = this.telefonoEdicion;
+
+    this.entidadService.editarCliente(this.cliente).subscribe({
+      next: (data: any) => {
+        console.log('Cliente editado:', data);
+        this.visibleEditar = false;
+      },
+      error: (err: any) => {
+        console.error('Error al editar cliente:', err);
+        alert('Error al editar cliente: ' + (err.message || err.status));
+      }
+    });
+  }
+
 }

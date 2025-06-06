@@ -40,4 +40,9 @@ export class EntidadService {
     );
   }
 
+  editarCliente(cliente: ClienteDto): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarcliente`, cliente, 
+      { responseType: 'text' });
+  }
+
 }

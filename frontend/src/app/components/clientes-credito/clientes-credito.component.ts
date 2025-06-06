@@ -12,7 +12,7 @@ import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 interface ClienteCredito {
@@ -49,6 +49,7 @@ export class ClientesCreditoComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private creditoService: CreditoService,
     private entidadService: EntidadService
   ) {}
@@ -137,5 +138,9 @@ export class ClientesCreditoComponent {
         }
       });
     }
+  }
+
+  mostrarDetalles(id: number){
+    this.router.navigate(['/cliente', id]);
   }
 }
