@@ -58,7 +58,7 @@ export class ProveedoresComponent {
   }
 
   cargarProveedores(): void {
-    this.entidadService.listarProveedores().subscribe({
+    this.entidadService.listadoProveedores().subscribe({
       next: (data: any) => {
         
         if (data && Array.isArray(data)) {

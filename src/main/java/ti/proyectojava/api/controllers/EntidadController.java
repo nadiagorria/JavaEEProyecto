@@ -104,6 +104,7 @@ public class EntidadController {
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
     public ResponseEntity<String> crearProveedor(@RequestBody ProveedorDto proveedorDto) {
+        proveedorDto.setId(null);
         String response = entidadService.crearProveedor(proveedorDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
