@@ -8,6 +8,9 @@ import { TableModule } from 'primeng/table';
 import { EntidadService } from 'src/services/entidad.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProveedorDto } from 'src/models';
+import { DialogModule } from 'primeng/dialog';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface ComprasCliente {
   id: number;
@@ -18,7 +21,7 @@ interface ComprasCliente {
 
 @Component({
   selector: 'app-proveedor-perfil',
-  imports: [HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule],
+  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule],
   templateUrl: './proveedor-perfil.component.html',
   styleUrl: './proveedor-perfil.component.scss'
 })
@@ -35,6 +38,8 @@ export class ProveedorPerfilComponent {
 
   totalRecords: number = 0;
 
+  visibleEditar: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
@@ -45,6 +50,40 @@ export class ProveedorPerfilComponent {
     this.entidadService.getProveedor(id).subscribe(data => {
       this.proveedor = data;
     });
+  }
+
+  showDialogEditar() {
+    this.visibleEditar = true;
+  }
+
+  nombreEdicion: string = '';
+  telefonoEdicion: string = '';
+  correoEdicion: string = '';
+
+
+  editarProveedor() {
+    if (!this.nombreEdicion || !this.telefonoEdicion || !this.correoEdicion) {
+      alert('Por favor, complete todos los campos.');
+      return;
+    }
+    
+    this.proveedor.nombre = this.nombreEdicion;
+    
+    this.proveedor.telefono = this.telefonoEdicion;
+
+    this.proveedor.correo = this.correoEdicion;
+
+    this.entidadService.editarProveedor(this.proveedor).subscribe({
+      next: (data: any) => {
+        console.log('Proveedor editado:', data);
+        this.visibleEditar = false;
+      },
+      error: (err: any) => {
+        console.error('Error al editar proveedor:', err);
+        alert('Error al editar proveedor: ' + (err.message || err.status));
+      }
+    });
+
   }
 
 }

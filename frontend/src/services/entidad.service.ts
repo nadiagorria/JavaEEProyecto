@@ -45,4 +45,9 @@ export class EntidadService {
       { responseType: 'text' });
   }
 
+  editarProveedor(proveedor: ProveedorDto): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarproveedor`, proveedor, 
+      { responseType: 'text' });
+  }
+
 }

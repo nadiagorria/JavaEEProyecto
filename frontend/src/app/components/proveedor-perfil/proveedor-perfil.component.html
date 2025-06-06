@@ -9,7 +9,29 @@
       </div>
 
       <div class="papaBoton">
-        <p-button label="Editar" severity="secondary"></p-button>
+        <p-button label="Editar Proveedor" severity="secondary" (click)="showDialogEditar()"></p-button>
+          <p-dialog header="Editar Cliente" [(visible)]="visibleEditar" [modal]="true" [breakpoints]="{ '400px': '80vw' }" [draggable]="false" [resizable]="true">
+              <div class="flex flex-column w-full gap-3">
+                <div class="w-full">
+                  <label for="nombre" class="block mb-2">Nombre</label>
+                  <input  pInputText class="w-full" placeholder="Nombre" style="font-size: 1.2rem;" [(ngModel)]="nombreEdicion"/>
+                </div>
+                
+                <div class="w-full">
+                  <label for="telefono" class="block mb-2">Teléfono</label>
+                  <input  pInputText class="w-full" placeholder="Telefono" style="font-size: 1.2rem;" [(ngModel)]="telefonoEdicion"/>
+                </div>
+
+                <div class="w-full">
+                  <label for="correo" class="block mb-2">Correo</label>
+                  <input pInputText class="w-full" placeholder="Correo" style="font-size: 1.2rem;" [(ngModel)]="correoEdicion"/>
+                </div>
+                
+                <div class="w-full flex justify-content-end mt-3">
+                  <p-button label="Confirmar" severity="secondary" (click)="editarProveedor()"></p-button>
+                </div>
+              </div>
+      </p-dialog>
       </div>
 
     </div>

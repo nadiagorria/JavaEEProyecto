@@ -46,7 +46,7 @@
 
   <article class="w-full cartelEditar">
     <p-button label="Editar Cliente" severity="secondary" (click)="showDialogEditar()"></p-button>
-    <p-dialog header="Editar Cliente" [(visible)]="visibleEditar" [modal]="true" [breakpoints]="{ '400px': '80vw' }" [draggable]="false" [resizable]="true">
+      <p-dialog header="Editar Cliente" [(visible)]="visibleEditar" [modal]="true" [breakpoints]="{ '400px': '80vw' }" [draggable]="false" [resizable]="true">
               <div class="flex flex-column w-full gap-3">
                 <div class="w-full">
                   <label for="nombre" class="block mb-2">Nombre</label>
@@ -62,7 +62,7 @@
                   <p-button label="Confirmar" severity="secondary" (click)="editarCliente()"></p-button>
                 </div>
               </div>
-            </p-dialog>
+      </p-dialog>
   </article>
 
   <article class="w-full tablaMargen">
