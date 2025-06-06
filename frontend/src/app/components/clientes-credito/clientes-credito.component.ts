@@ -148,7 +148,30 @@ export class ClientesCreditoComponent {
 
   eliminarCliente(id: number) {
     if (confirm('¿Está seguro que desea eliminar este cliente?')) {
-      
-    }
+      this.entidadService.eliminarPersona(id).subscribe({
+        next: (data: any) => {
+          console.log('Cliente eliminado exitosamente', data);
+          
+          // Actualizar las listas filtrando el cliente eliminado
+          this.creditos = this.creditos.filter(c => c.cliente.id !== id);
+          this.creditosFiltrados = this.creditosFiltrados.filter(c => c.cliente.id !== id);
+          this.totalRecords = this.creditosFiltrados.length;
+
+          this.cargarCreditos();
+          
+          alert('Cliente eliminado exitosamente');
+        },
+        error: (err: any) => {
+          console.error('Error al eliminar cliente:', err);
+          let mensajeError = 'Error al eliminar cliente';
+          if (err.error && typeof err.error === 'string') {
+            mensajeError += ': ' + err.error;
+          } else if (err.message) {
+            mensajeError += ': ' + err.message;
+          }
+          alert(mensajeError);
+        }
+      });
+    } 
   }
 }
