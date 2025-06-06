@@ -37,35 +37,18 @@
             [(ngModel)]="nuevoProducto.nombre"
             name="nombreProducto"
             required />
-        </div>
-
-        <!-- Precios -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="precioCompra">Precio de compra *</label>
-            <input
-              type="number"
-              id="precioCompra"
-              placeholder="0.00"
-              [(ngModel)]="nuevoProducto.precioCompra"
-              name="precioCompra"
-              min="0"
-              step="0.01"
-              required />
-          </div>
-
-          <div class="form-group">
-            <label for="precioVenta">Precio de venta *</label>
-            <input
-              type="number"
-              id="precioVenta"
-              placeholder="0.00"
-              [(ngModel)]="nuevoProducto.precio"
-              name="precio"
-              min="0"
-              step="0.01"
-              required />
-          </div>
+        </div>        <!-- Precio de venta -->
+        <div class="form-group">
+          <label for="precioVenta">Precio de venta *</label>
+          <input
+            type="number"
+            id="precioVenta"
+            placeholder="0.00"
+            [(ngModel)]="nuevoProducto.precio"
+            name="precio"
+            min="0"
+            step="0.01"
+            required />
         </div>
 
         <!-- Código de barras -->
@@ -79,36 +62,18 @@
             name="codigoBarras"
             required />
           <small class="help-text">* Campo obligatorio - Debe ingresarse manualmente</small>
-        </div>
-
-        <!-- Stocks -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="stockMin">Stock mínimo *</label>
-            <input
-              type="number"
-              id="stockMin"
-              placeholder="0"
-              [(ngModel)]="nuevoProducto.stockMin"
-              name="stockMin"
-              min="0"
-              required />
-          </div>
-
-          <div class="form-group">
-            <label for="stockTotal">Stock total *</label>
-            <input
-              type="number"
-              id="stockTotal"
-              placeholder="0"
-              [(ngModel)]="nuevoProducto.stockTotal"
-              name="stockTotal"
-              min="0"
-              required />
-          </div>
-        </div>
-
-        <!-- Categoría -->
+        </div>        <!-- Stock mínimo -->
+        <div class="form-group">
+          <label for="stockMin">Stock mínimo *</label>
+          <input
+            type="number"
+            id="stockMin"
+            placeholder="0"
+            [(ngModel)]="nuevoProducto.stockMin"
+            name="stockMin"
+            min="0"
+            required />
+        </div><!-- Categoría -->
         <div class="form-group">
           <label for="categoria">Categoría *</label>
           <select 
@@ -124,6 +89,24 @@
           </select>
           <small *ngIf="nuevoProducto.categoriaId !== null && nuevoProducto.categoriaId !== undefined" class="categoria-seleccionada">
             Categoría seleccionada: {{ obtenerNombreCategoria(nuevoProducto.categoriaId) }}
+          </small>
+        </div>
+
+        <!-- Proveedor -->
+        <div class="form-group">
+          <label for="proveedor">Proveedor</label>
+          <select 
+            id="proveedor"
+            [(ngModel)]="nuevoProducto.proveedorId" 
+            name="proveedorProducto"
+            [class.selected]="nuevoProducto.proveedorId !== null">
+            <option [ngValue]="null" selected>Sin proveedor</option>
+            <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.id">
+              {{ proveedor.nombre }}
+            </option>
+          </select>
+          <small *ngIf="nuevoProducto.proveedorId !== null && nuevoProducto.proveedorId !== undefined" class="proveedor-seleccionado">
+            Proveedor seleccionado: {{ obtenerNombreProveedor(nuevoProducto.proveedorId) }}
           </small>
         </div>
 

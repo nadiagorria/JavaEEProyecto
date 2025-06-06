@@ -3,17 +3,18 @@ package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ti.proyectojava.api.responses.ResponseListadoClientes;
+import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Credito;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
-import ti.proyectojava.dtos.ClienteCreditoDto;
-import ti.proyectojava.dtos.ClienteDto;
-import ti.proyectojava.dtos.CreditoDto;
-import ti.proyectojava.dtos.ProveedorDto;
+import ti.proyectojava.dtos.*;
+
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -59,6 +60,19 @@ public class EntidadService {
 
 
     //////////////////////////////////CLIENTE////////////////////////////////////////
+
+    public ResponseListadoClientes listadoClientes(){
+        ResponseListadoClientes response = new ResponseListadoClientes();
+
+        List<ClienteDto> clientesActivos = clienteRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoCliente)
+                .toList();
+
+        response.setClientes(clientesActivos);
+
+        return response;
+    }
 
     public String crearCliente(ClienteDto clienteDto) {
             return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
@@ -132,6 +146,18 @@ public class EntidadService {
     //////////////////////////////////PROVEEDOR///////////////////////////////////
 
 
+    public ResponseListadoProveedores listadoProveedores(){
+        ResponseListadoProveedores response = new ResponseListadoProveedores();
+
+        List<ProveedorDto> proveedoresActivos = proveedorRepository.findByActivoTrue()
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoProveedorSimple)
+                .toList();
+
+        response.setProveedores(proveedoresActivos);
+
+        return response;
+    }
 
     public String crearProveedor(ProveedorDto proveedorDto) {
             return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();

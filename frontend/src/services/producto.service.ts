@@ -13,10 +13,18 @@ export class ProductoService {
   constructor(
     private http: HttpClient,
     private urlService: UrlService
-  ) { }
-  crearProducto(producto: ProductoDto): Observable<string> {
+  ) { }  crearProducto(producto: ProductoDto): Observable<string> {
     return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto);
-  }  crearProductoConImagen(formData: FormData): Observable<string> {
+  }
+
+  // Nuevo método que usa el endpoint optimizado con DTO completo
+  crearProductoConDto(producto: ProductoDto): Observable<string> {
+    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear-dto`, producto, {
+      responseType: 'text' as 'json'
+    });
+  }
+
+  crearProductoConImagen(formData: FormData): Observable<string> {
     // No establecer Content-Type manualmente para FormData
     // Angular lo hará automáticamente y incluirá el boundary
     return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, formData, {

@@ -153,12 +153,18 @@ $text-color: #777;
     select.selected {
       border-color: #4CAF50;
       background-color: #f9fff9;
-    }
-
-    .categoria-seleccionada {
+    }    .categoria-seleccionada {
       display: block;
       margin-top: 5px;
       color: #4CAF50;
+      font-weight: 500;
+      font-size: 0.9em;
+    }
+
+    .proveedor-seleccionado {
+      display: block;
+      margin-top: 5px;
+      color: #2196F3;
       font-weight: 500;
       font-size: 0.9em;
     }

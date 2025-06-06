@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import ti.proyectojava.api.responses.ResponseListadoClientes;
+import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.dtos.*;
 import ti.proyectojava.services.EntidadService;
@@ -40,6 +42,14 @@ public class EntidadController {
 
 
     //////////////////////CLIENTE////////////////////////////
+
+    // esta funcion la puede usar cualquiera
+    @GetMapping("/clientes/listar")
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<ResponseListadoClientes> getClientes(){
+        ResponseListadoClientes response = entidadService.listadoClientes();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     //solo puede usarlo un admin
     @PostMapping("/cliente")
@@ -88,6 +98,14 @@ public class EntidadController {
     }
 
     /////////////////////////////PROVEEDOR/////////////////////////////////
+
+    // esta funcion la puede usar cualquiera
+    @GetMapping("/proveedor/listar")
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<ResponseListadoProveedores> getProveedores(){
+        ResponseListadoProveedores response = entidadService.listadoProveedores();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     //solo puede usarlo un admin
     @PostMapping("/proveedor")

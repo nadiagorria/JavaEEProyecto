@@ -73,12 +73,50 @@ public class ProductoController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error al crear producto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }    //solo admin puede hacerlo - endpoint principal para JSON con DTO completo
+    @PostMapping("/crear-dto")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta Funcion crea un nuevo producto usando ProductoDto completo")
+    public ResponseEntity<String> crearProductoConDto(@RequestBody ProductoDto productoDto) {
+        try {
+            // Validaciones básicas
+            if (productoDto.getNombre() == null || productoDto.getNombre().trim().isEmpty()) {
+                return new ResponseEntity<>("El nombre del producto es obligatorio", HttpStatus.BAD_REQUEST);
+            }
+            
+            if (productoDto.getPrecioVenta() <= 0) {
+                return new ResponseEntity<>("El precio de venta debe ser mayor a 0", HttpStatus.BAD_REQUEST);
+            }
+            
+            if (productoDto.getCodigoDeBarra() == null || productoDto.getCodigoDeBarra().trim().isEmpty()) {
+                return new ResponseEntity<>("El código de barras es obligatorio", HttpStatus.BAD_REQUEST);
+            }
+            
+            // Asegurar que el ID sea null para autogeneración
+            productoDto.setId(null);
+            productoDto.setActivo(true);
+            
+            String response = productoService.crearProducto(productoDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            String mensaje = e.getMessage();
+            if (mensaje.contains("codigo") || mensaje.contains("CODIGO")) {
+                return new ResponseEntity<>("Error: Ya existe un producto con ese código de barras", HttpStatus.BAD_REQUEST);
+            } else if (mensaje.contains("PRIMARY") || mensaje.contains("primary")) {
+                return new ResponseEntity<>("Error: Conflicto de ID de producto. Intente nuevamente", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>("Error de integridad de datos: " + mensaje, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al crear producto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //solo admin puede hacerlo - endpoint original para JSON
     @PostMapping("/crear-json")
     @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion crea un nuevo producto (JSON)")
+    @Operation(description = "Esta Funcion crea un nuevo producto (JSON) - DEPRECATED: usar /crear-dto")
     public ResponseEntity<String> crearProducto(@RequestBody ProductoDto productoDto) {
         String response = productoService.crearProducto(productoDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

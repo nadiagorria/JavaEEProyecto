@@ -40,4 +40,7 @@ export class EntidadService {
     );
   }
 
+  listadoProveedores(): Observable<{proveedores: ProveedorDto[]}> {
+    return this.http.get<{proveedores: ProveedorDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/proveedor/listar`);
+  }
 }
