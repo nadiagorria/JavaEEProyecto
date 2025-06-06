@@ -50,4 +50,20 @@ export class EntidadService {
       { responseType: 'text' });
   }
 
+  listarProveedores(): Observable<ProveedorDto[]> {
+    return this.http.get<ProveedorDto[]>(
+      `${this.urlService.baseUrl}${this.endpoint}/listarProveedores`
+    );
+  }
+
+  crearProveedor(proveedor: ProveedorDto): Observable<String> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/proveedor`, proveedor, 
+      { responseType: 'text' });
+  }
+  
+  eliminarPersona(id: number): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/eliminar`, id, 
+      { responseType: 'text' });
+  }
+
 }

@@ -7,6 +7,7 @@ import { VentasComponent } from './components/ventas/ventas.component';
 import { ClientePerfilComponent } from './components/cliente-perfil/cliente-perfil.component';
 import { ProductosComponent } from './components/productos/productos.component';
 import { ProductoInfoComponent } from './components/producto-info/producto-info.component';
+import { ProveedoresComponent } from './components/proveedores/proveedores.component';
 import { HomeComponent } from './components/home/home.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 
   { path: 'clientes', component: ClientesCreditoComponent },
+  { path: 'proveedores', component: ProveedoresComponent },
 
   {
     path: 'nuevaventa',
