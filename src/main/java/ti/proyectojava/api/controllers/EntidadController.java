@@ -12,6 +12,8 @@ import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.dtos.*;
 import ti.proyectojava.services.EntidadService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "api/v1/entidad")
 public class EntidadController {
@@ -29,14 +31,13 @@ public class EntidadController {
     @Secured({"ADMIN", "CAJERO"})
     public ResponseEntity<?> seleccionarEntidad(@RequestBody Long id) {
         return ResponseEntity.ok(entidadService.seleccionarEntidad(id));
-    }
-
-    //solo puede usarlo un admin
+    }    //solo puede usarlo un admin
     @PutMapping("/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una Persona")
     public ResponseEntity<String> eliminarPersona(@RequestBody Long id) {
-        Entidad entidad = entidadService.eliminarPersona(this.entidadActual);
+        Entidad entidad = entidadService.seleccionarEntidad(id);
+        entidad = entidadService.eliminarPersona(entidad);
         return ResponseEntity.ok("Persona eliminado correctamente. ID:" + entidad.getId());
     }
 
@@ -78,17 +79,8 @@ public class EntidadController {
     public ResponseEntity<String> editarCliente(@RequestBody ClienteDto clienteDto) {
         String result = entidadService.editarCliente(clienteDto);
         return ResponseEntity.ok(result);
-    }
-
-    //solo admin puede usarlo
-    @PutMapping("/{id}/eliminarCliente")
-    @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion elimina un cliente")
-    public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
-        String response = entidadService.eliminarCliente(id);
-        return new ResponseEntity<> (response, HttpStatus.OK);
-    }
-
+    }    
+    
     //cualquiera lo usa
     @GetMapping("/seleccionarCliente")
     @Secured({"ADMIN", "CAJERO"})
@@ -122,17 +114,8 @@ public class EntidadController {
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);
-    }
-
-    //solo admin puede usarlo
-    @PutMapping("/{id}/eliminarProveedor")
-    @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion elimina un proveedor")
-    public ResponseEntity<String> eliminarProveedor(@PathVariable Long id) {
-        String response = entidadService.eliminarProveedor(id);
-        return new ResponseEntity<> (response, HttpStatus.OK);
-    }
-
+    }    
+    
     //cualquiera lo usa
     @GetMapping("{id}/seleccionarProveedor/")
     @Secured({"ADMIN", "CAJERO"})
@@ -144,5 +127,18 @@ public class EntidadController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }}
+        
+    //cualquiera lo usa
+    @GetMapping("/listarProveedores")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta Funcion lista todos los proveedores activos")
+    public ResponseEntity<List<ProveedorDto>> listarProveedores() {
+        try {
+            List<ProveedorDto> proveedores = entidadService.listarProveedores();
+            return ResponseEntity.ok(proveedores);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
 }

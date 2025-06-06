@@ -2,5 +2,5 @@ export interface EntidadDto {
     nombre: string;
     telefono: string;
     activo: boolean;
-    id: number;
+    id: number | null;
 }

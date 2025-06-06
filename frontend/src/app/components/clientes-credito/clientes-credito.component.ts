@@ -12,7 +12,7 @@ import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 interface ClienteCredito {
@@ -44,19 +44,26 @@ interface ClienteCredito {
 export class ClientesCreditoComponent {
 
   creditos: CreditoDto[] = [];
+  creditosFiltrados: CreditoDto[] = [];
 
   totalRecords: number = 0;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private creditoService: CreditoService,
     private entidadService: EntidadService
   ) {}
-
   ngOnInit(): void {
+    this.cargarCreditos();
+  }
+
+  cargarCreditos(): void {
     this.creditoService.listarCreditos().subscribe({
       next: (data: any) => {
         this.creditos = data.creditos;
+        this.creditosFiltrados = [...this.creditos];
+        this.totalRecords = this.creditos.length;
       },
       error: (err: any) => {
         console.error('Error al listar créditos:', err);
@@ -79,9 +86,12 @@ export class ClientesCreditoComponent {
   minimo: number = 0;
   maximo: number = 0;
   deuda: number = 0;
-  pago: number = 0;
-
-  saveCliente() {
+  pago: number = 0;  saveCliente() {
+    // Validar que los campos requeridos estén completos
+    if (!this.nombre || !this.telefono) {
+      alert('Por favor, complete al menos el nombre y teléfono del cliente.');
+      return;
+    }
 
     const clienteCreditoDto: clienteCreditoDto = {
       nombre: this.nombre,
@@ -94,7 +104,6 @@ export class ClientesCreditoComponent {
 
     this.entidadService.crearClienteCredito(clienteCreditoDto).subscribe({
       next: (data: any) => {
-        this.creditos.push(data.credito);
         this.visible = false;
         this.nombre = '';
         this.telefono = '';
@@ -102,40 +111,67 @@ export class ClientesCreditoComponent {
         this.maximo = 0;
         this.deuda = 0;
         this.pago = 0;
-        window.location.reload();
+        
+        // Actualizar la lista de créditos sin recargar la página
+        this.cargarCreditos();
       },
       error: (err: any) => {
         console.error('Error al crear cliente y crédito:', err);
-        alert('Error al crear cliente y crédito: ' + (err.message || err.status));
+        let mensajeError = 'Error al crear cliente y crédito';
+        if (err.error && typeof err.error === 'string') {
+          mensajeError += ': ' + err.error;
+        } else if (err.message) {
+          mensajeError += ': ' + err.message;
+        }
+        alert(mensajeError);
       }
     });
   }
-
   busqueda: string = '';
 
   buscarCliente() {
     if (this.busqueda.trim() === '') {
-      this.creditoService.listarCreditos().subscribe({
-        next: (data: any) => {
-          this.creditos = data.creditos;
-        },
-        error: (err: any) => {
-          console.error('Error al listar créditos:', err);
-          alert('Error al listar créditos: ' + (err.message || err.status));
-        }
-      });
+      // Si la búsqueda está vacía, mostrar todos los créditos
+      this.creditosFiltrados = [...this.creditos];
     } else {
-      this.creditoService.listarCreditos().subscribe({
+      // Filtrar los créditos por nombre de cliente sin hacer una nueva petición
+      this.creditosFiltrados = this.creditos.filter((credito: CreditoDto) =>
+        credito.cliente.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
+      );
+    }
+    this.totalRecords = this.creditosFiltrados.length;
+  }
+
+  mostrarDetalles(id: number){
+    this.router.navigate(['/cliente', id]);
+  }
+
+  eliminarCliente(id: number) {
+    if (confirm('¿Está seguro que desea eliminar este cliente?')) {
+      this.entidadService.eliminarPersona(id).subscribe({
         next: (data: any) => {
-          this.creditos = data.creditos.filter((credito: CreditoDto) =>
-            credito.cliente.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
-          );
+          console.log('Cliente eliminado exitosamente', data);
+          
+          // Actualizar las listas filtrando el cliente eliminado
+          this.creditos = this.creditos.filter(c => c.cliente.id !== id);
+          this.creditosFiltrados = this.creditosFiltrados.filter(c => c.cliente.id !== id);
+          this.totalRecords = this.creditosFiltrados.length;
+
+          this.cargarCreditos();
+          
+          alert('Cliente eliminado exitosamente');
         },
         error: (err: any) => {
-          console.error('Error al buscar créditos:', err);
-          alert('Error al buscar créditos: ' + (err.message || err.status));
+          console.error('Error al eliminar cliente:', err);
+          let mensajeError = 'Error al eliminar cliente';
+          if (err.error && typeof err.error === 'string') {
+            mensajeError += ': ' + err.error;
+          } else if (err.message) {
+            mensajeError += ': ' + err.message;
+          }
+          alert(mensajeError);
         }
       });
-    }
+    } 
   }
 }

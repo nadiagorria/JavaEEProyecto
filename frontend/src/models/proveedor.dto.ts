@@ -3,7 +3,7 @@ import { ProductoDto } from './producto.dto';
 import { EntidadDto } from './entidad.dto';
 
 export interface ProveedorDto extends EntidadDto {
-    id: number;
+    id: number | null;
     nombre: string;
     telefono: string;
     correo: string;

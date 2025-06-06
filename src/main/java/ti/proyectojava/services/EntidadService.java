@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -54,6 +55,16 @@ public class EntidadService {
 
     public Entidad eliminarPersona(Entidad entidad) {
         entidad.setActivo(false);
+        
+
+        if(entidad instanceof Cliente) {
+            Cliente cliente = (Cliente) entidad;
+            if(cliente.getCredito() != null) {
+                Credito credito = cliente.getCredito();
+                credito.setActivo(false);
+                creditoRepository.save(credito);
+            }
+        } 
         entidadRepository.save(entidad);
         return entidad;
     }
@@ -118,20 +129,7 @@ public class EntidadService {
         } else {
             return "Cliente no encontrado con ID:" + clienteDto.getId();
         }
-    }
-
-    public String eliminarCliente(Long id) {
-        Optional<Cliente> clienteAct = clienteRepository.findById(id);
-        String response = null;
-
-        if (clienteAct.isPresent()) {
-            Cliente cliente = clienteAct.get();
-            cliente.setActivo(false);
-            clienteRepository.save(cliente);
-            response = "Cliente eliminado correctamente. ID:" + cliente.getId();
-        }
-        return response;
-    }
+    }    
 
     public ClienteDto seleccionarCliente(Long id) {
         // Compruebo si es Cliente
@@ -176,21 +174,8 @@ public class EntidadService {
         } else {
             return "Cliente no encontrado. ID:" + proveedorDto.getId();
         }
-    }
-
-    public String eliminarProveedor(Long id) {
-        Optional<Proveedor> proveedorAct = proveedorRepository.findById(id);
-        String response = null;
-
-        if (proveedorAct.isPresent()) {
-            Proveedor proveedor = proveedorAct.get();
-            proveedor.setActivo(false);
-            proveedorRepository.save(proveedor);
-            response = "Cliente eliminado correctamente. ID:" + proveedor.getId();
-        }
-        return response;
-    }
-
+    }    
+    
     public ProveedorDto seleccionarProveedor(Long id) {
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
@@ -200,6 +185,12 @@ public class EntidadService {
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
     }
 
+    public List<ProveedorDto> listarProveedores() {
+        List<Proveedor> proveedores = proveedorRepository.findByActivoTrue();
+        return proveedores.stream()
+                .map(mapsDtosEntityService::mapToDtoProveedor)
+                .collect(Collectors.toList());
+    }
 
 
 }

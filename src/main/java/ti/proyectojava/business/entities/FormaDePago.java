@@ -4,7 +4,8 @@ public enum FormaDePago {
     CREDITO,
     DEBITO,
     FIADO,
-  EFECTIVO,
+    EFECTIVO,
 }
+
 
 

@@ -43,4 +43,30 @@ export class EntidadService {
   listadoProveedores(): Observable<{proveedores: ProveedorDto[]}> {
     return this.http.get<{proveedores: ProveedorDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/proveedor/listar`);
   }
+  editarCliente(cliente: ClienteDto): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarcliente`, cliente, 
+      { responseType: 'text' });
+  }
+
+  editarProveedor(proveedor: ProveedorDto): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarproveedor`, proveedor, 
+      { responseType: 'text' });
+  }
+
+  listarProveedores(): Observable<ProveedorDto[]> {
+    return this.http.get<ProveedorDto[]>(
+      `${this.urlService.baseUrl}${this.endpoint}/listarProveedores`
+    );
+  }
+
+  crearProveedor(proveedor: ProveedorDto): Observable<String> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/proveedor`, proveedor, 
+      { responseType: 'text' });
+  }
+  
+  eliminarPersona(id: number): Observable<String> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/eliminar`, id, 
+      { responseType: 'text' });
+  }
+
 }
