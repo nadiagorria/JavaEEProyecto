@@ -1,15 +1,19 @@
 package ti.proyectojava.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.dtos.ProductoDto;
 import ti.proyectojava.services.ProductoService;
+import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "api/v1/producto")
@@ -24,14 +28,103 @@ public class ProductoController {
     }
 
     //solo admin puede hacerlo
-    @PostMapping("/crear")
+    @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion crea un nuevo producto")
+    @Operation(description = "Esta Funcion crea un nuevo producto con imagen")
+    public ResponseEntity<String> crearProductoConImagen(
+            @RequestParam("nombre") String nombre,
+            @RequestParam("precioCompra") float precioCompra,
+            @RequestParam("precioVenta") float precioVenta,
+            @RequestParam("codigoDeBarra") String codigoDeBarra,
+            @RequestParam("stockMin") int stockMin,
+            @RequestParam("stockTotal") int stockTotal,
+            @RequestParam(value = "categoriaId", required = false) Long categoriaId,
+            @RequestParam(value = "proveedorId", required = false) Long proveedorId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
+          try {
+            ProductoDto productoDto = new ProductoDto();
+            productoDto.setId(null); // Asegurar que el ID sea null para autogeneración
+            productoDto.setNombre(nombre);
+            productoDto.setPrecioCompra(precioCompra);
+            productoDto.setPrecioVenta(precioVenta);
+            productoDto.setCodigoDeBarra(codigoDeBarra);
+            productoDto.setStockMin(stockMin);
+            productoDto.setStockTotal(stockTotal);
+            productoDto.setActivo(true);
+            
+            // Si se proporciona una imagen, convertirla a byte array
+            if (imagen != null && !imagen.isEmpty()) {
+                productoDto.setImagen(imagen.getBytes());
+            }
+            
+            String response = productoService.crearProductoConImagen(productoDto, categoriaId, proveedorId);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+              } catch (IOException e) {
+            return new ResponseEntity<>("Error al procesar la imagen: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            String mensaje = e.getMessage();
+            if (mensaje.contains("codigo") || mensaje.contains("CODIGO")) {
+                return new ResponseEntity<>("Error: Ya existe un producto con ese código de barras", HttpStatus.BAD_REQUEST);
+            } else if (mensaje.contains("PRIMARY") || mensaje.contains("primary")) {
+                return new ResponseEntity<>("Error: Conflicto de ID de producto. Intente nuevamente", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>("Error de integridad de datos: " + mensaje, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al crear producto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //solo admin puede hacerlo - endpoint original para JSON
+    @PostMapping("/crear-json")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta Funcion crea un nuevo producto (JSON)")
     public ResponseEntity<String> crearProducto(@RequestBody ProductoDto productoDto) {
         String response = productoService.crearProducto(productoDto);
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
+    // Endpoint para obtener la imagen de un producto
+    @GetMapping("/{id}/imagen")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Obtiene la imagen de un producto")
+    public ResponseEntity<byte[]> obtenerImagenProducto(@PathVariable Long id) {
+        try {
+            byte[] imagen = productoService.obtenerImagenProducto(id);
+            if (imagen != null && imagen.length > 0) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.IMAGE_JPEG); // Asumimos JPEG por defecto
+                headers.setContentLength(imagen.length);
+                return new ResponseEntity<>(imagen, headers, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Endpoint para actualizar solo la imagen de un producto
+    @PutMapping(value = "/{id}/imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Secured({"ADMIN"})
+    @Operation(description = "Actualiza la imagen de un producto")
+    public ResponseEntity<String> actualizarImagenProducto(
+            @PathVariable Long id,
+            @RequestParam("imagen") MultipartFile imagen) {
+        
+        try {
+            if (imagen.isEmpty()) {
+                return new ResponseEntity<>("No se proporcionó ninguna imagen", HttpStatus.BAD_REQUEST);
+            }
+            
+            String response = productoService.actualizarImagenProducto(id, imagen.getBytes());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error al procesar la imagen: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al actualizar imagen: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //cualquiera puede usarlo

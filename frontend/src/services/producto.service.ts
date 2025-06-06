@@ -14,9 +14,26 @@ export class ProductoService {
     private http: HttpClient,
     private urlService: UrlService
   ) { }
-
   crearProducto(producto: ProductoDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, producto);
+    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto);
+  }  crearProductoConImagen(formData: FormData): Observable<string> {
+    // No establecer Content-Type manualmente para FormData
+    // Angular lo hará automáticamente y incluirá el boundary
+    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, formData, {
+      responseType: 'text' as 'json' // Esto ayuda a manejar respuestas de texto plano
+    });
+  }
+
+  obtenerImagenProducto(id: number): Observable<Blob> {
+    return this.http.get(`${this.urlService.baseUrl}${this.endpoint}/${id}/imagen`, {
+      responseType: 'blob'
+    });
+  }
+
+  actualizarImagenProducto(id: number, imagen: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('imagen', imagen);
+    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/imagen`, formData);
   }
 
   obtenerProducto(id: number): Observable<ProductoDto> {

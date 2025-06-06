@@ -1,65 +1,181 @@
-.producto-info {
-  .imagen-producto {
-    img {
-      max-width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+// Estilos optimizados para carga rápida
+.main-content {
+  min-height: calc(100vh - 120px);
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-section .page-title {
+  color: #2c3e50;
+  font-weight: 600;
+  margin: 0;
+}
+
+// Card del producto simplificado
+.producto-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .imagen-container {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .producto-imagen {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
-
-  .info-producto {
-    h2 {
-      margin-bottom: 1rem;
-      font-weight: 600;
+  
+  .producto-nombre {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .detalles-lista .detalle-item {
+    margin-bottom: 0.75rem;
+    
+    strong {
+      color: #495057;
+      margin-right: 0.5rem;
     }
-
-    .detalles {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        margin-bottom: 0.4rem;
-        font-size: 0.9rem;
-
-        strong {
-          color: #555;
-          margin-right: 0.5rem;
+  }
+    .precio-section {
+    padding: 1rem;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    
+    .precio-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .precio-label {
+        font-weight: 500;
+        color: #495057;
+      }
+      
+      .precio-valor {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        
+        &.precio-compra {
+          color: #6c757d;
+          font-size: 1.2rem;
         }
       }
-    }
-
-    .precio-total {
-      .precio {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2c3e50;
-      }
-    }
-
-    button {
-      margin-top: 1rem;
     }
   }
 }
 
-/* Ajustes para la tabla y paginador PrimeNG */
-.p-table {
-  font-family: Arial, sans-serif;
-  font-size: 0.9rem;
-
-  th {
-    background-color: #f3f3f3;
-    text-align: left;
+// Sección de lotes simplificada
+.lotes-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  
+  h4 {
+    color: #2c3e50;
     font-weight: 600;
-    padding: 0.75rem 1rem;
+    margin: 0;
   }
+}
 
-  td {
-    padding: 0.6rem 1rem;
+// Stock badges optimizados
+.stock-alto { background-color: #d4edda; color: #155724; }
+.stock-medio { background-color: #fff3cd; color: #856404; }
+.stock-bajo { background-color: #f8d7da; color: #721c24; }
+
+.stock-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+// Clases de fecha
+.fecha-vencida { color: #dc3545; font-weight: 600; }
+.fecha-proxima { color: #fd7e14; font-weight: 600; }
+.fecha-advertencia { color: #ffc107; font-weight: 500; }
+.fecha-normal { color: #28a745; }
+
+// Responsive básico
+@media (max-width: 768px) {
+  .container { padding: 0.5rem; }
+  .producto-card .imagen-container { height: 200px; }
+}
+
+// Estilos para el formulario del modal
+.lote-form {
+  .form-group {
+    margin-bottom: 1rem;
+    
+    label {
+      display: block;
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
   }
+}
 
-  .p-paginator {
-    font-size: 0.85rem;
+// Estilos globales para PrimeNG
+::ng-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background: #f8f9fa;
+      border-color: #dee2e6;
+      color: #495057;
+      font-weight: 600;
+      padding: 0.75rem;
+    }
+    
+    .p-datatable-tbody > tr > td {
+      padding: 0.75rem;
+      border-color: #dee2e6;
+    }
+    
+    .p-datatable-tbody > tr:hover {
+      background: #f8f9fa;
+    }
+  }
+  
+  .p-dialog {
+    .p-dialog-header {
+      background: #6c757d;
+      color: white;
+      border: none;
+      
+      .p-dialog-title {
+        font-weight: 600;
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+    
+    .p-dialog-footer {
+      border: none;
+      padding: 1rem 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
   }
 }

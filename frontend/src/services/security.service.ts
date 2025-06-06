@@ -69,48 +69,48 @@ export class SecurityService {
       return CryptoJS.AES.decrypt(cadena.trim(), '@BYF2025').toString(CryptoJS.enc.Utf8);
     }
   }  getUserName() {
-    console.log('getUserName llamado, usuario actual:', this.user);
+    //console.log('getUserName llamado, usuario actual:', this.user);
     
     if (this.user && this.user.nombreUsuario) {
-      console.log('Devolviendo nombreUsuario:', this.user.nombreUsuario);
+      //console.log('Devolviendo nombreUsuario:', this.user.nombreUsuario);
       return this.user.nombreUsuario;
     }
     
     // Si no hay usuario, intentar cargar desde localStorage
-    console.log('Usuario no encontrado, intentando cargar desde localStorage...');
+    //console.log('Usuario no encontrado, intentando cargar desde localStorage...');
     if (this.isLoggedIn() && this.user && this.user.nombreUsuario) {
-      console.log('Usuario cargado desde localStorage:', this.user.nombreUsuario);
+      //console.log('Usuario cargado desde localStorage:', this.user.nombreUsuario);
       return this.user.nombreUsuario;
     }
     
-    console.log('No se pudo obtener el nombre de usuario');
+    //console.log('No se pudo obtener el nombre de usuario');
     return null;
   }
 
   getUserRoles() {
     return this.user.roles;
   }  public isLoggedIn() {
-    console.log('isLoggedIn llamado');
+    //console.log('isLoggedIn llamado');
     
     if (localStorage.getItem('USER') !== null) {
-      console.log('USER encontrado en localStorage');
+      //console.log('USER encontrado en localStorage');
       let item = localStorage.getItem('USER')?.toString();
       const cadena: string = item !== undefined ? item : '';
       try {
         const decryptedData = this.convertText("decrypt", cadena);
-        console.log('Datos desencriptados:', decryptedData);
+       // console.log('Datos desencriptados:', decryptedData);
         this.user = JSON.parse(decryptedData || "{}");
-        console.log('Usuario parseado:', this.user);
+        //console.log('Usuario parseado:', this.user);
         return true;
       } catch (error) {
-        console.error('Error al desencriptar datos del usuario:', error);
+        //console.error('Error al desencriptar datos del usuario:', error);
         // Si hay error, limpiar localStorage
         localStorage.removeItem('USER');
         localStorage.removeItem('token');
         return false;
       }
     } else {
-      console.log('No hay USER en localStorage');
+      //console.log('No hay USER en localStorage');
       return false;
     }
   }

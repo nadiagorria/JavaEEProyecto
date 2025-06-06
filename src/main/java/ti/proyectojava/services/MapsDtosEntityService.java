@@ -84,6 +84,7 @@ public class MapsDtosEntityService {
         processed.add(categoria);
 
         CategoriaDto catDto = new CategoriaDto();
+        catDto.setId(categoria.getId());
         catDto.setNombre(categoria.getNombre());
         catDto.setActivo(categoria.getActivo());
 
@@ -920,7 +921,9 @@ public class MapsDtosEntityService {
             }
         }
 
+        // Crear nuevo producto (sin asignar ID para que sea autogenerado)
         Producto producto = new Producto();
+        // No establecer ID para permitir autogeneración
         producto.setPrecioCompra(productoDto.getPrecioCompra());
         producto.setPrecioVenta(productoDto.getPrecioVenta());
         producto.setCodigoDeBarra(productoDto.getCodigoDeBarra());
@@ -1025,7 +1028,9 @@ public class MapsDtosEntityService {
         productoDto.setStockTotal(producto.getStockTotal());
         productoDto.setActivo(producto.getActivo());
         productoDto.setNombre(producto.getNombre());
-        productoDto.setImagen(producto.getImagen());
+        // NO incluir imagen en el listado para evitar problemas de tamaño
+        // productoDto.setImagen(producto.getImagen());
+        productoDto.setImagen(null); // Siempre null en listados
 
         if (producto.getCombos() != null) {
             productoDto.setCombos(
@@ -1075,12 +1080,59 @@ public class MapsDtosEntityService {
 
         if (producto.getCategoria() != null) {
             productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria(), processed));
+        }        return productoDto;
+    }
+
+    // Método específico para casos donde SÍ necesitamos incluir la imagen
+    public ProductoDto mapToDtoProductoConImagen(Producto producto) {
+        return mapToDtoProductoConImagen(producto, new HashSet<>());
+    }
+
+    public ProductoDto mapToDtoProductoConImagen(Producto producto, Set<Object> processed) {
+        if (producto == null || processed.contains(producto)) {
+            return null;
+        }
+        processed.add(producto);
+
+        ProductoDto productoDto = new ProductoDto();
+        productoDto.setId(producto.getId());
+        productoDto.setPrecioCompra(producto.getPrecioCompra());
+        productoDto.setPrecioVenta(producto.getPrecioVenta());
+        productoDto.setCodigoDeBarra(producto.getCodigoDeBarra());
+        productoDto.setStockMin(producto.getStockMin());
+        productoDto.setStockTotal(producto.getStockTotal());
+        productoDto.setActivo(producto.getActivo());
+        productoDto.setNombre(producto.getNombre());
+        // SÍ incluir imagen en este método específico
+        productoDto.setImagen(producto.getImagen());
+
+        // Incluir solo los datos básicos, sin relaciones complejas para evitar problemas de rendimiento
+        if (producto.getCategoria() != null) {
+            productoDto.setCategoria(mapToDtoCategoriaSimple(producto.getCategoria()));
+        }
+
+        if (producto.getProveedor() != null) {
+            productoDto.setProveedor(mapToDtoProveedorSimple(producto.getProveedor()));
         }
 
         return productoDto;
-
     }
 
+    public ProveedorDto mapToDtoProveedorSimple(Proveedor proveedor) {
+        if (proveedor == null) {
+            return null;
+        }
+
+        ProveedorDto dto = new ProveedorDto();
+        dto.setId(proveedor.getId());
+        dto.setNombre(proveedor.getNombre());
+        dto.setTelefono(proveedor.getTelefono());
+        dto.setActivo(proveedor.isActivo());
+        dto.setCorreo(proveedor.getCorreo());
+
+        // No incluir productos para evitar referencias circulares
+        return dto;
+    }
     public ComboDto mapToDtoComboSimple(Combo combo) {
         if (combo == null) {
             return null;

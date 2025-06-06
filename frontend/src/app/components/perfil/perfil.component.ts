@@ -37,7 +37,7 @@ export class PerfilComponent implements OnInit {  usuario = {
     nombreUsuario: '',
     roles: [] as string[],
     email: '',
-    avatar: 'https://via.placeholder.com/120'  // Placeholder por ahora
+    avatar: '/placeholder-image.webp'  // Placeholder local
   };
 
   ventas: Venta[] = [

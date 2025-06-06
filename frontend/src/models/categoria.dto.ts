@@ -2,7 +2,7 @@
 import { ProductoDto } from './producto.dto';
 
 export interface CategoriaDto {
-    id: number;
+    id: number | null;
     nombre: string;
     activo: boolean;
     subcategorias: Pick<CategoriaDto, 'id' | 'nombre'>[];

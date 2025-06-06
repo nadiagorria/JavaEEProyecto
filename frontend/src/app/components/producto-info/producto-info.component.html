@@ -1,114 +1,189 @@
-<div class="producto-info grid">
+<app-header></app-header>
 
-  <!-- Información del producto -->
-  <div class="imagen-producto col-12 md:col-4 flex justify-content-center align-items-center">
-    <img [src]="producto?.imagen || 'https://via.placeholder.com/300x200?text=Imagen+Producto'" alt="Imagen producto" />
-  </div>
-
-  <div class="info-producto col-12 md:col-8 p-3">
-
-    <h2>{{ producto?.nombre }}</h2>
-    <ul class="detalles">
-      
-      <li><strong>Código de Barras:</strong> {{ producto?.codigoDeBarra }}</li>
-      <li><strong>Proveedor:</strong> {{ producto?.proveedor }}</li>
-      <li><strong>Stock total:</strong> {{ producto?.stockTotal }}</li>
-      <li><strong>Categoria:</strong> {{ producto?.categoria?.nombre }}</li>
-    </ul>
-
-    <div class="precio-total mt-3">
-      <span class="precio">{{ producto?.precioVenta | currency }}</span>
+<div class="main-content">
+  <div class="container p-4">
+    
+    <!-- Header simple -->
+    <div class="header-section mb-3">
+      <div class="flex justify-content-between align-items-center">
+        <h2 class="page-title">Información del Producto</h2>
+      </div>
     </div>
 
-    <!--<button pButton type="button" label="+ Añadir lote" class="mt-3" (click)="agregarLote()"></button>-->
-    
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center p-4">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p class="mt-2">Cargando...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !loading" class="text-center p-4">
+      <i class="pi pi-exclamation-triangle text-danger"></i>
+      <p class="mt-2 text-danger">{{ error }}</p>
+    </div>
+
+    <!-- Contenido principal -->
+    <div *ngIf="producto && !loading && !error" class="producto-container">
+        <!-- Card principal del producto -->
+      <div class="producto-card mb-3">
+        <div class="grid">
+          <!-- Imagen del producto -->
+          <div class="col-12 md:col-4">
+            <div class="imagen-container">
+              <img [src]="imagenUrl || '/placeholder-image.webp'" 
+                   alt="Imagen de {{ producto.nombre }}" 
+                   class="producto-imagen" />
+            </div>
+          </div>
+
+          <!-- Información del producto -->
+          <div class="col-12 md:col-8 p-3">
+            <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+            
+            <div class="detalles-lista">
+              <div class="detalle-item">
+                <strong>Código de Barras:</strong> {{ producto.codigoDeBarra }}
+              </div>              <div class="detalle-item">
+                <strong>Proveedor:</strong> {{ producto.proveedor?.nombre || 'Sin proveedor' }}
+              </div>
+              <div class="detalle-item">
+                <strong>Stock Total:</strong> 
+                <span class="stock-badge" [class]="getStockClass(producto.stockTotal)">
+                  {{ producto.stockTotal }}
+                </span>
+              </div>              <div class="detalle-item">
+                <strong>Categoría:</strong> {{ producto.categoria?.nombre || 'Sin categoría' }}
+              </div>
+            </div>            <div class="precio-section mt-3">
+              <div class="precio-item">
+                <span class="precio-label">Precio de Venta:</span>
+                <span class="precio-valor">{{ producto.precioVenta | currency:'USD':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="precio-item mt-2">
+                <span class="precio-label">Precio de Compra Actual:</span>
+                <span class="precio-valor precio-compra">{{ producto.precioCompra | currency:'USD':'symbol':'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      <!-- Tabla de lotes con paginación -->
+      <div class="col-12 mt-5">
+        <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true"></button>        <p-table
+          [value]="producto.lotes || []"
+          [paginator]="true"
+          [rows]="5"
+          [rowsPerPageOptions]="[5, 10]"
+          showGridlines
+          responsiveLayout="scroll"
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} lotes"
+          [totalRecords]="producto.lotes.length || 0">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>N° Lote</th>
+              <th>Fecha de Vencimiento</th>
+              <th>Precio de Compra</th>
+              <th>Stock</th>
+              <th>Eliminar</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-lote>
+            <tr>
+              <td>{{ lote.numeLote }}</td>
+              <td>{{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+              <td>{{ lote.precioCompra | currency }}</td>
+              <td>{{ lote.stock }}</td>              <td>
+               <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                        (click)="eliminarLote(lote.id!)" 
+                        [disabled]="!lote.id"
+                        aria-label="Eliminar lote"></button>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+    </div>
   </div>
-
-  <!-- Tabla de lotes con paginación -->
-  <div class="col-12 mt-5">
-    <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true"></button>
-    <p-table
-      [value]="producto?.lotes || []"
-      [paginator]="true"
-      [rows]="5"
-      [rowsPerPageOptions]="[5, 10]"
-      showGridlines
-      responsiveLayout="scroll"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} lotes"
-      [totalRecords]="producto?.lotes?.length || 0">
-
-      <ng-template pTemplate="header">
-        <tr>
-          <th>N° Lote</th>
-          <th>Fecha de Vencimiento</th>
-          <th>Precio de Compra</th>
-          <th>Stock</th>
-          <th>Eliminar</th>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="body" let-lote>
-        <tr>
-          <td>{{ lote.numeLote }}</td>
-          <td>{{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
-          <td>{{ lote.precioCompra | currency }}</td>
-          <td>{{ lote.stock }}</td>
-          <td>
-           <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
-                    (click)="eliminarLote(lote.id)" aria-label="Eliminar lote"></button>
-          </td>
-        </tr>
-      </ng-template>
-
-    </p-table>
-  </div>
-
 </div>
 
+<!-- Modal de PrimeNG -->
 <p-dialog
   header="Agregar Lote"
   [(visible)]="mostrarModalAgregarLote"
   [modal]="true"
-  [style]="{width: '30vw'}"
-  class="texto">
+  [style]="{width: '400px'}"
+  [closable]="true">
 
-  <div class="form-container">
-    <form>
-      <div class="form-group">
-        <input
-          type="text"
-          placeholder="N° Lote"
-          [(ngModel)]="nuevoLote.numeLote"
-          name="numeLote"
-          required />
-      </div>
-      <div class="form-group">
-        <input
-          type="number"
-          placeholder="Stock"
-          [(ngModel)]="nuevoLote.stock"
-          name="stock"
-          min="0"
-          required />
-      </div>
-      <div class="form-group">
-        <input
-          type="date"
-          placeholder="Fecha de Vencimiento"
-          [(ngModel)]="nuevoLote.fechaVencimiento"
-          name="fechaVencimiento"
-          required />
-      </div>
-      <div class="form-group">
-        <input
-          type="number"
-          placeholder="Precio de Compra"
-          [(ngModel)]="nuevoLote.precioCompra"
-          name="precioCompra"
-          min="0"
-          required />
-      </div>
-      <button type="button" (click)="agregarLote()">Agregar Lote</button>
-    </form>
-  </div>
+  <form class="lote-form">
+    <div class="form-group">
+      <label for="numeLote">Número de Lote *</label>
+      <input
+        id="numeLote"
+        type="text"
+        pInputText
+        placeholder="Ej: L001-2024"
+        [(ngModel)]="nuevoLote.numeLote"
+        name="numeLote"
+        class="w-full" />
+    </div>
+
+    <div class="form-group">
+      <label for="stock">Stock *</label>
+      <input
+        id="stock"
+        type="number"
+        pInputText
+        placeholder="0"
+        [(ngModel)]="nuevoLote.stock"
+        name="stock"
+        min="0"
+        class="w-full" />
+    </div>
+
+    <div class="form-group">
+      <label for="fechaVencimiento">Fecha de Vencimiento *</label>
+      <input
+        id="fechaVencimiento"
+        type="date"
+        pInputText
+        [(ngModel)]="nuevoLote.fechaVencimiento"
+        name="fechaVencimiento"
+        class="w-full" />
+    </div>
+
+    <div class="form-group">
+      <label for="precioCompra">Precio de Compra *</label>
+      <input
+        id="precioCompra"
+        type="number"
+        pInputText
+        placeholder="0.00"
+        [(ngModel)]="nuevoLote.precioCompra"
+        name="precioCompra"
+        min="0"
+        step="0.01"
+        class="w-full" />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button 
+      pButton 
+      type="button" 
+      label="Cancelar" 
+      class="p-button-text"
+      (click)="mostrarModalAgregarLote = false">
+    </button>
+    <button 
+      pButton 
+      type="button" 
+      label="Agregar" 
+      class="p-button-success"
+      (click)="agregarLote()">
+    </button>
+  </ng-template>
 </p-dialog>
+
+<app-footer></app-footer>

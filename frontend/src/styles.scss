@@ -8,3 +8,20 @@ html, body {
   background: #f7f6f6;
   font-family: "Montserrat", sans-serif;
 }
+
+/* Estilos globales para imágenes placeholder y contenedores de imagen */
+.image-container, .imagen-container, .imagen-producto {
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Asegurar que las imágenes placeholder se adapten completamente */
+img[src*="placeholder-image.webp"], 
+img[src*="placeholder.webp"] {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+}
