@@ -12,9 +12,11 @@ import java.util.Date;
 public class Oferta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "OFERTA_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)    @Column(name = "OFERTA_ID")
     private Long id;
+
+    @Column(name = "OFERTA_DESCRIPCION")
+    private String descripcion;
 
     @Column(name = "OFERTA_DESCUENTO")
     private float descuento;

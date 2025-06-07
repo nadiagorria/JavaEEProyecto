@@ -77,7 +77,7 @@ public class OfertaService {
 
         List<ComboDto> combosActivos = comboRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoCombo)
+                .map(mapsDtosEntityService::mapToDtoComboSimple)
                 .toList();
 
         response.setCombos(combosActivos);
@@ -123,7 +123,7 @@ public class OfertaService {
 
         List<DescuentoDto> descuentosActivos = descuentoRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoDescuento)
+                .map(mapsDtosEntityService::mapToDtoDescuentoSimple)
                 .toList();
 
         response.setDescuentos(descuentosActivos);
@@ -170,7 +170,7 @@ public class OfertaService {
 
         List<PromocionDto> promocionesActivos = promocionRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoPromocion)
+                .map(mapsDtosEntityService::mapToDtoPromocionSimple)
                 .toList();
 
         response.setPromociones(promocionesActivos);

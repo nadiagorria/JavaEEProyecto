@@ -17,6 +17,7 @@ import { ClientesCreditoComponent } from './components/clientes-credito/clientes
 import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedor-perfil.component';
 
 import { PerfilComponent } from './components/perfil/perfil.component';
+import { OfertasComponent } from './components/ofertas/ofertas.component';
 
 
 export const routes: Routes = [
@@ -70,11 +71,15 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['CAJERO', 'ADMIN'] }
   },
-
   { path: 'productos', 
     component: ProductosComponent,
     canActivate: [AuthGuard],
     data: { roles: ['CAJERO', 'ADMIN'] }
+   },
+  { path: 'ofertas', 
+    component: OfertasComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN'] }
    },
   { path: 'producto/:id', component: ProductoInfoComponent },
   { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN', 'CAJERO'] } },

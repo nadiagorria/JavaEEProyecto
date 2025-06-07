@@ -89,26 +89,25 @@ export class HeaderComponent implements OnInit {
       },
       {
         separator: true
-      },
-      {
+      },      {
         label: 'Productos',
         icon: 'pi pi-box',
-        command: () => this.mostrarMensaje('Productos')
+        command: () => this.router.navigate(['/productos'])
       },
       {
         label: 'Clientes',
         icon: 'pi pi-users',
-        command: () => this.mostrarMensaje('Clientes')
+        command: () => this.router.navigate(['/clientes'])
       },
       {
         label: 'Proveedores',
         icon: 'pi pi-truck',
-        command: () => this.mostrarMensaje('Proveedores')
+        command: () => this.router.navigate(['/proveedores'])
       },
       {
         label: 'Ofertas',
         icon: 'pi pi-percentage',
-        command: () => this.mostrarMensaje('Ofertas')
+        command: () => this.router.navigate(['/ofertas'])
       },
       {
         label: 'Créditos',

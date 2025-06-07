@@ -1,0 +1,446 @@
+// Aplicamos la misma fuente que usa la página de ventas
+.texto {
+  font-family: "Source Sans 3", sans-serif;
+}
+
+// Header de la página
+.ofertas-header {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+}
+
+// Contenido de cada tab
+.tab-content {
+  padding: 20px 0;
+}
+
+// Header de cada tabla
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ecf0f1;
+  
+  h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// Botones
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  
+  &.nuevo {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    
+    &:hover {
+      background: linear-gradient(135deg, #2980b9, #1c5985);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+  }
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    
+    &:hover {
+      background: linear-gradient(135deg, #2980b9, #1c5985);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.btn-secondary {
+    background: #95a5a6;
+    color: white;
+    
+    &:hover {
+      background: #7f8c8d;
+    }
+  }
+  
+  &.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  i {
+    font-size: 0.9rem;
+  }
+}
+
+// Badges
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.badge-success {
+    background-color: #27ae60;
+    color: white;
+  }
+  
+  &.badge-danger {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  &.badge-info {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  &.badge-warning {
+    background-color: #f39c12;
+    color: white;
+  }
+}
+
+// Celdas de productos en combos
+.productos-cell {
+  max-width: 250px;
+  
+  small {
+    display: block;
+    color: #7f8c8d;
+    line-height: 1.4;
+  }
+}
+
+// Texto centrado
+.text-center {
+  text-align: center;
+}
+
+// Margen derecho para botones
+.me-2 {
+  margin-right: 8px;
+}
+
+// Estilos para formularios en modales
+.modal-form {
+  padding: 20px 0;
+  
+  .form-group {
+    margin-bottom: 20px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.9rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+    }
+    
+    input.form-control {
+      padding: 12px 15px;
+    }
+    
+    .form-text {
+      color: #7f8c8d;
+      font-size: 0.8rem;
+      margin-top: 5px;
+      font-style: italic;
+    }
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    
+    .col-md-6 {
+      flex: 1;
+    }
+  }
+}
+
+// Personalización de componentes PrimeNG
+:host ::ng-deep {
+  // Tabs
+  .p-tabview {
+    .p-tabview-nav {
+      background: white;
+      border-bottom: 2px solid #ecf0f1;
+      
+      .p-tabview-nav-link {
+        background: transparent;
+        border: none;
+        color: #7f8c8d;
+        font-weight: 600;
+        padding: 15px 25px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          color: #3498db;
+          background: rgba(52, 152, 219, 0.05);
+        }
+      }
+      
+      .p-highlight .p-tabview-nav-link {
+        color: #3498db;
+        border-bottom: 3px solid #3498db;
+        background: rgba(52, 152, 219, 0.05);
+      }
+    }
+    
+    .p-tabview-panels {
+      background: transparent;
+      padding: 0;
+    }
+  }
+  
+  // Tablas
+  .p-datatable {
+    border: 1px solid #ecf0f1;
+    border-radius: 12px;
+    overflow: hidden;
+    
+    .p-datatable-header {
+      background: #f8f9fa;
+      border-bottom: 2px solid #ecf0f1;
+      padding: 15px 20px;
+    }
+    
+    .p-datatable-thead > tr > th {
+      background: #34495e;
+      color: white;
+      font-weight: 600;
+      padding: 15px 12px;
+      border: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .p-datatable-tbody > tr {
+      border-bottom: 1px solid #ecf0f1;
+      transition: background-color 0.3s ease;
+      
+      &:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+      }
+      
+      > td {
+        padding: 15px 12px;
+        border: none;
+        font-size: 0.9rem;
+        vertical-align: middle;
+      }
+    }
+    
+    .p-paginator {
+      background: #f8f9fa;
+      border-top: 1px solid #ecf0f1;
+      padding: 15px 20px;
+      
+      .p-paginator-pages .p-paginator-page {
+        &.p-highlight {
+          background: #3498db;
+          color: white;
+        }
+      }
+    }
+  }
+  
+  // Diálogos
+  .p-dialog {
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    
+    .p-dialog-header {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 12px 12px 0 0;
+      
+      .p-dialog-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      
+      .p-dialog-header-close {
+        color: white;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 0 25px;
+    }
+    
+    .p-dialog-footer {
+      padding: 20px 25px;
+      background: #f8f9fa;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  }
+  
+  // Dropdowns y multiselect
+  .p-dropdown, .p-multiselect {
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &.p-focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .p-dropdown-trigger, .p-multiselect-trigger {
+      color: #7f8c8d;
+    }
+  }
+  
+  // Input numbers
+  .p-inputnumber {
+    .p-inputtext {
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+    }
+  }
+  
+  // Calendarios
+  .p-calendar {
+    .p-inputtext {
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+    }
+  }
+  
+  // Checkboxes
+  .p-checkbox {
+    .p-checkbox-box {
+      border: 2px solid #ecf0f1;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      
+      &.p-highlight {
+        background: #3498db;
+        border-color: #3498db;
+      }
+    }
+  }
+  
+  // Toast messages
+  .p-toast {
+    .p-toast-message {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+  .ofertas-container {
+    padding: 15px;
+  }
+  
+  .ofertas-header {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  .table-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+    
+    h2 {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+  }
+  
+  .modal-form {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+  
+  :host ::ng-deep {
+    .p-dialog {
+      width: 95% !important;
+      margin: 0 auto;
+      
+      .p-dialog-content,
+      .p-dialog-footer {
+        padding: 15px 20px;
+      }
+    }
+    
+    .p-tabview {
+      .p-tabview-nav-link {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,498 @@
+<app-header></app-header>
+
+<div class="grid">
+  <div class="col-12">
+    
+    <div class="col-12 mb-3 pl-5">
+      <h2 class="texto">Gestión de Ofertas</h2>
+    </div>
+
+    <div class="col-12 flex justify-content-center">
+      <div class="md:col-8 lg:col-11">
+        
+        <p-tabView>
+          <!-- Tab de Promociones -->
+          <p-tabPanel header="Promociones">
+            <div class="mb-3">
+              <p-button label="Nueva Promoción" 
+                        icon="pi pi-plus" 
+                        (click)="abrirModalPromocion()"
+                        class="p-button-primary"></p-button>
+            </div>
+            
+            <p-table [value]="promociones" 
+                     [paginator]="true" 
+                     [rows]="5" 
+                     [rowsPerPageOptions]="[5, 10, 20]"
+                     paginatorPosition="bottom"
+                     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} promociones"
+                     showGridlines
+                     [responsive]="true"
+                     class="texto">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Descripción</th>
+                  <th>Producto</th>
+                  <th>Descuento</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-promocion>
+                <tr>
+                  <td>{{promocion.descripcion}}</td>
+                  <td>{{promocion.producto?.nombre || 'N/A'}}</td>
+                  <td>{{promocion.descuento}}%</td>
+                  <td>{{formatearFecha(promocion.inicio)}}</td>
+                  <td>{{formatearFecha(promocion.fin)}}</td>
+                  <td>
+                    <p-tag [value]="promocion.activo ? 'Activo' : 'Inactivo'" 
+                           [severity]="promocion.activo ? 'success' : 'secondary'"></p-tag>
+                  </td>
+                  <td>
+                    <p-button icon="pi pi-pencil" 
+                              class="p-button-text p-button-rounded" 
+                              (click)="editarPromocion(promocion)"
+                              pTooltip="Editar"></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+
+          <!-- Tab de Combos -->
+          <p-tabPanel header="Combos">
+            <div class="mb-3">
+              <p-button label="Nuevo Combo" 
+                        icon="pi pi-plus" 
+                        (click)="abrirModalCombo()"
+                        class="p-button-primary"></p-button>
+            </div>
+            
+            <p-table [value]="combos" 
+                     [paginator]="true" 
+                     [rows]="5" 
+                     [rowsPerPageOptions]="[5, 10, 20]"
+                     paginatorPosition="bottom"
+                     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} combos"
+                     showGridlines
+                     [responsive]="true"
+                     class="texto">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Descripción</th>
+                  <th>Productos</th>
+                  <th>Descuento</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-combo>
+                <tr>
+                  <td>{{combo.descripcion}}</td>
+                  <td>{{formatearProductos(combo.productos || [])}}</td>
+                  <td>{{combo.descuento}}%</td>
+                  <td>{{formatearFecha(combo.inicio)}}</td>
+                  <td>{{formatearFecha(combo.fin)}}</td>
+                  <td>
+                    <p-tag [value]="combo.activo ? 'Activo' : 'Inactivo'" 
+                           [severity]="combo.activo ? 'success' : 'secondary'"></p-tag>
+                  </td>
+                  <td>
+                    <p-button icon="pi pi-pencil" 
+                              class="p-button-text p-button-rounded" 
+                              (click)="editarCombo(combo)"
+                              pTooltip="Editar"></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+
+          <!-- Tab de Descuentos -->
+          <p-tabPanel header="Descuentos">
+            <div class="mb-3">
+              <p-button label="Nuevo Descuento" 
+                        icon="pi pi-plus" 
+                        (click)="abrirModalDescuento()"
+                        class="p-button-primary"></p-button>
+            </div>
+            
+            <p-table [value]="descuentos" 
+                     [paginator]="true" 
+                     [rows]="5" 
+                     [rowsPerPageOptions]="[5, 10, 20]"
+                     paginatorPosition="bottom"
+                     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} descuentos"
+                     showGridlines
+                     [responsive]="true"
+                     class="texto">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Descripción</th>
+                  <th>Producto</th>
+                  <th>Descuento</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-descuento>
+                <tr>
+                  <td>{{descuento.descripcion}}</td>
+                  <td>{{descuento.producto?.nombre || 'N/A'}}</td>
+                  <td>{{descuento.descuento}}%</td>
+                  <td>{{formatearFecha(descuento.inicio)}}</td>
+                  <td>{{formatearFecha(descuento.fin)}}</td>
+                  <td>
+                    <p-tag [value]="descuento.activo ? 'Activo' : 'Inactivo'" 
+                           [severity]="descuento.activo ? 'success' : 'secondary'"></p-tag>
+                  </td>
+                  <td>
+                    <p-button icon="pi pi-pencil" 
+                              class="p-button-text p-button-rounded" 
+                              (click)="editarDescuento(descuento)"
+                              pTooltip="Editar"></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+        </p-tabView>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL PROMOCIÓN -->
+<p-dialog
+  [header]="editandoPromocion ? 'Editar Promoción' : 'Nueva Promoción'"
+  [(visible)]="mostrarModalPromocion"
+  [modal]="true"
+  [style]="{width: '600px'}"
+  class="texto">
+
+  <div class="modal-form">
+    <form>
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcionPromocion">Descripción *</label>
+        <input
+          type="text"
+          id="descripcionPromocion"
+          placeholder="Ej: Lleva 3 paga 2"
+          [(ngModel)]="nuevaPromocion.descripcion"
+          name="descripcionPromocion"
+          class="form-control"
+          required />      </div>
+      
+      <!-- Producto -->
+      <div class="form-group">
+        <label for="productoPromocion">Producto *</label>
+        <p-dropdown
+          [options]="productos"
+          [(ngModel)]="productoSeleccionadoPromocion"
+          name="productoPromocion"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Selecciona un producto"
+          (onChange)="onProductoChange($event, 'promocion')"
+          class="form-control"
+          [filter]="true"
+          filterBy="nombre">
+        </p-dropdown>
+      </div>
+
+      <!-- Unidades requeridas -->
+      <div class="form-group">
+        <label for="unidadesPromocion">Unidades Requeridas *</label>
+        <p-inputNumber
+          [(ngModel)]="nuevaPromocion.descuento"
+          name="unidadesPromocion"
+          [min]="1"
+          [max]="100"
+          placeholder="Cantidad de unidades"
+          class="form-control">
+        </p-inputNumber>
+        <small class="form-text">Por ejemplo: Si es 3, significa "lleva 3 paga 2"</small>
+      </div>
+
+      <!-- Fechas -->
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inicioPromocion">Fecha Inicio *</label>
+          <p-calendar
+            [(ngModel)]="nuevaPromocion.inicio"
+            name="inicioPromocion"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="finPromocion">Fecha Fin *</label>
+          <p-calendar
+            [(ngModel)]="nuevaPromocion.fin"
+            name="finPromocion"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+      </div>
+
+      <!-- Estado activo -->
+      <div class="form-group">
+        <p-checkbox
+          [(ngModel)]="nuevaPromocion.activo"
+          name="activoPromocion"
+          binary="true"
+          label="Promoción activa">
+        </p-checkbox>
+      </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      class="btn btn-secondary me-2"
+      (click)="mostrarModalPromocion = false">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="guardarPromocion()">
+      {{editandoPromocion ? 'Actualizar' : 'Crear'}} Promoción
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- MODAL COMBO -->
+<p-dialog
+  [header]="editandoCombo ? 'Editar Combo' : 'Nuevo Combo'"
+  [(visible)]="mostrarModalCombo"
+  [modal]="true"
+  [style]="{width: '700px'}"
+  class="texto">
+
+  <div class="modal-form">
+    <form>
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcionCombo">Descripción *</label>
+        <input
+          type="text"
+          id="descripcionCombo"
+          placeholder="Ej: Combo desayuno completo"
+          [(ngModel)]="nuevoCombo.descripcion"
+          name="descripcionCombo"
+          class="form-control"
+          required />      </div>
+      
+      <!-- Productos -->
+      <div class="form-group">
+        <label for="productosCombo">Productos *</label>
+        <p-multiSelect
+          [options]="productos"
+          [(ngModel)]="productosSeleccionadosCombo"
+          name="productosCombo"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Selecciona los productos del combo"
+          (onChange)="onProductosComboChange($event)"
+          class="form-control"
+          [filter]="true"
+          filterBy="nombre">
+        </p-multiSelect>
+        <small class="form-text">Selecciona al menos 2 productos</small>
+      </div>
+
+      <!-- Descuento -->
+      <div class="form-group">
+        <label for="descuentoCombo">Descuento (%) *</label>
+        <p-inputNumber
+          [(ngModel)]="nuevoCombo.descuento"
+          name="descuentoCombo"
+          [min]="1"
+          [max]="99"
+          suffix="%"
+          placeholder="Porcentaje de descuento"
+          class="form-control">
+        </p-inputNumber>
+        <small class="form-text">Descuento aplicado cuando se compran todos los productos juntos</small>
+      </div>
+
+      <!-- Fechas -->
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inicioCombo">Fecha Inicio *</label>
+          <p-calendar
+            [(ngModel)]="nuevoCombo.inicio"
+            name="inicioCombo"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="finCombo">Fecha Fin *</label>
+          <p-calendar
+            [(ngModel)]="nuevoCombo.fin"
+            name="finCombo"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+      </div>
+
+      <!-- Estado activo -->
+      <div class="form-group">
+        <p-checkbox
+          [(ngModel)]="nuevoCombo.activo"
+          name="activoCombo"
+          binary="true"
+          label="Combo activo">
+        </p-checkbox>
+      </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      class="btn btn-secondary me-2"
+      (click)="mostrarModalCombo = false">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="guardarCombo()">
+      {{editandoCombo ? 'Actualizar' : 'Crear'}} Combo
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- MODAL DESCUENTO -->
+<p-dialog
+  [header]="editandoDescuento ? 'Editar Descuento' : 'Nuevo Descuento'"
+  [(visible)]="mostrarModalDescuento"
+  [modal]="true"
+  [style]="{width: '600px'}"
+  class="texto">
+  <div class="modal-form">
+    <form>
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcionDescuento">Descripción *</label>
+        <input
+          type="text"
+          id="descripcionDescuento"
+          placeholder="Ej: Descuento especial fin de semana"
+          [(ngModel)]="nuevoDescuento.descripcion"
+          name="descripcionDescuento"
+          class="form-control"
+          required />
+      </div>
+
+      <!-- Producto -->
+      <div class="form-group">
+        <label for="productoDescuento">Producto *</label>
+        <p-dropdown
+          [options]="productos"
+          [(ngModel)]="productoSeleccionadoDescuento"
+          name="productoDescuento"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Selecciona un producto"
+          (onChange)="onProductoChange($event, 'descuento')"
+          class="form-control"
+          [filter]="true"
+          filterBy="nombre">
+        </p-dropdown>
+      </div>
+
+      <!-- Descuento -->
+      <div class="form-group">
+        <label for="porcentajeDescuento">Descuento (%) *</label>
+        <p-inputNumber
+          [(ngModel)]="nuevoDescuento.descuento"
+          name="porcentajeDescuento"
+          [min]="1"
+          [max]="99"
+          suffix="%"
+          placeholder="Porcentaje de descuento"
+          class="form-control">
+        </p-inputNumber>
+        <small class="form-text">Descuento aplicado a cada unidad del producto</small>
+      </div>
+
+      <!-- Fechas -->
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inicioDescuento">Fecha Inicio *</label>
+          <p-calendar
+            [(ngModel)]="nuevoDescuento.inicio"
+            name="inicioDescuento"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="finDescuento">Fecha Fin *</label>
+          <p-calendar
+            [(ngModel)]="nuevoDescuento.fin"
+            name="finDescuento"
+            [showIcon]="true"
+            placeholder="dd/mm/aaaa"
+            class="form-control">
+          </p-calendar>
+        </div>
+      </div>
+
+      <!-- Estado activo -->
+      <div class="form-group">
+        <p-checkbox
+          [(ngModel)]="nuevoDescuento.activo"
+          name="activoDescuento"
+          binary="true"
+          label="Descuento activo">
+        </p-checkbox>
+      </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      class="btn btn-secondary me-2"
+      (click)="mostrarModalDescuento = false">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="guardarDescuento()">
+      {{editandoDescuento ? 'Actualizar' : 'Crear'}} Descuento
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- Toast para mensajes -->
+<p-toast></p-toast>
+
+<app-footer></app-footer>

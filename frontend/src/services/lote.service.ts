@@ -13,13 +13,24 @@ export class LoteService {
   constructor(
     private http: HttpClient,
     private urlService: UrlService
-  ) {}
-
-  crearLote(lote: LoteDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, lote);
+  ) {}  crearLote(lote: LoteDto): Observable<any> {
+    // Asegurarnos de que la fecha sea una string en formato ISO
+    const lotePayload = {
+      ...lote,
+      fechaVencimiento: lote.fechaVencimiento instanceof Date 
+        ? lote.fechaVencimiento.toISOString().split('T')[0] 
+        : lote.fechaVencimiento
+    };
+    
+    console.log('Enviando lote al servidor:', lotePayload);
+    // Usamos { responseType: 'text' } para manejar respuestas en texto plano
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, lotePayload, { 
+      responseType: 'text' 
+    });
   }
-
   eliminarLote(id: number): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {});
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {}, {
+      responseType: 'text'
+    });
   }
 }

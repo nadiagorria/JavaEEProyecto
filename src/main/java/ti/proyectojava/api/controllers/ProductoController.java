@@ -73,7 +73,10 @@ public class ProductoController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error al crear producto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }    //solo admin puede hacerlo - endpoint principal para JSON con DTO completo
+    }
+
+
+    //solo admin puede hacerlo - endpoint principal para JSON con DTO completo
     @PostMapping("/crear-dto")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo producto usando ProductoDto completo")
@@ -191,34 +194,38 @@ public class ProductoController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-    }
-
-    //solo admin puede usarlo
+    }    //solo admin puede usarlo
     @PutMapping("/{id}/editar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion edita un producto")
-    public ResponseEntity<String> EditarProducto(@RequestBody ProductoDto productoDto) {
-        Producto producto = productoService.editarProducto(this.productoActual, productoDto);
+    public ResponseEntity<String> EditarProducto(@PathVariable Long id, @RequestBody ProductoDto productoDto) {
+        try {
+            Producto producto = productoService.editarProductoPorId(id, productoDto);
 
-        if (producto == null){
-            return new ResponseEntity<>("Error al modificar el produtcto. ID:" + producto.getId(), HttpStatus.BAD_REQUEST);
-        }else {
-            this.productoActual = producto;
-
-            return new ResponseEntity<>("producto actual actualizado. ID:" + producto.getId(), HttpStatus.CREATED);
+            if (producto == null){
+                return new ResponseEntity<>("Producto no encontrado. ID:" + id, HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>("Producto actualizado correctamente. ID:" + producto.getId(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al editar el producto: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    //solo admin puede usarlo
+    }    //solo admin puede usarlo
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina un producto")
-    public ResponseEntity<String> borrarProducto(/*@RequestBody Long id*/) {
-        String response = productoService.borrarProducto(this.productoActual.getId());
-
-        this.productoActual = null; //inchequeable
-
-        return new ResponseEntity<> (response, HttpStatus.OK);
+    public ResponseEntity<String> borrarProducto(@PathVariable Long id) {
+        try {
+            String response = productoService.borrarProducto(id);
+            
+            if (response != null) {
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Producto no encontrado. ID:" + id, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al eliminar el producto: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //todos pueden usarla

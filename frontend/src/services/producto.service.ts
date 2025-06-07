@@ -14,21 +14,21 @@ export class ProductoService {
     private http: HttpClient,
     private urlService: UrlService
   ) { }  crearProducto(producto: ProductoDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto);
-  }
-
-  // Nuevo método que usa el endpoint optimizado con DTO completo
-  crearProductoConDto(producto: ProductoDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear-dto`, producto, {
-      responseType: 'text' as 'json'
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto, {
+      responseType: 'text'
     });
   }
-
-  crearProductoConImagen(formData: FormData): Observable<string> {
+  // Nuevo método que usa el endpoint optimizado con DTO completo
+  crearProductoConDto(producto: ProductoDto): Observable<any> {
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-dto`, producto, {
+      responseType: 'text'
+    });
+  }
+  crearProductoConImagen(formData: FormData): Observable<any> {
     // No establecer Content-Type manualmente para FormData
     // Angular lo hará automáticamente y incluirá el boundary
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/crear`, formData, {
-      responseType: 'text' as 'json' // Esto ayuda a manejar respuestas de texto plano
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, formData, {
+      responseType: 'text' // Esto ayuda a manejar respuestas de texto plano
     });
   }
 
@@ -47,13 +47,16 @@ export class ProductoService {
   obtenerProducto(id: number): Observable<ProductoDto> {
     return this.http.get<ProductoDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
   }
-
   editarProducto(producto: ProductoDto): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${producto.id}/editar`, producto);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${producto.id}/editar`, producto, {
+      responseType: 'text'
+    });
   }
 
   eliminarProducto(id: number): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {});
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {}, {
+      responseType: 'text'
+    });
   }
 
   listarProductos(): Observable<{productos: ProductoDto[]}> {

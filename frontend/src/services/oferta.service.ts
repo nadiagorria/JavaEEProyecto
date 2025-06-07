@@ -29,19 +29,17 @@ export class OfertaService {
   ) { }
 
   // ==================== COMBOS ====================
-
   /**
    * Crea un nuevo combo
    */
   crearCombo(combo: ComboDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/combo`, combo);
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/combo`, combo, { responseType: 'text' });
   }
-
   /**
    * Edita un combo existente
    */
   editarCombo(combo: ComboDto): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/editarcombo`, combo);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarcombo`, combo, { responseType: 'text' });
   }
 
   /**
@@ -59,19 +57,17 @@ export class OfertaService {
   }
 
   // ==================== DESCUENTOS ====================
-
   /**
    * Crea un nuevo descuento
    */
   crearDescuento(descuento: DescuentoDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/descuento`, descuento);
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/descuento`, descuento, { responseType: 'text' });
   }
-
   /**
    * Edita un descuento existente
    */
   editarDescuento(descuento: DescuentoDto): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/editardescuento`, descuento);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editardescuento`, descuento, { responseType: 'text' });
   }
 
   /**
@@ -89,19 +85,17 @@ export class OfertaService {
   }
 
   // ==================== PROMOCIONES ====================
-
   /**
    * Crea una nueva promoción
    */
   crearPromocion(promocion: PromocionDto): Observable<string> {
-    return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}/promocion`, promocion);
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/promocion`, promocion, { responseType: 'text' });
   }
-
   /**
    * Edita una promoción existente
    */
   editarPromocion(promocion: PromocionDto): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/editarpromocion`, promocion);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarpromocion`, promocion, { responseType: 'text' });
   }
 
   /**
@@ -119,11 +113,10 @@ export class OfertaService {
   }
 
   // ==================== GENERAL ====================
-
   /**
    * Elimina (lógicamente) una oferta por ID
    */
   eliminarOferta(id: number): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/eliminar`, id);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/eliminar`, id, { responseType: 'text' });
   }
 }

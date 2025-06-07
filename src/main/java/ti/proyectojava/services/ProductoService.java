@@ -114,9 +114,7 @@ public class ProductoService {
             return mapsDtosEntityService.mapToDtoProducto(aux.get());
         }
         return null;
-    }
-
-    public Producto editarProducto(Producto productoActual, ProductoDto productoDto) {
+    }    public Producto editarProducto(Producto productoActual, ProductoDto productoDto) {
 
         productoActual.setPrecioCompra(productoDto.getPrecioCompra());
         productoActual.setPrecioVenta(productoDto.getPrecioVenta());
@@ -128,8 +126,39 @@ public class ProductoService {
         productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
         productoRepository.save(productoActual);
         return productoActual;
+    }
 
-
+    public Producto editarProductoPorId(Long id, ProductoDto productoDto) {
+        Optional<Producto> productoOpt = productoRepository.findById(id);
+        
+        if (productoOpt.isPresent()) {
+            Producto productoActual = productoOpt.get();
+            
+            // Only update fields that are provided in the DTO
+            if (productoDto.getNombre() != null) {
+                productoActual.setNombre(productoDto.getNombre());
+            }
+            if (productoDto.getPrecioVenta() != 0) {
+                productoActual.setPrecioVenta(productoDto.getPrecioVenta());
+            }
+            if (productoDto.getStockMin() != 0) {
+                productoActual.setStockMin(productoDto.getStockMin());
+            }
+            
+            // Update categoria if provided
+            if (productoDto.getCategoria() != null) {
+                productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
+            }
+            
+            // Update proveedor if provided
+            if (productoDto.getProveedor() != null) {
+                productoActual.setProveedor(mapsDtosEntityService.mapToEntityProveedor(productoDto.getProveedor()));
+            }
+            
+            productoRepository.save(productoActual);
+            return productoActual;
+        }
+        return null;
     }
 
     public String borrarProducto(Long id) {

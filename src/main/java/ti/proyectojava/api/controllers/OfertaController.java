@@ -32,6 +32,7 @@ public class OfertaController {
     @Secured({"ADMIN"})
     @Operation(description = "Crea un nuevo Combo")
     public ResponseEntity<String> crearCombo(@RequestBody ComboDto comboDto) {
+        comboDto.setId(null);
         String response = ofertaService.crearCombo(comboDto);
         return response == null ?
                 new ResponseEntity<>("Error al crear Combo. ID:" + comboDto.getId(), HttpStatus.BAD_REQUEST) :
@@ -71,6 +72,7 @@ public class OfertaController {
     @Secured({"ADMIN"})
     @Operation(description = "Crea un nuevo Descuento")
     public ResponseEntity<String> crearDescuento(@RequestBody DescuentoDto descuentoDto) {
+        descuentoDto.setId(null); // Aseguramos que el ID sea nulo para crear un nuevo descuento
         String response = ofertaService.crearDescuento(descuentoDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -108,6 +110,7 @@ public class OfertaController {
     @Secured({"ADMIN"})
     @Operation(description = "Crea una nueva Promoción")
     public ResponseEntity<String> crearPromocion(@RequestBody PromocionDto promocionDto) {
+        promocionDto.setId(null); // Aseguramos que el ID sea nulo para crear una nueva promoción
         String response = ofertaService.crearPromocion(promocionDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
