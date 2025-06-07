@@ -510,7 +510,7 @@ public class MapsDtosEntityService {
         if (usuario.getVentas() != null) {
             usuarioDto.setVentas(
                     usuario.getVentas().stream()
-                            .map(venta -> mapToDtoVenta(venta, processed))
+                            .map(venta -> mapToDtoVentaPlano(venta))
                             .filter(Objects::nonNull)
                             .toList()
             );

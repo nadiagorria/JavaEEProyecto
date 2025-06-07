@@ -23,6 +23,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     @Query("SELECT COUNT(u.id) as usuariosTotales FROM Usuario u")
     int cantidadUsuarios();
 
-    @Query("SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.ventas v WHERE u.nombre = :nombre")
-    Optional<Usuario> findByNombreWithVentas(@Param("nombre") String nombre);
 }
