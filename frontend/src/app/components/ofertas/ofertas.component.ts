@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,8 +13,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { OfertaService } from '../../../services/oferta.service';
 import { ProductoService } from '../../../services/producto.service';
@@ -39,14 +40,15 @@ import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../mode
     TabViewModule,
     TagModule,
     ToastModule,
+    ConfirmDialogModule,
     HeaderComponent,
     FooterComponent
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './ofertas.component.html',
   styleUrl: './ofertas.component.scss'
 })
-export class OfertasComponent implements OnInit {
+export class OfertasComponent implements OnInit, AfterViewInit {
 
   // Arrays para las tablas
   promociones: PromocionDto[] = [];
@@ -58,14 +60,13 @@ export class OfertasComponent implements OnInit {
   mostrarModalPromocion: boolean = false;
   mostrarModalCombo: boolean = false;
   mostrarModalDescuento: boolean = false;
-
   // Formularios
   nuevaPromocion: Partial<PromocionDto> = {
     descripcion: '',
     descuento: 0,
     activo: true,
     inicio: new Date(),
-    fin: new Date(),
+    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
     producto: { id: 0, nombre: '' }
   };
 
@@ -74,37 +75,66 @@ export class OfertasComponent implements OnInit {
     descuento: 0,
     activo: true,
     inicio: new Date(),
-    fin: new Date(),
+    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
     productos: []
   };
 
   nuevoDescuento: Partial<DescuentoDto> = {
+    descripcion: '',
     descuento: 0,
     activo: true,
     inicio: new Date(),
-    fin: new Date(),
+    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
     producto: { id: 0, nombre: '' }
   };
-
   // Variables para los formularios
   productoSeleccionadoPromocion: number = 0;
   productoSeleccionadoDescuento: number = 0;
   productosSeleccionadosCombo: number[] = [];
-
-  // Variables para edición
-  editandoPromocion: boolean = false;
-  editandoCombo: boolean = false;
-  editandoDescuento: boolean = false;
-
   constructor(
     private ofertaService: OfertaService,
     private productoService: ProductoService,
     private messageService: MessageService,
+    private confirmationService: ConfirmationService,
     private router: Router
   ) { }
 
   ngOnInit() {
     this.cargarDatos();
+  }
+
+  ngAfterViewInit() {
+    // Initialize date objects to prevent calendar errors
+    setTimeout(() => {
+      this.initializeDates();
+    }, 100);
+  }
+
+  private initializeDates() {
+    // Ensure all date objects are properly initialized
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
+    if (!this.nuevaPromocion.inicio) {
+      this.nuevaPromocion.inicio = now;
+    }
+    if (!this.nuevaPromocion.fin) {
+      this.nuevaPromocion.fin = tomorrow;
+    }
+    
+    if (!this.nuevoCombo.inicio) {
+      this.nuevoCombo.inicio = now;
+    }
+    if (!this.nuevoCombo.fin) {
+      this.nuevoCombo.fin = tomorrow;
+    }
+    
+    if (!this.nuevoDescuento.inicio) {
+      this.nuevoDescuento.inicio = now;
+    }
+    if (!this.nuevoDescuento.fin) {
+      this.nuevoDescuento.fin = tomorrow;
+    }
   }
 
   cargarDatos() {
@@ -176,30 +206,22 @@ export class OfertasComponent implements OnInit {
         });
       }
     });
-  }
-
-  // ==================== PROMOCIONES ====================
+  }  // ==================== PROMOCIONES ====================
   abrirModalPromocion() {
-    this.editandoPromocion = false;
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
     this.nuevaPromocion = {
       descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: new Date(),
-      fin: new Date(),
+      inicio: now,
+      fin: tomorrow,
       producto: { id: 0, nombre: '' }
     };
     this.productoSeleccionadoPromocion = 0;
     this.mostrarModalPromocion = true;
-  }
-  
-  editarPromocion(promocion: PromocionDto) {
-    this.editandoPromocion = true;
-    this.nuevaPromocion = { ...promocion };
-    this.productoSeleccionadoPromocion = promocion.producto?.id || 0;
-    this.mostrarModalPromocion = true;
-  }
-  guardarPromocion() {
+  }guardarPromocion() {
     if (!this.validarPromocion()) {
       return;
     }
@@ -214,50 +236,32 @@ export class OfertasComponent implements OnInit {
     }
 
     const promocion = this.nuevaPromocion as PromocionDto;
+    
+    // Debug: verificar qué datos se están enviando
+    console.log('Datos de promoción a enviar:', promocion);
 
-    if (this.editandoPromocion) {
-      this.ofertaService.editarPromocion(promocion).subscribe({
-        next: (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Promoción actualizada correctamente'
-          });
-          this.mostrarModalPromocion = false;
-          this.cargarPromociones();
-        },
-        error: (error) => {
-          console.error('Error al actualizar promoción:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al actualizar la promoción'
-          });
-        }
-      });    } else {
-      this.ofertaService.crearPromocion(promocion).subscribe({
-        next: (response) => {
-          console.log('Promoción creada exitosamente:', response);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Promoción creada correctamente'
-          });
-          this.mostrarModalPromocion = false;
-          this.cargarPromociones();
-        },
-        error: (error) => {
-          console.error('Error al crear promoción:', error);
-          console.error('Status:', error.status);
-          console.error('Message:', error.message);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al crear la promoción'
-          });
-        }
-      });
-    }
+    this.ofertaService.crearPromocion(promocion).subscribe({
+      next: (response) => {
+        console.log('Promoción creada exitosamente:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Promoción creada correctamente'
+        });
+        this.mostrarModalPromocion = false;
+        this.cargarPromociones();
+      },
+      error: (error) => {
+        console.error('Error al crear promoción:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear la promoción'
+        });
+      }
+    });
   }
   validarPromocion(): boolean {
     if (!this.nuevaPromocion.descripcion || this.nuevaPromocion.descripcion.trim() === '') {
@@ -288,34 +292,27 @@ export class OfertasComponent implements OnInit {
     }
 
     return true;
-  }
-
-  // ==================== COMBOS ====================
+  }  // ==================== COMBOS ====================
   abrirModalCombo() {
-    this.editandoCombo = false;
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
     this.nuevoCombo = {
       descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: new Date(),
-      fin: new Date(),
+      inicio: now,
+      fin: tomorrow,
       productos: []
     };
     this.productosSeleccionadosCombo = [];
     this.mostrarModalCombo = true;
-  }  editarCombo(combo: ComboDto) {
-    this.editandoCombo = true;
-    this.nuevoCombo = { 
-      ...combo,
-      productos: combo.productos || []
-    };
-    this.productosSeleccionadosCombo = combo.productos?.map(p => p.id).filter((id): id is number => id !== null) || [];
-    this.mostrarModalCombo = true;
-  }
-  guardarCombo() {
+  }guardarCombo() {
     if (!this.validarCombo()) {
       return;
-    }    // Sincronizar los productos antes de guardar
+    }
+
+    // Sincronizar los productos antes de guardar
     this.nuevoCombo.productos = this.productosSeleccionadosCombo.map((id: number) => {
       const producto = this.productos.find((p: ProductoDto) => p.id === id);
       return { 
@@ -325,50 +322,32 @@ export class OfertasComponent implements OnInit {
     }).filter((p: { id: number; nombre: string }) => p.id !== 0);
 
     const combo = this.nuevoCombo as ComboDto;
+    
+    // Debug: verificar qué datos se están enviando
+    console.log('Datos de combo a enviar:', combo);
 
-    if (this.editandoCombo) {
-      this.ofertaService.editarCombo(combo).subscribe({
-        next: (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Combo actualizado correctamente'
-          });
-          this.mostrarModalCombo = false;
-          this.cargarCombos();
-        },
-        error: (error) => {
-          console.error('Error al actualizar combo:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al actualizar el combo'
-          });
-        }
-      });    } else {
-      this.ofertaService.crearCombo(combo).subscribe({
-        next: (response) => {
-          console.log('Combo creado exitosamente:', response);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Combo creado correctamente'
-          });
-          this.mostrarModalCombo = false;
-          this.cargarCombos();
-        },
-        error: (error) => {
-          console.error('Error al crear combo:', error);
-          console.error('Status:', error.status);
-          console.error('Message:', error.message);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al crear el combo'
-          });
-        }
-      });
-    }
+    this.ofertaService.crearCombo(combo).subscribe({
+      next: (response) => {
+        console.log('Combo creado exitosamente:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Combo creado correctamente'
+        });
+        this.mostrarModalCombo = false;
+        this.cargarCombos();
+      },
+      error: (error) => {
+        console.error('Error al crear combo:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear el combo'
+        });
+      }
+    });
   }
   validarCombo(): boolean {
     if (!this.nuevoCombo.descripcion || this.nuevoCombo.descripcion.trim() === '') {
@@ -399,28 +378,22 @@ export class OfertasComponent implements OnInit {
     }
 
     return true;
-  }
-
-  // ==================== DESCUENTOS ====================
+  }  // ==================== DESCUENTOS ====================
   abrirModalDescuento() {
-    this.editandoDescuento = false;
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
     this.nuevoDescuento = {
+      descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: new Date(),
-      fin: new Date(),
+      inicio: now,
+      fin: tomorrow,
       producto: { id: 0, nombre: '' }
     };
     this.productoSeleccionadoDescuento = 0;
     this.mostrarModalDescuento = true;
-  }
-  editarDescuento(descuento: DescuentoDto) {
-    this.editandoDescuento = true;
-    this.nuevoDescuento = { ...descuento };
-    this.productoSeleccionadoDescuento = descuento.producto?.id || 0;
-    this.mostrarModalDescuento = true;
-  }
-  guardarDescuento() {
+  }guardarDescuento() {
     if (!this.validarDescuento()) {
       return;
     }
@@ -435,52 +408,42 @@ export class OfertasComponent implements OnInit {
     }
 
     const descuento = this.nuevoDescuento as DescuentoDto;
+    
+    // Debug: verificar qué datos se están enviando
+    console.log('Datos de descuento a enviar:', descuento);
 
-    if (this.editandoDescuento) {
-      this.ofertaService.editarDescuento(descuento).subscribe({
-        next: (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Descuento actualizado correctamente'
-          });
-          this.mostrarModalDescuento = false;
-          this.cargarDescuentos();
-        },
-        error: (error) => {
-          console.error('Error al actualizar descuento:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al actualizar el descuento'
-          });
-        }
-      });    } else {
-      this.ofertaService.crearDescuento(descuento).subscribe({
-        next: (response) => {
-          console.log('Descuento creado exitosamente:', response);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Descuento creado correctamente'
-          });
-          this.mostrarModalDescuento = false;
-          this.cargarDescuentos();
-        },
-        error: (error) => {
-          console.error('Error al crear descuento:', error);
-          console.error('Status:', error.status);
-          console.error('Message:', error.message);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al crear el descuento'
-          });
-        }
+    this.ofertaService.crearDescuento(descuento).subscribe({
+      next: (response) => {
+        console.log('Descuento creado exitosamente:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Descuento creado correctamente'
+        });
+        this.mostrarModalDescuento = false;
+        this.cargarDescuentos();
+      },
+      error: (error) => {
+        console.error('Error al crear descuento:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear el descuento'
+        });
+      }
+    });
+  }validarDescuento(): boolean {
+    if (!this.nuevoDescuento.descripcion || this.nuevoDescuento.descripcion.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'La descripción es requerida'
       });
+      return false;
     }
-  }
-  validarDescuento(): boolean {
+
     if (!this.productoSeleccionadoDescuento || this.productoSeleccionadoDescuento === 0) {
       this.messageService.add({
         severity: 'warn',
@@ -499,7 +462,8 @@ export class OfertasComponent implements OnInit {
       return false;
     }
 
-    return true;  }
+    return true;
+  }
 
   // ==================== UTILIDADES ====================
   
@@ -530,5 +494,46 @@ export class OfertasComponent implements OnInit {
   
   formatearProductos(productos: Pick<ProductoDto, 'id' | 'nombre'>[]): string {
     return productos.map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre).join(', ');
+  }
+
+  // ==================== ELIMINAR OFERTAS ====================
+    eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
+    this.confirmationService.confirm({
+      message: `¿Está seguro que desea eliminar esta ${tipo}?`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.ofertaService.eliminarOferta(id).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} eliminada correctamente`
+            });
+            
+            // Recargar la tabla correspondiente
+            switch (tipo) {
+              case 'promocion':
+                this.cargarPromociones();
+                break;
+              case 'combo':
+                this.cargarCombos();
+                break;
+              case 'descuento':
+                this.cargarDescuentos();
+                break;
+            }
+          },
+          error: (error) => {
+            console.error(`Error al eliminar ${tipo}:`, error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Error al eliminar la ${tipo}`
+            });
+          }
+        });
+      }
+    });
   }
 }

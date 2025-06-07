@@ -50,12 +50,11 @@
                   <td>
                     <p-tag [value]="promocion.activo ? 'Activo' : 'Inactivo'" 
                            [severity]="promocion.activo ? 'success' : 'secondary'"></p-tag>
-                  </td>
-                  <td>
-                    <p-button icon="pi pi-pencil" 
-                              class="p-button-text p-button-rounded" 
-                              (click)="editarPromocion(promocion)"
-                              pTooltip="Editar"></p-button>
+                  </td>                  <td>
+                    <p-button icon="pi pi-trash" 
+                              class="p-button-text p-button-rounded p-button-danger" 
+                              (click)="eliminarOferta(promocion.id, 'promocion')"
+                              pTooltip="Eliminar"></p-button>
                   </td>
                 </tr>
               </ng-template>
@@ -101,12 +100,11 @@
                   <td>
                     <p-tag [value]="combo.activo ? 'Activo' : 'Inactivo'" 
                            [severity]="combo.activo ? 'success' : 'secondary'"></p-tag>
-                  </td>
-                  <td>
-                    <p-button icon="pi pi-pencil" 
-                              class="p-button-text p-button-rounded" 
-                              (click)="editarCombo(combo)"
-                              pTooltip="Editar"></p-button>
+                  </td>                  <td>
+                    <p-button icon="pi pi-trash" 
+                              class="p-button-text p-button-rounded p-button-danger" 
+                              (click)="eliminarOferta(combo.id, 'combo')"
+                              pTooltip="Eliminar"></p-button>
                   </td>
                 </tr>
               </ng-template>
@@ -152,12 +150,11 @@
                   <td>
                     <p-tag [value]="descuento.activo ? 'Activo' : 'Inactivo'" 
                            [severity]="descuento.activo ? 'success' : 'secondary'"></p-tag>
-                  </td>
-                  <td>
-                    <p-button icon="pi pi-pencil" 
-                              class="p-button-text p-button-rounded" 
-                              (click)="editarDescuento(descuento)"
-                              pTooltip="Editar"></p-button>
+                  </td>                  <td>
+                    <p-button icon="pi pi-trash" 
+                              class="p-button-text p-button-rounded p-button-danger" 
+                              (click)="eliminarOferta(descuento.id, 'descuento')"
+                              pTooltip="Eliminar"></p-button>
                   </td>
                 </tr>
               </ng-template>
@@ -173,7 +170,7 @@
 
 <!-- MODAL PROMOCIÓN -->
 <p-dialog
-  [header]="editandoPromocion ? 'Editar Promoción' : 'Nueva Promoción'"
+  [header]="'Nueva Promoción'"
   [(visible)]="mostrarModalPromocion"
   [modal]="true"
   [style]="{width: '600px'}"
@@ -227,23 +224,27 @@
       <!-- Fechas -->
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="inicioPromocion">Fecha Inicio *</label>
-          <p-calendar
+          <label for="inicioPromocion">Fecha Inicio *</label>          <p-calendar
             [(ngModel)]="nuevaPromocion.inicio"
             name="inicioPromocion"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="inicioPromocion"
             class="form-control">
           </p-calendar>
         </div>
 
         <div class="form-group col-md-6">
-          <label for="finPromocion">Fecha Fin *</label>
-          <p-calendar
+          <label for="finPromocion">Fecha Fin *</label>          <p-calendar
             [(ngModel)]="nuevaPromocion.fin"
             name="finPromocion"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="finPromocion"
             class="form-control">
           </p-calendar>
         </div>
@@ -272,14 +273,14 @@
       type="button"
       class="btn btn-primary"
       (click)="guardarPromocion()">
-      {{editandoPromocion ? 'Actualizar' : 'Crear'}} Promoción
+      Crear Promoción
     </button>
   </ng-template>
 </p-dialog>
 
 <!-- MODAL COMBO -->
 <p-dialog
-  [header]="editandoCombo ? 'Editar Combo' : 'Nuevo Combo'"
+  [header]="'Nuevo Combo'"
   [(visible)]="mostrarModalCombo"
   [modal]="true"
   [style]="{width: '700px'}"
@@ -335,23 +336,27 @@
       <!-- Fechas -->
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="inicioCombo">Fecha Inicio *</label>
-          <p-calendar
+          <label for="inicioCombo">Fecha Inicio *</label>          <p-calendar
             [(ngModel)]="nuevoCombo.inicio"
             name="inicioCombo"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="inicioCombo"
             class="form-control">
           </p-calendar>
         </div>
 
         <div class="form-group col-md-6">
-          <label for="finCombo">Fecha Fin *</label>
-          <p-calendar
+          <label for="finCombo">Fecha Fin *</label>          <p-calendar
             [(ngModel)]="nuevoCombo.fin"
             name="finCombo"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="finCombo"
             class="form-control">
           </p-calendar>
         </div>
@@ -380,14 +385,14 @@
       type="button"
       class="btn btn-primary"
       (click)="guardarCombo()">
-      {{editandoCombo ? 'Actualizar' : 'Crear'}} Combo
+      Crear Combo
     </button>
   </ng-template>
 </p-dialog>
 
 <!-- MODAL DESCUENTO -->
 <p-dialog
-  [header]="editandoDescuento ? 'Editar Descuento' : 'Nuevo Descuento'"
+  [header]="'Nuevo Descuento'"
   [(visible)]="mostrarModalDescuento"
   [modal]="true"
   [style]="{width: '600px'}"
@@ -442,23 +447,27 @@
       <!-- Fechas -->
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="inicioDescuento">Fecha Inicio *</label>
-          <p-calendar
+          <label for="inicioDescuento">Fecha Inicio *</label>          <p-calendar
             [(ngModel)]="nuevoDescuento.inicio"
             name="inicioDescuento"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="inicioDescuento"
             class="form-control">
           </p-calendar>
         </div>
 
         <div class="form-group col-md-6">
-          <label for="finDescuento">Fecha Fin *</label>
-          <p-calendar
+          <label for="finDescuento">Fecha Fin *</label>          <p-calendar
             [(ngModel)]="nuevoDescuento.fin"
             name="finDescuento"
             [showIcon]="true"
             placeholder="dd/mm/aaaa"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            inputId="finDescuento"
             class="form-control">
           </p-calendar>
         </div>
@@ -487,12 +496,15 @@
       type="button"
       class="btn btn-primary"
       (click)="guardarDescuento()">
-      {{editandoDescuento ? 'Actualizar' : 'Crear'}} Descuento
+      Crear Descuento
     </button>
   </ng-template>
 </p-dialog>
 
 <!-- Toast para mensajes -->
 <p-toast></p-toast>
+
+<!-- Diálogo de confirmación -->
+<p-confirmDialog></p-confirmDialog>
 
 <app-footer></app-footer>

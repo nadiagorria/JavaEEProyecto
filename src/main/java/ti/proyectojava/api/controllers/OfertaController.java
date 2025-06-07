@@ -103,13 +103,13 @@ public class OfertaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    ////////////////////// PROMOCIÓN //////////////////////
-
-    //solo admin puede hacerlo
+    ////////////////////// PROMOCIÓN //////////////////////    //solo admin puede hacerlo
     @PostMapping("/promocion")
     @Secured({"ADMIN"})
     @Operation(description = "Crea una nueva Promoción")
     public ResponseEntity<String> crearPromocion(@RequestBody PromocionDto promocionDto) {
+        System.out.println("DEBUG: Datos recibidos en controller - PromocionDto: " + promocionDto);
+        System.out.println("DEBUG: Descripción recibida: " + promocionDto.getDescripcion());
         promocionDto.setId(null); // Aseguramos que el ID sea nulo para crear una nueva promoción
         String response = ofertaService.crearPromocion(promocionDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

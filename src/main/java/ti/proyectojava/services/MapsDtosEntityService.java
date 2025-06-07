@@ -752,9 +752,7 @@ public class MapsDtosEntityService {
 
     public Combo mapToEntityCombo(ComboDto comboDto) {
         return mapToEntityCombo(comboDto, new HashSet<>());
-    }
-
-    private Combo mapToEntityCombo(ComboDto comboDto, Set<Object> processed) {
+    }    private Combo mapToEntityCombo(ComboDto comboDto, Set<Object> processed) {
         if (comboDto == null || processed.contains(comboDto)) {
             return null;
         }
@@ -777,13 +775,20 @@ public class MapsDtosEntityService {
         combo.setDescripcion(comboDto.getDescripcion());
 
         if (comboDto.getProductos() != null) {
-            combo.setProductos(
-                    comboDto.getProductos().stream()
-                            .map(productoDto -> mapToEntityProducto(productoDto, processed))
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
-            combo.getProductos().forEach(producto -> {
+            // Para combos, solo necesitamos obtener productos existentes por ID
+            List<Producto> productos = comboDto.getProductos().stream()
+                    .filter(productoDto -> productoDto.getId() != null)
+                    .map(productoDto -> {
+                        Optional<Producto> productoOpt = productoRepository.findById(productoDto.getId());
+                        return productoOpt.orElse(null);
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            
+            combo.setProductos(productos);
+            
+            // Mantener bidireccionalidad
+            productos.forEach(producto -> {
                 if (!producto.getCombos().contains(combo)) {
                     producto.getCombos().add(combo);
                 }
@@ -795,9 +800,7 @@ public class MapsDtosEntityService {
 
     public DescuentoDto mapToDtoDescuento(Descuento descuento) {
         return mapToDtoDescuento(descuento, new HashSet<>());
-    }
-
-    public DescuentoDto mapToDtoDescuento(Descuento descuento, Set<Object> processed) {
+    }    public DescuentoDto mapToDtoDescuento(Descuento descuento, Set<Object> processed) {
         if (descuento == null || processed.contains(descuento)) {
             return null;
         }
@@ -807,6 +810,7 @@ public class MapsDtosEntityService {
         dto.setInicio(descuento.getInicio());
         dto.setFin(descuento.getFin());
         dto.setId(descuento.getId());
+        dto.setDescripcion(descuento.getDescripcion());
         dto.setDescuento(descuento.getDescuento());
         if (descuento.getProducto() != null) {
             dto.setProducto(mapToDtoProducto(descuento.getProducto(), processed));
@@ -831,11 +835,10 @@ public class MapsDtosEntityService {
             if (descExistente.isPresent()) {
                 return descExistente.get();
             }
-        }
-
-        Descuento descuento = new Descuento();
+        }        Descuento descuento = new Descuento();
         descuento.setInicio(descuentoDto.getInicio());
         descuento.setFin(descuentoDto.getFin());
+        descuento.setDescripcion(descuentoDto.getDescripcion());
         descuento.setDescuento(descuentoDto.getDescuento());
         descuento.setActivo(descuentoDto.getActivo());
 
@@ -893,6 +896,7 @@ public class MapsDtosEntityService {
         promocion.setFin(promocionDto.getFin());
         promocion.setDescuento(promocionDto.getDescuento());
         promocion.setActivo(promocionDto.getActivo());
+        System.out.println("me llego la descripcion a maptoentity: " + promocionDto.getDescripcion());
         promocion.setDescripcion(promocionDto.getDescripcion());
 
         if (promocionDto.getProducto() != null) {
@@ -1203,15 +1207,14 @@ public class MapsDtosEntityService {
         dto.setInicio(promocion.getInicio());
         dto.setFin(promocion.getFin());
         return dto;
-    }
-
-    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
+    }    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
         if (descuento == null) {
             return null;
         }
 
         DescuentoDto dto = new DescuentoDto();
         dto.setId(descuento.getId());
+        dto.setDescripcion(descuento.getDescripcion());
         dto.setDescuento(descuento.getDescuento());
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());
@@ -1222,9 +1225,7 @@ public class MapsDtosEntityService {
         }
 
         return dto;
-    }
-
-    // descuento sin producto
+    }    // descuento sin producto
     public DescuentoDto mapToDtoDescuentoSinProducto(Descuento descuento){
         if (descuento == null) {
             return null;
@@ -1232,6 +1233,7 @@ public class MapsDtosEntityService {
 
         DescuentoDto dto = new DescuentoDto();
         dto.setId(descuento.getId());
+        dto.setDescripcion(descuento.getDescripcion());
         dto.setDescuento(descuento.getDescuento());
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());

@@ -47,10 +47,11 @@ public class OfertaService {
         return response;
     }
 
-    /// //////////////////////////COMBO////////////////////////////////////
+    /// COMBOS ///////////////
 
     public String crearCombo(ComboDto comboDto) {
-        if(comboRepository.findById(comboDto.getId()).isEmpty()){
+        // Si el ID es null, es un nuevo combo
+        if(comboDto.getId() == null || comboRepository.findById(comboDto.getId()).isEmpty()){
             return "Combo creado. ID:" + comboRepository.save(mapsDtosEntityService.mapToEntityCombo(comboDto)).getId();
         }
         return null;
@@ -60,11 +61,15 @@ public class OfertaService {
         Optional<Combo> optionalCombo = comboRepository.findById(comboDto.getId());
         if (optionalCombo.isPresent()) {
             Combo combo = optionalCombo.get();
-            combo.setDescripcion(combo.getDescripcion());
-            combo.setDescuento(combo.getDescuento());
-            combo.setDescuento(combo.getDescuento());
-            combo.setProductos(combo.getProductos());
-            // No actualizamos ID ni relaciones por simplicidad
+            combo.setDescripcion(comboDto.getDescripcion());
+            combo.setDescuento(comboDto.getDescuento());
+            combo.setActivo(comboDto.getActivo());
+            combo.setInicio(comboDto.getInicio());
+            combo.setFin(comboDto.getFin());
+            // Mapear productos del DTO
+            combo.setProductos(comboDto.getProductos().stream()
+                .map(mapsDtosEntityService::mapToEntityProducto)
+                .collect(Collectors.toList()));
             comboRepository.save(combo);
             return "Combo actualizado. ID:" + combo.getId();
         } else {
@@ -108,9 +113,10 @@ public class OfertaService {
         Optional<Descuento> optionalDescuento = descuentoRepository.findById(descuentoDto.getId());
         if (optionalDescuento.isPresent()) {
             Descuento descuento = optionalDescuento.get();
-            descuento.setDescuento(descuento.getDescuento());
-            descuento.setProducto(descuento.getProducto());
-            // No actualizamos ID ni relaciones por simplicidad
+            descuento.setDescripcion(descuentoDto.getDescripcion());
+            descuento.setDescuento(descuentoDto.getDescuento());
+            descuento.setProducto(mapsDtosEntityService.mapToEntityProducto(descuentoDto.getProducto()));
+            descuento.setActivo(descuentoDto.getActivo());
             descuentoRepository.save(descuento);
             return "Descuento actualizado. ID:" + descuento.getId();
         } else {
@@ -147,6 +153,7 @@ public class OfertaService {
 //////////////////////////////////PROMOCIONES///////////////////////////////////
 
     public String crearPromocion(PromocionDto promocionDto) {
+        System.out.println("Creando promoción: " + promocionDto.getDescripcion());
         return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
     }
 
@@ -191,3 +198,4 @@ public class OfertaService {
     }
 
 }
+

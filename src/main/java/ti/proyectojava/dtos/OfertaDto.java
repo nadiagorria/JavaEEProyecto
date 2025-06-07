@@ -8,6 +8,7 @@ import java.util.Date;
 public class OfertaDto {
 
     private Long id;
+    private String descripcion;
     private Float descuento;
     private Boolean activo;
     private Date inicio;
