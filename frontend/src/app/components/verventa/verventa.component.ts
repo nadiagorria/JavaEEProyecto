@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { VentaService } from 'src/services/venta.service';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 @Component({
@@ -20,9 +22,11 @@ import { FooterComponent } from '../footer/footer.component';
     CurrencyPipe,
     TagModule,
     TooltipModule,
+    ToastModule,
     HeaderComponent,
     FooterComponent
   ],
+  providers: [MessageService],
   templateUrl: './verventa.component.html',
   styleUrl: './verventa.component.scss'
 })
@@ -49,14 +53,26 @@ export class VerventaComponent implements OnInit {
       this.loading = false;
     }
   }
-  
-  cargarVenta(id: number) {
+    cargarVenta(id: number) {
     console.log('Cargando venta con ID:', id);
     this.loading = true;
     
     this.ventaService.obtenerVenta(id).subscribe({
       next: (venta) => {
         console.log('Respuesta del backend:', venta);
+        
+        // Verificar si la venta está activa
+        if (!venta.activo) {
+          console.warn('Intento de acceso a venta eliminada');
+          this.error = 'Esta venta ha sido eliminada y no está disponible para visualización';
+          this.loading = false;
+          // Redirigir después de un breve delay para mostrar el mensaje
+          setTimeout(() => {
+            this.router.navigate(['/ventas']);
+          }, 2000);
+          return;
+        }
+        
         this.venta = venta;
         
         // Usar directamente las cantidades del DTO sin mapeo
@@ -72,8 +88,16 @@ export class VerventaComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error completo:', error);
-        this.error = `Error al cargar los datos de la venta. Status: ${error.status}`;
+        if (error.status === 404) {
+          this.error = 'La venta solicitada no existe o ha sido eliminada';
+        } else {
+          this.error = `Error al cargar los datos de la venta. Status: ${error.status}`;
+        }
         this.loading = false;
+        // Redirigir después de mostrar el error
+        setTimeout(() => {
+          this.router.navigate(['/ventas']);
+        }, 2000);
       }
     });
   }

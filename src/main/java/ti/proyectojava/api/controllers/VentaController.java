@@ -19,6 +19,7 @@ import ti.proyectojava.services.VentaService;
 import ti.proyectojava.services.CreditoService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -109,15 +110,24 @@ public class VentaController {    private final VentaService ventaService;
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("id", ventaId));
-    }
-
-    //solo el admin puede usarla
+    }    //solo el admin puede usarla
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una venta")
-    public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
-        Venta venta = ventaService.eliminarVenta(id);
-        return new ResponseEntity<>("Venta eliminada. ID: " + venta.getId(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> eliminarVenta(@PathVariable Long id) {
+        try {
+            Venta venta = ventaService.eliminarVenta(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Venta eliminada correctamente");
+            response.put("ventaId", venta.getId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 
     /*//cualquiera puede hacerlo
