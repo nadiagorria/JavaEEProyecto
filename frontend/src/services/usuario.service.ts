@@ -22,7 +22,8 @@ export class UsuarioService {
     const userData = {
       mail: cambios.email,
       nombre: username,
-      contrasenia: cambios.newPassword || cambios.currentPassword // si no hay nueva contraseña, mantener la actual
+      contrasenia: cambios.currentPassword, // Enviamos la contraseña actual para verificación
+      nuevaContrasenia: cambios.newPassword // Nueva propiedad para la nueva contraseña
     };
 
     return this.http.put(

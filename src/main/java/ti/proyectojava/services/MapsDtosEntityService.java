@@ -622,9 +622,6 @@ public class MapsDtosEntityService {
         RolUsuarioDto rolDto = new RolUsuarioDto();
         rolDto.setId(rol.getId());
         rolDto.setNombre(rol.getNombre());
-        rolDto.setUsuarios(rol.getUsuarios().stream()
-                .map(user -> mapToDtoUsuario(user, processed))
-                .toList());
         return rolDto;
     }
 
