@@ -44,7 +44,7 @@
                 <tr>
                   <td>{{promocion.descripcion}}</td>
                   <td>{{promocion.producto?.nombre || 'N/A'}}</td>
-                  <td>{{promocion.descuento}}%</td>
+                    <td>{{promocion.descuento - 1}} x {{promocion.descuento}}</td>
                   <td>{{formatearFecha(promocion.inicio)}}</td>
                   <td>{{formatearFecha(promocion.fin)}}</td>
                   <td>
