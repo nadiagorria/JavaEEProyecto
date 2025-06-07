@@ -10,5 +10,5 @@ export interface UsuarioDto {
     activo: boolean;
     roles: Pick<RolUsuarioDto, 'id' | 'nombre'>[];
     notificaciones: Pick<NotificacionUsuarioDto, 'id' | 'leido'>[];
-    ventas: Pick<VentaDto, 'id' | 'fechaVenta'>[];
+    ventas: Pick<VentaDto, 'id' | 'fechaVenta' | 'total' | 'formaPago'>[];
 }

@@ -2,6 +2,7 @@ package ti.proyectojava.business.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ti.proyectojava.business.entities.Usuario;
 
@@ -21,4 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 
     @Query("SELECT COUNT(u.id) as usuariosTotales FROM Usuario u")
     int cantidadUsuarios();
+
+    @Query("SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.ventas v WHERE u.nombre = :nombre")
+    Optional<Usuario> findByNombreWithVentas(@Param("nombre") String nombre);
 }

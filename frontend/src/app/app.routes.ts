@@ -75,9 +75,19 @@ export const routes: Routes = [
     component: ProductosComponent,
     canActivate: [AuthGuard],
     data: { roles: ['CAJERO', 'ADMIN'] }
-   },
-  { path: 'producto/:id', component: ProductoInfoComponent },
-  { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN', 'CAJERO'] } },
+  },
+
+  { path: 'producto/:id',
+    component: ProductoInfoComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] }
+  },
+
+  { path: 'perfil',
+    component: PerfilComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN', 'CAJERO'] } 
+  },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
