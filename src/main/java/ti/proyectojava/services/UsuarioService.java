@@ -31,7 +31,7 @@ public class UsuarioService {
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoUsuario)
+                .map(mapsDtosEntityService::mapToDtoUsuarioPlano)
                 .toList();
 
         responseListadoUsuarios.setUsuarios(usuariosActivos);

@@ -484,6 +484,25 @@ public class MapsDtosEntityService {
         return notiDto;
     }
 
+    public UsuarioDto mapToDtoUsuarioPlano(Usuario usuario) {
+        if (usuario == null) return null;
+
+        UsuarioDto usuarioDto = new UsuarioDto();
+        usuarioDto.setMail(usuario.getMail());
+        usuarioDto.setContrasenia(usuario.getContrasenia());
+        usuarioDto.setNombre(usuario.getNombre());
+        usuarioDto.setActivo(usuario.getActivo());
+
+        usuarioDto.setRoles(
+                usuario.getRoles().stream()
+                        .map(rol -> mapToDtoRoles(rol))
+                        .filter(Objects::nonNull)
+                        .toList()
+        );
+
+        return usuarioDto;
+    }
+
     public UsuarioDto mapToDtoUsuario(Usuario usuario) {
         return mapToDtoUsuario(usuario, new HashSet<>());
     }
