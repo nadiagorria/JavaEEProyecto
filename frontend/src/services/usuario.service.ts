@@ -32,8 +32,11 @@ export class UsuarioService {
       { responseType: 'text' }
     );
   }
-
   obtenerUsuarioPorNombre(username: string): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(`${this.urlService.baseUrl}${this.endpoint}/${username}`);
+  }
+
+  obtenerTodosLosUsuarios(): Observable<UsuarioDto[]> {
+    return this.http.get<UsuarioDto[]>(`${this.urlService.baseUrl}${this.endpoint}`);
   }
 }

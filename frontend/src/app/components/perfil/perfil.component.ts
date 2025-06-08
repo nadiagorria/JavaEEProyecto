@@ -23,6 +23,13 @@ interface VentaPerfil {
   formaPago: string;
 }
 
+interface UsuarioTabla {
+  nombre: string;
+  mail: string;
+  roles: string[];
+  activo: boolean;
+}
+
 @Component({
   selector: 'app-perfil',
   standalone: true,
@@ -50,11 +57,13 @@ export class PerfilComponent implements OnInit {
     email: '',
     avatar: '/placeholder-image.webp'
   };
-
   ventas: VentaPerfil[] = [];
   totalVentas = 0;  // total simulado por ahora
   rangoInicio = 1;
   rangoFin = 10;
+
+  usuarios: UsuarioTabla[] = [];
+  totalUsuarios = 0;
   showEditDialog = false;  editForm = {
     email: '',
     currentPassword: '',
@@ -75,7 +84,29 @@ export class PerfilComponent implements OnInit {
     private router: Router,
     private usuarioService: UsuarioService,
     private ventaService: VentaService
-  ) {}
+  ) {}  isAdmin(): boolean {
+    return this.usuario.roles.includes('ADMIN');
+  }
+  cargarUsuarios(): void {
+    if (!this.isAdmin()) return;
+
+    this.usuarioService.obtenerTodosLosUsuarios().subscribe({
+      next: (response: any) => {
+        if (response && response.usuarios) {
+          this.usuarios = response.usuarios.map((u: any) => ({
+            nombre: u.nombre,
+            mail: u.mail,
+            roles: u.roles.map((r: any) => r.nombre),
+            activo: u.activo
+          }));
+          this.totalUsuarios = this.usuarios.length;
+        }
+      },
+      error: (error: any) => {
+        console.error('Error al cargar usuarios:', error);
+      }
+    });
+  }
 
   ngOnInit(): void {
     // Solo mostrar el perfil si el usuario está autenticado
@@ -90,17 +121,22 @@ export class PerfilComponent implements OnInit {
       
       // Cargar los datos completos del usuario incluyendo sus ventas
       this.usuarioService.obtenerUsuarioPorNombre(nombreUsuario).subscribe({
-        next: (userData) => {
+        next: (userData: any) => {
           // Actualizar datos del usuario
           this.usuario.nombreUsuario = userData.nombre;
-          this.usuario.roles = userData.roles.map(r => r.nombre);
+          this.usuario.roles = userData.roles.map((r: any) => r.nombre);
           this.usuario.email = userData.mail;
           
           // Procesar las ventas
           if (userData.ventas) {
             this.ventas = userData.ventas
-              .sort((a, b) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
+              .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
             this.totalVentas = this.ventas.length;
+          }
+
+          // Si es admin, cargar la lista de usuarios
+          if (this.isAdmin()) {
+            this.cargarUsuarios();
           }
         },
         error: (error) => {
