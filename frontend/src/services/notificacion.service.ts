@@ -102,11 +102,23 @@ export class NotificacionService {
       }
     });
   }  /**
-   * Fuerza una actualización de las notificaciones solo si está autenticado
+   * Fuerza una actualización inmediata de las notificaciones solo si está autenticado
    */
   refrescar(): void {
     if (this.securityService.isLoggedIn()) {
       this.actualizarNotificaciones();
+    }
+  }
+
+  /**
+   * Fuerza una actualización inmediata de las notificaciones tras completar una venta
+   */
+  refrescarPostVenta(): void {
+    if (this.securityService.isLoggedIn()) {
+      // Refrescar inmediatamente después de la venta
+      setTimeout(() => {
+        this.actualizarNotificaciones();
+      }, 500); // Pequeño delay para permitir que el backend procese la venta
     }
   }
   /**

@@ -19,6 +19,7 @@ import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
 import { CreditoService } from 'src/services/credito.service';
 import { OfertaService, ResponseListadoCombos } from 'src/services/oferta.service';
+import { NotificacionService } from 'src/services/notificacion.service';
 import { HeaderComponent } from '../header/header.component';
 import { forkJoin, Observable } from 'rxjs';
 import { Router, NavigationStart } from '@angular/router';
@@ -33,6 +34,7 @@ interface ItemVenta extends CantidadDto {
   tipoOferta?: 'combo' | 'promocion' | 'descuento';
   nombreOferta?: string;
   porcentajeDescuento?: number;
+  producto: Pick<ProductoDto, 'id' | 'nombre' | 'precioVenta' | 'codigoDeBarra' | 'stockTotal'>;
 }
 
 @Component({
@@ -61,11 +63,13 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   cantidades: ItemVenta[] = [];
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
-  
-  // Control de navegación y confirmación
+    // Control de navegación y confirmación
   mostrarDialogoConfirmacion: boolean = false;
   rutaNavegacionPendiente: string | null = null;
   navigationSubscription: Subscription | null = null;
+  
+  // Variables para detectar cambios en cantidad
+  private cantidadAnterior: Map<number, number> = new Map();
   
   // Escáner físico USB
   escanerActivo: boolean = false;
@@ -77,7 +81,8 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
-    displayDialog: boolean = false;
+  displayDialog: boolean = false;
+  
   creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'> | null = null;
   creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
   creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
@@ -94,6 +99,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     private ventaService: VentaService,
     private creditoService: CreditoService,
     private ofertaService: OfertaService,
+    private notificacionService: NotificacionService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router
@@ -419,7 +425,6 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   esPagoFiado(): boolean {
     return this.formaPagoSeleccionada === 'FIADO';
   }
-
   filtrarProductos(event: { query: string }) {
     const query = event.query.toLowerCase();
 
@@ -442,13 +447,57 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     );
   }
 
+  /**
+   * Verifica si un producto tiene stock disponible
+   */
+  tieneStock(producto: ProductoDto): boolean {
+    return producto.stockTotal > 0;
+  }
+
+  /**
+   * Evita que se seleccionen productos sin stock
+   */
+  onProductoSelect(event: any): void {
+    const producto = event.value;
+    if (!this.tieneStock(producto)) {
+      event.preventDefault();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Sin stock',
+        detail: `El producto ${producto.nombre} no tiene stock disponible`
+      });
+      this.productoSeleccionado = null;
+      return;
+    }
+    this.agregarALista(event);
+  }
   agregarALista(event: { value: ProductoDto }) {
     const producto = event.value;
     const itemExistente = this.cantidades.find(c => c.producto.id === producto.id);
     
     if (itemExistente) {
+      // Verificar stock disponible antes de incrementar
+      const cantidadTotal = itemExistente.cantidad + 1;
+      if (cantidadTotal > producto.stockTotal) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Stock insuficiente',
+          detail: `Solo quedan ${producto.stockTotal} unidades de ${producto.nombre} en stock`
+        });
+        return;
+      }
       itemExistente.cantidad++;
     } else {
+      // Verificar stock disponible antes de agregar
+      if (producto.stockTotal < 1) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Sin stock',
+          detail: `No hay stock disponible de ${producto.nombre}`
+        });
+        return;
+      }
+      
       const nuevoItem: ItemVenta = {
         id: null,
         cantidad: 1,
@@ -460,7 +509,8 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           id: producto.id,
           nombre: producto.nombre,
           precioVenta: producto.precioVenta,
-          codigoDeBarra: producto.codigoDeBarra
+          codigoDeBarra: producto.codigoDeBarra,
+          stockTotal: producto.stockTotal
         },
         venta: {
           id: null,
@@ -578,8 +628,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       credito: this.formaPagoSeleccionada === 'FIADO' ? {
         id: this.creditoSeleccionado!.id,
         precioTotal: this.calcularTotal()
-      } : undefined,
-      cantidades: this.cantidades.map(c => ({
+      } : undefined,      cantidades: this.cantidades.map(c => ({
         id: null,
         cantidad: c.cantidad,
         precioActual: this.getPrecioFinal(c) / c.cantidad, // Precio unitario con descuento
@@ -616,13 +665,18 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
             });
           }
           return;
-        }
-        
-        this.messageService.add({
+        }        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Venta creada correctamente'
         });
+        
+        // Refrescar notificaciones inmediatamente después de la venta
+        this.notificacionService.refrescarPostVenta();
+        
+        // Recargar productos para actualizar el stock
+        this.cargarProductos();
+        
         this.displayDialog = false;
         this.limpiarVenta();
       },
@@ -704,44 +758,65 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       this.codigoBarrasBuffer += event.key;
     }
   }
-
   toggleEscanerFisico() {
     this.escanerActivo = !this.escanerActivo;
     
     if (this.escanerActivo) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Escáner Activado',
-        detail: 'Escanee productos con su lector de códigos',
+        summary: '📱 Escáner Activado',
+        detail: 'Modo escáner USB activo. Escanee productos con su lector',
         life: 3000
       });
     } else {
       this.messageService.add({
         severity: 'info',
-        summary: 'Escáner Desactivado',
-        detail: 'Modo escáner desactivado',
+        summary: '📱 Escáner Desactivado',
+        detail: 'Modo escáner desactivado. Use la búsqueda manual',
         life: 3000
       });
       this.codigoBarrasBuffer = '';
     }
   }
-
   private procesarCodigoBarras(codigoBarras: string) {
     this.productoService.buscarPorCodigoBarras(codigoBarras).subscribe({
       next: (producto) => {
         if (producto) {
+          // Verificar stock antes de agregar
+          if (!this.tieneStock(producto)) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: '⚠️ Stock Insuficiente',
+              detail: `${producto.nombre} no tiene stock disponible (Stock: ${producto.stockTotal})`,
+              life: 3000
+            });
+            return;
+          }
+          
+          // Verificar si ya existe en la lista y si tiene stock suficiente
+          const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
+          if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: '⚠️ Stock Insuficiente',
+              detail: `${producto.nombre} alcanzó el stock máximo disponible (${producto.stockTotal})`,
+              life: 3000
+            });
+            return;
+          }
+          
           this.agregarALista({ value: producto });
           
           this.messageService.add({
             severity: 'success',
-            summary: 'Producto Agregado',
+            summary: '✅ Producto Agregado',
             detail: `${producto.nombre} agregado a la venta`,
             life: 2000
           });
         } else {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Producto No Encontrado',
+            summary: '❌ Producto No Encontrado',
             detail: `No se encontró producto con código: ${codigoBarras}`,
             life: 4000
           });
@@ -751,12 +826,133 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         console.error('Error al buscar producto:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: '❌ Error de Conexión',
           detail: 'Error al buscar el producto escaneado',
           life: 4000
         });
       }
-    });
+    });  }
+
+  // ==================== STOCK VALIDATION ====================
+
+  /**
+   * Valida el stock antes de aplicar ofertas
+   */
+  validarYAplicarOfertas(event: any, item: ItemVenta) {
+    const nuevaCantidad = event.value;
+    const stockDisponible = this.getStockDisponible(item.producto);
+    
+    if (nuevaCantidad > stockDisponible) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: '⚠️ Cantidad Excedida',
+        detail: `${item.producto.nombre}: máximo ${stockDisponible} unidades disponibles (Stock: ${stockDisponible})`,
+        life: 3000
+      });
+      // Revertir a la cantidad máxima disponible
+      item.cantidad = stockDisponible;
+      return;
+    }
+    
+    // Validar cantidad mínima
+    if (nuevaCantidad < 1) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: '⚠️ Cantidad Inválida',
+        detail: 'La cantidad mínima es 1 unidad',
+        life: 2000
+      });
+      item.cantidad = 1;
+      return;
+    }
+    
+    // Actualizar la cantidad anterior después de la validación
+    this.cantidadAnterior.set(item.producto.id!, nuevaCantidad);
+    
+    this.aplicarOfertas();
+  }
+
+  /**
+   * Obtiene el stock disponible para un producto
+   */
+  getStockDisponible(producto: any): number {
+    // Buscar el producto completo en la lista para obtener el stock total actualizado
+    const productoCompleto = this.productos.find(p => p.id === producto.id);
+    return productoCompleto ? productoCompleto.stockTotal : (producto.stockTotal || 0);  }
+
+  /**
+   * Guarda la cantidad anterior al hacer focus en el input
+   */
+  guardarCantidadAnterior(item: ItemVenta) {
+    this.cantidadAnterior.set(item.producto.id!, item.cantidad);
+  }
+  /**
+   * Verifica si hubo intento de incrementar cuando ya se alcanzó el stock máximo
+   */
+  verificarCambioManual(item: ItemVenta) {
+    const cantidadPrevia = this.cantidadAnterior.get(item.producto.id!) || item.cantidad;
+    const stockDisponible = this.getStockDisponible(item.producto);
+    
+    // Si la cantidad sigue siendo el máximo y antes también era el máximo,
+    // significa que hubo un intento de incrementar pero fue bloqueado por [max]
+    if (item.cantidad === stockDisponible && cantidadPrevia === stockDisponible) {
+      // Agregar un pequeño delay para detectar clicks en los botones
+      setTimeout(() => {
+        if (item.cantidad === stockDisponible) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: '⚠️ Stock Máximo Alcanzado',
+            detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
+            life: 3000
+          });
+        }
+      }, 100);
+    }
+    
+    // Limpiar el valor guardado
+    this.cantidadAnterior.delete(item.producto.id!);
+  }
+
+  /**
+   * Detecta intentos de incremento manual con las teclas de flecha
+   */
+  onInputKeydown(event: KeyboardEvent, item: ItemVenta) {
+    const stockDisponible = this.getStockDisponible(item.producto);
+    
+    // Detectar intento de incrementar con flecha arriba cuando ya está en el máximo
+    if (event.key === 'ArrowUp' && item.cantidad >= stockDisponible) {
+      event.preventDefault();
+      this.messageService.add({
+        severity: 'warn',
+        summary: '⚠️ Stock Máximo Alcanzado',
+        detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
+        life: 3000
+      });
+    }
+  }
+  /**
+   * Detecta clicks en los botones de incremento del p-inputNumber
+   */
+  detectarClickIncremento(event: MouseEvent, item: ItemVenta) {
+    const target = event.target as HTMLElement;
+    const stockDisponible = this.getStockDisponible(item.producto);
+    
+    // Verificar si el click fue en el botón de incremento
+    if (target && (target.classList.contains('p-inputnumber-button-up') || 
+                   target.closest('.p-inputnumber-button-up'))) {
+      
+      // Si ya está en el máximo, mostrar alerta
+      if (item.cantidad >= stockDisponible) {
+        setTimeout(() => {
+          this.messageService.add({
+            severity: 'warn',
+            summary: '⚠️ Stock Máximo Alcanzado',
+            detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
+            life: 3000
+          });
+        }, 50);
+      }
+    }
   }
 
 }
