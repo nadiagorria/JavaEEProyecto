@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.business.entities.Usuario;
 import ti.proyectojava.business.repositories.UsuarioRepository;
+import ti.proyectojava.services.PasswordService;
 
 
 import java.util.Optional;
@@ -14,16 +15,31 @@ public class SeguridadService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PasswordService passwordService;
 
     public Optional<Usuario> autenticarUsuario(String usuario,
                                                String password) {
-        Optional<Usuario> objUsuario
-                = usuarioRepository.findByNombreIgnoreCaseAndContrasenia(usuario, password);
+        // Buscar usuario por nombre (sin verificar contraseña en la consulta)
+        Optional<Usuario> objUsuario = usuarioRepository.findByNombreIgnoreCase(usuario);
+        
         if (objUsuario.isEmpty()) {
             return Optional.empty();
-        } else if (!objUsuario.get().getActivo()) {
+        }
+        
+        Usuario usuarioEncontrado = objUsuario.get();
+        
+        // Verificar si el usuario está activo
+        if (!usuarioEncontrado.getActivo()) {
             return Optional.empty();
         }
+        
+        // Verificar la contraseña usando BCrypt
+        if (!passwordService.matchPassword(password, usuarioEncontrado.getContrasenia())) {
+            return Optional.empty();
+        }
+        
         return objUsuario;
     }
 

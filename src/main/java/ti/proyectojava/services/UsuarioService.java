@@ -5,7 +5,6 @@ import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.UsuarioRepository;
 import ti.proyectojava.business.repositories.RolUsuarioRepository;
-import ti.proyectojava.dtos.RolUsuarioDto;
 import ti.proyectojava.dtos.UsuarioDto;
 
 import java.util.List;
@@ -18,12 +17,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolUsuarioRepository rolUsuarioRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
+    private final PasswordService passwordService;
 
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService, PasswordService passwordService) {
         this.usuarioRepository = usuarioRepository;
         this.rolUsuarioRepository = rolUsuarioRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
+        this.passwordService = passwordService;
     }
 
     public ResponseListadoUsuarios listadoUsuarios(){
@@ -47,6 +48,10 @@ public class UsuarioService {
         String response = null;
 
         if(usuario.getNombre() != null && usuario.getMail() != null && usuario.getContrasenia() != null && usuarioRepository.findByNombreIgnoreCase(usuario.getNombre()).isEmpty()) {
+            // Encriptar la contraseña antes de crear el usuario
+            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
+            usuario.setContrasenia(contraseniaEncriptada);
+            
             // Crear la entidad usuario
             Usuario nuevoUsuario = mapsDtosEntityService.mapToEntityUsuario(usuario);
             
@@ -60,7 +65,7 @@ public class UsuarioService {
                 rolUsuarioRepository.findById(2L).ifPresent(roles::add);
             }
             nuevoUsuario.setRoles(roles);
-            
+
             // Guardar usuario con roles
             Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
             response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();        }
@@ -86,7 +91,13 @@ public class UsuarioService {
         Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
 
         aux.setMail(usuario.getMail());
-        aux.setContrasenia(usuario.getContrasenia());
+        
+        // Solo encriptar la contraseña si se proporciona una nueva
+        if (usuario.getContrasenia() != null && !usuario.getContrasenia().trim().isEmpty()) {
+            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
+            aux.setContrasenia(contraseniaEncriptada);
+        }
+        
         usuarioRepository.save(aux);
         response = "Usuario modificado correctamente. NOMBRE:" + aux.getNombre();
         return response;

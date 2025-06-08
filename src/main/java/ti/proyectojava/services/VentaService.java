@@ -29,14 +29,16 @@ public class VentaService {
     private final CreditoRepository creditoRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
     private final ProductoRepository productoRepository;
+    private final NotificacionUsuarioService notificacionUsuarioService;
 
     @Autowired
-    private VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository, CantidadRepository cantidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService){
+    private VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository, CantidadRepository cantidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService, @Lazy NotificacionUsuarioService notificacionUsuarioService){
         this.ventaRepository=ventaRepository;
         this.cantidadRepository=cantidadRepository;
         this.creditoRepository = creditoRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
         this.productoRepository = productoRepository;
+        this.notificacionUsuarioService = notificacionUsuarioService;
     }
 
     public VentaDto obtenerVentaPorId(Long ventaId) {
@@ -70,6 +72,13 @@ public class VentaService {
             
             log.info("Stock actualizado para producto {}: {} -> {}", 
                 producto.getNombre(), stockActual, producto.getStockTotal());
+            
+            // Verificar stock mínimo después de la venta
+            try {
+                notificacionUsuarioService.verificarStockMinimoPostVenta(producto);
+            } catch (Exception e) {
+                log.warn("Error al verificar stock mínimo para producto {}: {}", producto.getNombre(), e.getMessage());
+            }
         }
         
         if (ventaGuardada.getFormaPago() == FormaDePago.FIADO && ventaGuardada.getCredito() != null) {
