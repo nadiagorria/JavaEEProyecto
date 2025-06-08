@@ -121,6 +121,10 @@ export class HeaderComponent implements OnInit {
     alert(`La sección "${seccion}" estará disponible próximamente.`);
   }
 
+  navegarA(ruta: string): void {
+    this.router.navigate([ruta]);
+  }
+
   cerrarSesion() {
     this.securityService.logout();
   }

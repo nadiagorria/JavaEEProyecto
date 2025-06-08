@@ -31,9 +31,7 @@
           </div>
         </div>
       </p-card>
-    </div>
-
-    <!-- Ventas Table -->
+    </div>    <!-- Ventas Table -->
     <div class="col-12 md:col-8 lg:col-9">
       <p-card header="Mis Ventas">
         <p-table [value]="ventas" 
@@ -42,21 +40,66 @@
                  [totalRecords]="totalVentas"
                  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} ventas"
                  [showCurrentPageReport]="true"
-                 [tableStyle]="{ 'min-width': '50rem' }">
+                 [tableStyle]="{ 'min-width': '50rem' }">          
           <ng-template pTemplate="header">
             <tr>
-              <th>ID</th>
-              <th>Cliente</th>
               <th>Fecha</th>
               <th>Total</th>
+              <th>Método de Pago</th>
+              <th>Acciones</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-venta>
             <tr>
-              <td>{{venta.id}}</td>
-              <td>{{venta.cliente}}</td>
-              <td>{{venta.fecha}}</td>
-              <td>{{venta.total}}</td>
+              <td>{{venta.fechaVenta | date:'dd/MM/yyyy HH:mm'}}</td>
+              <td>${{venta.total?.toFixed(2)}}</td>
+              <td>{{venta.formaPago}}</td>
+              <td>
+                <p-button icon="pi pi-eye" 
+                         (click)="verDetalleVenta(venta.id)"
+                         styleClass="p-button-rounded p-button-text">
+                </p-button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <!-- Users Table (Admin Only) -->
+    <div class="col-12 md:col-12 lg:col-12 mt-3" *ngIf="isAdmin()">
+      <p-card header="Usuarios del Sistema">
+        <p-table [value]="usuarios" 
+                 [paginator]="true" 
+                 [rows]="10" 
+                 [totalRecords]="totalUsuarios"
+                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+                 [showCurrentPageReport]="true"
+                 [tableStyle]="{ 'min-width': '50rem' }">          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Roles</th>
+              <th>Estado</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-usuario>
+            <tr>
+              <td>{{usuario.nombre}}</td>
+              <td>{{usuario.mail}}</td>
+              <td>
+                <p-tag *ngFor="let rol of usuario.roles" 
+                       [value]="rol" 
+                       [severity]="getRoleSeverity(rol)"
+                       class="mr-2">
+                </p-tag>
+              </td>
+              <td>
+                <p-tag [value]="usuario.activo ? 'Activo' : 'Inactivo'"
+                       [severity]="usuario.activo ? 'success' : 'danger'">
+                </p-tag>
+              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -66,3 +109,79 @@
 </div>
 
 <app-footer></app-footer>
+
+<p-dialog 
+  header="Editar Perfil" 
+  [(visible)]="showEditDialog" 
+  [modal]="true" 
+  [style]="{width: '400px'}"
+  [draggable]="false"
+  [resizable]="false">
+  
+  <div class="flex flex-column gap-3">
+    <div class="field">
+      <label for="email" class="block mb-2">Correo Electrónico</label>
+      <input 
+        id="email" 
+        type="email" 
+        pInputText 
+        [(ngModel)]="editForm.email"        class="w-full"
+        placeholder="Ingrese su correo electrónico"/>      <small class="p-error block mt-1" *ngIf="editForm.email && !isValidEmail(editForm.email)">
+        Por favor ingrese un correo electrónico válido
+      </small>
+      <small class="p-error block mt-1" *ngIf="formErrors.email">{{formErrors.email}}</small>
+    </div>
+
+    <div class="field">
+      <label for="currentPassword" class="block mb-2">Contraseña Actual</label>
+      <p-password 
+        id="currentPassword"
+        [(ngModel)]="editForm.currentPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        class="w-full"        placeholder="Ingrese su contraseña actual"/>
+      <small class="p-error block mt-1" *ngIf="formErrors.currentPassword">{{formErrors.currentPassword}}</small>
+    </div>
+
+    <div class="field">      <label for="newPassword" class="block mb-2">Nueva Contraseña (opcional)</label>
+      <p-password 
+        id="newPassword"
+        [(ngModel)]="editForm.newPassword"
+        [feedback]="true"
+        [toggleMask]="true"
+        class="w-full"
+        placeholder="Ingrese nueva contraseña"/>
+      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.newPassword.length < 6">
+        La contraseña debe tener al menos 6 caracteres
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="confirmPassword" class="block mb-2">Confirmar Nueva Contraseña</label>
+      <p-password 
+        id="confirmPassword"
+        [(ngModel)]="editForm.confirmPassword"
+        [feedback]="false"        [toggleMask]="true"
+        class="w-full"
+        placeholder="Confirme nueva contraseña"/>
+      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.confirmPassword && editForm.newPassword !== editForm.confirmPassword">
+        Las contraseñas no coinciden
+      </small>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        (click)="cerrarDialog()"
+        styleClass="p-button-text"></p-button>      <p-button 
+        label="Guardar" 
+        icon="pi pi-check" 
+        (click)="guardarCambios()"
+        [loading]="loading"
+        [disabled]="!isValidForm() || loading"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
