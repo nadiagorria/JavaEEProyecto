@@ -31,7 +31,7 @@ public class UsuarioService {
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoUsuario)
+                .map(mapsDtosEntityService::mapToDtoUsuarioPlano)
                 .toList();
 
         responseListadoUsuarios.setUsuarios(usuariosActivos);
@@ -78,15 +78,24 @@ public class UsuarioService {
             response = "Usuario eliminado correctamente. NOMBRE:" + usuario.getNombre();
         }
         return response;
-    }
-
-    public String modificarUsuario(String nombre, UsuarioDto usuario){
+    }    public String modificarUsuario(String nombre, UsuarioDto usuario){
         String response = null;
 
         Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
+        
+        // Verificar que la contraseña actual coincida con la almacenada
+        if (!aux.getContrasenia().equals(usuario.getContrasenia())) {
+            throw new RuntimeException("Contraseña actual incorrecta");
+        }
 
+        // Actualizar email
         aux.setMail(usuario.getMail());
-        aux.setContrasenia(usuario.getContrasenia());
+        
+        // Si hay una nueva contraseña, actualizarla
+        if (usuario.getNuevaContrasenia() != null && !usuario.getNuevaContrasenia().isEmpty()) {
+            aux.setContrasenia(usuario.getNuevaContrasenia());
+        }
+
         usuarioRepository.save(aux);
         response = "Usuario modificado correctamente. NOMBRE:" + aux.getNombre();
         return response;

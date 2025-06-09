@@ -484,6 +484,25 @@ public class MapsDtosEntityService {
         return notiDto;
     }
 
+    public UsuarioDto mapToDtoUsuarioPlano(Usuario usuario) {
+        if (usuario == null) return null;
+
+        UsuarioDto usuarioDto = new UsuarioDto();
+        usuarioDto.setMail(usuario.getMail());
+        usuarioDto.setContrasenia(usuario.getContrasenia());
+        usuarioDto.setNombre(usuario.getNombre());
+        usuarioDto.setActivo(usuario.getActivo());
+
+        usuarioDto.setRoles(
+                usuario.getRoles().stream()
+                        .map(rol -> mapToDtoRoles(rol))
+                        .filter(Objects::nonNull)
+                        .toList()
+        );
+
+        return usuarioDto;
+    }
+
     public UsuarioDto mapToDtoUsuario(Usuario usuario) {
         return mapToDtoUsuario(usuario, new HashSet<>());
     }
@@ -510,7 +529,7 @@ public class MapsDtosEntityService {
         if (usuario.getVentas() != null) {
             usuarioDto.setVentas(
                     usuario.getVentas().stream()
-                            .map(venta -> mapToDtoVenta(venta, processed))
+                            .map(venta -> mapToDtoVentaPlano(venta))
                             .filter(Objects::nonNull)
                             .toList()
             );
@@ -622,9 +641,6 @@ public class MapsDtosEntityService {
         RolUsuarioDto rolDto = new RolUsuarioDto();
         rolDto.setId(rol.getId());
         rolDto.setNombre(rol.getNombre());
-        rolDto.setUsuarios(rol.getUsuarios().stream()
-                .map(user -> mapToDtoUsuario(user, processed))
-                .toList());
         return rolDto;
     }
 
