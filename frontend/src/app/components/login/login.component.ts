@@ -97,10 +97,10 @@ export class LoginComponent {
               
               switch (errorData.error) {
                 case 'USUARIO_INCORRECTO':
-                  mensaje = 'El nombre de usuario no existe';
+                  mensaje = 'El nombre de usuario o la contraseña son incorrectos.';
                   break;
                 case 'CONTRASENIA_INCORRECTA':
-                  mensaje = 'La contraseña es incorrecta';
+                  mensaje = 'El nombre de usuario o la contraseña son incorrectos.';
                   break;
                 case 'ERROR_SERVIDOR':
                   mensaje = 'Error interno del servidor. Intente nuevamente.';
@@ -134,8 +134,12 @@ export class LoginComponent {
         severity: 'warn',
         summary: 'Formulario incompleto',
         detail: 'Por favor completa todos los campos requeridos',
-        life: 3000
-      });
+        life: 3000      });
     }
+  }
+
+  irARecuperarPassword() {
+    // Forzar recarga completa de la página al navegar a recuperar-password
+    window.location.href = '/recuperar-password';
   }
 }

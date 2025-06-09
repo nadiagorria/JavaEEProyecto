@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
+import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password.component';
 import { NuevaventaComponent } from './components/nuevaventa/nuevaventa.component';
 import { VerventaComponent } from './components/verventa/verventa.component';
 import { VentasComponent } from './components/ventas/ventas.component';
@@ -23,6 +24,7 @@ import { OfertasComponent } from './components/ofertas/ofertas.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
+  { path: 'recuperar-password', component: RecuperarPasswordComponent },
 
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 

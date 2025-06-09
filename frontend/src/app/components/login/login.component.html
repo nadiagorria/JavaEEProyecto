@@ -55,8 +55,12 @@
           </small>
           <small *ngIf="formGroup.get('contrasenia')?.errors?.['minlength']">
             Mínimo 6 caracteres
-          </small>
-        </div>
+          </small>        </div>
+      </div>      <div class="forgot-password-section">
+        <a (click)="irARecuperarPassword()" class="forgot-password-link">
+          <i class="pi pi-question-circle"></i>
+          ¿Olvidaste tu contraseña?
+        </a>
       </div>
 
       <div class="button-section">

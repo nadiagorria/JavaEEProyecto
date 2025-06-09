@@ -56,4 +56,24 @@ export class UsuarioService {
     );
   }
 
+  solicitarRecuperacionPassword(email: string): Observable<string> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/solicitar-recuperacion`,
+      { email: email },
+      { responseType: 'text' }
+    );
+  }
+
+  restablecerPassword(email: string, codigo: string, nuevaPassword: string): Observable<string> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/restablecer-password`,
+      { 
+        email: email,
+        codigo: codigo,
+        nuevaPassword: nuevaPassword
+      },
+      { responseType: 'text' }
+    );
+  }
+
 }

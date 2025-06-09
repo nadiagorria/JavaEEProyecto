@@ -25,19 +25,19 @@ public class SeguridadService {
         Optional<Usuario> objUsuario = usuarioRepository.findByNombreIgnoreCase(usuario);
         
         if (objUsuario.isEmpty()) {
-            return Optional.empty();
+            throw new RuntimeException("USUARIO_INCORRECTO");
         }
         
         Usuario usuarioEncontrado = objUsuario.get();
         
         // Verificar si el usuario está activo
         if (!usuarioEncontrado.getActivo()) {
-            return Optional.empty();
+            throw new RuntimeException("USUARIO_INACTIVO");
         }
         
         // Verificar la contraseña usando BCrypt
         if (!passwordService.matchPassword(password, usuarioEncontrado.getContrasenia())) {
-            return Optional.empty();
+            throw new RuntimeException("CONTRASENIA_INCORRECTA");
         }
         
         return objUsuario;

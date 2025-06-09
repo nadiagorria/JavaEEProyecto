@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.dtos.UsuarioDto;
+import ti.proyectojava.dtos.RecuperacionPasswordDto;
 import ti.proyectojava.services.UsuarioService;
 
 @RestController
@@ -96,6 +97,30 @@ public class UsuarioController {
             String adminUsuario = authentication.getName();
             
             String response = usuarioService.revocarRolAdmin(adminUsuario, usuarioDestino);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }    @PostMapping("/solicitar-recuperacion")
+    @Operation(description = "Solicita recuperación de contraseña por email")
+    public ResponseEntity<String> solicitarRecuperacionPassword(@RequestBody RecuperacionPasswordDto request) {
+        try {
+            String response = usuarioService.solicitarRecuperacionPassword(request.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/restablecer-password")
+    @Operation(description = "Restablece la contraseña usando el código de recuperación")
+    public ResponseEntity<String> restablecerPassword(@RequestBody RecuperacionPasswordDto request) {
+        try {
+            String response = usuarioService.restablecerPassword(
+                request.getEmail(), 
+                request.getCodigo(), 
+                request.getNuevaPassword()
+            );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

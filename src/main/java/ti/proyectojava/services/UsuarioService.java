@@ -1,15 +1,19 @@
 package ti.proyectojava.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.UsuarioRepository;
 import ti.proyectojava.business.repositories.RolUsuarioRepository;
+import ti.proyectojava.business.repositories.PasswordRecoveryRepository;
 import ti.proyectojava.dtos.UsuarioDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.Random;
 
 @Service
 public class UsuarioService {
@@ -18,13 +22,18 @@ public class UsuarioService {
     private final RolUsuarioRepository rolUsuarioRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
     private final PasswordService passwordService;
+    private final PasswordRecoveryRepository passwordRecoveryRepository;
+    
+    @Autowired
+    private EmailService emailService;
 
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService, PasswordService passwordService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService, PasswordService passwordService, PasswordRecoveryRepository passwordRecoveryRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolUsuarioRepository = rolUsuarioRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
         this.passwordService = passwordService;
+        this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
     public ResponseListadoUsuarios listadoUsuarios(){
@@ -162,6 +171,128 @@ public class UsuarioService {
         usuario.setRoles(rolesActualizados);
         usuarioRepository.save(usuario);
         return "Permisos de administrador revocados exitosamente de: " + usuarioDestino;
+    }
+
+    /**
+     * Solicita recuperación de contraseña generando un código de recuperación
+     */
+    public String solicitarRecuperacionPassword(String email) {
+        // Verificar que el email existe
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("No existe un usuario registrado con ese email");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        // Invalidar códigos anteriores del mismo email
+        List<PasswordRecovery> codigosAnteriores = passwordRecoveryRepository.findByEmailAndUsadoFalse(email);
+        codigosAnteriores.forEach(codigo -> codigo.setUsado(true));
+        passwordRecoveryRepository.saveAll(codigosAnteriores);
+
+        // Generar código de 6 dígitos
+        String codigoRecuperacion = generarCodigoRecuperacion();
+        
+        // Crear nuevo registro de recuperación (válido por 15 minutos)
+        LocalDateTime fechaExpiracion = LocalDateTime.now().plusMinutes(15);
+        PasswordRecovery recovery = new PasswordRecovery(email, codigoRecuperacion, fechaExpiracion);
+        passwordRecoveryRepository.save(recovery);
+
+        try {
+            // Enviar código por email
+            emailService.enviarCodigoRecuperacion(email, codigoRecuperacion, usuario.getNombre());
+            return "Se ha enviado un código de recuperación a tu email (" + 
+                   enmascararEmail(email) + "). El código es válido por 15 minutos.";
+        } catch (Exception e) {
+            // Si falla el envío del email, eliminar el código generado
+            passwordRecoveryRepository.delete(recovery);
+            throw new RuntimeException("Error al enviar el email de recuperación. Verifica tu conexión e inténtalo de nuevo.");
+        }
+    }
+
+    /**
+     * Restablece la contraseña usando el código de recuperación
+     */
+    public String restablecerPassword(String email, String codigo, String nuevaPassword) {
+        // Validar que la nueva contraseña no esté vacía y tenga al menos 6 caracteres
+        if (nuevaPassword == null || nuevaPassword.trim().length() < 6) {
+            throw new RuntimeException("La nueva contraseña debe tener al menos 6 caracteres");
+        }
+
+        // Buscar código de recuperación válido
+        Optional<PasswordRecovery> recoveryOpt = passwordRecoveryRepository
+                .findByEmailAndCodigoRecuperacionAndUsadoFalse(email, codigo);
+        
+        if (recoveryOpt.isEmpty()) {
+            throw new RuntimeException("Código de recuperación inválido o ya utilizado");
+        }
+
+        PasswordRecovery recovery = recoveryOpt.get();
+        
+        // Verificar que no haya expirado
+        if (LocalDateTime.now().isAfter(recovery.getFechaExpiracion())) {
+            throw new RuntimeException("El código de recuperación ha expirado");
+        }
+
+        // Buscar el usuario
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        
+        // Actualizar contraseña
+        String passwordEncriptada = passwordService.encryptPassword(nuevaPassword);
+        usuario.setContrasenia(passwordEncriptada);
+        usuarioRepository.save(usuario);        // Marcar código como usado
+        recovery.setUsado(true);
+        passwordRecoveryRepository.save(recovery);
+
+        // Enviar notificación de cambio de contraseña
+        try {
+            emailService.enviarNotificacionCambioPassword(email, usuario.getNombre());
+        } catch (Exception e) {
+            // No fallar si no se puede enviar la notificación
+            System.err.println("No se pudo enviar notificación de cambio de contraseña: " + e.getMessage());
+        }
+
+        return "Contraseña restablecida exitosamente";
+    }
+
+    /**
+     * Genera un código de recuperación de 6 dígitos
+     */
+    private String generarCodigoRecuperacion() {
+        Random random = new Random();
+        int codigo = 100000 + random.nextInt(900000); // Genera número entre 100000 y 999999
+        return String.valueOf(codigo);
+    }
+
+    /**
+     * Enmascara un email para mostrar solo las primeras letras y el dominio
+     */
+    private String enmascararEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return email;
+        }
+        
+        String[] partes = email.split("@");
+        String usuario = partes[0];
+        String dominio = partes[1];
+        
+        if (usuario.length() <= 2) {
+            return usuario.charAt(0) + "*@" + dominio;
+        } else {
+            return usuario.substring(0, 2) + "***@" + dominio;
+        }
+    }
+
+    /**
+     * Limpia códigos de recuperación expirados (se puede ejecutar como tarea programada)
+     */
+    public void limpiarCodigosExpirados() {
+        passwordRecoveryRepository.deleteByFechaExpiracionBefore(LocalDateTime.now());
     }
 
 }

@@ -33,18 +33,42 @@ public class SeguridadController {
 
     @PostMapping("/autenticacion")
     @Transactional(readOnly = true)
-    public ResponseEntity<UsuarioSecurityDto> autenticarUsuario(
+    public ResponseEntity<?> autenticarUsuario(
             @RequestParam("usuario") String usuario,
             @RequestParam("password") String password
     ) {
-        Usuario objUsuario = seguridadService
-                .autenticarUsuario(usuario, password)
-                .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos."));
-        String token = generarToken(objUsuario);
-        UsuarioSecurityDto usuarioResponse
-                = new UsuarioSecurityDto(objUsuario.getNombre(),
-                        token, seguridadService.listarRolesPorUsuario(objUsuario));
-        return new ResponseEntity<>(usuarioResponse, HttpStatus.OK);
+        try {
+            Usuario objUsuario = seguridadService
+                    .autenticarUsuario(usuario, password)
+                    .orElseThrow(() -> new RuntimeException("ERROR_SERVIDOR"));
+            String token = generarToken(objUsuario);
+            UsuarioSecurityDto usuarioResponse
+                    = new UsuarioSecurityDto(objUsuario.getNombre(),
+                            token, seguridadService.listarRolesPorUsuario(objUsuario));
+            return new ResponseEntity<>(usuarioResponse, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            String errorCode = e.getMessage();
+            String errorMessage;
+            
+            switch (errorCode) {
+                case "USUARIO_INCORRECTO":
+                    errorMessage = "El nombre de usuario o la contraseña son incorrectos.";
+                    break;
+                case "CONTRASENIA_INCORRECTA":
+                    errorMessage = "El nombre de usuario o la contraseña son incorrectos.";
+                    break;
+                case "USUARIO_INACTIVO":
+                    errorMessage = "Este usuario ya no existe.";
+                    break;
+                default:
+                    errorMessage = "Error interno del servidor";
+                    errorCode = "ERROR_SERVIDOR";
+                    break;            }
+            
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
+        }
     }
 
     private String generarToken(Usuario usuario) {

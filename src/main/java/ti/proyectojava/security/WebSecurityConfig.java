@@ -40,7 +40,9 @@ public class WebSecurityConfig {
                         .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/solicitar-recuperacion").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/restablecer-password").permitAll()
                         //.requestMatchers(antMatcher("/api/v1/entidad/**")).permitAll()
 
 
