@@ -112,6 +112,57 @@ public class UsuarioService {
         return mapsDtosEntityService.mapToDtoUsuario(usuario);
     }
 
+    public String otorgarRolAdmin(String adminUsuario, String usuarioDestino) {
+        // Verificar que solo el usuario "admin" puede otorgar roles de administrador
+        if (!"admin".equals(adminUsuario)) {
+            throw new RuntimeException("Solo el administrador por defecto puede otorgar permisos de administrador");
+        }
+
+        // Verificar que el usuario destino existe
+        Usuario usuario = usuarioRepository.findByNombreIgnoreCase(usuarioDestino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + usuarioDestino));
+
+        // Verificar que el usuario tenga solo rol CAJERO
+        boolean soloTieneCajero = usuario.getRoles().size() == 1 && 
+                                 usuario.getRoles().get(0).getNombre().equals("CAJERO");
+        
+        if (!soloTieneCajero) {
+            throw new RuntimeException("Solo se pueden otorgar permisos de administrador a usuarios con rol exclusivo de CAJERO");
+        }
+
+        // Agregar rol ADMIN (manteniendo CAJERO)
+        List<RolUsuario> roles = new ArrayList<>(usuario.getRoles());
+        rolUsuarioRepository.findById(1L).ifPresent(roles::add);
+        usuario.setRoles(roles);
+        
+        usuarioRepository.save(usuario);
+        return "Permisos de administrador otorgados exitosamente a: " + usuarioDestino;
+    }
+
+    public String revocarRolAdmin(String adminUsuario, String usuarioDestino) {
+        // Verificar que solo el usuario "admin" puede revocar roles de administrador
+        if (!"admin".equals(adminUsuario)) {
+            throw new RuntimeException("Solo el administrador por defecto puede revocar permisos de administrador");
+        }
+
+        // Verificar que el usuario destino existe
+        Usuario usuario = usuarioRepository.findByNombreIgnoreCase(usuarioDestino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + usuarioDestino));
+
+        // No permitir que se modifique al propio admin
+        if ("admin".equals(usuarioDestino)) {
+            throw new RuntimeException("No se puede modificar al usuario administrador por defecto");
+        }
+
+        // Remover solo el rol ADMIN, mantener CAJERO
+        List<RolUsuario> rolesActualizados = usuario.getRoles().stream()
+                .filter(rol -> !rol.getNombre().equals("ADMIN"))
+                .collect(java.util.stream.Collectors.toList());
+        
+        usuario.setRoles(rolesActualizados);
+        usuarioRepository.save(usuario);
+        return "Permisos de administrador revocados exitosamente de: " + usuarioDestino;
+    }
 
 }
 

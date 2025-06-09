@@ -64,10 +64,8 @@
           </ng-template>
         </p-table>
       </p-card>
-    </div>
-
-    <!-- Users Table (Admin Only) -->
-    <div class="col-12 md:col-12 lg:col-12 mt-3" *ngIf="isAdmin()">
+    </div>    <!-- Users Table (Exclusive Admin Only) -->
+    <div class="col-12 md:col-12 lg:col-12 mt-3" *ngIf="isExclusiveAdmin()">
       <p-card header="Usuarios del Sistema">
         <p-table [value]="usuarios" 
                  [paginator]="true" 
@@ -75,16 +73,15 @@
                  [totalRecords]="totalUsuarios"
                  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
                  [showCurrentPageReport]="true"
-                 [tableStyle]="{ 'min-width': '50rem' }">          
-          <ng-template pTemplate="header">
+                 [tableStyle]="{ 'min-width': '50rem' }">            <ng-template pTemplate="header">
             <tr>
               <th>Nombre</th>
               <th>Email</th>
               <th>Roles</th>
               <th>Estado</th>
+              <th *ngIf="isDefaultAdmin()">Acciones</th>
             </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-usuario>
+          </ng-template>          <ng-template pTemplate="body" let-usuario>
             <tr>
               <td>{{usuario.nombre}}</td>
               <td>{{usuario.mail}}</td>
@@ -99,6 +96,28 @@
                 <p-tag [value]="usuario.activo ? 'Activo' : 'Inactivo'"
                        [severity]="usuario.activo ? 'success' : 'danger'">
                 </p-tag>
+              </td>
+              <td *ngIf="isDefaultAdmin()">
+                <div class="flex gap-2">
+                  <p-button 
+                    *ngIf="puedeOtorgarPermisos(usuario)"
+                    icon="pi pi-user-plus" 
+                    size="small"
+                    severity="success"
+                    [text]="true"
+                    (click)="otorgarPermisos(usuario.nombre)"
+                    pTooltip="Otorgar permisos de administrador">
+                  </p-button>
+                  <p-button 
+                    *ngIf="puedeRevocarPermisos(usuario)"
+                    icon="pi pi-user-minus" 
+                    size="small"
+                    severity="danger"
+                    [text]="true"
+                    (click)="revocarPermisos(usuario.nombre)"
+                    pTooltip="Revocar permisos de administrador">
+                  </p-button>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -150,9 +169,11 @@
         [feedback]="true"
         [toggleMask]="true"
         class="w-full"
-        placeholder="Ingrese nueva contraseña"/>
-      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.newPassword.length < 6">
+        placeholder="Ingrese nueva contraseña"/>      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.newPassword.length < 6">
         La contraseña debe tener al menos 6 caracteres
+      </small>
+      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.currentPassword && editForm.newPassword === editForm.currentPassword">
+        La nueva contraseña debe ser diferente a la actual
       </small>
     </div>
 
@@ -185,3 +206,5 @@
     </div>
   </ng-template>
 </p-dialog>
+
+<p-toast position="top-right" [life]="5000"></p-toast>

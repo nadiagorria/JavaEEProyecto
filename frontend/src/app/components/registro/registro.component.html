@@ -58,16 +58,10 @@
           </span>
           <span *ngIf="formGroup.get('password')?.value.length >= 6" class="password-valid">
             <i class="pi pi-check-circle"></i> Contraseña válida
-          </span>
-        </div>
-      </div><div class="form-field checkbox-field">
-        <p-checkbox 
-          formControlName="admin" 
-          inputId="admin" 
-          [binary]="true"
-        ></p-checkbox>
-        <label for="admin" class="checkbox-label">Permisos de Administrador</label>
-      </div><button 
+          </span>        </div>
+      </div>
+
+<button
         pButton 
         type="submit" 
         label="Registrar" 

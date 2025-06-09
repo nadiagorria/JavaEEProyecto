@@ -13,6 +13,9 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { UsuarioService } from '../../../services/usuario.service';
 import { VentaService } from '../../../services/venta.service';
 
@@ -32,8 +35,7 @@ interface UsuarioTabla {
 
 @Component({
   selector: 'app-perfil',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule, 
     HeaderComponent, 
     FooterComponent,
@@ -45,10 +47,13 @@ interface UsuarioTabla {
     DialogModule,
     FormsModule,
     InputTextModule,
-    PasswordModule
+    PasswordModule,
+    TooltipModule,
+    ToastModule
   ],
   templateUrl: './perfil.component.html',
-  styleUrls: ['./perfil.component.scss']
+  styleUrls: ['./perfil.component.scss'],
+  providers: [MessageService]
 })
 export class PerfilComponent implements OnInit {
   usuario = {
@@ -78,17 +83,84 @@ export class PerfilComponent implements OnInit {
     newPassword: '',
     confirmPassword: ''
   };
-
   constructor(
     private securityService: SecurityService,
     private router: Router,
     private usuarioService: UsuarioService,
-    private ventaService: VentaService
+    private ventaService: VentaService,
+    private messageService: MessageService
   ) {}  isAdmin(): boolean {
     return this.usuario.roles.includes('ADMIN');
   }
+
+  isExclusiveAdmin(): boolean {
+    return this.usuario.roles.length === 1 && this.usuario.roles.includes('ADMIN');
+  }
+
+  isDefaultAdmin(): boolean {
+    return this.usuario.nombreUsuario === 'admin';
+  }
+
+  puedeOtorgarPermisos(usuario: UsuarioTabla): boolean {
+    return this.isDefaultAdmin() && 
+           usuario.roles.length === 1 && 
+           usuario.roles.includes('CAJERO') &&
+           usuario.nombre !== 'admin';
+  }
+
+  puedeRevocarPermisos(usuario: UsuarioTabla): boolean {
+    return this.isDefaultAdmin() && 
+           usuario.roles.includes('ADMIN') && 
+           usuario.roles.includes('CAJERO') &&
+           usuario.nombre !== 'admin';
+  }  otorgarPermisos(nombreUsuario: string): void {
+    this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
+      next: (response: any) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Permisos Otorgados',
+          detail: 'Permisos de administrador otorgados exitosamente',
+          life: 4000
+        });
+        this.cargarUsuarios(); // Recargar lista
+      },
+      error: (error: any) => {
+        console.error('Error al otorgar permisos:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al Otorgar Permisos',
+          detail: error.error || 'Error al otorgar permisos de administrador',
+          life: 5000
+        });
+      }
+    });
+  }
+
+  revocarPermisos(nombreUsuario: string): void {
+    this.usuarioService.revocarRolAdmin(nombreUsuario).subscribe({
+      next: (response: any) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Permisos Revocados',
+          detail: 'Permisos de administrador revocados exitosamente',
+          life: 4000
+        });
+        this.cargarUsuarios(); // Recargar lista
+      },
+      error: (error: any) => {
+        console.error('Error al revocar permisos:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al Revocar Permisos',
+          detail: error.error || 'Error al revocar permisos de administrador',
+          life: 5000
+        });
+      }
+    });
+  }
+
   cargarUsuarios(): void {
-    if (!this.isAdmin()) return;
+    if (!this.isExclusiveAdmin()) return;
 
     this.usuarioService.obtenerTodosLosUsuarios().subscribe({
       next: (response: any) => {
@@ -132,10 +204,8 @@ export class PerfilComponent implements OnInit {
             this.ventas = userData.ventas
               .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
             this.totalVentas = this.ventas.length;
-          }
-
-          // Si es admin, cargar la lista de usuarios
-          if (this.isAdmin()) {
+          }          // Si es admin exclusivo, cargar la lista de usuarios
+          if (this.isExclusiveAdmin()) {
             this.cargarUsuarios();
           }
         },
@@ -181,8 +251,7 @@ export class PerfilComponent implements OnInit {
   isValidEmail(email: string): boolean {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
-  }
-  isValidForm(): boolean {
+  }  isValidForm(): boolean {
     // Validate email
     if (!this.editForm.email || !this.isValidEmail(this.editForm.email)) {
       return false;
@@ -204,11 +273,15 @@ export class PerfilComponent implements OnInit {
       if (this.editForm.newPassword !== this.editForm.confirmPassword) {
         return false;
       }
+      
+      // New password cannot be the same as current password
+      if (this.editForm.newPassword === this.editForm.currentPassword) {
+        return false;
+      }
     }
     
     return true;
   }
-
   guardarCambios() {
     if (!this.isValidForm()) {
       return;
@@ -216,12 +289,33 @@ export class PerfilComponent implements OnInit {
 
     // Validación de contraseñas
     if (this.editForm.newPassword && this.editForm.newPassword !== this.editForm.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Validación',
+        detail: 'Las contraseñas no coinciden',
+        life: 4000
+      });
+      return;
+    }
+
+    // Validación de nueva contraseña igual a la actual
+    if (this.editForm.newPassword && this.editForm.newPassword === this.editForm.currentPassword) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Contraseña Duplicada',
+        detail: 'La nueva contraseña debe ser diferente a la actual',
+        life: 4000
+      });
       return;
     }
 
     if (!this.editForm.currentPassword) {
-      alert('Debe ingresar su contraseña actual');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo Requerido',
+        detail: 'Debe ingresar su contraseña actual',
+        life: 4000
+      });
       return;
     }
 
@@ -229,14 +323,22 @@ export class PerfilComponent implements OnInit {
       email: this.editForm.email,
       currentPassword: this.editForm.currentPassword,
       newPassword: this.editForm.newPassword || this.editForm.currentPassword
-    };    this.loading = true;
+    };
+
+    this.loading = true;
     this.usuarioService.modificarUsuario(this.usuario.nombreUsuario, cambios).subscribe({
       next: (response: any) => {
         if (typeof response === 'string' && response.includes('modificado')) {
           this.usuario.email = this.editForm.email;
           this.showEditDialog = false;
           this.loading = false;
-          alert('Perfil actualizado con éxito');
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Perfil Actualizado',
+            detail: 'Los cambios se han guardado correctamente',
+            life: 4000
+          });
           
           // Actualizar datos del usuario en el servicio de seguridad
           if (this.securityService.user) {
@@ -244,18 +346,39 @@ export class PerfilComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          alert('Error al actualizar el perfil: Respuesta inesperada del servidor');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error del Servidor',
+            detail: 'Respuesta inesperada del servidor',
+            life: 4000
+          });
         }
-      },      error: (error) => {
+      },
+      error: (error) => {
         this.loading = false;
         console.error('Error al actualizar perfil:', error);
+        
         let errorMessage = 'Error al actualizar el perfil';
+        let severity = 'error';
+        let summary = 'Error de Actualización';
+        
         if (error.error && typeof error.error === 'string') {
-          errorMessage = error.error;
+          if (error.error.includes('Contraseña actual incorrecta')) {
+            summary = 'Contraseña Incorrecta';
+            errorMessage = 'La contraseña actual que ingresaste no es correcta';
+            severity = 'warn';
+          } else {
+            errorMessage = error.error;
+          }
         } else if (error.message) {
           errorMessage = error.message;
         }
-        alert(errorMessage);
+          this.messageService.add({
+          severity: severity,
+          summary: summary,
+          detail: errorMessage,
+          life: 5000
+        });
       }
     });
   }

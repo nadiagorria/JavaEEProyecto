@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, Router } from '@angular/router';
-import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { SecurityService } from '../../../services/security.service';
@@ -23,7 +22,6 @@ import { of } from 'rxjs';
             ButtonModule,
             ReactiveFormsModule,
             RouterLink,
-            CheckboxModule,
             CommonModule,
             ToastModule
             ],
@@ -46,8 +44,7 @@ export class RegistroComponent {
     this.formGroup = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      admin: [false]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     // Configurar validación en tiempo real para el username
@@ -90,9 +87,10 @@ export class RegistroComponent {
   onSubmit() {
     if (this.formGroup.valid && !this.isLoading && !this.usernameExists) {
       this.isLoading = true;
-      const { username, email, password, admin } = this.formGroup.value;
+      const { username, email, password } = this.formGroup.value;
       
-      this.securityService.register(username, email, password, admin).subscribe({
+      // Always register as CAJERO (admin = false)
+      this.securityService.register(username, email, password, false).subscribe({
         next: (response) => {
           this.isLoading = false;
           

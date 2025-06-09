@@ -39,4 +39,21 @@ export class UsuarioService {
   obtenerTodosLosUsuarios(): Observable<UsuarioDto[]> {
     return this.http.get<UsuarioDto[]>(`${this.urlService.baseUrl}${this.endpoint}`);
   }
+
+  otorgarRolAdmin(usuarioDestino: string): Observable<string> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/otorgar-admin/${usuarioDestino}`,
+      {},
+      { responseType: 'text' }
+    );
+  }
+
+  revocarRolAdmin(usuarioDestino: string): Observable<string> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/revocar-admin/${usuarioDestino}`,
+      {},
+      { responseType: 'text' }
+    );
+  }
+
 }
