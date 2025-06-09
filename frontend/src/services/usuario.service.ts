@@ -18,5 +18,25 @@ export class UsuarioService {
 
   getUsuariosTotales(): Observable<number> {
     return this.http.get<number>(`${this.urlService.baseUrl}${this.endpoint}/cantidadUsuarios`);
+  }  modificarUsuario(username: string, cambios: { email: string, currentPassword: string, newPassword: string }): Observable<any> {
+    const userData = {
+      mail: cambios.email,
+      nombre: username,
+      contrasenia: cambios.currentPassword, // Enviamos la contraseña actual para verificación
+      nuevaContrasenia: cambios.newPassword // Nueva propiedad para la nueva contraseña
+    };
+
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/${username}`,
+      userData,
+      { responseType: 'text' }
+    );
+  }
+  obtenerUsuarioPorNombre(username: string): Observable<UsuarioDto> {
+    return this.http.get<UsuarioDto>(`${this.urlService.baseUrl}${this.endpoint}/${username}`);
+  }
+
+  obtenerTodosLosUsuarios(): Observable<UsuarioDto[]> {
+    return this.http.get<UsuarioDto[]>(`${this.urlService.baseUrl}${this.endpoint}`);
   }
 }

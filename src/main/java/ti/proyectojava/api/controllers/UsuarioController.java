@@ -57,4 +57,16 @@ public class UsuarioController {
         Integer response = usuarioService.listadoUsuariosTotales();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/{nombre}")
+    @Operation(description = "Obtiene los datos de un usuario específico")
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<UsuarioDto> obtenerUsuario(@PathVariable(name = "nombre") String nombreUsuario) {
+        try {
+            UsuarioDto usuario = usuarioService.buscarUsuario(nombreUsuario);
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 }

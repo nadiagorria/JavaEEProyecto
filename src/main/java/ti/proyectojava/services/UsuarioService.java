@@ -32,7 +32,7 @@ public class UsuarioService {
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue()
                 .stream()
-                .map(mapsDtosEntityService::mapToDtoUsuario)
+                .map(mapsDtosEntityService::mapToDtoUsuarioPlano)
                 .toList();
 
         responseListadoUsuarios.setUsuarios(usuariosActivos);
@@ -84,20 +84,23 @@ public class UsuarioService {
         }
         return response;
     }
-
+    
     public String modificarUsuario(String nombre, UsuarioDto usuario){
-        String response = null;
+        String response = null;        Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));        
+        // Verificar que la contraseña actual coincida con la almacenada (usando encriptación)
+        if (!passwordService.matchPassword(usuario.getContrasenia(), aux.getContrasenia())) {
+            throw new RuntimeException("Contraseña actual incorrecta");
+        }
 
-        Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
-
+        // Actualizar email
         aux.setMail(usuario.getMail());
         
-        // Solo encriptar la contraseña si se proporciona una nueva
-        if (usuario.getContrasenia() != null && !usuario.getContrasenia().trim().isEmpty()) {
-            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
+        // Si hay una nueva contraseña, encriptarla y actualizarla
+        if (usuario.getNuevaContrasenia() != null && !usuario.getNuevaContrasenia().trim().isEmpty()) {
+            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getNuevaContrasenia());
             aux.setContrasenia(contraseniaEncriptada);
         }
-        
+
         usuarioRepository.save(aux);
         response = "Usuario modificado correctamente. NOMBRE:" + aux.getNombre();
         return response;
