@@ -85,8 +85,8 @@ export class ClientesCreditoComponent {
   //Credito
   minimo: number = 0;
   maximo: number = 0;
-  deuda: number = 0;
-  pago: number = 0;  saveCliente() {
+  
+  saveCliente() {
     // Validar que los campos requeridos estén completos
     if (!this.nombre || !this.telefono) {
       alert('Por favor, complete al menos el nombre y teléfono del cliente.');
@@ -96,8 +96,8 @@ export class ClientesCreditoComponent {
     const clienteCreditoDto: clienteCreditoDto = {
       nombre: this.nombre,
       telefono: this.telefono,
-      precioTotal: this.deuda,
-      pagoHastaAhora: this.pago,
+      precioTotal: 0,
+      pagoHastaAhora: 0,
       minimo: this.minimo,
       maximo: this.maximo,
     };
@@ -109,8 +109,6 @@ export class ClientesCreditoComponent {
         this.telefono = '';
         this.minimo = 0;
         this.maximo = 0;
-        this.deuda = 0;
-        this.pago = 0;
         
         // Actualizar la lista de créditos sin recargar la página
         this.cargarCreditos();
