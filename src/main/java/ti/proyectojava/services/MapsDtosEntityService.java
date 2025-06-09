@@ -440,6 +440,8 @@ public class MapsDtosEntityService {
         lote = new Lote();
         lote.setNumero(dto.getNumeLote());
         lote.setStock(dto.getStock());
+
+        
         lote.setFechaVencimiento(dto.getFechaVencimiento());
         lote.setPrecioCompra(dto.getPrecioCompra());
         lote.setActivo(dto.getActivo());

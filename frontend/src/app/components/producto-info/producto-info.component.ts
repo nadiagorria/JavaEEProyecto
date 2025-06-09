@@ -89,9 +89,14 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   };
   categorias: CategoriaDto[] = [];
   proveedores: ProveedorDto[] = [];
-    // Existing lote modal properties
+  // Existing lote modal properties
   mostrarModalAgregarLote: boolean = false;
-  nuevoLote: Partial<LoteDto> = {
+  nuevoLote: {
+    numeLote: string;
+    stock: number;
+    fechaVencimiento: string | Date | undefined;
+    precioCompra: number;
+  } = {
     numeLote: '',
     stock: 0,
     fechaVencimiento: undefined,
@@ -343,25 +348,28 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           detail: errorMessage
         });
       }
-    });  }agregarLote() {
+    });  }  agregarLote() {
     if (!this.producto || this.producto.id === null) return;
     
-    // Validación básica
     if (!this.validarFormularioLote()) {
       return;
-    }
-    
-    // Aseguramos que la fecha esté en el formato correcto
+    }    
+
     let fechaVencimiento: Date;
+     
     if (this.nuevoLote.fechaVencimiento) {
-      // Si es string, convertirlo a Date
       if (typeof this.nuevoLote.fechaVencimiento === 'string') {
-        fechaVencimiento = new Date(this.nuevoLote.fechaVencimiento);
-      } else {
-        fechaVencimiento = this.nuevoLote.fechaVencimiento;
+        const fechaString = this.nuevoLote.fechaVencimiento as string;
+        
+        const [year, month, day] = fechaString.split('-').map(Number);
+        
+        fechaVencimiento = new Date(year, month - 1, day); // month es 0-indexed
+        } else {
+        fechaVencimiento = this.nuevoLote.fechaVencimiento as Date;
+        console.log('🔍 DEBUG - Fecha ya era Date:', fechaVencimiento);
       }
     } else {
-      // Si no hay fecha, usar la fecha actual (no debería ocurrir por la validación)
+      // Si no hay fecha, usar la fecha actual (cambiar a que pueda ser null)
       fechaVencimiento = new Date();
     }
 
@@ -379,9 +387,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       }
     };
 
-    console.log('Enviando lote para crear:', lote);    this.loteService.crearLote(lote).subscribe({
+    
+    this.loteService.crearLote(lote).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor al crear lote:', response);
         // Extraer el ID del lote de la respuesta (formato "Lote creado. ID: XXX")
         const idMatch = response.match(/ID: (\d+)/);
         const idLote = idMatch ? idMatch[1] : 'desconocido';
@@ -403,7 +411,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         console.error('Error al agregar lote:', err);
         let errorMessage = 'Error al agregar el lote. Verifique los datos e intente nuevamente.';
         
-        // Handle different error response types (JSON or plain text)
         if (err.error) {
           if (typeof err.error === 'string') {
             errorMessage = err.error;

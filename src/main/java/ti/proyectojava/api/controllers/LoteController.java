@@ -1,6 +1,7 @@
 package ti.proyectojava.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -11,6 +12,7 @@ import ti.proyectojava.services.ProductoService;
 
 @RestController
 @RequestMapping(value = "api/v1/lote")
+@Slf4j
 public class LoteController {
     private final LoteService loteService;
     private final ProductoService productoService;
@@ -25,6 +27,7 @@ public class LoteController {
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea una nuevo lote")
     public ResponseEntity<String> crearLote(@RequestBody LoteDto loteDto) {
+        
         productoService.ActualizarPrecioCompraYStockProducto(loteDto.getProducto().getId(), loteDto.getPrecioCompra(), loteDto.getStock());
         String response = loteService.crearLote(loteDto);
 

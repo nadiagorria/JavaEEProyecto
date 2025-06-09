@@ -14,15 +14,37 @@ export class LoteService {
     private http: HttpClient,
     private urlService: UrlService
   ) {}  crearLote(lote: LoteDto): Observable<any> {
-    // Asegurarnos de que la fecha sea una string en formato ISO
+    
+    let fechaFormateada: string;
+    
+    if (lote.fechaVencimiento instanceof Date) {
+      // Usamos getFullYear, getMonth, getDate para evitar problemas de zona horaria
+      const fecha = lote.fechaVencimiento;
+      
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+      fechaFormateada = `${year}-${month}-${day}`;
+      
+    } else if (typeof lote.fechaVencimiento === 'string') {
+      // Si ya es string, asumimos que está en formato YYYY-MM-DD
+      fechaFormateada = lote.fechaVencimiento;
+    } else {
+      const hoy = new Date();
+      const year = hoy.getFullYear();
+      const month = String(hoy.getMonth() + 1).padStart(2, '0');
+      const day = String(hoy.getDate()).padStart(2, '0');
+      fechaFormateada = `${year}-${month}-${day}`;
+    }
+    
     const lotePayload = {
       ...lote,
-      fechaVencimiento: lote.fechaVencimiento instanceof Date 
-        ? lote.fechaVencimiento.toISOString().split('T')[0] 
-        : lote.fechaVencimiento
+      fechaVencimiento: fechaFormateada
     };
     
-    console.log('Enviando lote al servidor:', lotePayload);
+    console.log('🚀 SERVICIO - Fecha formateada final:', fechaFormateada);
+    console.log('🚀 SERVICIO - Payload completo:', lotePayload);
+    
     // Usamos { responseType: 'text' } para manejar respuestas en texto plano
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, lotePayload, { 
       responseType: 'text' 
