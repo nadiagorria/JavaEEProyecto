@@ -782,12 +782,18 @@ public class MapsDtosEntityService {
             if (comboExistente.isPresent()) {
                 return comboExistente.get();
             }
-        }
-
-
-        Combo combo = new Combo();
+        }        Combo combo = new Combo();
+        
+        // Logs para debug de fechas
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio DTO: " + comboDto.getInicio());
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin DTO: " + comboDto.getFin());
+        
         combo.setInicio(comboDto.getInicio());
         combo.setFin(comboDto.getFin());
+        
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio Entity después de asignar: " + combo.getInicio());
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin Entity después de asignar: " + combo.getFin());
+        
         combo.setDescuento(comboDto.getDescuento());
         combo.setActivo(comboDto.getActivo());
         combo.setDescripcion(comboDto.getDescripcion());

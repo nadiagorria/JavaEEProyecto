@@ -2,7 +2,7 @@ package ti.proyectojava.dtos;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class OfertaDto {
@@ -11,6 +11,6 @@ public class OfertaDto {
     private String descripcion;
     private Float descuento;
     private Boolean activo;
-    private Date inicio;
-    private Date fin;
+    private LocalDate inicio;
+    private LocalDate fin;
 }

@@ -21,6 +21,7 @@ import ti.proyectojava.services.CreditoService;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "api/v1/venta")
@@ -79,7 +80,7 @@ public class VentaController {    private final VentaService ventaService;
 
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
-        ventaDto.setUsuario(usuario.getNombre());        // Validación para pagos FIADO: verificar límites de crédito
+        ventaDto.setUsuario(usuario.getNombre());// Validación para pagos FIADO: verificar límites de crédito
         if (ventaDto.getFormaPago() == FormaDePago.FIADO) {
             if (ventaDto.getCredito() == null || ventaDto.getCredito().getId() == null) {
                 return ResponseEntity

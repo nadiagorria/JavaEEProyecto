@@ -62,10 +62,13 @@ export class ProductoService {
   listarProductos(): Observable<{productos: ProductoDto[]}> {
     return this.http.get<{productos: ProductoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listar`);
   }
-
   buscarPorCodigoBarras(codigoBarras: string): Observable<ProductoDto | null> {
     return this.http.get<ProductoDto>(`${this.urlService.baseUrl}${this.endpoint}/buscar/codigo/${codigoBarras}`);
   }  
+  
+  buscarTodosPorCodigoBarras(codigoBarras: string): Observable<ProductoDto[]> {
+    return this.http.get<ProductoDto[]>(`${this.urlService.baseUrl}${this.endpoint}/buscar/codigo/todos/${codigoBarras}`);
+  }
   
   buscarTopNProductos(n: number): Observable<{productos: ProductoDto[]}> {
     return this.http.get<{productos: ProductoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listarCategorias?n=${n}`);

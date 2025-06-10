@@ -59,14 +59,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   // Modales
   mostrarModalPromocion: boolean = false;
   mostrarModalCombo: boolean = false;
-  mostrarModalDescuento: boolean = false;
-  // Formularios
+  mostrarModalDescuento: boolean = false;  // Formularios
   nuevaPromocion: Partial<PromocionDto> = {
     descripcion: '',
     descuento: 0,
     activo: true,
-    inicio: new Date(),
-    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    inicio: this.getTodayISOString(),
+    fin: this.getTomorrowISOString(),
     producto: { id: 0, nombre: '' }
   };
 
@@ -74,8 +73,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     descripcion: '',
     descuento: 0,
     activo: true,
-    inicio: new Date(),
-    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    inicio: this.getTodayISOString(),
+    fin: this.getTomorrowISOString(),
     productos: []
   };
 
@@ -83,11 +82,10 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     descripcion: '',
     descuento: 0,
     activo: true,
-    inicio: new Date(),
-    fin: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    inicio: this.getTodayISOString(),
+    fin: this.getTomorrowISOString(),
     producto: { id: 0, nombre: '' }
-  };
-  // Variables para los formularios
+  };// Variables para los formularios
   productoSeleccionadoPromocion: number = 0;
   productoSeleccionadoDescuento: number = 0;
   productosSeleccionadosCombo: number[] = [];
@@ -98,6 +96,21 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     private confirmationService: ConfirmationService,
     private router: Router
   ) { }
+  // Helper functions for date handling
+  private getTodayISOString(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+  private getTomorrowISOString(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1); // Agregar un día
+    return tomorrow.toISOString().split('T')[0];
+  }
+
+  private formatDateForDisplay(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES'); // Returns dd/MM/yyyy format
+  }
 
   ngOnInit() {
     this.cargarDatos();
@@ -109,28 +122,27 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       this.initializeDates();
     }, 100);
   }
-
   private initializeDates() {
-    // Ensure all date objects are properly initialized
-    const now = new Date();
-    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    // Ensure all date strings are properly initialized
+    const today = this.getTodayISOString();
+    const tomorrow = this.getTomorrowISOString();
     
     if (!this.nuevaPromocion.inicio) {
-      this.nuevaPromocion.inicio = now;
+      this.nuevaPromocion.inicio = today;
     }
     if (!this.nuevaPromocion.fin) {
       this.nuevaPromocion.fin = tomorrow;
     }
     
     if (!this.nuevoCombo.inicio) {
-      this.nuevoCombo.inicio = now;
+      this.nuevoCombo.inicio = today;
     }
     if (!this.nuevoCombo.fin) {
       this.nuevoCombo.fin = tomorrow;
     }
     
     if (!this.nuevoDescuento.inicio) {
-      this.nuevoDescuento.inicio = now;
+      this.nuevoDescuento.inicio = today;
     }
     if (!this.nuevoDescuento.fin) {
       this.nuevoDescuento.fin = tomorrow;
@@ -208,15 +220,12 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     });
   }  // ==================== PROMOCIONES ====================
   abrirModalPromocion() {
-    const now = new Date();
-    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    
     this.nuevaPromocion = {
       descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: now,
-      fin: tomorrow,
+      inicio: this.getTodayISOString(),
+      fin: this.getTomorrowISOString(),
       producto: { id: 0, nombre: '' }
     };
     this.productoSeleccionadoPromocion = 0;
@@ -233,9 +242,16 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         id: productoSeleccionado.id, 
         nombre: productoSeleccionado.nombre || '' 
       };
-    }
-
-    const promocion = this.nuevaPromocion as PromocionDto;
+    }    // Crear la promoción directamente (ya no necesitamos formatear fechas)
+    const promocion: PromocionDto = {
+      id: 0, // Se asignará por el backend
+      descripcion: this.nuevaPromocion.descripcion || '',
+      descuento: this.nuevaPromocion.descuento || 0,
+      activo: this.nuevaPromocion.activo || true,
+      inicio: this.nuevaPromocion.inicio || this.getTodayISOString(),
+      fin: this.nuevaPromocion.fin || this.getTomorrowISOString(),
+      producto: this.nuevaPromocion.producto || { id: 0, nombre: '' }
+    };
     
     // Debug: verificar qué datos se están enviando
     console.log('Datos de promoción a enviar:', promocion);
@@ -294,15 +310,12 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }  // ==================== COMBOS ====================
   abrirModalCombo() {
-    const now = new Date();
-    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    
     this.nuevoCombo = {
       descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: now,
-      fin: tomorrow,
+      inicio: this.getTodayISOString(),
+      fin: this.getTomorrowISOString(),
       productos: []
     };
     this.productosSeleccionadosCombo = [];
@@ -313,15 +326,21 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     }
 
     // Sincronizar los productos antes de guardar
-    this.nuevoCombo.productos = this.productosSeleccionadosCombo.map((id: number) => {
+    const productosCombo = this.productosSeleccionadosCombo.map((id: number) => {
       const producto = this.productos.find((p: ProductoDto) => p.id === id);
       return { 
         id: producto?.id || 0, 
         nombre: producto?.nombre || '' 
-      };
-    }).filter((p: { id: number; nombre: string }) => p.id !== 0);
-
-    const combo = this.nuevoCombo as ComboDto;
+      };    }).filter((p: { id: number; nombre: string }) => p.id !== 0);    // Crear el combo directamente (ya no necesitamos formatear fechas)
+    const combo: ComboDto = {
+      id: 0, // Se asignará por el backend
+      descripcion: this.nuevoCombo.descripcion || '',
+      descuento: this.nuevoCombo.descuento || 0,
+      activo: this.nuevoCombo.activo || true,
+      inicio: this.nuevoCombo.inicio || this.getTodayISOString(),
+      fin: this.nuevoCombo.fin || this.getTomorrowISOString(),
+      productos: productosCombo
+    };
     
     // Debug: verificar qué datos se están enviando
     console.log('Datos de combo a enviar:', combo);
@@ -380,15 +399,12 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }  // ==================== DESCUENTOS ====================
   abrirModalDescuento() {
-    const now = new Date();
-    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    
     this.nuevoDescuento = {
       descripcion: '',
       descuento: 0,
       activo: true,
-      inicio: now,
-      fin: tomorrow,
+      inicio: this.getTodayISOString(),
+      fin: this.getTomorrowISOString(),
       producto: { id: 0, nombre: '' }
     };
     this.productoSeleccionadoDescuento = 0;
@@ -405,9 +421,16 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         id: productoSeleccionado.id, 
         nombre: productoSeleccionado.nombre || '' 
       };
-    }
-
-    const descuento = this.nuevoDescuento as DescuentoDto;
+    }    // Crear el descuento directamente (ya no necesitamos formatear fechas)
+    const descuento: DescuentoDto = {
+      id: 0, // Se asignará por el backend
+      descripcion: this.nuevoDescuento.descripcion || '',
+      descuento: this.nuevoDescuento.descuento || 0,
+      activo: this.nuevoDescuento.activo || true,
+      inicio: this.nuevoDescuento.inicio || this.getTodayISOString(),
+      fin: this.nuevoDescuento.fin || this.getTomorrowISOString(),
+      producto: this.nuevoDescuento.producto || { id: 0, nombre: '' }
+    };
     
     // Debug: verificar qué datos se están enviando
     console.log('Datos de descuento a enviar:', descuento);
@@ -488,9 +511,10 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         nombre: producto?.nombre || '' 
       };
     }).filter((p: { id: number; nombre: string }) => p.id !== 0);  }
-
-  formatearFecha(fecha: Date): string {
-    return new Date(fecha).toLocaleDateString('es-ES');  }
+  
+  formatearFecha(fecha: string): string {
+    return this.formatDateForDisplay(fecha);
+  }
   
   formatearProductos(productos: Pick<ProductoDto, 'id' | 'nombre'>[]): string {
     return productos.map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre).join(', ');

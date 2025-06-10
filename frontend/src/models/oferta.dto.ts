@@ -4,6 +4,6 @@ export interface OfertaDto {
     descripcion: string;
     descuento: number;
     activo: boolean;
-    inicio: Date;
-    fin: Date;
+    inicio: string; // ISO date format: YYYY-MM-DD
+    fin: string; // ISO date format: YYYY-MM-DD
 }

@@ -15,9 +15,11 @@ import ti.proyectojava.dtos.CantidadDto;
 import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,8 +51,17 @@ public class VentaService {
             throw new RuntimeException("La venta ha sido eliminada y no está disponible");
         }
         
-        return mapsDtosEntityService.mapToDtoVentaPlano(venta);
-    }public Long crearVenta(VentaDto ventaDto) {
+        return mapsDtosEntityService.mapToDtoVentaPlano(venta);    
+    }
+    
+    public Long crearVenta(VentaDto ventaDto) {
+        System.out.println("VentaService - estableciendo fecha y hora actual para la venta");
+        
+        // Siempre establecer la fecha y hora actual al crear una venta
+        LocalDateTime ahora = LocalDateTime.now();
+        ventaDto.setFechaVenta(ahora);
+        System.out.println("VentaService - fechaVenta asignada: " + ventaDto.getFechaVenta());
+        
         ventaDto.setFinalizada(true);
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
         

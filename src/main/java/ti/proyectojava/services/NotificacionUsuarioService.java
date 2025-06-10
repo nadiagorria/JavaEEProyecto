@@ -10,7 +10,6 @@ import ti.proyectojava.dtos.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -116,8 +115,7 @@ public class NotificacionUsuarioService {
                     lote.getFechaVencimiento() != null &&
                     lote.getStock() != null && lote.getStock() > 0) {
 
-                    LocalDate fechaVencimiento = lote.getFechaVencimiento().toInstant()
-                            .atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate fechaVencimiento = lote.getFechaVencimiento();
                     
                     long diasFaltantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaVencimiento);
                     

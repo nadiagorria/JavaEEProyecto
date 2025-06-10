@@ -5,10 +5,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
 public class ProjectoJavaEeApplication {
+
+	@PostConstruct
+	void started() {
+		// Configurar la zona horaria por defecto del sistema
+		TimeZone.setDefault(TimeZone.getTimeZone("America/Montevideo"));
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectoJavaEeApplication.class, args);

@@ -157,45 +157,89 @@ export class VerventaComponent implements OnInit {
       this.esOfertaVigenteEnFecha(combo)
     );
   }
-
   /**
    * Verifica si un producto tenía ofertas aplicadas en la fecha de la venta
+   * Se basa únicamente en si las ofertas estaban vigentes y se cumplían los criterios mínimos
    */
   tieneOfertasVigentes(producto: any): boolean {
-    const descuentos = this.getDescuentosVigentes(producto);
-    const promociones = this.getPromocionesVigentes(producto);
-    const combos = this.getCombosVigentes(producto);
+    const itemEnVenta = this.cantidades.find(cantidad => cantidad.producto.id === producto.id);
     
-    return descuentos.length > 0 || promociones.length > 0 || combos.length > 0;
-  }
-
-  /**
+    if (!itemEnVenta) {
+      return false;
+    }
+    
+    // Verificar descuentos vigentes - si había descuentos vigentes, asumimos que se aplicaron
+    const descuentos = this.getDescuentosVigentes(producto);
+    if (descuentos.length > 0) {
+      return true;
+    }
+    
+    // Verificar promociones vigentes - solo si se cumple la cantidad mínima requerida
+    const promociones = this.getPromocionesVigentes(producto);
+    for (const promocion of promociones) {
+      if (itemEnVenta.cantidad >= promocion.descuento) {
+        return true;
+      }
+    }
+    
+    // Verificar combos vigentes - si había combos vigentes, asumimos que se aplicaron
+    const combos = this.getCombosVigentes(producto);
+    if (combos.length > 0) {
+      return true;
+    }
+    
+    return false;
+  }  /**
    * Obtiene el texto descriptivo de las ofertas aplicadas
    */
   getTextoOfertas(producto: any): string {
+    if (!this.tieneOfertasVigentes(producto)) {
+      return '';
+    }
+    
+    const itemEnVenta = this.cantidades.find(cantidad => cantidad.producto.id === producto.id);
+    if (!itemEnVenta) return '';
+    
     const ofertas: string[] = [];
     
+    // Mostrar descuentos vigentes
     const descuentos = this.getDescuentosVigentes(producto);
-    const promociones = this.getPromocionesVigentes(producto);
-    const combos = this.getCombosVigentes(producto);
-    
     descuentos.forEach(desc => ofertas.push(`Descuento ${desc.descuento}%`));
-    promociones.forEach(promo => ofertas.push(`Promoción ${promo.descripcion}`));
+    
+    // Mostrar promociones vigentes solo si se cumple la cantidad mínima
+    const promociones = this.getPromocionesVigentes(producto);
+    promociones.forEach(promo => {
+      if (itemEnVenta.cantidad >= promo.descuento) {
+        ofertas.push(`Promoción ${promo.descripcion}`);
+      }
+    });
+    
+    // Mostrar combos vigentes
+    const combos = this.getCombosVigentes(producto);
     combos.forEach(combo => ofertas.push(`Combo: ${combo.descripcion} (${combo.descuento}%)`));
     
     return ofertas.join(', ');
-  }
-  /**
+  }  /**
    * Obtiene la severidad del tag basado en el tipo de oferta
    */
   getSeveridadOferta(producto: any): string {
+    if (!this.tieneOfertasVigentes(producto)) {
+      return 'secondary';
+    }
+    
+    const itemEnVenta = this.cantidades.find(cantidad => cantidad.producto.id === producto.id);
+    if (!itemEnVenta) return 'secondary';
+    
     const descuentos = this.getDescuentosVigentes(producto);
-    const promociones = this.getPromocionesVigentes(producto);
     const combos = this.getCombosVigentes(producto);
     
-    if (combos.length > 0) return 'success';      // Verde para combos
-    if (promociones.length > 0) return 'info';    // Azul para promociones
-    if (descuentos.length > 0) return 'warning';  // Amarillo para descuentos
+    // Verificar promociones que cumplan con la cantidad mínima
+    const promociones = this.getPromocionesVigentes(producto);
+    const promocionesAplicables = promociones.filter(promo => itemEnVenta.cantidad >= promo.descuento);
+    
+    if (combos.length > 0) return 'success';                // Verde para combos
+    if (promocionesAplicables.length > 0) return 'info';    // Azul para promociones
+    if (descuentos.length > 0) return 'warning';            // Amarillo para descuentos
     
     return 'secondary';
   }

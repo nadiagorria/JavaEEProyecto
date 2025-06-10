@@ -3,6 +3,8 @@ package ti.proyectojava.business.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class Venta {
     private Long id;
 
     @Column(name = "VENTA_FECHA")
-    private Date fechaVenta;
+    private LocalDateTime fechaVenta;
 
     @Column(name = "VENTA_TOTAL")
     private float total;

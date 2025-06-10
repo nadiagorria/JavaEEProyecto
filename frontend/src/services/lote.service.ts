@@ -8,45 +8,15 @@ import { UrlService } from './url.service';
   providedIn: 'root'
 })
 export class LoteService {
-  private endpoint: string = '/lote';
-
-  constructor(
+  private endpoint: string = '/lote';  constructor(
     private http: HttpClient,
     private urlService: UrlService
   ) {}  crearLote(lote: LoteDto): Observable<any> {
+    // Con LocalDate en el backend, ya no necesitamos formatear nada
+    // El backend automáticamente parsea strings ISO (YYYY-MM-DD)
+    console.log('🚀 SERVICIO - Payload completo:', lote);
     
-    let fechaFormateada: string;
-    
-    if (lote.fechaVencimiento instanceof Date) {
-      // Usamos getFullYear, getMonth, getDate para evitar problemas de zona horaria
-      const fecha = lote.fechaVencimiento;
-      
-      const year = fecha.getFullYear();
-      const month = String(fecha.getMonth() + 1).padStart(2, '0');
-      const day = String(fecha.getDate()).padStart(2, '0');
-      fechaFormateada = `${year}-${month}-${day}`;
-      
-    } else if (typeof lote.fechaVencimiento === 'string') {
-      // Si ya es string, asumimos que está en formato YYYY-MM-DD
-      fechaFormateada = lote.fechaVencimiento;
-    } else {
-      const hoy = new Date();
-      const year = hoy.getFullYear();
-      const month = String(hoy.getMonth() + 1).padStart(2, '0');
-      const day = String(hoy.getDate()).padStart(2, '0');
-      fechaFormateada = `${year}-${month}-${day}`;
-    }
-    
-    const lotePayload = {
-      ...lote,
-      fechaVencimiento: fechaFormateada
-    };
-    
-    console.log('🚀 SERVICIO - Fecha formateada final:', fechaFormateada);
-    console.log('🚀 SERVICIO - Payload completo:', lotePayload);
-    
-    // Usamos { responseType: 'text' } para manejar respuestas en texto plano
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, lotePayload, { 
+    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, lote, { 
       responseType: 'text' 
     });
   }

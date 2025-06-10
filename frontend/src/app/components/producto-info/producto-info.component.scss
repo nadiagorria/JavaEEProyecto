@@ -410,7 +410,7 @@
   
   // Estilos específicos para el diálogo
   .producto-dialog {
-    .p-dialog-content {
+    .p_dialog-content {
       max-height: 80vh !important;
       overflow: auto !important; // Permite scroll en el contenido del diálogo
     }
@@ -443,4 +443,88 @@
 ::ng-deep .producto-dialog .p-dialog-content {
   max-height: 80vh !important;
   overflow: auto !important;
+}
+
+// Date input styling to match ofertas component with gray theme
+.form-group {
+  margin-bottom: 20px;
+  
+  input[type="date"] {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-family: "Source Sans 3", sans-serif;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    
+    &:focus {
+      color: #495057;
+      background-color: #fff;
+      border-color: #6c757d;
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
+    }
+    
+    &:hover {
+      border-color: #6c757d;
+    }
+    
+    // Style the calendar icon
+    &::-webkit-calendar-picker-indicator {
+      color: #7f8c8d;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%237f8c8d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
+      background-size: 18px;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding: 4px;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+    
+    // Style the date text
+    &::-webkit-datetime-edit {
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    &::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
+    }
+    
+    // When focused, highlight the border and icon
+    &:focus {
+      &::-webkit-calendar-picker-indicator {
+        color: #6c757d;
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236c757d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
+      }
+    }
+    
+    // Style for Firefox
+    &::-moz-calendar-picker-indicator {
+      background-color: #7f8c8d;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+  }
+  
+  label {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 14px;
+  }
 }

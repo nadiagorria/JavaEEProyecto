@@ -87,26 +87,33 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     categoriaId: null,
     proveedorId: null
   };
-  categorias: CategoriaDto[] = [];
-  proveedores: ProveedorDto[] = [];
+  categorias: CategoriaDto[] = [];  proveedores: ProveedorDto[] = [];
+  
+  // Helper function for getting today's date in ISO format
+  private getTodayISOString(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   // Existing lote modal properties
   mostrarModalAgregarLote: boolean = false;
   nuevoLote: {
     numeLote: string;
     stock: number;
-    fechaVencimiento: string | Date | undefined;
+    fechaVencimiento: string | undefined;
     precioCompra: number;
   } = {
     numeLote: '',
     stock: 0,
-    fechaVencimiento: undefined,
+    fechaVencimiento: undefined, // Will be set in ngOnInit
     precioCompra: 0
   };
-  minFechaVencimiento: string = '';
-  ngOnInit() {
+  minFechaVencimiento: string = '';ngOnInit() {
     // Inicializar la fecha mínima de vencimiento
     const hoy = new Date();
     this.minFechaVencimiento = hoy.toISOString().split('T')[0];
+    
+    // Inicializar el formulario de lote con fecha por defecto
+    this.nuevoLote.fechaVencimiento = this.getTodayISOString();
     
     const id = Number(this.route.snapshot.paramMap.get('id'));
     
@@ -353,31 +360,13 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     
     if (!this.validarFormularioLote()) {
       return;
-    }    
-
-    let fechaVencimiento: Date;
-     
-    if (this.nuevoLote.fechaVencimiento) {
-      if (typeof this.nuevoLote.fechaVencimiento === 'string') {
-        const fechaString = this.nuevoLote.fechaVencimiento as string;
-        
-        const [year, month, day] = fechaString.split('-').map(Number);
-        
-        fechaVencimiento = new Date(year, month - 1, day); // month es 0-indexed
-        } else {
-        fechaVencimiento = this.nuevoLote.fechaVencimiento as Date;
-        console.log('🔍 DEBUG - Fecha ya era Date:', fechaVencimiento);
-      }
-    } else {
-      // Si no hay fecha, usar la fecha actual (cambiar a que pueda ser null)
-      fechaVencimiento = new Date();
     }
 
-    // Crear el objeto lote con datos validados
+    // Crear el objeto lote con datos validados - ahora trabajamos directamente con strings ISO
     const lote: LoteDto = {
       numeLote: this.nuevoLote.numeLote || '',
       stock: this.nuevoLote.stock || 0,
-      fechaVencimiento: fechaVencimiento,
+      fechaVencimiento: this.nuevoLote.fechaVencimiento || this.getTodayISOString(),
       precioCompra: this.nuevoLote.precioCompra || 0,
       id: null,
       activo: true,
@@ -428,13 +417,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-  private resetearFormularioLote(): void {
+  }  private resetearFormularioLote(): void {
     // Resetear los valores del formulario
     this.nuevoLote = {
       numeLote: '',
       stock: 0,
-      fechaVencimiento: undefined,
+      fechaVencimiento: this.getTodayISOString(),
       precioCompra: 0
     };
   }

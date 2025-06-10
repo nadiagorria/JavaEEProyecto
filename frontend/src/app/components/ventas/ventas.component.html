@@ -29,7 +29,10 @@
           </ng-template>
           <ng-template pTemplate="body" let-venta>
             <tr>
-              <td>{{venta.fechaVenta | date:'medium'}}</td>
+              <td>
+                <!-- Usando el pipe date con un valor string ISO para formatear como fecha -->
+                {{venta.fechaVenta ? (venta.fechaVenta | date:'medium') : 'Sin fecha'}}
+              </td>
               <td>{{venta.total | currency}}</td>
               <td>{{venta.formaPago}}</td>
               <td>{{venta.usuario}}</td>

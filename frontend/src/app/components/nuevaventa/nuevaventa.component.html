@@ -261,5 +261,14 @@
 
 </div>
 
+<!-- Diálogo de selección de productos duplicados -->
+<app-seleccion-producto-dialog
+  [display]="displaySeleccionProducto"
+  [productos]="productosDuplicados"
+  [codigoBarras]="codigoBarrasEscaneado"
+  (productoSeleccionado)="onProductoSeleccionado($event)"
+  (dialogCerrado)="onDialogoSeleccionCerrado()">
+</app-seleccion-producto-dialog>
+
 <!-- ConfirmDialog para el ConfirmationService -->
 <p-confirmDialog></p-confirmDialog>

@@ -9,6 +9,7 @@
 
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-field">
+
         <p-iftalabel>
           <input 
             pInputText 
@@ -23,6 +24,7 @@
             Nombre de Usuario
           </label>
         </p-iftalabel>
+        
         <div class="field-error" *ngIf="formGroup.get('username')?.invalid && formGroup.get('username')?.touched">
           <small *ngIf="formGroup.get('username')?.errors?.['required']">
             El nombre de usuario es requerido

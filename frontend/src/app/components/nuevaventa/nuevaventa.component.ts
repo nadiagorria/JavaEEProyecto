@@ -21,6 +21,7 @@ import { CreditoService } from 'src/services/credito.service';
 import { OfertaService, ResponseListadoCombos } from 'src/services/oferta.service';
 import { NotificacionService } from 'src/services/notificacion.service';
 import { HeaderComponent } from '../header/header.component';
+import { SeleccionProductoDialogComponent } from '../seleccion-producto-dialog/seleccion-producto-dialog.component';
 import { forkJoin, Observable } from 'rxjs';
 import { Router, NavigationStart } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -52,7 +53,8 @@ interface ItemVenta extends CantidadDto {
     TooltipModule,
     CommonModule,
     HeaderComponent,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    SeleccionProductoDialogComponent
   ],
   templateUrl: './nuevaventa.component.html',
   styleUrl: './nuevaventa.component.scss',
@@ -76,12 +78,16 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   codigoBarrasBuffer: string = '';
   ultimoTiempo: number = 0;
   private readonly TIEMPO_LIMITE_CARACTER = 50; // ms entre caracteres del escáner
-  
-  // Ofertas disponibles
+    // Ofertas disponibles
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
   displayDialog: boolean = false;
+  
+  // Variables para diálogo de selección de productos duplicados
+  displaySeleccionProducto: boolean = false;
+  productosDuplicados: ProductoDto[] = [];
+  codigoBarrasEscaneado: string = '';
   
   creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'> | null = null;
   creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
@@ -513,9 +519,9 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           stockTotal: producto.stockTotal
         },
         venta: {
-          id: null,
-          fechaVenta: new Date()
-        }
+            id: null,
+            fechaVenta: '' 
+          }
       };
       this.cantidades.push(nuevoItem);
       this.totalRecords++;
@@ -619,16 +625,17 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         });
         return;
       }
-    }
-
+    }    
+    // Ya no es necesario crear o enviar la fecha, el backend se encargará de esto
+    
     const venta: Partial<VentaDto> = {
-      fechaVenta: new Date(),
+      // fechaVenta no se incluye, será establecida por el backend
       total: this.calcularTotal(),
       formaPago: this.formaPagoSeleccionada,
       credito: this.formaPagoSeleccionada === 'FIADO' ? {
         id: this.creditoSeleccionado!.id,
         precioTotal: this.calcularTotal()
-      } : undefined,      cantidades: this.cantidades.map(c => ({
+      } : undefined,cantidades: this.cantidades.map(c => ({
         id: null,
         cantidad: c.cantidad,
         precioActual: this.getPrecioFinal(c) / c.cantidad, // Precio unitario con descuento
@@ -777,42 +784,32 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       });
       this.codigoBarrasBuffer = '';
     }
-  }
-  private procesarCodigoBarras(codigoBarras: string) {
-    this.productoService.buscarPorCodigoBarras(codigoBarras).subscribe({
-      next: (producto) => {
-        if (producto) {
-          // Verificar stock antes de agregar
-          if (!this.tieneStock(producto)) {
+  }  private procesarCodigoBarras(codigoBarras: string) {
+    // Primero buscar todos los productos con ese código de barras
+    this.productoService.buscarTodosPorCodigoBarras(codigoBarras).subscribe({
+      next: (productos) => {
+        if (productos && productos.length > 0) {
+          // Filtrar productos con stock
+          const productosConStock = productos.filter(p => this.tieneStock(p));
+          
+          if (productosConStock.length === 0) {
             this.messageService.add({
               severity: 'warn',
-              summary: '⚠️ Stock Insuficiente',
-              detail: `${producto.nombre} no tiene stock disponible (Stock: ${producto.stockTotal})`,
-              life: 3000
+              summary: '⚠️ Sin Stock',
+              detail: `No hay productos disponibles con stock para el código: ${codigoBarras}`,
+              life: 4000
             });
             return;
           }
           
-          // Verificar si ya existe en la lista y si tiene stock suficiente
-          const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
-          if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
-            this.messageService.add({
-              severity: 'warn',
-              summary: '⚠️ Stock Insuficiente',
-              detail: `${producto.nombre} alcanzó el stock máximo disponible (${producto.stockTotal})`,
-              life: 3000
-            });
-            return;
+          if (productosConStock.length === 1) {
+            // Solo un producto con stock, agregar directamente
+            const producto = productosConStock[0];
+            this.agregarProductoDirectamente(producto);
+          } else {
+            // Múltiples productos con stock, mostrar diálogo de selección
+            this.mostrarDialogoSeleccion(productos, codigoBarras);
           }
-          
-          this.agregarALista({ value: producto });
-          
-          this.messageService.add({
-            severity: 'success',
-            summary: '✅ Producto Agregado',
-            detail: `${producto.nombre} agregado a la venta`,
-            life: 2000
-          });
         } else {
           this.messageService.add({
             severity: 'warn',
@@ -823,15 +820,16 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         }
       },
       error: (error) => {
-        console.error('Error al buscar producto:', error);
+        console.error('Error al buscar productos:', error);
         this.messageService.add({
           severity: 'error',
           summary: '❌ Error de Conexión',
-          detail: 'Error al buscar el producto escaneado',
+          detail: 'Error al buscar productos con el código escaneado',
           life: 4000
         });
       }
-    });  }
+    });
+  }
 
   // ==================== STOCK VALIDATION ====================
 
@@ -949,10 +947,70 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
             summary: '⚠️ Stock Máximo Alcanzado',
             detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
             life: 3000
-          });
-        }, 50);
+          });        }, 50);
       }
     }
+  }
+
+  // ==================== MÉTODOS PARA MÚLTIPLES PRODUCTOS ====================
+
+  /**
+   * Muestra el diálogo de selección cuando hay múltiples productos con el mismo código
+   */
+  private mostrarDialogoSeleccion(productos: ProductoDto[], codigoBarras: string) {
+    this.productosDuplicados = productos;
+    this.codigoBarrasEscaneado = codigoBarras;
+    this.displaySeleccionProducto = true;
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: '🔍 Múltiples Productos',
+      detail: `Se encontraron ${productos.length} productos con el código ${codigoBarras}. Seleccione el correcto.`,
+      life: 4000
+    });
+  }
+
+  /**
+   * Agrega un producto directamente cuando solo hay uno disponible
+   */
+  private agregarProductoDirectamente(producto: ProductoDto) {
+    // Verificar si ya existe en la lista y si tiene stock suficiente
+    const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
+    if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: '⚠️ Stock Insuficiente',
+        detail: `${producto.nombre} alcanzó el stock máximo disponible (${producto.stockTotal})`,
+        life: 3000
+      });
+      return;
+    }
+    
+    this.agregarALista({ value: producto });
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: '✅ Producto Agregado',
+      detail: `${producto.nombre} agregado a la venta`,
+      life: 2000
+    });
+  }
+
+  /**
+   * Maneja la selección de un producto desde el diálogo
+   */
+  onProductoSeleccionado(producto: ProductoDto) {
+    this.displaySeleccionProducto = false;
+    this.agregarProductoDirectamente(producto);
+  }
+
+  /**
+   * Maneja el cierre del diálogo de selección
+   */
+  onDialogoSeleccionCerrado() {
+    this.displaySeleccionProducto = false;
+    this.productosDuplicados = [];
+    this.codigoBarrasEscaneado = '';
   }
 
 }

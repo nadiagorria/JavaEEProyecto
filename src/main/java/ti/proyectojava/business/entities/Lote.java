@@ -3,6 +3,7 @@ package ti.proyectojava.business.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -21,7 +22,7 @@ public class Lote {
     private Integer stock;
 
     @Column(name = "FECHAVENCIMIENTO")
-    private Date fechaVencimiento;
+    private LocalDate fechaVencimiento;
 
     @Column(name = "PRECIOCOMPRA")
     private Float precioCompra;
