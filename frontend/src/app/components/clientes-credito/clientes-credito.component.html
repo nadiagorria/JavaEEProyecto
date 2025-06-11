@@ -28,14 +28,6 @@
         <label for="max" class="font-semibold w-24 modal">Max</label>
         <input pInputText class="flex-auto modal" [(ngModel)]="maximo" autocomplete="off" type="number"/>
       </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="deuda" class="font-semibold w-24 modal">Deuda</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="deuda" autocomplete="off" type="number" />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="pago" class="font-semibold w-24 modal">Pago</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="pago" autocomplete="off" type="number"/>
-      </div>
       <div class="flex justify-end gap-2">
         <p-button label="Confirmar" severity="secondary" (click)="saveCliente()" />
       </div>

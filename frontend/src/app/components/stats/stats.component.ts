@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -13,7 +13,8 @@ import { UsuarioService } from 'src/services/usuario.service';
   selector: 'app-stats',
   imports: [HeaderComponent, FooterComponent, CommonModule],
   templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.scss']
+  styleUrls: ['./stats.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class StatsComponent implements OnInit {
 

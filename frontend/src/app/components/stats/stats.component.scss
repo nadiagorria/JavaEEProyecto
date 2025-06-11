@@ -1,96 +1,285 @@
+:root {
+  --primary-bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --light-card-bg: #f9f9f9;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --border-primary: #e0e0e0;
+  --border-radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-bg: #1a1a1a;
+    --card-bg: #2a2a2a;
+    --light-card-bg: #353535;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --border-primary: #444444;
+  }
+}
+
+// Forzar aplicación de variables CSS en dark mode
+@media (prefers-color-scheme: dark) {
+  // Estilos específicos para elementos que puedan no estar heredando correctamente
+  app-stats {
+    color-scheme: dark;
+  }
+  
+  .stats-container {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  .miniCartel, .cartel {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-primary) !important;
+  }
+  
+  .blancoMiniCartel {
+    background-color: var(--light-card-bg) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  .textoMiniCartel, .titulo-ingresos {
+    color: var(--text-secondary) !important;
+  }
+  
+  .numero1MiniCartel, .monto-total, .logoCartel, .icon-accent {
+    color: var(--text-primary) !important;
+  }
+  
+  .logoMiniCartel {
+    color: var(--text-secondary) !important;
+  }
+  
+  .producto-item, .categoria-item {
+    color: var(--text-secondary) !important;
+    border-bottom-color: var(--border-primary) !important;
+    
+    &:hover {
+      color: var(--text-primary) !important;
+    }
+  }
+}
+
 html, body {
   overflow-x: hidden;
+  background-color: var(--primary-bg);
 }
 
 main {
   font-family: "Montserrat", sans-serif;
 }
 
+.stats-container {
+  font-family: "Montserrat", sans-serif;
+  background: var(--primary-bg);
+  min-height: 100vh;
+  padding: 2rem 0;
+  position: relative;
+}
+
 .article-1 {
-  height: 150px;
-  padding-left: 4vw;
-  padding-right: 4.3vw;
-  margin-top: 45px;
-  margin-bottom: 30px;
+  height: auto;
+  min-height: 180px;
+  padding: 0 4vw;
+  margin: 3rem 0;
   gap: 2vw;
+  
+  @media (max-width: 1200px) {
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }
 
 .miniCartel {
   height: 100%;
+  min-height: 180px;
   width: 21vw;
-  padding-top: 20px;
-  padding-left: 1.7vw;
-  background: #444444;
-  border-color: #444444;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 16px 16px 16px
+  max-width: 320px;
+  padding: 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+  word-wrap: break-word;
+  
+  @media (max-width: 1200px) {
+    width: calc(50% - 1rem);
+    max-width: none;
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 160px;
+    max-width: none;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--text-primary);
+  }
 }
 
 .cabezaMiniCartel {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .textoMiniCartel {
-  font-size: 1.05rem;
-  font-weight: bold;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logoMiniCartel {
-  margin-right: 2vw;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  color: var(--text-secondary);
+}
+
+.icon-accent {
+  color: var(--text-primary) !important;
 }
 
 .papaNumeros {
-  height: 87px;
- }
-
-.numero1MiniCartel {
-  height: 20px;
-  margin-top: 35px;
-  font-size: 1.45rem;
-  margin-bottom: 6px;
+  height: auto;
+  min-height: 87px;
+  display: flex;
+  align-items: center;
 }
 
-.numero2MiniCartel {
-  height: 15px;
-  margin-right: 18vw;
-  color:  #FFFFFF;
-  opacity: 0.5;
+.numero1MiniCartel {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lista-productos, .lista-categorias {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.producto-item, .categoria-item {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    color: var(--text-primary);
+  }
+  
+  &:first-child {
+    padding-top: 0;
+  }
 }
 
 .margenBullet {
-  margin-top: 21px;
+  margin-top: 0 !important;
 }
 
 .article-2 {
-  height: 398px;
-  padding-left: 4vw;
-  padding-right: 4.8vw;
-  margin-bottom: 45px;
+  height: auto;
+  min-height: 420px;
+  padding: 0 4vw;
+  margin-bottom: 3rem;
 }
 
 .cartel {
-      width: 100%;
-      height: 398px;
-      padding-top: 40px;
-      padding-left: 6vw;
-      padding-right: 6vw;
-      background: #444444;
-      border-color: #D6D6D6;
-      border-width: 1px;
-      border-style: solid;
-      border-radius: 16px 16px 16px 16px;
+  width: 100%;
+  height: auto;
+  min-height: 450px;
+  padding: 3rem 4rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  position: relative;
+  overflow: hidden;
+  word-wrap: break-word;
+  
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+    min-height: 400px;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--text-primary);
+  }
 }
 
 .cabezaCartel {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 
 .margenTextoCartel {
-  margin-bottom: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.titulo-ingresos {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monto-total {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .textoCartel {
@@ -98,22 +287,54 @@ main {
 }
 
 .logoCartel {
-  font-size: 2.2rem;
+  font-size: 3.5rem;
+  color: var(--text-primary);
 }
 
 .restoCartel {
-  margin-top: 40px;
+  margin-top: 2rem;
   gap: 2vw;
+  
+  @media (max-width: 1200px) {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.payment-card {
+  @media (max-width: 1200px) {
+    width: calc(50% - 0.75rem);
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .blancoMiniCartel {
-    background: #FFFFFF;
-    border-color: #FFFFFF;
-    color: #232323;
+  background: var(--light-card-bg) !important;
+  border: 1px solid var(--border-primary) !important;
+  
+  .payment-icon {
+    color: var(--text-primary) !important;
+  }
+  
+  &::before {
+    background: var(--text-primary) !important;
+  }
 }
 
-ul {
-  margin-top: 0;
+// Estilos para estados vacíos simplificados
+.empty-state {
+  .producto-item, .categoria-item {
+    opacity: 0.5;
+    font-style: italic;
+  }
 }
 
 

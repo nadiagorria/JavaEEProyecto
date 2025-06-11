@@ -73,6 +73,12 @@ export class ProveedorPerfilComponent {
 
     this.proveedor.correo = this.correoEdicion;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.proveedor.correo)) {
+      alert('Por favor, ingrese un correo electrónico válido.');
+      return;
+    }
+
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
         console.log('Proveedor editado:', data);

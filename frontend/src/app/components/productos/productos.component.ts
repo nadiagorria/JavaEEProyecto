@@ -6,6 +6,8 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { ProductoService } from '../../../services/producto.service';
 import { CategoriaService } from '../../../services/categoria.service';
 import { EntidadService } from '../../../services/entidad.service';
@@ -25,8 +27,10 @@ import { HeaderComponent } from '../header/header.component';
     ButtonModule,
     DropdownModule,
     InputTextModule,
-    HeaderComponent
+    HeaderComponent,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss'
 })
@@ -38,12 +42,16 @@ export class ProductosComponent implements OnInit, OnDestroy {
       private urlService: UrlService,
       private router: Router,
       private route: ActivatedRoute,
-      private securityService: SecurityService
+      private securityService: SecurityService,
+      private messageService: MessageService
     ) { }
 
   productos: ProductoDto[] = [];
+  productosFiltrados: ProductoDto[] = []; // Array para productos filtrados
   categorias: any[] = [];
   proveedores: ProveedorDto[] = [];
+  terminoBusqueda: string = ''; // Término de búsqueda
+  categoriaFiltro: number | null = null; // Categoría seleccionada para filtrar
 
   ngOnInit() {
     this.cargarProductos();
@@ -116,7 +124,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
   cargarProductos() {
     this.productoService.listarProductos().subscribe({
       next: (response) => {
-        this.productos = response.productos;
+        // Ordenar los productos alfabéticamente por nombre
+        this.productos = response.productos.sort((a, b) => 
+          a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase())
+        );
+        this.productosFiltrados = [...this.productos]; // Inicializar productos filtrados
         // Cargar imágenes solo cuando se cargan los productos por primera vez
         this.cargarImagenesProductos();
       },
@@ -125,6 +137,61 @@ export class ProductosComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  // Método para aplicar filtros y búsqueda
+  aplicarFiltros() {
+    // Comenzar com todos os produtos
+    let resultado = [...this.productos];
+    
+    // Aplicar filtro de búsqueda si hay un término
+    if (this.terminoBusqueda.trim()) {
+      const busqueda = this.terminoBusqueda.toLowerCase().trim();
+      resultado = resultado.filter(producto => 
+        producto.nombre.toLowerCase().includes(busqueda) ||
+        producto.codigoDeBarra.toLowerCase().includes(busqueda)
+      );
+    }
+    
+    // Aplicar filtro de categoría si hay una seleccionada
+    if (this.categoriaFiltro !== null) {
+      console.log('Filtrando por categoría:', this.categoriaFiltro);
+      console.log('Tipo de categoriaFiltro:', typeof this.categoriaFiltro);
+      
+      resultado = resultado.filter(producto => {
+        if (!producto.categoria) return false;
+        
+        const categoriaIdProducto = typeof producto.categoria.id === 'string' 
+          ? parseInt(producto.categoria.id) 
+          : producto.categoria.id;
+          
+        console.log('Producto:', producto.nombre, 
+                    'CategoriaID:', producto.categoria.id,
+                    'Tipo:', typeof producto.categoria.id);
+                    
+        return categoriaIdProducto === this.categoriaFiltro;
+      });
+    }
+    
+    // Actualizar los productos filtrados
+    this.productosFiltrados = resultado;
+    console.log('Productos filtrados:', this.productosFiltrados.length);
+  }
+
+  // Método para manejar cambios en la búsqueda
+  onBusquedaChange(event: any) {
+    this.terminoBusqueda = event.target.value;
+    this.aplicarFiltros();
+  }
+
+  // Método para manejar cambios en el filtro de categoría
+  onCategoriaChange(event: any) {
+    console.log('Valor seleccionado:', event.target.value);
+    // Si el valor es una cadena vacía o null, establecer como null
+    this.categoriaFiltro = event.target.value === '' ? null : Number(event.target.value);
+    console.log('categoriaFiltro después de conversión:', this.categoriaFiltro);
+    this.aplicarFiltros();
+  }
+  // ...existing code...
 
   // Método para cargar las imágenes una sola vez y cachearlas
   cargarImagenesProductos() {
@@ -201,6 +268,23 @@ export class ProductosComponent implements OnInit, OnDestroy {
   crearCategoria() {
     if (!this.nombreCategoria) return;
 
+    // Convertir a minúsculas y eliminar espacios extra para comparación
+    const nombreNormalizado = this.nombreCategoria.trim().toLowerCase();
+
+    // Verificar si ya existe una categoría con el mismo nombre
+    const categoriaExistente = this.categorias.find(
+      cat => cat.nombre.trim().toLowerCase() === nombreNormalizado
+    );
+
+    if (categoriaExistente) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ya existe una categoría con este nombre'
+      });
+      return;
+    }
+
     const nuevaCategoria = {
       id: null,
       nombre: this.nombreCategoria,
@@ -215,29 +299,59 @@ export class ProductosComponent implements OnInit, OnDestroy {
     this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
       next: (response) => {
         console.log('Categoría creada exitosamente:', response);
-        // Primero cerramos el modal y limpiamos el formulario
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Categoría creada correctamente'
+        });
+
+        // Limpiamos el formulario y cerramos el modal
         this.nombreCategoria = '';
         this.categoriaPadre = null;
         this.mostrarModalAgregarCategoria = false;
         
-        // Luego actualizamos la lista de categorías
-        this.categoriaService.listarCategorias().subscribe({
-          next: (response) => {
-            console.log('Categorías actualizadas:', response);
-            this.categorias = response.categorias;
-          },
-          error: (error) => {
-            console.error('Error al listar categorías:', error);
-          }
-        });
+        // Actualizamos la lista de categorías
+        this.cargarCategorias();
       },
       error: (error) => {
         console.error('Error al crear categoría:', error);
-        // Cerramos el modal y limpiamos aunque haya error
-        this.nombreCategoria = '';
-        this.categoriaPadre = null;
-        this.mostrarModalAgregarCategoria = false;
-        alert('Error al crear la categoría');
+        let mensajeError = 'Error al crear la categoría';
+        
+        // Si el status es 201, significa que se creó correctamente
+        if (error.status === 201) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Categoría creada correctamente'
+          });
+          
+          // Limpiamos el formulario y cerramos el modal
+          this.nombreCategoria = '';
+          this.categoriaPadre = null;
+          this.mostrarModalAgregarCategoria = false;
+          
+          // Actualizamos la lista de categorías
+          this.cargarCategorias();
+          return;
+        }
+
+        // Manejo de diferentes tipos de errores reales
+        if (error.error) {
+          if (typeof error.error === 'string') {
+            mensajeError = error.error;
+          } else if (error.error.message) {
+            mensajeError = error.error.message;
+          }
+        } else if (error.message) {
+          mensajeError = error.message;
+        }
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: mensajeError
+        });
       }
     });
   }
