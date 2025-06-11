@@ -473,10 +473,20 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
+
   verDetalleVenta(ventaId: number | null) {
     if (ventaId) {
-      // Abrir la venta en una nueva pestaña
-      window.open(`/verventa/${ventaId}`, '_blank');
+      this.ventaService.obtenerVenta(ventaId).subscribe({
+        next: (ventaDetalle) => {
+          // Aquí podrías mostrar un diálogo con los detalles de la venta
+          console.log('Detalles de la venta:', ventaDetalle);
+          alert(`Venta ID: ${ventaId}\nTotal: $${ventaDetalle.total}\nFecha: ${new Date(ventaDetalle.fechaVenta).toLocaleString()}`);
+        },
+        error: (error) => {
+          console.error('Error al obtener detalles de la venta:', error);
+          alert('Error al obtener los detalles de la venta');
+        }
+      });
     }
   }
 }

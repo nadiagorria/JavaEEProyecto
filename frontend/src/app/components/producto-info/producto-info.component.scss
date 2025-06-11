@@ -113,6 +113,7 @@
 .fecha-proxima { color: #fd7e14; font-weight: 600; }
 .fecha-advertencia { color: #ffc107; font-weight: 500; }
 .fecha-normal { color: #28a745; }
+.fecha-sin-vencimiento { color: #6c757d; font-style: italic; font-size: 0.9rem; }
 
 // Responsive básico
 @media (max-width: 768px) {
