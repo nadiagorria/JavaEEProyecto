@@ -62,7 +62,6 @@ public class VentaService {
         ventaDto.setFechaVenta(ahora);
         System.out.println("VentaService - fechaVenta asignada: " + ventaDto.getFechaVenta());
         
-        ventaDto.setFinalizada(true);
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
         
         // Descontar stock de los productos vendidos
@@ -137,7 +136,6 @@ public class VentaService {
         }
         
         venta.setActivo(false);
-        venta.setFinalizada(true);
         
         log.info("Venta eliminada exitosamente. ID: {}. Stock devuelto para {} productos.", 
                  ventaId, venta.getCantidades().size());
@@ -147,9 +145,6 @@ public class VentaService {
         Venta venta = ventaRepository.findById(ventaId)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
 
-        if (venta.getFinalizada()) {
-            throw new RuntimeException("No se puede modificar una venta finalizada. ID:" + ventaId);
-        }
 
         Cantidad cantidad = cantidadRepository.findById(cantidadId)
                 .orElseThrow(() -> new RuntimeException("Cantidad no encontrada. ID:" + cantidadId));
@@ -204,7 +199,7 @@ public class VentaService {
             creditoRepository.save(credito);
         }
 
-        venta.setFinalizada(true); // Marcar la venta como finalizada
+        
         ventaRepository.save(venta);
 
         return "Venta finalizada correctamente. ID:" + venta.getId();

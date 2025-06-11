@@ -1,0 +1,193 @@
+CASOS DE USO NO CRUD - SISTEMA POS/KIOSCO
+================================================
+
+ACTORES DEL SISTEMA:
+==================
+- ADMIN: Administrador del sistema con permisos completos
+- CAJERO: Usuario operativo con permisos limitados
+- CLIENTE: Cliente con crédito en el sistema
+- SISTEMA: Procesos automáticos del sistema
+
+CASOS DE USO NO CRUD:
+====================
+
+1. AUTENTICACIÓN Y SEGURIDAD
+-----------------------------
+
+CU001: Autenticar Usuario
+- Actor: ADMIN, CAJERO
+- Descripción: El usuario ingresa credenciales para acceder al sistema
+- Flujo: Login con validación de contraseña encriptada, generación de token JWT
+- Validaciones: Usuario activo, contraseña correcta
+
+CU002: Recuperar Contraseña
+- Actor: ADMIN, CAJERO
+- Descripción: Usuario solicita restablecimiento de contraseña via email
+- Flujo: Solicitud por email → Envío código 6 dígitos → Validación código → Nueva contraseña
+- Validaciones: Email válido, código no expirado (15 minutos), contraseña mínimo 6 caracteres
+
+CU003: Gestionar Roles de Usuario
+- Actor: ADMIN (solo admin por defecto)
+- Descripción: Otorgar o revocar permisos de administrador
+- Restricción: Solo el usuario "admin" puede modificar roles
+
+2. GESTIÓN DE VENTAS
+--------------------
+
+CU004: Procesar Venta
+- Actor: ADMIN, CAJERO
+- Descripción: Crear una venta con productos, aplicar ofertas y procesar pago
+- Flujo: Agregar productos → Validar stock → Aplicar ofertas → Seleccionar forma pago → Confirmar
+- Validaciones: Stock suficiente, ofertas vigentes, límites de crédito
+
+CU005: Procesar Venta a Crédito (Fiado)
+- Actor: ADMIN, CAJERO
+- Descripción: Realizar venta con pago diferido usando crédito del cliente
+- Validaciones: 
+  * Monto supera mínimo requerido del crédito
+  * No excede límite máximo disponible
+  * Actualización automática del saldo del crédito
+
+CU006: Aplicar Ofertas en Venta
+- Actor: SISTEMA (automático durante venta)
+- Descripción: Aplicar descuentos, promociones y combos vigentes
+- Tipos: Descuentos por producto, promociones temporales, combos con precio especial
+
+CU007: Cancelar/Eliminar Venta
+- Actor: ADMIN
+- Descripción: Anular venta ya procesada
+- Efectos: Devolver stock a productos, reducir deuda de crédito si aplica
+
+CU008: Listar Ventas por Usuario
+- Actor: ADMIN (ve todas), CAJERO (ve solo propias)
+- Descripción: Visualizar ventas según permisos del usuario
+
+3. GESTIÓN DE STOCK E INVENTARIO
+---------------------------------
+
+CU009: Actualizar Stock por Venta
+- Actor: SISTEMA (automático al procesar venta)
+- Descripción: Descontar stock de productos vendidos
+- Validaciones: Stock suficiente antes de venta
+
+CU010: Actualizar Stock por Lote
+- Actor: ADMIN
+- Descripción: Incrementar stock y precio al crear nuevo lote
+- Efectos: Actualiza precio de compra y stock total del producto
+
+CU011: Devolver Stock por Cancelación
+- Actor: SISTEMA (automático al cancelar venta)
+- Descripción: Restaurar stock cuando se cancela venta o se elimina producto de venta
+
+4. SISTEMA DE NOTIFICACIONES
+-----------------------------
+
+CU012: Verificar Stock Mínimo
+- Actor: SISTEMA (automático post-venta y programado)
+- Descripción: Detectar productos con stock igual o menor al mínimo
+- Frecuencia: Después de cada venta y verificación programada
+- Cooldown: Una notificación cada 24 horas por producto
+
+CU013: Verificar Vencimiento de Lotes
+- Actor: SISTEMA (programado diariamente 9:30 AM)
+- Descripción: Detectar lotes próximos a vencer
+- Alertas:
+  * Primera alerta: 19-21 días antes del vencimiento
+  * Segunda alerta: 13-15 días antes del vencimiento
+- Cooldown: Una notificación cada 72 horas por lote
+
+CU014: Gestionar Notificaciones de Usuario
+- Actor: ADMIN, CAJERO
+- Descripción: Marcar notificaciones como leídas, contar no leídas
+- Funciones: Marcar individual, marcar todas, contar pendientes
+
+CU015: Ejecutar Verificación Manual de Vencimientos
+- Actor: ADMIN
+- Descripción: Forzar verificación inmediata de lotes próximos a vencer
+
+5. GESTIÓN DE CRÉDITOS
+-----------------------
+
+CU016: Procesar Pago de Crédito
+- Actor: ADMIN, CAJERO
+- Descripción: Registrar pago parcial o total de deuda del cliente
+- Efectos: Reduce saldo adeudado, actualiza dinero disponible
+
+CU017: Validar Límites de Crédito
+- Actor: SISTEMA (automático en ventas fiadas)
+- Descripción: Verificar capacidad de compra del cliente
+- Validaciones:
+  * Monto mínimo para compra fiada
+  * No exceder límite máximo de crédito
+  * Calcular dinero disponible
+
+6. BÚSQUEDA Y CONSULTAS
+-----------------------
+
+CU018: Buscar Producto por Código de Barras
+- Actor: ADMIN, CAJERO
+- Descripción: Localizar producto mediante código de barras escaneado o ingresado
+- Funciones: Búsqueda exacta, manejo de códigos duplicados
+
+CU019: Filtrar Productos con Stock
+- Actor: ADMIN, CAJERO
+- Descripción: Mostrar solo productos disponibles para venta
+
+CU020: Obtener Datos de Usuario Autenticado
+- Actor: ADMIN, CAJERO
+- Descripción: Recuperar información del usuario logueado incluyendo roles
+
+7. PROCESOS DE OFERTAS
+----------------------
+
+CU021: Validar Vigencia de Ofertas
+- Actor: SISTEMA (automático durante aplicación)
+- Descripción: Verificar que descuentos, promociones y combos estén activos y en periodo válido
+
+CU022: Calcular Precios con Ofertas
+- Actor: SISTEMA (automático durante venta)
+- Descripción: Aplicar lógica de precios especiales según ofertas vigentes
+
+8. REPORTES Y ESTADÍSTICAS
+--------------------------
+
+CU023: Generar Estadísticas de Productos
+- Actor: ADMIN, CAJERO
+- Descripción: Obtener top N productos más vendidos con sus categorías
+
+CU024: Contar Totales del Sistema
+- Actor: ADMIN, CAJERO
+- Descripción: Obtener contadores de usuarios, ventas, productos, etc.
+
+9. GESTIÓN DE SESIONES
+----------------------
+
+CU025: Mantener Sesión Activa
+- Actor: SISTEMA
+- Descripción: Validar tokens JWT y mantener contexto de usuario autenticado
+
+CU026: Controlar Acceso por Roles
+- Actor: SISTEMA
+- Descripción: Verificar permisos según anotaciones @Secured en endpoints
+
+10. COMUNICACIONES
+------------------
+
+CU027: Enviar Email de Recuperación
+- Actor: SISTEMA
+- Descripción: Enviar código de recuperación por email con formato personalizado
+- Validez: 15 minutos, código de 6 dígitos
+
+CU028: Enviar Notificación de Cambio de Contraseña
+- Actor: SISTEMA
+- Descripción: Confirmar por email cuando se restablece contraseña
+
+NOTAS TÉCNICAS:
+==============
+- Todas las operaciones de stock incluyen logging para auditoria
+- Las notificaciones se crean para todos los usuarios activos del sistema
+- Los tokens JWT tienen validez de 8 horas
+- Las verificaciones automáticas usan schedulers con cron expressions
+- El sistema maneja diferentes formas de pago: EFECTIVO, TARJETA CRÉDITO, TARJETA DÉBITO, FIADO
+- Implementa patrones de seguridad con encriptación BCrypt
+- Arquitectura REST con validaciones en múltiples capas

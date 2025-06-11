@@ -10,7 +10,6 @@ export interface VentaDto {
     credito: Pick<CreditoDto, 'id' | 'precioTotal'>;
     cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[];
     activo: boolean;
-    finalizada: boolean;
     formaPago: string;
     usuario: string;
 }
@@ -21,7 +20,6 @@ export interface VentaSimpleDto {
     total: number;
     cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[];
     activo: boolean;
-    finalizada: boolean;
     formaPago: string;
     usuario: string;
 }

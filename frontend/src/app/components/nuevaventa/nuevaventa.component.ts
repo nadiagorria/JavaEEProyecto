@@ -646,8 +646,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           codigoDeBarra: c.producto.codigoDeBarra
         }
       })),
-      activo: true,
-      finalizada: true
+      activo: true
     };    this.ventaService.crearVenta(venta as VentaDto).subscribe({
       next: (response) => {        // Verificar si la respuesta contiene un error
         if (response && typeof response === 'object' && 'error' in response) {
