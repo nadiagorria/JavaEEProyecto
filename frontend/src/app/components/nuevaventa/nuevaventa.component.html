@@ -88,11 +88,23 @@
 
     </p-table>
   </div>
-
   <!-- Barra de búsqueda -->
-  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">      <!-- Controles de búsqueda y escáner -->
-    <div class="w-full">
-      <div class="flex mb-3 align-items-stretch" style="gap: 0.25rem;">
+  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">
+    <!-- Controles de búsqueda y escáner -->
+    <div class="w-full search-container">      <div class="search-controls mb-3">
+        <!-- Botón del escáner físico -->
+        <button 
+          pButton 
+          type="button" 
+          [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
+          [severity]="escanerActivo ? 'danger' : 'info'"
+          [outlined]="!escanerActivo"
+          label="Escáner"
+          class="scanner-btn"
+          (click)="toggleEscanerFisico()"
+          pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
+          tooltipPosition="bottom">
+        </button>
         <div class="flex-1">          <p-autoComplete
             class="texto w-full"
             [(ngModel)]="productoSeleccionado"
@@ -117,21 +129,14 @@
                 </div>
               </div>
             </ng-template>
+            <ng-template pTemplate="empty">
+              <div class="texto text-center p-3 text-500">
+                <i class="pi pi-search mr-2"></i>
+                No se encontraron productos
+              </div>
+            </ng-template>
           </p-autoComplete>
         </div>
-        <!-- Botón del escáner físico -->
-        <button 
-          pButton 
-          type="button" 
-          [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
-          [severity]="escanerActivo ? 'danger' : 'info'"
-          [outlined]="!escanerActivo"
-          class="scanner-btn flex-shrink-0"
-          style="height: 42px; width: 42px; margin-left: 0.25rem;"
-          (click)="toggleEscanerFisico()"
-          pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
-          tooltipPosition="bottom">
-        </button>
       </div>
       
       <!-- Indicador de estado del escáner -->
