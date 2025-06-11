@@ -1,12 +1,21 @@
 <app-header></app-header>
+<p-toast></p-toast>
 
 <div class="producto-container">
-  <div class="producto-header">
-    <div class="busqueda-filtro">
-      <input type="text" placeholder="Buscar por nombre, código interno o de barras" />
-      <select>
-        <option value="">Filtrar por Categoría</option>
-        <!-- Más opciones aquí -->
+  <div class="producto-header">    <div class="busqueda-filtro">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre o código de barras" 
+        [(ngModel)]="terminoBusqueda"
+        (input)="onBusquedaChange($event)"
+        name="busqueda" />      <select 
+        [(ngModel)]="categoriaFiltro"
+        (change)="onCategoriaChange($event)"
+        name="categoriaFiltro">
+        <option value="">Todas las categorías</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">
+          {{ categoria.nombre }}
+        </option>
       </select>
     </div>
 
@@ -202,7 +211,7 @@
   </p-dialog>
 
   <!-- Grid de productos -->
-  <div class="producto-grid">    <div class="producto-card" *ngFor="let producto of productos" (click)="producto.id && verProducto(producto.id)" style="cursor:pointer">
+  <div class="producto-grid">    <div class="producto-card" *ngFor="let producto of productosFiltrados" (click)="producto.id && verProducto(producto.id)" style="cursor:pointer">
       <div class="imagen-container">
         <img 
           [src]="obtenerImagenProducto(producto.id)" 

@@ -350,9 +350,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (!this.validarFormularioLote()) {
       return;
     }
-    
-    // Aseguramos que la fecha esté en el formato correcto
-    let fechaVencimiento: Date;
+      // Manejar la fecha de vencimiento (ahora es opcional)
+    let fechaVencimiento: Date | undefined = undefined;
     if (this.nuevoLote.fechaVencimiento) {
       // Si es string, convertirlo a Date
       if (typeof this.nuevoLote.fechaVencimiento === 'string') {
@@ -360,16 +359,13 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       } else {
         fechaVencimiento = this.nuevoLote.fechaVencimiento;
       }
-    } else {
-      // Si no hay fecha, usar la fecha actual (no debería ocurrir por la validación)
-      fechaVencimiento = new Date();
     }
 
     // Crear el objeto lote con datos validados
     const lote: LoteDto = {
       numeLote: this.nuevoLote.numeLote || '',
       stock: this.nuevoLote.stock || 0,
-      fechaVencimiento: fechaVencimiento,
+      fechaVencimiento: fechaVencimiento ?? null as unknown as Date,
       precioCompra: this.nuevoLote.precioCompra || 0,
       id: null,
       activo: true,
@@ -432,8 +428,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     };
   }
 
-  private validarFormularioLote(): boolean {
-    if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
+  private validarFormularioLote(): boolean {    if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -451,14 +446,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if (!this.nuevoLote.fechaVencimiento) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Validación',
-        detail: 'La fecha de vencimiento es obligatoria'
-      });
-      return false;
-    }
+    // La fecha de vencimiento es opcional, no se valida
 
     if (this.nuevoLote.precioCompra === undefined || this.nuevoLote.precioCompra < 0) {
       this.messageService.add({
