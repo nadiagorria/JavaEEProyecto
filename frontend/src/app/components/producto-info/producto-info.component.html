@@ -218,6 +218,30 @@
           </p-dropdown>
         </div>
       </div>
+
+      <!-- Image Upload Section -->
+      <div class="form-section">
+        <div class="section-title">Imagen del Producto</div>
+        
+        <div class="form-group">
+          <label for="imagen">Imagen del producto (opcional)</label>
+          <input
+            type="file"
+            id="imagen"
+            accept="image/*"
+            (change)="onImagenSeleccionada($event)"
+            name="imagen" />
+          <small class="help-text">Este campo es opcional. Solo se actualizará la imagen si selecciona una nueva.</small>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="image-preview mb-3" *ngIf="imagenPreviewEdicion || imagenUrl">
+          <img [src]="imagenPreviewEdicion || imagenUrl" 
+               alt="Vista previa" 
+               style="max-width: 200px; max-height: 200px; object-fit: contain;" 
+               (error)="onImageError($event)" />
+        </div>
+      </div>
     </form>
   </div>
 
@@ -246,7 +270,7 @@
   [style]="{width: '400px'}"
   [contentStyle]="{overflow: 'auto'}"
   [closable]="true"
-  styleClass="producto-dialog"
+  styleClass="producto_dialog"
   appendTo="body">
 
   <form class="lote-form">

@@ -25,6 +25,7 @@ import { LoteDto } from 'src/models/lote.dto';
 import { CategoriaDto } from 'src/models/categoria.dto';
 import { ProveedorDto } from 'src/models/proveedor.dto';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FileUploadModule } from 'primeng/fileupload';
 
 interface EditandoProducto {
   id: number | null;
@@ -53,6 +54,7 @@ interface EditandoProducto {
     DropdownModule,
     ConfirmDialogModule,
     ToastModule,
+    FileUploadModule,
     HeaderComponent,
     FooterComponent
   ],
@@ -98,6 +100,11 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     precioCompra: 0
   };
   minFechaVencimiento: string = '';
+
+  // Image upload properties
+  imagenSeleccionada: File | null = null;
+  imagenPreviewEdicion: string | null = null;
+
   ngOnInit() {
     // Inicializar la fecha mínima de vencimiento
     const hoy = new Date();
@@ -113,21 +120,36 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.error = 'ID de producto inválido';
       this.loading = false;
     }
-  }
-
-  cargarProducto(id: number) {
+  }  cargarProducto(id: number) {
     this.loading = true;
-    this.productoService.obtenerProducto(id).subscribe({
-      next: (response) => {
+    this.productoService.obtenerProducto(id).subscribe({      next: (response) => {
         console.log('Respuesta del backend:', response);
         console.log('Lotes del producto:', response.lotes);
         this.producto = response;
+        
+        // Ordenar lotes por fecha de vencimiento
+        if (this.producto.lotes) {
+          this.producto.lotes.sort((a, b) => {
+            // Si alguno no tiene fecha de vencimiento, ponerlo al final
+            if (!a.fechaVencimiento) return 1;
+            if (!b.fechaVencimiento) return -1;
+            
+            // Convertir strings a fechas y comparar
+            const fechaA = new Date(a.fechaVencimiento);
+            const fechaB = new Date(b.fechaVencimiento);
+            return fechaA.getTime() - fechaB.getTime();
+          });
+        }
+        
         this.loading = false;
         
         // Cargar imagen del producto de forma asíncrona
         if (this.producto.id) {
           this.cargarImagenProducto(this.producto.id);
         }
+
+        // Verificar precios de lotes actuales
+        this.verificarPreciosLotesActuales();
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
@@ -135,6 +157,45 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+  private verificarPrecios(): void {
+    if (!this.producto || !this.producto.lotes) return;
+
+    // Filtrar solo lotes activos que tienen precio de compra mayor al precio de venta
+    const lotesConPrecioMayor = this.producto.lotes.filter(
+      lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
+    );
+
+    if (lotesConPrecioMayor.length > 0) {
+      lotesConPrecioMayor.forEach(lote => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Advertencia de Precios',
+          detail: `Lote ${lote.numeLote}: El precio de venta actual (${this.producto!.precioVenta}) es menor al precio de compra (${lote.precioCompra}). Esto resulta en pérdidas.`,
+          life: 10000
+        });
+      });
+    }
+  }
+
+  private verificarPreciosLotesActuales(): void {
+    if (!this.producto || !this.producto.lotes) return;
+
+    // Filtrar solo lotes activos que tienen precio de compra mayor al precio de venta
+    const lotesConPrecioMayor = this.producto.lotes.filter(
+      lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
+    );
+
+    if (lotesConPrecioMayor.length > 0) {
+      lotesConPrecioMayor.forEach(lote => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Advertencia de Precios',
+          detail: `Lote ${lote.numeLote}: El precio de venta actual (${this.producto!.precioVenta}) es menor al precio de compra (${lote.precioCompra}). Esto resulta en pérdidas.`,
+          life: 10000
+        });
+      });
+    }
   }
 
   private cargarImagenProducto(productoId: number): void {
@@ -239,16 +300,38 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
     console.log('Producto para editar:', productoParaEditar);
 
+    // Primero editar el producto
     this.productoService.editarProducto(productoParaEditar).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Producto editado correctamente'
-        });
-        this.mostrarModalEditar = false;
-        if (this.producto!.id !== null) {
-          this.cargarProducto(this.producto!.id);
+        // Si hay una nueva imagen, actualizarla
+        if (this.imagenSeleccionada) {
+          this.productoService.actualizarImagenProducto(this.editandoProducto.id!, this.imagenSeleccionada).subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Éxito',
+                detail: 'Producto e imagen actualizados correctamente'
+              });
+              this.finalizarEdicion();
+            },
+            error: (error) => {
+              console.error('Error al actualizar la imagen:', error);
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'Producto actualizado pero hubo un error al actualizar la imagen'
+              });
+              this.finalizarEdicion();
+            }
+          });
+        } else {
+          // Si no hay imagen nueva, solo mostrar mensaje de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Producto actualizado correctamente'
+          });
+          this.finalizarEdicion();
         }
       },
       error: (error) => {
@@ -260,6 +343,16 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  private finalizarEdicion(): void {
+    this.mostrarModalEditar = false;
+    if (this.producto!.id !== null) {
+      this.cargarProducto(this.producto!.id);
+    }
+    // Reset image selection
+    this.imagenSeleccionada = null;
+    this.imagenPreviewEdicion = null;
   }
 
   private validarFormularioEdicion(): boolean {
@@ -427,8 +520,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       precioCompra: 0
     };
   }
-
-  private validarFormularioLote(): boolean {    if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
+  private validarFormularioLote(): boolean {    
+    if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -455,6 +548,15 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         detail: 'El precio de compra debe ser un valor válido'
       });
       return false;
+    }    // Verificar si el precio de compra del nuevo lote es mayor al precio de venta actual
+    if (this.producto && this.nuevoLote.precioCompra && this.nuevoLote.precioCompra > this.producto.precioVenta) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia de Precios',
+        detail: `El precio de compra del nuevo lote (${this.nuevoLote.precioCompra}) es mayor al precio de venta actual (${this.producto.precioVenta}). Esto resultará en pérdidas.`,
+        life: 10000
+      });
+      // No retornamos false para permitir la creación, solo es una advertencia
     }
 
     return true;
@@ -495,5 +597,26 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       return 'stock-medio';
     }
     return 'stock-bajo';
+  }
+
+  onImagenSeleccionada(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.imagenSeleccionada = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagenPreviewEdicion = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onImageError(event: any) {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement && !imgElement.src.includes('placeholder-image.webp')) {
+      imgElement.src = '/placeholder-image.webp';
+    }
   }
 }
