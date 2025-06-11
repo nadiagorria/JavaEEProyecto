@@ -6,12 +6,14 @@ import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VentaService } from 'src/services/venta.service';
+import { SecurityService } from 'src/services/security.service';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
+
 @Component({
   selector: 'app-verventa',
   standalone: true,
@@ -40,7 +42,27 @@ export class VerventaComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private ventaService: VentaService) {
+    private ventaService: VentaService,
+    private securityService: SecurityService,
+    private messageService: MessageService) {
+  }
+
+  // Verificar si el usuario es administrador
+  private isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    return roles && roles.includes('ADMIN');
+  }
+
+  // Verificar si el usuario actual puede ver esta venta
+  private canViewVenta(venta: VentaSimpleDto): boolean {
+    // Si es admin, puede ver todas las ventas
+    if (this.isAdmin()) {
+      return true;
+    }
+    
+    // Si es cajero, solo puede ver sus propias ventas
+    const currentUser = this.securityService.getUserName();
+    return venta.usuario === currentUser;
   }
 
   ngOnInit() {
@@ -53,7 +75,8 @@ export class VerventaComponent implements OnInit {
       this.loading = false;
     }
   }
-    cargarVenta(id: number) {
+
+  cargarVenta(id: number) {
     console.log('Cargando venta con ID:', id);
     this.loading = true;
     
@@ -66,10 +89,16 @@ export class VerventaComponent implements OnInit {
           console.warn('Intento de acceso a venta eliminada');
           this.error = 'Esta venta ha sido eliminada y no está disponible para visualización';
           this.loading = false;
-          // Redirigir después de un breve delay para mostrar el mensaje
-          setTimeout(() => {
-            this.router.navigate(['/ventas']);
-          }, 2000);
+          this.mostrarErrorYRedirigir('Esta venta ha sido eliminada y no está disponible.');
+          return;
+        }
+
+        // Verificar permisos de acceso
+        if (!this.canViewVenta(venta)) {
+          console.warn('Intento de acceso no autorizado a venta');
+          this.error = 'No tienes permisos para ver esta venta';
+          this.loading = false;
+          this.mostrarErrorYRedirigir('No tienes permisos para ver esta venta.');
           return;
         }
         
@@ -90,22 +119,38 @@ export class VerventaComponent implements OnInit {
         console.error('Error completo:', error);
         if (error.status === 404) {
           this.error = 'La venta solicitada no existe o ha sido eliminada';
+          this.mostrarErrorYRedirigir('La venta solicitada no existe.');
+        } else if (error.status === 403) {
+          this.error = 'No tienes permisos para ver esta venta';
+          this.mostrarErrorYRedirigir('No tienes permisos para ver esta venta.');
         } else {
           this.error = `Error al cargar los datos de la venta. Status: ${error.status}`;
+          this.mostrarErrorYRedirigir('Error al cargar la venta.');
         }
         this.loading = false;
-        // Redirigir después de mostrar el error
-        setTimeout(() => {
-          this.router.navigate(['/ventas']);
-        }, 2000);
       }
     });
   }
+
+  private mostrarErrorYRedirigir(mensaje: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Acceso Denegado',
+      detail: mensaje,
+      life: 3000
+    });
+    
+    // Redirigir después de mostrar el mensaje
+    setTimeout(() => {
+      this.router.navigate(['/ventas']);
+    }, 2000);
+  }
   
   calcularTotal(): number {
-  return this.cantidades.reduce((total, cantidad) =>
-    total + (cantidad.cantidad * cantidad.precioActual), 0);
-}
+    return this.cantidades.reduce((total, cantidad) =>
+      total + (cantidad.cantidad * cantidad.precioActual), 0);
+  }
+
   calcularCantidadTotal(): number {
     return this.cantidades.reduce((sum, c) => sum + c.cantidad, 0);
   }
@@ -157,6 +202,7 @@ export class VerventaComponent implements OnInit {
       this.esOfertaVigenteEnFecha(combo)
     );
   }
+
   /**
    * Verifica si un producto tenía ofertas aplicadas en la fecha de la venta
    * Se basa únicamente en si las ofertas estaban vigentes y se cumplían los criterios mínimos
@@ -189,7 +235,9 @@ export class VerventaComponent implements OnInit {
     }
     
     return false;
-  }  /**
+  }
+
+  /**
    * Obtiene el texto descriptivo de las ofertas aplicadas
    */
   getTextoOfertas(producto: any): string {
@@ -219,7 +267,9 @@ export class VerventaComponent implements OnInit {
     combos.forEach(combo => ofertas.push(`Combo: ${combo.descripcion} (${combo.descuento}%)`));
     
     return ofertas.join(', ');
-  }  /**
+  }
+
+  /**
    * Obtiene la severidad del tag basado en el tipo de oferta
    */
   getSeveridadOferta(producto: any): string {
@@ -254,7 +304,6 @@ export class VerventaComponent implements OnInit {
       this.tieneOfertasVigentes(cantidad.producto)
     );
   }
-
   volver() {
     this.router.navigate(['/ventas']);
   }

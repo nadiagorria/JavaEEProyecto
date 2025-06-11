@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
     List<Venta> findByActivoTrue();
+    List<Venta> findByActivoTrueAndUsuarioNombre(String nombreUsuario);
     Optional<Venta> findById(Long id);
 
     @Query("SELECT COUNT(v.id) as ventasTotales FROM Venta v")

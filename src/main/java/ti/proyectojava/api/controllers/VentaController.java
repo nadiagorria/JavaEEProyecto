@@ -33,12 +33,28 @@ public class VentaController {    private final VentaService ventaService;
         this.ventaService = ventaService;
         this.usuarioService = usuarioService;
         this.creditoService = creditoService;
-    }
-
+    }    
+    
     @GetMapping()
-    @Secured({"ADMIN"})
-    public ResponseEntity<ResponseListadoVentas> listarVentas() {
-        ResponseListadoVentas response = ventaService.listadoVentas();
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<ResponseListadoVentas> listarVentas(Authentication authentication) {
+        String username = authentication.getName();
+        UsuarioDto usuario = usuarioService.buscarUsuario(username);
+        
+        // Verificar roles del usuario
+        boolean esAdmin = usuario.getRoles().stream()
+                .anyMatch(rol -> rol.getNombre().equals("ADMIN"));
+        
+        ResponseListadoVentas response;
+        
+        if (esAdmin) {
+            // Si es admin, ver todas las ventas
+            response = ventaService.listadoVentas();
+        } else {
+            // Si es solo cajero, ver solo sus ventas
+            response = ventaService.listadoVentasPorUsuario(username);
+        }
+        
         return ResponseEntity.ok(response);
     }
 

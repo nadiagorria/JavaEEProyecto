@@ -11,6 +11,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { VentaService } from '../../../services/venta.service';
+import { SecurityService } from '../../../services/security.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 
@@ -39,16 +40,21 @@ export class VentasComponent implements OnInit {
   ventas: VentaDto[] = [];
   totalRecords: number = 0;
   selectedVenta: VentaDto | null = null;
+  isAdmin: boolean = false;
 
   constructor(
     private ventaService: VentaService,
+    private securityService: SecurityService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
     this.totalRecords = this.ventas.length;
   }
-
   ngOnInit() {
+    // Verificar si el usuario es admin
+    if (this.securityService.isLoggedIn() && this.securityService.user) {
+      this.isAdmin = this.securityService.user.roles?.includes('ADMIN') || false;
+    }
     this.cargarVentas();
   }
   cargarVentas() {

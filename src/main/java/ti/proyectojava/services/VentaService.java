@@ -220,6 +220,18 @@ public class VentaService {
         responseListadoVentas.setVentas(ventasActivas);
 
         return responseListadoVentas;
+    }    public ResponseListadoVentas listadoVentasPorUsuario(String nombreUsuario) {
+        ResponseListadoVentas responseListadoVentas = new ResponseListadoVentas();
+
+        // Obtener solo las ventas activas del usuario específico
+        List<VentaDto> ventasUsuario = ventaRepository.findByActivoTrueAndUsuarioNombre(nombreUsuario)
+                .stream()
+                .map(mapsDtosEntityService::mapToDtoVentaPlano)
+                .toList();
+
+        responseListadoVentas.setVentas(ventasUsuario);
+
+        return responseListadoVentas;
     }
 
     public Integer listadoVentasTotales() {
