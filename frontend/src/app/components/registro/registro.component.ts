@@ -29,6 +29,7 @@ import { of } from 'rxjs';
   styleUrl: './registro.component.scss',
   providers: [MessageService]
 })
+
 export class RegistroComponent {
   formGroup: FormGroup;
   isLoading = false;
@@ -40,15 +41,45 @@ export class RegistroComponent {
     private router: Router,
     private messageService: MessageService,
     private securityService: SecurityService
-  ) {
+  ) {    
+    
     this.formGroup = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, 
+    { validators: this.passwordMatchValidator });
 
     // Configurar validación en tiempo real para el username
     this.setupUsernameValidation();
+  }
+
+  // Validador personalizado para confirmar que las contraseñas coincidan
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+    } else if (confirmPassword?.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
+    }
+    
+    return null;
+  }
+
+  // Verificar si el email es válido
+  isValidEmail(): boolean {
+    const emailControl = this.formGroup.get('email');
+    return emailControl?.valid || false;
+  }
+
+  // Verificar si las contraseñas coinciden
+  passwordsMatch(): boolean {
+    const password = this.formGroup.get('password')?.value;
+    const confirmPassword = this.formGroup.get('confirmPassword')?.value;
+    return password === confirmPassword;
   }
 
   private setupUsernameValidation() {

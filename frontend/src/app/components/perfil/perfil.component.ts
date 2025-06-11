@@ -60,8 +60,23 @@ export class PerfilComponent implements OnInit {
     nombreUsuario: '',
     roles: [] as string[],
     email: '',
-    avatar: '/placeholder-image.webp'
+    avatar: '/placeholder-image.webp',
+    avatarColor: '#6366f1' // Color del icono del avatar
   };
+  
+  // Colores disponibles para el avatar
+  private avatarColors = [
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#06b6d4', // Cyan
+    '#10b981', // Emerald
+    '#f59e0b', // Amber
+    '#ef4444', // Red
+    '#ec4899', // Pink
+    '#84cc16', // Lime
+    '#f97316', // Orange
+    '#3b82f6'  // Blue
+  ];
   ventas: VentaPerfil[] = [];
   totalVentas = 0;  // total simulado por ahora
   rangoInicio = 1;
@@ -89,7 +104,16 @@ export class PerfilComponent implements OnInit {
     private usuarioService: UsuarioService,
     private ventaService: VentaService,
     private messageService: MessageService
-  ) {}  isAdmin(): boolean {
+  ) {
+    // Generar color aleatorio para el avatar al cargar el componente
+    this.generateRandomAvatarColor();
+  }
+
+  // Generar color aleatorio para el avatar
+  generateRandomAvatarColor(): void {
+    const randomIndex = Math.floor(Math.random() * this.avatarColors.length);
+    this.usuario.avatarColor = this.avatarColors[randomIndex];
+  }isAdmin(): boolean {
     return this.usuario.roles.includes('ADMIN');
   }
 

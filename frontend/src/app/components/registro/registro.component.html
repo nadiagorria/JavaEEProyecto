@@ -27,9 +27,7 @@
             <i class="pi pi-check-circle"></i> Nombre de usuario disponible
           </span>
         </div>
-      </div>
-
-      <div class="form-field">
+      </div>      <div class="form-field">
         <p-iftalabel>
           <input 
             pInputText 
@@ -37,9 +35,19 @@
             formControlName="email" 
             placeholder=" "
             autocomplete="email"
+            [class.invalid]="formGroup.get('email')?.touched && formGroup.get('email')?.invalid"
+            [class.valid]="formGroup.get('email')?.touched && isValidEmail()"
           />
           <label for="email">Correo Electrónico</label>
         </p-iftalabel>
+        <div class="email-validation" *ngIf="formGroup.get('email')?.value && formGroup.get('email')?.value.length > 0">
+          <span *ngIf="formGroup.get('email')?.invalid" class="email-invalid">
+            <i class="pi pi-times-circle"></i> Por favor ingresa un email válido
+          </span>
+          <span *ngIf="isValidEmail()" class="email-valid">
+            <i class="pi pi-check-circle"></i> Email válido
+          </span>
+        </div>
       </div>      <div class="form-field">
         <p-iftalabel>
           <p-password 
@@ -61,21 +69,47 @@
           </span>        </div>
       </div>
 
+      <div class="form-field">
+        <p-iftalabel>
+          <p-password 
+            formControlName="confirmPassword" 
+            inputId="confirmPassword" 
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder=" "
+            autocomplete="new-password"
+            [class.invalid]="formGroup.get('confirmPassword')?.touched && !passwordsMatch() && formGroup.get('confirmPassword')?.value"
+            [class.valid]="formGroup.get('confirmPassword')?.value && passwordsMatch()"
+          />
+          <label for="confirmPassword">Confirmar Contraseña</label>
+        </p-iftalabel>
+        <div class="confirm-password-validation" *ngIf="formGroup.get('confirmPassword')?.value && formGroup.get('confirmPassword')?.value.length > 0">
+          <span *ngIf="!passwordsMatch()" class="password-mismatch">
+            <i class="pi pi-times-circle"></i> Las contraseñas no coinciden
+          </span>
+          <span *ngIf="passwordsMatch()" class="password-match">
+            <i class="pi pi-check-circle"></i> Las contraseñas coinciden
+          </span>
+        </div>
+      </div>
+
 <button
         pButton 
         type="submit" 
         label="Registrar" 
         [loading]="isLoading"
-        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername"
+        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername || !passwordsMatch()"
         icon="pi pi-user-plus"
         iconPos="right"
       >
       </button>
     </form>
-    
-    <div class="login-link">
+      <div class="sesion">
       ¿Ya tienes una cuenta?
-      <a routerLink="/login">Iniciar Sesión aquí</a>
+      <a routerLink="/login" class="login-link">
+        <i class="pi pi-sign-in"></i>
+        Iniciar Sesión aquí
+      </a>
     </div>
   </div>
 </div>
