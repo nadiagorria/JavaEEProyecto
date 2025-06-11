@@ -2,6 +2,22 @@
 
 <main class="w-full stats-container">
 
+    <!-- Filtro por mes -->
+    <section class="filter-section">
+      <div class="filter-container">
+        <label for="mesFilter" class="filter-label">Filtrar por mes:</label>
+        <select 
+          id="mesFilter" 
+          class="filter-select" 
+          [(ngModel)]="mesSeleccionado" 
+          (ngModelChange)="filtrarPorMes()">
+          <option *ngFor="let mes of meses" [value]="mes.valor">
+            {{ mes.nombre }}
+          </option>
+        </select>
+      </div>
+    </section>
+
     <article class="flex w-full article-1">
       <div class="miniCartel card-hover sales-card">
         <div class="w-full cabezaMiniCartel">
