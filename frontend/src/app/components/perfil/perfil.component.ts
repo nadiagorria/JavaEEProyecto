@@ -15,7 +15,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UsuarioService } from '../../../services/usuario.service';
 import { VentaService } from '../../../services/venta.service';
 
@@ -49,11 +50,12 @@ interface UsuarioTabla {
     InputTextModule,
     PasswordModule,
     TooltipModule,
-    ToastModule
+    ToastModule,
+    ConfirmDialogModule
   ],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
 export class PerfilComponent implements OnInit {
   usuario = {
@@ -97,13 +99,13 @@ export class PerfilComponent implements OnInit {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  };
-  constructor(
+  };  constructor(
     private securityService: SecurityService,
     private router: Router,
     private usuarioService: UsuarioService,
     private ventaService: VentaService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {
     // Generar color aleatorio para el avatar al cargar el componente
     this.generateRandomAvatarColor();
@@ -410,26 +412,71 @@ export class PerfilComponent implements OnInit {
   cerrarDialog() {
     this.showEditDialog = false;
   }
-
   cerrarSesion() {
     // Remove user data and navigate to login
     this.securityService.logout();
     this.router.navigate(['/login']);
   }
 
+  eliminarVenta(id: number | null) {
+    if (!id) return;
+
+    this.confirmationService.confirm({
+      message: '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.ventaService.eliminarVenta(id).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Venta eliminada correctamente'
+            });
+            // Recargar ventas del usuario
+            if (this.securityService.user) {
+              const nombreUsuario = this.securityService.user.nombreUsuario;
+              this.cargarVentasUsuario(nombreUsuario);
+            }
+          },
+          error: (error) => {
+            console.error('Error al eliminar venta:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al eliminar la venta'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  private cargarVentasUsuario(nombreUsuario: string) {
+    this.usuarioService.obtenerUsuarioPorNombre(nombreUsuario).subscribe({
+      next: (userData: any) => {
+        if (userData.ventas) {
+          this.ventas = userData.ventas
+            .filter((v: any) => v.activo) // Solo ventas activas
+            .map((v: any) => ({
+              id: v.id,
+              fechaVenta: new Date(v.fechaVenta),
+              total: v.total,
+              formaPago: v.formaPago
+            }))
+            .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
+          this.totalVentas = this.ventas.length;
+        }
+      },
+      error: (error) => {
+        console.error('Error al recargar ventas:', error);
+      }
+    });
+  }
   verDetalleVenta(ventaId: number | null) {
     if (ventaId) {
-      this.ventaService.obtenerVenta(ventaId).subscribe({
-        next: (ventaDetalle) => {
-          // Aquí podrías mostrar un diálogo con los detalles de la venta
-          console.log('Detalles de la venta:', ventaDetalle);
-          alert(`Venta ID: ${ventaId}\nTotal: $${ventaDetalle.total}\nFecha: ${new Date(ventaDetalle.fechaVenta).toLocaleString()}`);
-        },
-        error: (error) => {
-          console.error('Error al obtener detalles de la venta:', error);
-          alert('Error al obtener los detalles de la venta');
-        }
-      });
+      // Abrir la venta en una nueva pestaña
+      window.open(`/verventa/${ventaId}`, '_blank');
     }
   }
 }

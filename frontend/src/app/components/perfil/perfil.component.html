@@ -56,11 +56,18 @@
             <tr>
               <td>{{venta.fechaVenta | date:'dd/MM/yyyy HH:mm'}}</td>
               <td>${{venta.total?.toFixed(2)}}</td>
-              <td>{{venta.formaPago}}</td>
+              <td>{{venta.formaPago}}</td>              
               <td>
                 <p-button icon="pi pi-eye" 
                          (click)="verDetalleVenta(venta.id)"
-                         styleClass="p-button-rounded p-button-text">
+                         styleClass="p-button-rounded p-button-text"
+                         pTooltip="Ver detalle">
+                </p-button>
+                <p-button *ngIf="isAdmin()" 
+                          icon="pi pi-trash" 
+                          (click)="eliminarVenta(venta.id)"
+                          styleClass="p-button-rounded p-button-text p-button-danger"
+                          pTooltip="Eliminar venta">
                 </p-button>
               </td>
             </tr>
@@ -206,8 +213,13 @@
         (click)="guardarCambios()"
         [loading]="loading"
         [disabled]="!isValidForm() || loading"></p-button>
-    </div>
-  </ng-template>
+    </div>  </ng-template>
 </p-dialog>
 
+<!-- Toast para mensajes -->
 <p-toast position="top-right" [life]="5000"></p-toast>
+
+<!-- Diálogo de confirmación -->
+<p-confirmDialog></p-confirmDialog>
+
+<app-footer></app-footer>
