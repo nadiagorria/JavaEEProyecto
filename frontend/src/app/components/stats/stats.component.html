@@ -2,7 +2,7 @@
 
 <main class="w-full stats-container">
 
-    <!-- Filtro por mes -->
+    <!-- Filtro por mes y año -->
     <section class="filter-section">
       <div class="filter-container">
         <label for="mesFilter" class="filter-label">Filtrar por mes:</label>
@@ -13,6 +13,19 @@
           (ngModelChange)="filtrarPorMes()">
           <option *ngFor="let mes of meses" [value]="mes.valor">
             {{ mes.nombre }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-container">
+        <label for="anoFilter" class="filter-label">Filtrar por año:</label>
+        <select 
+          id="anoFilter" 
+          class="filter-select" 
+          [(ngModel)]="anoSeleccionado" 
+          (ngModelChange)="filtrarPorMes()">
+          <option *ngFor="let ano of anos" [value]="ano.valor">
+            {{ ano.nombre }}
           </option>
         </select>
       </div>

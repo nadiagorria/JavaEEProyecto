@@ -345,13 +345,16 @@ main {
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .filter-container {
   display: flex;
   align-items: center;
   gap: 1rem;
-  max-width: 400px;
+  max-width: 300px;
 }
 
 .filter-label {

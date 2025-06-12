@@ -51,6 +51,10 @@ export class StatsComponent implements OnInit {
     { valor: '11', nombre: 'Noviembre' },
     { valor: '12', nombre: 'Diciembre' }
   ];
+  
+  // Propiedades para el filtro de años
+  anoSeleccionado: string = '';
+  anos: { valor: string, nombre: string }[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -59,7 +63,7 @@ export class StatsComponent implements OnInit {
     private usuarioservice: UsuarioService
   ) {}
 
-  n = 3; //de cuanto es el top N de productos que se quiere obtener
+  n = 3; // de cuanto es el top N de productos que se quiere obtener
   ngOnInit(): void {
     this.ventaservice.getVentasTotales().subscribe(data => {
       this.ventasTotales = data;
@@ -74,7 +78,6 @@ export class StatsComponent implements OnInit {
       this.productosMasPopulares = data.productos;
       console.log('Productos más populares:', this.productosMasPopulares);
       
-      // Limpiar categorías antes de llenar
       this.categoriasMasPopulares = [];
       
       this.productosMasPopulares.forEach(producto => {
@@ -86,21 +89,41 @@ export class StatsComponent implements OnInit {
 
         this.ventas = data.ventas || [];
         this.ventasFiltradas = [...this.ventas]; 
+        this.cargarAniosDisponibles();
         this.calcularEstadisticas();
       });
     });
   }
-  // Método para filtrar ventas por mes
-  filtrarPorMes(): void {
-    if (this.mesSeleccionado === '') {
-      this.ventasFiltradas = [...this.ventas];
-    } else {
-      this.ventasFiltradas = this.ventas.filter(venta => {
-        const fechaVenta = new Date(venta.fechaVenta);
-        const mesVenta = fechaVenta.getMonth() + 1; // getMonth() devuelve 0-11, necesitamos 1-12
-        return mesVenta.toString() === this.mesSeleccionado;
-      });
+  
+  // Método para cargar los años disponibles en las ventas
+  cargarAniosDisponibles(): void {
+    // Inicializar con opción para todos los años
+    this.anos = [{ valor: '', nombre: 'Todos los años' }];
+    
+    // Añadir años predefinidos desde 2020 hasta el año actual (2025)
+    const currentYear = new Date().getFullYear();
+    for (let year = 2020; year <= currentYear; year++) {
+      this.anos.push({ valor: year.toString(), nombre: year.toString() });
     }
+  }
+  
+  // Método para filtrar ventas por mes y año
+  filtrarPorMes(): void {
+    this.ventasFiltradas = this.ventas.filter(venta => {
+      const fechaVenta = new Date(venta.fechaVenta);
+      const mesVenta = fechaVenta.getMonth() + 1; // getMonth() devuelve 0-11, necesitamos 1-12
+      const anioVenta = fechaVenta.getFullYear().toString();
+      
+      // Filtrar por mes si está seleccionado
+      const cumpleMes = this.mesSeleccionado === '' || mesVenta.toString() === this.mesSeleccionado;
+      
+      // Filtrar por año si está seleccionado
+      const cumpleAnio = this.anoSeleccionado === '' || anioVenta === this.anoSeleccionado;
+      
+      // Debe cumplir ambos filtros
+      return cumpleMes && cumpleAnio;
+    });
+    
     this.calcularEstadisticas();
   }
 
