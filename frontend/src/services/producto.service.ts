@@ -13,7 +13,9 @@ export class ProductoService {
   constructor(
     private http: HttpClient,
     private urlService: UrlService
-  ) { }  crearProducto(producto: ProductoDto): Observable<string> {
+  ) { }  
+  
+  crearProducto(producto: ProductoDto): Observable<string> {
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto, {
       responseType: 'text'
     });
