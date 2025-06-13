@@ -178,15 +178,14 @@
     header="Finalizar Venta"
     class="texto"
     [(visible)]="displayDialog"
-    [style]="{width: '750px', minHeight: '450px'}"
+    [style]="{width: esPagoFiado() ? '750px' : '450px', minHeight: '450px'}"
     [modal]="true"
     [closable]="false"
     [draggable]="false"
     [resizable]="false">
-    <div class="p-fluid px-4 py-3">
-      <!-- Row para forma de pago y cliente -->
+    <div class="p-fluid px-4 py-3">      <!-- Row para forma de pago y cliente -->
       <div class="grid">
-        <div class="col-12 md:col-6">
+        <div [class]="esPagoFiado() ? 'col-12 md:col-6' : 'col-12'">
           <label for="formaPago" class="block text-sm font-medium text-900 mb-2">Forma de Pago *</label>
           <p-dropdown
             id="formaPago"
