@@ -174,95 +174,119 @@
     </div>
 
   </div>
-
   <p-dialog
     header="Finalizar Venta"
     class="texto"
     [(visible)]="displayDialog"
-    [style]="{width: '50vw', height: '35vw'}"
+    [style]="{width: '750px', minHeight: '450px'}"
     [modal]="true"
     [closable]="false"
     [draggable]="false"
-    [resizable]="false">    <div class="grid p-fluid">
-      <div class="col-12 mt-3">
-        <h5 class="texto">Forma de Pago</h5>
-        <p-dropdown
-        [(ngModel)]="formaPagoSeleccionada"
-        [options]="formasPago"
-        class="texto"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Seleccione forma de pago"
-        (onChange)="onFormaPagoChange()"
-        [required]="true">
-    </p-dropdown>
+    [resizable]="false">
+    <div class="p-fluid px-4 py-3">
+      <!-- Row para forma de pago y cliente -->
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <label for="formaPago" class="block text-sm font-medium text-900 mb-2">Forma de Pago *</label>
+          <p-dropdown
+            id="formaPago"
+            [(ngModel)]="formaPagoSeleccionada"
+            [options]="formasPago"
+            class="texto w-full"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccione forma de pago"
+            (onChange)="onFormaPagoChange()"
+            [required]="true">
+          </p-dropdown>
+        </div>
+
+        <div class="col-12 md:col-6" *ngIf="esPagoFiado()">
+          <label for="cliente" class="block text-sm font-medium text-900 mb-2">Cliente *</label>
+          <p-dropdown
+            id="cliente"
+            class="texto w-full"
+            [(ngModel)]="creditoSeleccionado"
+            [options]="creditos"
+            optionLabel="cliente.nombre"
+            placeholder="Seleccionar cliente..."
+            [required]="true"
+            [filter]="true"
+            filterBy="cliente.nombre"
+            [showClear]="true"
+            scrollHeight="120px">
+            <ng-template let-credito pTemplate="item">
+              <div class="texto">
+                <div class="font-semibold">{{credito.cliente.nombre}}</div>
+                <div class="text-sm text-500">
+                  Disponible: {{calcularDineroDisponible(credito) | currency}}
+                  <span [class]="puedeComprarConCredito(credito) ? 'text-green-600' : 'text-red-600'">
+                    {{puedeComprarConCredito(credito) ? '✓ Puede comprar' : '✗ No puede comprar'}}
+                  </span>
+                </div>
+                <div class="text-xs text-500">
+                  Mínimo: {{credito.minimo | currency}} | Máximo: {{credito.maximo | currency}}
+                </div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
       </div>
 
-      <div class="col-12" *ngIf="esPagoFiado()">
-        <h5 class="texto">Cliente</h5>        <p-dropdown
-          class="texto"
-          [(ngModel)]="creditoSeleccionado"
-          [options]="creditos"
-          optionLabel="cliente.nombre"
-          placeholder="Seleccionar cliente..."
-          [required]="true"
-          [filter]="true"
-          filterBy="cliente.nombre"
-          [showClear]="true"
-          scrollHeight="120px">
-          <ng-template let-credito pTemplate="item">
-            <div class="texto">
-              <div class="font-semibold">{{credito.cliente.nombre}}</div>
-              <div class="text-sm text-500">
-                Disponible: {{calcularDineroDisponible(credito) | currency}}
-                <span [class]="puedeComprarConCredito(credito) ? 'text-green-600' : 'text-red-600'">
-                  {{puedeComprarConCredito(credito) ? '✓ Puede comprar' : '✗ No puede comprar'}}
-                </span>
-              </div>
-              <div class="text-xs text-500">
-                Mínimo: {{credito.minimo | currency}} | Máximo: {{credito.maximo | currency}}
-              </div>
-            </div>
-          </ng-template>
-        </p-dropdown>
-        <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
-        <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente && !puedeComprarConCredito(creditoSeleccionado)" 
-             class="mt-2 p-2 border-round bg-red-50 text-red-800 text-sm">
+      <!-- Mensajes de validación -->
+      <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente && !puedeComprarConCredito(creditoSeleccionado)" 
+           class="mt-3 p-3 border-round bg-red-50 border-red-200 border-1">
+        <div class="flex align-items-center text-red-800">
           <i class="pi pi-exclamation-triangle mr-2"></i>
-          <div *ngIf="!superaCreditoMinimo(creditoSeleccionado)">
-            El total de la venta ({{calcularTotal() | currency}}) debe superar el mínimo de {{creditoSeleccionado.minimo | currency}} para compras fiadas.
-          </div>
-          <div *ngIf="superaCreditoMinimo(creditoSeleccionado) && !puedeRealizarCompra(creditoSeleccionado)">
-            El cliente no puede realizar esta compra. Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}.
+          <div>
+            <div *ngIf="!superaCreditoMinimo(creditoSeleccionado)" class="font-semibold">
+              El total debe superar el mínimo de {{creditoSeleccionado.minimo | currency}}
+            </div>
+            <div *ngIf="superaCreditoMinimo(creditoSeleccionado) && !puedeRealizarCompra(creditoSeleccionado)" class="font-semibold">
+              Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}
+            </div>
           </div>
         </div>
-          <!-- Información del crédito del cliente seleccionado -->
-        <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente" class="mt-2 p-2 border-round bg-blue-50 text-blue-800 text-sm">
-          <div><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
-          <div><strong>Límite mínimo:</strong> {{creditoSeleccionado.minimo | currency}}</div>
-          <div><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>
-          <div><strong>Deuda actual:</strong> {{(creditoSeleccionado.precioTotal - creditoSeleccionado.pagoHastaAhora) | currency}}</div>
-          <div><strong>Disponible:</strong> {{calcularDineroDisponible(creditoSeleccionado) | currency}}</div>
-          <div><strong>Total de esta venta:</strong> {{calcularTotal() | currency}}</div>
-        </div>
-      </div>      <div class="col-12 mt-5 flex justify-content-end gap-2 fixed bottom-0 right-0">
-        <button pButton
-                type="button"
-                label="Cancelar"
-                icon="pi pi-times"
-                variant="outlined"
-                severity="danger"
-                class="p-button-text texto"
-                (click)="displayDialog = false"></button>        <button pButton
-                type="button"
-                severity="contrast"
-                label="Confirmar"
-                icon="pi pi-check"
-                class="p-button-success texto"
-                [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado))"
-                (click)="confirmarVenta()"></button>
       </div>
-    </div>  </p-dialog>
+
+      <!-- Información del crédito del cliente seleccionado -->
+      <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente" 
+           class="mt-3 p-3 border-round bg-blue-50 border-blue-200 border-1">
+        <h6 class="text-blue-800 mt-0 mb-2">
+          <i class="pi pi-info-circle mr-2"></i>Información del Crédito
+        </h6>
+        <div class="grid text-sm text-blue-800">
+          <div class="col-6">
+            <div class="mb-2"><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
+            <div class="mb-2"><strong>Límite mínimo:</strong> {{creditoSeleccionado.minimo | currency}}</div>
+            <div class="mb-2"><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>
+          </div>
+          <div class="col-6">
+            <div class="mb-2"><strong>Deuda actual:</strong> {{(creditoSeleccionado.precioTotal - creditoSeleccionado.pagoHastaAhora) | currency}}</div>
+            <div class="mb-2"><strong>Disponible:</strong> {{calcularDineroDisponible(creditoSeleccionado) | currency}}</div>
+            <div class="mb-2"><strong>Total venta:</strong> {{calcularTotal() | currency}}</div>
+          </div>
+        </div>
+      </div>
+    </div>    <ng-template pTemplate="footer">
+      <div class="flex justify-content-end gap-2 px-4 py-3">
+        <p-button 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          [outlined]="true"
+          severity="secondary"
+          (onClick)="displayDialog = false">
+        </p-button>
+        <p-button 
+          label="Confirmar Venta" 
+          icon="pi pi-check" 
+          severity="success"
+          [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado))"
+          (onClick)="confirmarVenta()">
+        </p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
 
 </div>
 
