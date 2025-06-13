@@ -112,6 +112,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   ) { }ngOnInit() {
     this.cargarProductos();
     this.cargarOfertas();
+    this.cargarCreditos();
   }
 
   ngOnDestroy() {
@@ -208,6 +209,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.creditoService.listarCreditos().subscribe({
       next: (response) => {
         this.creditos = response.creditos;
+        this.creditosFiltrados = [...this.creditos];
       },
       error: (error) => {
         console.error('Error al cargar créditos:', error);
@@ -375,15 +377,19 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   // ==================== LÓGICA DE CRÉDITOS ====================
-
   /**
    * Filtra los clientes basándose en el texto de búsqueda
    */
   filtrarClientes(event: { query: string }) {
-    const query = event.query.toLowerCase();
-    this.creditosFiltrados = this.creditos.filter(credito =>
-      credito.cliente.nombre.toLowerCase().includes(query)
-    );
+    const query = event.query.toLowerCase().trim();
+    
+    if (query === '') {
+      this.creditosFiltrados = [...this.creditos];
+    } else {
+      this.creditosFiltrados = this.creditos.filter(credito =>
+        credito.cliente.nombre.toLowerCase().includes(query)
+      );
+    }
   }
 
   /**
@@ -1012,5 +1018,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.codigoBarrasEscaneado = '';
   }
 
-}
+  onClienteSeleccionado(event: any) {
+    this.creditoSeleccionado = event;
+  }
 
+  onClienteLimpiado() {
+    this.creditoSeleccionado = null;
+  }
+
+}

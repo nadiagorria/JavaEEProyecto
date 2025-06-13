@@ -10,3 +10,8 @@ export interface CreditoDto {
     cliente: Pick<ClienteDto, 'id' | 'nombre' | 'telefono'>;
     ventas?: Pick<VentaDto, 'id' | 'fechaVenta' | 'total'>[];
 }
+
+export interface CreditoSimpleDto {
+    id: number;
+    cliente: Pick<ClienteDto, 'id' | 'nombre' | 'telefono'>;
+}

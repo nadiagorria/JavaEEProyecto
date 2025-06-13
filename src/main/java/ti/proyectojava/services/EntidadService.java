@@ -72,7 +72,7 @@ public class EntidadService {
 
     //////////////////////////////////CLIENTE////////////////////////////////////////
 
-    public ResponseListadoClientes listadoClientes(){
+    /*public ResponseListadoClientes listadoClientes(){
         ResponseListadoClientes response = new ResponseListadoClientes();
 
         List<ClienteDto> clientesActivos = clienteRepository.findByActivoTrue()
@@ -83,7 +83,7 @@ public class EntidadService {
         response.setClientes(clientesActivos);
 
         return response;
-    }
+    }*/
 
     public String crearCliente(ClienteDto clienteDto) {
             return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();

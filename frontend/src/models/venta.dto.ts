@@ -1,7 +1,6 @@
 
-import { CreditoDto } from './credito.dto';
+import { CreditoDto, CreditoSimpleDto } from './credito.dto';
 import { CantidadDto } from './cantidad.dto';
-import { UsuarioDto } from './usuario.dto';
 
 export interface VentaDto {
     id: number | null;
@@ -16,10 +15,12 @@ export interface VentaDto {
 
 export interface VentaSimpleDto {
     id: number | null;
-    fechaVenta: string; // ISO datetime format from LocalDateTime
+    fechaVenta: string;
     total: number;
     cantidades: Pick<CantidadDto, 'id' | 'cantidad' | 'precioActual' | 'producto'>[];
     activo: boolean;
     formaPago: string;
     usuario: string;
+    credito: Pick<CreditoSimpleDto, 'id' | 'cliente'>;
+
 }

@@ -199,16 +199,18 @@
       </div>
 
       <div class="col-12" *ngIf="esPagoFiado()">
-        <h5 class="texto">Cliente</h5>
-        <p-autoComplete
+        <h5 class="texto">Cliente</h5>        <p-dropdown
           class="texto"
           [(ngModel)]="creditoSeleccionado"
-          [suggestions]="creditosFiltrados"
-          (completeMethod)="filtrarClientes($event)"
-          field="cliente.nombre"
-          placeholder="Buscar cliente..."
-          [dropdown]="true"
-          [required]="true">          <ng-template let-credito pTemplate="item">
+          [options]="creditos"
+          optionLabel="cliente.nombre"
+          placeholder="Seleccionar cliente..."
+          [required]="true"
+          [filter]="true"
+          filterBy="cliente.nombre"
+          [showClear]="true"
+          scrollHeight="120px">
+          <ng-template let-credito pTemplate="item">
             <div class="texto">
               <div class="font-semibold">{{credito.cliente.nombre}}</div>
               <div class="text-sm text-500">
@@ -222,14 +224,9 @@
               </div>
             </div>
           </ng-template>
-          <ng-template let-credito pTemplate="selectedItem">
-            <div class="texto" *ngIf="credito">
-              {{credito.cliente.nombre}} - Disponible: {{calcularDineroDisponible(credito) | currency}}
-            </div>
-          </ng-template>
-        </p-autoComplete>
-          <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
-        <div *ngIf="creditoSeleccionado && !puedeComprarConCredito(creditoSeleccionado)" 
+        </p-dropdown>
+        <!-- Mensaje de advertencia si el cliente seleccionado no puede realizar la compra -->
+        <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente && !puedeComprarConCredito(creditoSeleccionado)" 
              class="mt-2 p-2 border-round bg-red-50 text-red-800 text-sm">
           <i class="pi pi-exclamation-triangle mr-2"></i>
           <div *ngIf="!superaCreditoMinimo(creditoSeleccionado)">
@@ -240,7 +237,7 @@
           </div>
         </div>
           <!-- Información del crédito del cliente seleccionado -->
-        <div *ngIf="creditoSeleccionado" class="mt-2 p-2 border-round bg-blue-50 text-blue-800 text-sm">
+        <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente" class="mt-2 p-2 border-round bg-blue-50 text-blue-800 text-sm">
           <div><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
           <div><strong>Límite mínimo:</strong> {{creditoSeleccionado.minimo | currency}}</div>
           <div><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>

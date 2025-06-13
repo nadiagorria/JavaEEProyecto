@@ -13,6 +13,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-verventa',
@@ -26,7 +27,8 @@ import { FooterComponent } from '../footer/footer.component';
     TooltipModule,
     ToastModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    CardModule
   ],
   providers: [MessageService],
   templateUrl: './verventa.component.html',
