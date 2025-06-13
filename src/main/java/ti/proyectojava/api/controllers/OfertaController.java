@@ -45,20 +45,18 @@ public class OfertaController {
             return response == null ?
                     new ResponseEntity<>("Error al crear Combo. ID:" + comboDto.getId(), HttpStatus.BAD_REQUEST) :
                     new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("ERROR en crearCombo: " + e.getMessage());
             e.printStackTrace();
-            return new ResponseEntity<>("Error al crear combo: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            // Devolver el mensaje específico del error de validación
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.err.println("ERROR GENERAL en crearCombo: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error interno al crear combo: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
-    @PutMapping("/editarcombo")
-    @Secured({"ADMIN"})
-    @Operation(description = "Edita un Combo existente")
-    public ResponseEntity<String> editarCombo(@RequestBody ComboDto comboDto) {
-        return ResponseEntity.ok(ofertaService.editarCombo(comboDto));
-    }
 
     //todos pueden usarla
     @GetMapping("/listarCombo")
@@ -96,20 +94,18 @@ public class OfertaController {
             descuentoDto.setId(null); // Aseguramos que el ID sea nulo para crear un nuevo descuento
             String response = ofertaService.crearDescuento(descuentoDto);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("ERROR en crearDescuento: " + e.getMessage());
             e.printStackTrace();
-            return new ResponseEntity<>("Error al crear descuento: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            // Devolver el mensaje específico del error de validación
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.err.println("ERROR GENERAL en crearDescuento: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error interno al crear descuento: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
-    @PutMapping("/editardescuento")
-    @Secured({"ADMIN"})
-    @Operation(description = "Edita un Descuento existente")
-    public ResponseEntity<String> editarDescuento(@RequestBody DescuentoDto descuentoDto) {
-        return ResponseEntity.ok(ofertaService.editarDescuento(descuentoDto));
-    }
 
     //todos pueden usarla
     @GetMapping("/listarDescuentos")
@@ -145,20 +141,18 @@ public class OfertaController {
             promocionDto.setId(null); // Aseguramos que el ID sea nulo para crear una nueva promoción
             String response = ofertaService.crearPromocion(promocionDto);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("ERROR en crearPromocion: " + e.getMessage());
             e.printStackTrace();
-            return new ResponseEntity<>("Error al crear promoción: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            // Devolver el mensaje específico del error de validación
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.err.println("ERROR GENERAL en crearPromocion: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error interno al crear promoción: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
-    @PutMapping("/editarpromocion")
-    @Secured({"ADMIN"})
-    @Operation(description = "Edita una Promoción existente")
-    public ResponseEntity<String> editarPromocion(@RequestBody PromocionDto promocionDto) {
-        return ResponseEntity.ok(ofertaService.editarPromocion(promocionDto));
-    }
 
     //todos pueden usarla
     @GetMapping("/listarPromociones")

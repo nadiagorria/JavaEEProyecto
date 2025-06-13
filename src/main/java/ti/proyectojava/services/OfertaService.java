@@ -23,13 +23,15 @@ public class OfertaService {
     private final DescuentoRepository descuentoRepository;
     private final PromocionRepository promocionRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
+    private final ValidacionOfertasService validacionOfertasService;
 
-    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, MapsDtosEntityService mapsDtosEntityService){
+    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, MapsDtosEntityService mapsDtosEntityService, ValidacionOfertasService validacionOfertasService){
         this.ofertaRepository = ofertaRepository;
         this.comboRepository = comboRepository;
         this.descuentoRepository = descuentoRepository;
         this.promocionRepository = promocionRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
+        this.validacionOfertasService = validacionOfertasService;
     }
 
 
@@ -47,36 +49,19 @@ public class OfertaService {
         return response;
     }
 
-    /// COMBOS ///////////////
+    /// COMBOS ///////////////    
 
     public String crearCombo(ComboDto comboDto) {
+        // Validar conflictos de ofertas antes de crear
+        validacionOfertasService.validarConflictosCombo(comboDto);
+        
         // Si el ID es null, es un nuevo combo
         if(comboDto.getId() == null || comboRepository.findById(comboDto.getId()).isEmpty()){
             return "Combo creado. ID:" + comboRepository.save(mapsDtosEntityService.mapToEntityCombo(comboDto)).getId();
         }
         return null;
-    }
-
-    public String editarCombo(ComboDto comboDto) {
-        Optional<Combo> optionalCombo = comboRepository.findById(comboDto.getId());
-        if (optionalCombo.isPresent()) {
-            Combo combo = optionalCombo.get();
-            combo.setDescripcion(comboDto.getDescripcion());
-            combo.setDescuento(comboDto.getDescuento());
-            combo.setActivo(comboDto.getActivo());
-            combo.setInicio(comboDto.getInicio());
-            combo.setFin(comboDto.getFin());
-            // Mapear productos del DTO
-            combo.setProductos(comboDto.getProductos().stream()
-                .map(mapsDtosEntityService::mapToEntityProducto)
-                .collect(Collectors.toList()));
-            comboRepository.save(combo);
-            return "Combo actualizado. ID:" + combo.getId();
-        } else {
-            return "Combo no encontrado. ID:" + comboDto.getId();
-        }
-    }
-
+    }    
+    
     public ResponseListadoCombos listadoCombo() {
         ResponseListadoCombos response = new ResponseListadoCombos();
 
@@ -103,27 +88,15 @@ public class OfertaService {
     }
 
 
-    //////////////////////////////////DESCUENTO///////////////////////////////////
-
+    //////////////////////////////////DESCUENTO///////////////////////////////////    
+    
     public String crearDescuento(DescuentoDto descuentoDto) {
+        // Validar conflictos de ofertas antes de crear
+        validacionOfertasService.validarConflictosDescuento(descuentoDto);
+        
         return "Descuento creado. ID:" + descuentoRepository.save(mapsDtosEntityService.mapToEntityDescuento(descuentoDto)).getId();
     }
-
-    public String editarDescuento(DescuentoDto descuentoDto) {
-        Optional<Descuento> optionalDescuento = descuentoRepository.findById(descuentoDto.getId());
-        if (optionalDescuento.isPresent()) {
-            Descuento descuento = optionalDescuento.get();
-            descuento.setDescripcion(descuentoDto.getDescripcion());
-            descuento.setDescuento(descuentoDto.getDescuento());
-            descuento.setProducto(mapsDtosEntityService.mapToEntityProducto(descuentoDto.getProducto()));
-            descuento.setActivo(descuentoDto.getActivo());
-            descuentoRepository.save(descuento);
-            return "Descuento actualizado. ID:" + descuento.getId();
-        } else {
-            return "Descuento no encontrado. ID:" + descuentoDto.getId();
-        }
-    }
-
+    
     public ResponseListadoDescuentos listadoDescuentos() {
         ResponseListadoDescuentos response = new ResponseListadoDescuentos();
 
@@ -152,25 +125,14 @@ public class OfertaService {
 
 //////////////////////////////////PROMOCIONES///////////////////////////////////
 
-    public String crearPromocion(PromocionDto promocionDto) {
+public String crearPromocion(PromocionDto promocionDto) {
+        // Validar conflictos de ofertas antes de crear        
+    validacionOfertasService.validarConflictosPromocion(promocionDto);
+        
         System.out.println("Creando promoción: " + promocionDto.getDescripcion());
         return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
-    }
-
-    public String editarPromocion(PromocionDto promocionDto) {
-        Optional<Promocion> optionalPromocion = promocionRepository.findById(promocionDto.getId());
-        if (optionalPromocion.isPresent()) {
-            Promocion promocion = optionalPromocion.get();
-            promocion.setDescripcion(promocionDto.getDescripcion());
-            promocion.setDescuento(promocionDto.getDescuento());
-            promocion.setProducto(mapsDtosEntityService.mapToEntityProducto(promocionDto.getProducto()));
-            promocion.setActivo(promocionDto.getActivo());
-            promocionRepository.save(promocion);
-            return "Promoción actualizada. ID:" + promocion.getId();
-        } else {
-            return "Promoción no encontrada. ID:" + promocionDto.getId();
-        }
-    }
+    }    
+    
 
     public ResponseListadoPromociones listadoPromociones() {
         ResponseListadoPromociones response = new ResponseListadoPromociones();
