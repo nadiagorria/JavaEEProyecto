@@ -6,6 +6,8 @@
   --text-secondary: #555555;
   --border-primary: #e0e0e0;
   --border-radius-lg: 12px;
+  --accent-color: #007bff;
+  --accent-hover: #0056b3;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,12 +18,14 @@
     --text-primary: #ffffff;
     --text-secondary: #b3b3b3;
     --border-primary: #444444;
+    --accent-color: #4a9eff;
+    --accent-hover: #357abd;
   }
 }
 
 // Forzar aplicación de variables CSS en dark mode
 @media (prefers-color-scheme: dark) {
-  // Estilos específicos para elementos que puedan no estar heredando correctamente
+  // Estilos específicos para elementos que puedan no estar herediendo correctamente
   app-stats {
     color-scheme: dark;
   }
@@ -79,6 +83,75 @@ main {
   min-height: 100vh;
   padding: 2rem 0;
   position: relative;
+}
+
+// Estilos para la sección de filtros
+.filter-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem 4vw;
+  margin-bottom: 2rem;
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 2rem 4vw;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    margin: 1rem 2vw;
+  }
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+.filter-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.filter-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+  }
+  
+  &:hover {
+    border-color: var(--accent-color);
+  }
+  
+  option {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    padding: 0.5rem;
+  }
 }
 
 .article-1 {
@@ -377,12 +450,12 @@ main {
 
   &:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--accent-color);
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
   }
 
   &:hover {
-    border-color: #007bff;
+    border-color: var(--accent-hover);
   }
 
   option {
@@ -390,6 +463,81 @@ main {
     color: var(--text-primary);
     padding: 0.5rem;
   }
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.clear-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    background: var(--border-primary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .pi {
+    font-size: 0.85rem;
+  }
+}
+
+.filter-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(74, 158, 255, 0.1);
+  color: var(--accent-color);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  
+  .pi {
+    font-size: 0.8rem;
+  }
+}
+
+// Estilos específicos para las tarjetas de estadísticas
+.filtered-sales-card {
+  border-left: 4px solid var(--accent-color);
+}
+
+.texto-pequeno {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 768px) {
