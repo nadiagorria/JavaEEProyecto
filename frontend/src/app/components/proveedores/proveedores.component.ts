@@ -99,6 +99,14 @@ export class ProveedoresComponent {
     this.visible = true;
   }
 
+  cerrarDialog() {
+    this.visible = false;
+    // Limpiar los campos del formulario
+    this.nombre = '';
+    this.telefono = '';
+    this.correo = '';
+  }
+
   //Proveedor
   nombre: string = '';
   telefono: string = '';

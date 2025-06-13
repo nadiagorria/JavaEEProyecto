@@ -59,6 +59,13 @@ export class ClientePerfilComponent {
     this.visibleEditar = true;
   }
 
+  cerrarDialogEditar() {
+    this.visibleEditar = false;
+    // Resetear los campos a los valores originales
+    this.nombreEdicion = '';
+    this.telefonoEdicion = '';
+  }
+
   pago : number = 0;
 
   pagoButton() {

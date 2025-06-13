@@ -342,14 +342,14 @@ public class MapsDtosEntityService {
         dto.setTelefono(proveedor.getTelefono());
         dto.setActivo(proveedor.isActivo());
         dto.setCorreo(proveedor.getCorreo());
-        
 
-        if (proveedor.getProductos() != null) {
+        
+            if (proveedor.getProductos() != null) {
             dto.setProductosDto(
                     proveedor.getProductos().stream()
-                            .map(prod -> mapToDtoProductoSimple(prod))
+                            .filter(producto -> producto != null && producto.getActivo())
+                            .map(this::mapToDtoProductoSimple)
                             .filter(Objects::nonNull)
-                            .filter(findbyactivo -> findbyactivo.getActivo())
                             .toList()
             );
         }

@@ -9,28 +9,79 @@
         <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="buscarCliente()"/>
 
       </p-inputgroup-addon>
-    </p-inputgroup>
+    </p-inputgroup>    <p-button label="Añadir Nuevo" class="boton" severity="secondary" (click)="mostarModal()"></p-button>
+    <p-dialog 
+      header="Añadir nuevo cliente a crédito" 
+      [(visible)]="visible" 
+      [modal]="true" 
+      [style]="{width: '400px'}"
+      [draggable]="false"
+      [resizable]="false">
+      
+      <div class="flex flex-column gap-3">
+        <div class="field">
+          <label for="nombre" class="block mb-2">Nombre</label>
+          <input 
+            id="nombre" 
+            pInputText 
+            [(ngModel)]="nombre" 
+            class="w-full"
+            placeholder="Ingrese el nombre del cliente"
+            autocomplete="off" />
+        </div>
+        
+        <div class="field">
+          <label for="telefono" class="block mb-2">Teléfono</label>
+          <input 
+            id="telefono" 
+            pInputText 
+            [(ngModel)]="telefono" 
+            class="w-full"
+            placeholder="Ingrese el teléfono"
+            autocomplete="off" />
+        </div>
+        
+        <div class="field">
+          <label for="minimo" class="block mb-2">Crédito Mínimo</label>
+          <input 
+            id="minimo" 
+            pInputText 
+            [(ngModel)]="minimo" 
+            class="w-full"
+            placeholder="Ingrese el crédito mínimo"
+            type="number" 
+            autocomplete="off" />
+        </div>
+        
+        <div class="field">
+          <label for="maximo" class="block mb-2">Crédito Máximo</label>
+          <input 
+            id="maximo" 
+            pInputText 
+            [(ngModel)]="maximo" 
+            class="w-full"
+            placeholder="Ingrese el crédito máximo"
+            type="number"
+            autocomplete="off" />
+        </div>
+      </div>
 
-    <p-button label="Añadir Nuevo" class="boton" severity="secondary" (click)="mostarModal()"></p-button>
-    <p-dialog header="Añadir nuevo cliente a credito" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
-      <div class="flex items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24 modal">Nombre</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="nombre" autocomplete="off" />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="telefono" class="font-semibold w-24 modal">Telefono</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="telefono" autocomplete="off" />
-      </div>      <div class="flex items-center gap-4 mb-4">
-        <label for="min" class="font-semibold w-24 modal">Min</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="minimo" autocomplete="off" type="number" />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="max" class="font-semibold w-24 modal">Max</label>
-        <input pInputText class="flex-auto modal" [(ngModel)]="maximo" autocomplete="off" type="number"/>
-      </div>
-      <div class="flex justify-end gap-2">
-        <p-button label="Confirmar" severity="secondary" (click)="saveCliente()" />
-      </div>
+      <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+          <p-button 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="cerrarDialog()"
+            styleClass="p-button-text">
+          </p-button>
+          <p-button 
+            label="Guardar" 
+            icon="pi pi-check" 
+            (click)="saveCliente()"
+            severity="secondary">
+          </p-button>
+        </div>
+      </ng-template>
     </p-dialog>
 
   </article>  <article class="w-full">

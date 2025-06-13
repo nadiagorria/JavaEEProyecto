@@ -60,6 +60,14 @@ export class ProveedorPerfilComponent {
     this.visibleEditar = true;
   }
 
+  cerrarDialogEditar() {
+    this.visibleEditar = false;
+    // Resetear los campos a los valores originales
+    this.nombreEdicion = '';
+    this.telefonoEdicion = '';
+    this.correoEdicion = '';
+  }
+
   nombreEdicion: string = '';
   telefonoEdicion: string = '';
   correoEdicion: string = '';

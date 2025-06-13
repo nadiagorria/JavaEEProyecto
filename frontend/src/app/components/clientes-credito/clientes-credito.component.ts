@@ -111,6 +111,15 @@ export class ClientesCreditoComponent {
     this.visible = true;
   }
 
+  cerrarDialog() {
+    this.visible = false;
+    // Limpiar los campos del formulario
+    this.nombre = '';
+    this.telefono = '';
+    this.minimo = 0;
+    this.maximo = 0;
+  }
+
   //Cliente
   nombre: string = '';
   telefono: string = '';
