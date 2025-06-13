@@ -65,17 +65,27 @@ export class StatsComponent implements OnInit {
 
   n = 3; // de cuanto es el top N de productos que se quiere obtener
   ngOnInit(): void {
+    // Establecer el año actual como seleccionado por defecto
+    const currentYear = new Date().getFullYear().toString();
+    this.anoSeleccionado = currentYear;
+    console.log('Año seleccionado por defecto:', this.anoSeleccionado);
+    console.log('Años disponibles al iniciar:', this.anos);
+
+    // Cargar datos de totales
     this.ventaservice.getVentasTotales().subscribe(data => {
       this.ventasTotales = data;
+      console.log('Ventas totales cargadas:', this.ventasTotales);
     });
 
     this.usuarioservice.getUsuariosTotales().subscribe(data => {
       this.usuariosTotales = data;
+      console.log('Usuarios totales cargados:', this.usuariosTotales);
     });
 
+    // Cargar productos populares
     this.productoservice.buscarTopNProductos(this.n).subscribe(data => {
-      console.log('Respuesta completa:', data);
-      this.productosMasPopulares = data.productos;
+      console.log('Respuesta completa de productos:', data);
+      this.productosMasPopulares = data.productos || [];
       console.log('Productos más populares:', this.productosMasPopulares);
       
       this.categoriasMasPopulares = [];
@@ -85,17 +95,37 @@ export class StatsComponent implements OnInit {
           this.categoriasMasPopulares.push(producto.categoria);
         }
       });
-        this.ventaservice.listarVentas().subscribe(data => {
 
-        this.ventas = data.ventas || [];
-        this.ventasFiltradas = [...this.ventas]; 
-        this.cargarAniosDisponibles();
-        this.calcularEstadisticas();
-      });
+      // Cargar ventas después de productos
+      this.cargarVentas();
+    },
+    error => {
+      console.error('Error al cargar productos populares:', error);
+      // Cargar ventas incluso si falla la carga de productos
+      this.cargarVentas();
     });
   }
   
-  // Método para cargar los años disponibles en las ventas
+  // Método para cargar las ventas y aplicar filtros
+  cargarVentas(): void {
+    console.log('Cargando ventas...');
+    this.ventaservice.listarVentas().subscribe(
+      data => {
+        console.log('Datos de ventas recibidos:', data);
+        this.ventas = data.ventas || [];
+        console.log('Ventas cargadas:', this.ventas.length);
+        this.ventasFiltradas = [...this.ventas];
+        this.filtrarPorMes();
+      },
+      error => {
+        console.error('Error al cargar ventas:', error);
+        this.ventas = [];
+        this.ventasFiltradas = [];
+        this.calcularEstadisticas();
+      }
+    );
+  }
+    // Método para cargar los años disponibles en las ventas
   cargarAniosDisponibles(): void {
     // Inicializar con opción para todos los años
     this.anos = [{ valor: '', nombre: 'Todos los años' }];
@@ -105,11 +135,27 @@ export class StatsComponent implements OnInit {
     for (let year = 2020; year <= currentYear; year++) {
       this.anos.push({ valor: year.toString(), nombre: year.toString() });
     }
+    console.log('Años disponibles cargados:', this.anos);
   }
   
   // Método para filtrar ventas por mes y año
   filtrarPorMes(): void {
+    console.log('Filtrando ventas por mes:', this.mesSeleccionado, 'y año:', this.anoSeleccionado);
+    console.log('Total de ventas antes de filtrar:', this.ventas.length);
+    
+    if (!this.ventas || this.ventas.length === 0) {
+      console.log('No hay ventas para filtrar');
+      this.ventasFiltradas = [];
+      this.calcularEstadisticas();
+      return;
+    }
+    
     this.ventasFiltradas = this.ventas.filter(venta => {
+      if (!venta.fechaVenta) {
+        console.log('Venta sin fecha:', venta);
+        return false;
+      }
+      
       const fechaVenta = new Date(venta.fechaVenta);
       const mesVenta = fechaVenta.getMonth() + 1; // getMonth() devuelve 0-11, necesitamos 1-12
       const anioVenta = fechaVenta.getFullYear().toString();
@@ -124,16 +170,29 @@ export class StatsComponent implements OnInit {
       return cumpleMes && cumpleAnio;
     });
     
+    console.log('Ventas filtradas:', this.ventasFiltradas.length);
     this.calcularEstadisticas();
   }
 
   calcularEstadisticas(): void {
+    console.log('Calculando estadísticas con', this.ventasFiltradas.length, 'ventas filtradas');
     this.debito = 0;
     this.credito = 0;
     this.efectivo = 0;
     this.creditolocal = 0;
 
+    if (!this.ventasFiltradas || this.ventasFiltradas.length === 0) {
+      console.log('No hay ventas filtradas para calcular estadísticas');
+      this.ganancias = 0;
+      return;
+    }
+
     for (const venta of this.ventasFiltradas) {
+      if (!venta.total) {
+        console.log('Venta sin total:', venta);
+        continue;
+      }
+      
       if (venta.formaPago === 'DEBITO') {
         this.debito += venta.total;
       } else if (venta.formaPago === 'CREDITO') { 
@@ -146,6 +205,13 @@ export class StatsComponent implements OnInit {
       }
     }
     this.ganancias = this.debito + this.credito + this.efectivo + this.creditolocal;
+    console.log('Estadísticas calculadas:', {
+      debito: this.debito,
+      credito: this.credito,
+      efectivo: this.efectivo,
+      creditolocal: this.creditolocal,
+      ganancias: this.ganancias
+    });
   }
-
+  
 }
