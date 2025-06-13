@@ -99,15 +99,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    console.log('Roles del usuario:', roles);
     
     if (!roles) {
-      console.log('No hay roles disponibles');
       return false;
     }
     
     const hasAdminRole = roles.includes('ADMIN');
-    console.log('¿Tiene rol ADMIN?', hasAdminRole);
     
     return hasAdminRole;
   }
@@ -317,6 +314,16 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         if (this.imagenSeleccionada) {
           this.productoService.actualizarImagenProducto(this.editandoProducto.id!, this.imagenSeleccionada).subscribe({
             next: () => {
+              // Actualizar inmediatamente la imagen en la interfaz
+              if (this.imagenPreviewEdicion) {
+                // Limpiar caché de imagen anterior
+                this.cacheImagenes.delete(this.editandoProducto.id!);
+                // Usar la imagen preview como nueva imagen
+                this.imagenUrl = this.imagenPreviewEdicion;
+                // Agregar la nueva imagen al caché
+                this.cacheImagenes.set(this.editandoProducto.id!, this.imagenPreviewEdicion);
+              }
+              
               this.messageService.add({
                 severity: 'success',
                 summary: 'Éxito',
@@ -356,8 +363,22 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   private finalizarEdicion(): void {
     this.mostrarModalEditar = false;
-    if (this.producto!.id !== null) {
+    // Solo recargar producto si no se actualizó imagen (porque ya se actualizó inmediatamente)
+    if (this.producto!.id !== null && !this.imagenSeleccionada) {
       this.cargarProducto(this.producto!.id);
+    } else if (this.producto!.id !== null && this.imagenSeleccionada) {
+      // Solo actualizar los datos del producto sin recargar la imagen
+      this.productoService.obtenerProducto(this.producto!.id).subscribe({
+        next: (response) => {
+          // Mantener la imagen actual y solo actualizar otros datos
+          const imagenActual = this.imagenUrl;
+          this.producto = response;
+          this.imagenUrl = imagenActual;
+        },
+        error: (error) => {
+          console.error('Error al recargar datos del producto:', error);
+        }
+      });
     }
     this.imagenSeleccionada = null;
     this.imagenPreviewEdicion = null;
@@ -407,6 +428,19 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           summary: 'Error',
           detail: 'No se pudo eliminar el producto'
         });
+      }
+    });
+  }
+
+  confirmarEliminarLote(loteId: number) {
+    this.confirmationService.confirm({
+      message: '¿Está seguro de que desea eliminar este lote? Esta acción no se puede deshacer.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.eliminarLote(loteId);
       }
     });
   }

@@ -126,7 +126,7 @@
               <td>{{ lote.stock }}</td>              <td>
                 <p-button icon="pi pi-trash" 
                           styleClass="p-button-rounded p-button-text p-button-danger" 
-                          (click)="eliminarLote(lote.id!)" 
+                          (click)="confirmarEliminarLote(lote.id!)" 
                           [disabled]="!lote.id"
                           pTooltip="Eliminar lote"
                           *ngIf="isAdmin()">

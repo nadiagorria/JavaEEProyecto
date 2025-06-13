@@ -43,7 +43,9 @@ export class ProductoService {
   actualizarImagenProducto(id: number, imagen: File): Observable<string> {
     const formData = new FormData();
     formData.append('imagen', imagen);
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/imagen`, formData);
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/imagen`, formData, {
+      responseType: 'text'
+    });
   }
 
   obtenerProducto(id: number): Observable<ProductoDto> {
