@@ -34,18 +34,24 @@
             id="email" 
             formControlName="email" 
             placeholder=" "
-            autocomplete="email"
-            [class.invalid]="formGroup.get('email')?.touched && formGroup.get('email')?.invalid"
-            [class.valid]="formGroup.get('email')?.touched && isValidEmail()"
+            autocomplete="email"            
+            [class.invalid]="(formGroup.get('email')?.touched && formGroup.get('email')?.invalid) || emailExists"
+            [class.valid]="formGroup.get('email')?.touched && isValidEmail() && !emailExists && !isCheckingEmail"
           />
           <label for="email">Correo Electrónico</label>
-        </p-iftalabel>
+        </p-iftalabel>        
         <div class="email-validation" *ngIf="formGroup.get('email')?.value && formGroup.get('email')?.value.length > 0">
           <span *ngIf="formGroup.get('email')?.invalid" class="email-invalid">
             <i class="pi pi-times-circle"></i> Por favor ingresa un email válido
           </span>
-          <span *ngIf="isValidEmail()" class="email-valid">
-            <i class="pi pi-check-circle"></i> Email válido
+          <span *ngIf="isValidEmail() && isCheckingEmail" class="checking">
+            <i class="pi pi-spin pi-spinner"></i> Verificando disponibilidad...
+          </span>
+          <span *ngIf="isValidEmail() && !isCheckingEmail && emailExists" class="email-taken">
+            <i class="pi pi-times-circle"></i> Este email ya está registrado
+          </span>
+          <span *ngIf="isValidEmail() && !isCheckingEmail && !emailExists" class="email-available">
+            <i class="pi pi-check-circle"></i> Email disponible
           </span>
         </div>
       </div>      <div class="form-field">
@@ -98,7 +104,7 @@
         type="submit" 
         label="Registrar" 
         [loading]="isLoading"
-        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername || !passwordsMatch()"
+        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername || emailExists || isCheckingEmail || !passwordsMatch()"
         icon="pi pi-user-plus"
         iconPos="right"
       >

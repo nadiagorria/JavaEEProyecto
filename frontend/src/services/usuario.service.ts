@@ -76,4 +76,12 @@ export class UsuarioService {
     );
   }
 
+  eliminarUsuario(nombreUsuario: string): Observable<string> {
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/eliminar/${nombreUsuario}`,
+      {},
+      { responseType: 'text' }
+    );
+  }
+
 }

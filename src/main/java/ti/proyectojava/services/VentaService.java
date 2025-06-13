@@ -16,6 +16,7 @@ import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -65,7 +66,9 @@ public class VentaService {
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
         
         // Descontar stock de los productos vendidos
-        for (Cantidad cantidad : ventaGuardada.getCantidades()) {
+        // Crear una copia de la lista para evitar ConcurrentModificationException
+        List<Cantidad> cantidades = new ArrayList<>(ventaGuardada.getCantidades());
+        for (Cantidad cantidad : cantidades) {
             Producto producto = cantidad.getProducto();
             int stockActual = producto.getStockTotal();
             int cantidadVendida = cantidad.getCantidad();
@@ -109,9 +112,10 @@ public class VentaService {
         if (!venta.getActivo()) {
             throw new RuntimeException("La venta ya está eliminada. ID: " + ventaId);
         }
-        
-        // Devolver el stock de los productos vendidos
-        for (Cantidad cantidad : venta.getCantidades()) {
+          // Devolver el stock de los productos vendidos
+        // Crear una copia de la lista para evitar ConcurrentModificationException
+        List<Cantidad> cantidades = new ArrayList<>(venta.getCantidades());
+        for (Cantidad cantidad : cantidades) {
             Producto producto = cantidad.getProducto();
             int stockActual = producto.getStockTotal();
             int cantidadDevolver = cantidad.getCantidad();

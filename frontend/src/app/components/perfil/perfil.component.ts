@@ -139,6 +139,12 @@ export class PerfilComponent implements OnInit {
            usuario.roles.includes('ADMIN') && 
            usuario.roles.includes('CAJERO') &&
            usuario.nombre !== 'admin';
+  }
+
+  puedeBorrarUsuario(usuario: UsuarioTabla): boolean {
+    return this.isExclusiveAdmin() && 
+           usuario.nombre !== 'admin' &&
+           usuario.activo; // Solo mostrar la opción para usuarios activos
   }  otorgarPermisos(nombreUsuario: string): void {
     this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
@@ -180,6 +186,38 @@ export class PerfilComponent implements OnInit {
           summary: 'Error al Revocar Permisos',
           detail: error.error || 'Error al revocar permisos de administrador',
           life: 5000
+        });
+      }
+    });
+  }
+
+  eliminarUsuario(nombreUsuario: string): void {
+    this.confirmationService.confirm({
+      message: `¿Está seguro que desea eliminar al usuario '${nombreUsuario}'? Esta acción desactivará la cuenta del usuario.`,
+      header: 'Confirmar Eliminación de Usuario',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, Eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.usuarioService.eliminarUsuario(nombreUsuario).subscribe({
+          next: (response: any) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Usuario Eliminado',
+              detail: 'Usuario eliminado (desactivado) exitosamente',
+              life: 4000
+            });
+            this.cargarUsuarios(); // Recargar lista
+          },
+          error: (error: any) => {
+            console.error('Error al eliminar usuario:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error al Eliminar Usuario',
+              detail: error.error || 'Error al eliminar el usuario',
+              life: 5000
+            });
+          }
         });
       }
     });

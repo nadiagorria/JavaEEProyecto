@@ -20,6 +20,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     Optional<Usuario> findByNombreIgnoreCaseAndContrasenia(String nombre, String contrasenia);
     Optional<Usuario> findByNombreIgnoreCase(String nombre);
 
+    Optional<Usuario> findByMailIgnoreCaseAndActivoTrue(String mail);
+    
     @Query("SELECT COUNT(u.id) as usuariosTotales FROM Usuario u")
     int cantidadUsuarios();
 

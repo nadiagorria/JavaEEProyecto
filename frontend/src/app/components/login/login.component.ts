@@ -71,6 +71,7 @@ export class LoginComponent {
             email: response.email // Incluir el email en el objeto user del servicio
           };
 
+          this.messageService.clear();
           this.messageService.add({
             severity: 'success',
             summary: 'Bienvenido',

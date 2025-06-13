@@ -54,6 +54,12 @@ export class SecurityService {
     );
   }
 
+  checkEmail(email: string): Observable<any> {
+    return this.http.get(
+      `${this.urlService.baseUrl}${this.endpoint}/verificar-email/${email}`
+    );
+  }
+
   obtenerRoles(): Observable<any> {
     return this.http.get(
       `${this.urlService.baseUrl}${this.endpoint}/obtenerPerfiles`,
