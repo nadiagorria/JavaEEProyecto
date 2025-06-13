@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';   // necesario para pipes
-import { TableModule } from 'primeng/table';      // necesario para p-table
-import { ButtonModule } from 'primeng/button';    // necesario para botones pButton
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';   
 import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -20,6 +20,7 @@ import { ProductoService } from 'src/services/producto.service';
 import { LoteService } from 'src/services/lote.service';
 import { CategoriaService } from 'src/services/categoria.service';
 import { EntidadService } from 'src/services/entidad.service';
+import { SecurityService } from 'src/services/security.service';
 import { ProductoDto } from 'src/models/producto.dto';
 import { LoteDto } from 'src/models/lote.dto';
 import { CategoriaDto } from 'src/models/categoria.dto';
@@ -71,7 +72,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         private categoriaService: CategoriaService,
         private entidadService: EntidadService,
         private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private securityService: SecurityService
       ) { }
 
   producto?: ProductoDto;
@@ -90,10 +92,24 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     proveedorId: null
   };
   categorias: CategoriaDto[] = [];  proveedores: ProveedorDto[] = [];
-  
-  // Helper function for getting today's date in ISO format
+    
   private getTodayISOString(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    console.log('Roles del usuario:', roles);
+    
+    if (!roles) {
+      console.log('No hay roles disponibles');
+      return false;
+    }
+    
+    const hasAdminRole = roles.includes('ADMIN');
+    console.log('¿Tiene rol ADMIN?', hasAdminRole);
+    
+    return hasAdminRole;
   }
 
   // Existing lote modal properties
@@ -106,21 +122,16 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   } = {
     numeLote: '',
     stock: 0,
-    fechaVencimiento: undefined, // Optional field
+    fechaVencimiento: undefined, 
     precioCompra: 0
   };
   minFechaVencimiento: string = '';
 
-  // Image upload properties
   imagenSeleccionada: File | null = null;
   imagenPreviewEdicion: string | null = null;
   ngOnInit() {
-    // Inicializar la fecha mínima de vencimiento
     const hoy = new Date();
     this.minFechaVencimiento = hoy.toISOString().split('T')[0];
-    
-    // La fecha de vencimiento se mantiene como undefined (opcional)
-    // this.nuevoLote.fechaVencimiento permanece undefined por defecto
     
     const id = Number(this.route.snapshot.paramMap.get('id'));
     
@@ -139,14 +150,11 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         console.log('Lotes del producto:', response.lotes);
         this.producto = response;
         
-        // Ordenar lotes por fecha de vencimiento
         if (this.producto.lotes) {
           this.producto.lotes.sort((a, b) => {
-            // Si alguno no tiene fecha de vencimiento, ponerlo al final
             if (!a.fechaVencimiento) return 1;
             if (!b.fechaVencimiento) return -1;
             
-            // Convertir strings a fechas y comparar
             const fechaA = new Date(a.fechaVencimiento);
             const fechaB = new Date(b.fechaVencimiento);
             return fechaA.getTime() - fechaB.getTime();
@@ -155,12 +163,10 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         
         this.loading = false;
         
-        // Cargar imagen del producto de forma asíncrona
         if (this.producto.id) {
           this.cargarImagenProducto(this.producto.id);
         }
 
-        // Verificar precios de lotes actuales
         this.verificarPreciosLotesActuales();
       },
       error: (error) => {
@@ -173,7 +179,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   private verificarPrecios(): void {
     if (!this.producto || !this.producto.lotes) return;
 
-    // Filtrar solo lotes activos que tienen precio de compra mayor al precio de venta
     const lotesConPrecioMayor = this.producto.lotes.filter(
       lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
     );
@@ -193,7 +198,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   private verificarPreciosLotesActuales(): void {
     if (!this.producto || !this.producto.lotes) return;
 
-    // Filtrar solo lotes activos que tienen precio de compra mayor al precio de venta
     const lotesConPrecioMayor = this.producto.lotes.filter(
       lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
     );
@@ -251,11 +255,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       }
     });
   }
-  // EDIT FUNCTIONALITY
   abrirModalEditar(): void {
     if (!this.producto) return;
     
-    // Asegurar que tengamos las categorías y proveedores cargados antes de abrir el modal
     if (this.categorias.length === 0) {
       this.cargarCategorias();
     }
@@ -292,14 +294,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     console.log('Guardando producto con categoriaId:', this.editandoProducto.categoriaId);
     console.log('Guardando producto con proveedorId:', this.editandoProducto.proveedorId);
 
-    // Buscar la categoría y proveedor por ID
     const categoriaSeleccionada = this.categorias.find(c => c.id === this.editandoProducto.categoriaId);
     const proveedorSeleccionado = this.proveedores.find(p => p.id === this.editandoProducto.proveedorId);
 
     console.log('Categoría encontrada:', categoriaSeleccionada);
     console.log('Proveedor encontrado:', proveedorSeleccionado);
 
-    // Construir el objeto ProductoDto completo para la edición
     const productoParaEditar: ProductoDto = {
       ...this.producto!,
       id: this.editandoProducto.id,
@@ -312,10 +312,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
     console.log('Producto para editar:', productoParaEditar);
 
-    // Primero editar el producto
     this.productoService.editarProducto(productoParaEditar).subscribe({
       next: () => {
-        // Si hay una nueva imagen, actualizarla
         if (this.imagenSeleccionada) {
           this.productoService.actualizarImagenProducto(this.editandoProducto.id!, this.imagenSeleccionada).subscribe({
             next: () => {
@@ -337,7 +335,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
             }
           });
         } else {
-          // Si no hay imagen nueva, solo mostrar mensaje de éxito
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
@@ -362,7 +359,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (this.producto!.id !== null) {
       this.cargarProducto(this.producto!.id);
     }
-    // Reset image selection
     this.imagenSeleccionada = null;
     this.imagenPreviewEdicion = null;
   }
@@ -377,7 +373,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     );
   }
 
-  // DELETE FUNCTIONALITY
   confirmarEliminarProducto(): void {
     this.confirmationService.confirm({
       message: '¿Está seguro de que desea eliminar este producto?',
@@ -401,7 +396,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           summary: 'Éxito',
           detail: 'Producto eliminado correctamente'
         });
-        // Redirigir a la lista de productos después de un breve delay
         setTimeout(() => {
           this.router.navigate(['/productos']);
         }, 1500);
@@ -417,12 +411,10 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     });
   }
 
-  // EXISTING LOTE FUNCTIONALITY
   eliminarLote(loteId: number) {
     if (!this.producto || this.producto.id === null) return;
     this.loteService.eliminarLote(loteId).subscribe({
       next: () => {
-        // Quita el lote inactivo del array local
         this.producto!.lotes = this.producto!.lotes.filter(l => l.id !== loteId);
         if (this.producto!.id !== null) {
           this.cargarProducto(this.producto!.id);
@@ -431,7 +423,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         console.error('Error al eliminar lote:', err);
         let errorMessage = 'Error al eliminar el lote';
         
-        // Handle different error response types (JSON or plain text)
         if (err.error) {
           if (typeof err.error === 'string') {
             errorMessage = err.error;
@@ -453,7 +444,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     
     if (!this.validarFormularioLote()) {
       return;
-    }    // Crear el objeto lote con datos validados - fecha de vencimiento opcional
+    }    
     const lote: LoteDto = {
       numeLote: this.nuevoLote.numeLote || '',
       stock: this.nuevoLote.stock || 0,
@@ -470,7 +461,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     
     this.loteService.crearLote(lote).subscribe({
       next: (response) => {
-        // Extraer el ID del lote de la respuesta (formato "Lote creado. ID: XXX")
         const idMatch = response.match(/ID: (\d+)/);
         const idLote = idMatch ? idMatch[1] : 'desconocido';
         
@@ -480,7 +470,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           detail: `Lote #${idLote} agregado correctamente`
         });
         
-        // Recargar datos del producto
         if (this.producto!.id !== null) {
           this.cargarProducto(this.producto!.id);
         }
@@ -508,8 +497,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }  private resetearFormularioLote(): void {
-    // Resetear los valores del formulario - fecha de vencimiento opcional
+  }  
+  
+  private resetearFormularioLote(): void {
     this.nuevoLote = {
       numeLote: '',
       stock: 0,
@@ -536,7 +526,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    // La fecha de vencimiento es opcional, no se valida
 
     if (this.nuevoLote.precioCompra === undefined || this.nuevoLote.precioCompra < 0) {
       this.messageService.add({
@@ -545,7 +534,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         detail: 'El precio de compra debe ser un valor válido'
       });
       return false;
-    }    // Verificar si el precio de compra del nuevo lote es mayor al precio de venta actual
+    }    
+
     if (this.producto && this.nuevoLote.precioCompra && this.nuevoLote.precioCompra > this.producto.precioVenta) {
       this.messageService.add({
         severity: 'warn',
@@ -553,7 +543,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         detail: `El precio de compra del nuevo lote (${this.nuevoLote.precioCompra}) es mayor al precio de venta actual (${this.producto.precioVenta}). Esto resultará en pérdidas.`,
         life: 10000
       });
-      // No retornamos false para permitir la creación, solo es una advertencia
     }
 
     return true;
@@ -600,7 +589,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (file) {
       this.imagenSeleccionada = file;
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagenPreviewEdicion = e.target?.result as string;

@@ -1,11 +1,88 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "primeicons/primeicons.css";
 
 html, body {
   margin: 0;
   background: #f7f6f6;
   font-family: "Montserrat", sans-serif;
+}
+
+
+
+/* Clases específicas para diferentes estilos de tabla */
+.tabla-azul .p-datatable-thead > tr > th {
+  background: #34495e !important;
+  color: white !important;
+}
+
+/* Estilos universales para tablas PrimeNG */
+.p-datatable {
+  border: 1px solid #ecf0f1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .p-datatable-header {
+    background: #f8f9fa;
+    border-bottom: 2px solid #ecf0f1;
+    padding: 15px 20px;
+  }
+  
+  .p-datatable-thead > tr > th {
+    background: #34495e !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 15px 12px;
+    border: none;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .p-datatable-tbody > tr {
+    border-bottom: 1px solid #ecf0f1;
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: #f8f9fa;
+    }
+    
+    &:nth-child(even) {
+      background-color: #fdfdfd;
+    }
+  }
+  
+  .p-datatable-tbody > tr > td {
+    padding: 12px;
+    border: none;
+    font-size: 0.9rem;
+    vertical-align: middle;
+  }
+}
+
+/* Estilos universales para iconos de acción */
+.p-button-rounded.p-button-text {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &.p-button-danger {
+    color: #e74c3c;
+    
+    &:hover {
+      background: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+    }
+  }
+  
+  &:not(.p-button-danger) {
+    color: #3498db;
+    
+    &:hover {
+      background: rgba(52, 152, 219, 0.1);
+      color: #2980b9;
+    }
+  }
 }
 
 /* Estilos globales para imágenes placeholder y contenedores de imagen */
@@ -227,3 +304,50 @@ app-recuperar-password .p-button {
   min-height: 48px !important;
   white-space: nowrap !important;
 }
+
+/* Estilos universales para iconos de acción */
+.p-button.icon-eye {
+  color: #3498db !important;
+  
+  &:hover {
+    background: rgba(52, 152, 219, 0.1) !important;
+    color: #2980b9 !important;
+  }
+}
+
+.p-button.icon-trash {
+  color: #e74c3c !important;
+  
+  &:hover {
+    background: rgba(231, 76, 60, 0.1) !important;
+    color: #c0392b !important;
+  }
+}
+
+/* Estilos para botones de acción redondeados y de texto */
+.p-button-rounded.p-button-text {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &.p-button-danger {
+    color: #e74c3c;
+    
+    &:hover {
+      background: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+    }
+  }
+  
+  &:not(.p-button-danger) {
+    color: #3498db;
+    
+    &:hover {
+      background: rgba(52, 152, 219, 0.1);
+      color: #2980b9;
+    }
+  }
+}
+
+

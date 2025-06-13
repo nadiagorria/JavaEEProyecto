@@ -37,7 +37,7 @@
                   <th>Descuento</th>
                   <th>Inicio</th>
                   <th>Fin</th>
-                  <th>Estado</th>
+                  
                   <th>Acciones</th>
                 </tr>
               </ng-template>
@@ -47,13 +47,10 @@
                   <td>{{promocion.producto?.nombre || 'N/A'}}</td>
                     <td>{{promocion.descuento - 1}} x {{promocion.descuento}}</td>
                   <td>{{promocion.inicio | date:'dd/MM/yyyy'}}</td>
-                  <td>{{promocion.fin | date:'dd/MM/yyyy'}}</td>
+                  <td>{{promocion.fin | date:'dd/MM/yyyy'}}</td>                 
                   <td>
-                    <p-tag [value]="promocion.activo ? 'Activo' : 'Inactivo'" 
-                           [severity]="promocion.activo ? 'success' : 'secondary'"></p-tag>
-                  </td>                  <td>
                     <p-button icon="pi pi-trash" 
-                              class="p-button-text p-button-rounded p-button-danger" 
+                              styleClass="p-button-rounded p-button-text p-button-danger" 
                               (click)="eliminarOferta(promocion.id, 'promocion')"
                               pTooltip="Eliminar"></p-button>
                   </td>
@@ -103,7 +100,7 @@
                            [severity]="combo.activo ? 'success' : 'secondary'"></p-tag>
                   </td>                  <td>
                     <p-button icon="pi pi-trash" 
-                              class="p-button-text p-button-rounded p-button-danger" 
+                              styleClass="p-button-rounded p-button-text p-button-danger" 
                               (click)="eliminarOferta(combo.id, 'combo')"
                               pTooltip="Eliminar"></p-button>
                   </td>
@@ -152,10 +149,12 @@
                     <p-tag [value]="descuento.activo ? 'Activo' : 'Inactivo'" 
                            [severity]="descuento.activo ? 'success' : 'secondary'"></p-tag>
                   </td>                  <td>
-                    <p-button icon="pi pi-trash" 
-                              class="p-button-text p-button-rounded p-button-danger" 
-                              (click)="eliminarOferta(descuento.id, 'descuento')"
-                              pTooltip="Eliminar"></p-button>
+                    <p-button 
+                        icon="pi pi-trash" 
+                        styleClass="p-button-rounded p-button-text p-button-danger" 
+                        (click)="eliminarOferta(descuento.id, 'descuento')"
+                        pTooltip="Eliminar">
+                    </p-button>
                   </td>
                 </tr>
               </ng-template>
