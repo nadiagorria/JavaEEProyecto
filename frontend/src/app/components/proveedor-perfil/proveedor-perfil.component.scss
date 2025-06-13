@@ -16,10 +16,6 @@ main {
 
 }
 
-.Tarjetas{
-
-}
-
 .tarjeta-1 {
   color: black;
 }
@@ -47,6 +43,35 @@ main {
   height: 280px;
   width: 25vw;
   margin-right: 5vw;
+}
+
+// Estilos para el ícono del proveedor
+.avatar-icon {
+  width: 10vw;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  margin-right: 5vw;
+
+  i {
+    font-size: 3rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  &.proveedor-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
 }
 
 .tablaMargen {

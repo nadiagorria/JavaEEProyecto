@@ -8,6 +8,7 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
@@ -29,6 +30,7 @@ import { SecurityService } from 'src/services/security.service';
     MenuModule,
     TableModule,
     DialogModule,
+    TooltipModule,
     ],
   templateUrl: './proveedores.component.html',
   styleUrl: './proveedores.component.scss'

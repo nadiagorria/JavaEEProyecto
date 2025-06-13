@@ -54,19 +54,36 @@
           <th>Pago hasta ahora</th>
           <th>Acciones</th>
         </tr>
-      </ng-template>
-
-      <ng-template pTemplate="body" let-credito>
+      </ng-template>      <ng-template pTemplate="body" let-credito>
         <tr>
           <td>{{ credito.cliente.id }}</td>
-          <td><a href="javascript:void(0)" (click)="mostrarDetalles(credito.cliente.id)" class="hover:underline text-blue-600">{{ credito.cliente.nombre }}</a></td>
+          <td>{{ credito.cliente.nombre }}</td>
           <td>{{ credito.cliente.telefono }}</td>
           <td>{{ credito.minimo }}</td>
           <td>{{ credito.maximo }}</td>
           <td>{{ credito.precioTotal }}</td>
           <td>{{ credito.pagoHastaAhora }}</td>
           <td>
-            <p-button icon="pi pi-trash" severity="danger" (click)="eliminarCliente(credito.cliente.id)" styleClass="p-button-rounded p-button-text p-button-danger"></p-button>
+            <p-button 
+              icon="pi pi-eye" 
+              severity="info" 
+              size="small" 
+              [text]="true"
+              (click)="mostrarDetalles(credito.cliente.id)"
+              pTooltip="Ver cliente"
+              tooltipPosition="top"
+              styleClass="p-button-rounded p-button-text mr-2">
+            </p-button>
+            <p-button 
+              icon="pi pi-trash" 
+              severity="danger" 
+              size="small"
+              [text]="true"
+              (click)="eliminarCliente(credito.cliente.id)" 
+              pTooltip="Eliminar cliente"
+              tooltipPosition="top"
+              styleClass="p-button-rounded p-button-text">
+            </p-button>
           </td>
         </tr>
       </ng-template>

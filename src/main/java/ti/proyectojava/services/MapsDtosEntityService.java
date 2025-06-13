@@ -349,6 +349,7 @@ public class MapsDtosEntityService {
                     proveedor.getProductos().stream()
                             .map(prod -> mapToDtoProductoSimple(prod))
                             .filter(Objects::nonNull)
+                            .filter(findbyactivo -> findbyactivo.getActivo())
                             .toList()
             );
         }
