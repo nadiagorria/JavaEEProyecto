@@ -42,8 +42,7 @@ public class SeguridadController {
                     .autenticarUsuario(usuario, password)
                     .orElseThrow(() -> new RuntimeException("ERROR_SERVIDOR"));
             String token = generarToken(objUsuario);
-            UsuarioSecurityDto usuarioResponse
-                    = new UsuarioSecurityDto(objUsuario.getNombre(),
+            UsuarioSecurityDto usuarioResponse = new UsuarioSecurityDto(objUsuario.getNombre(),
                             token, seguridadService.listarRolesPorUsuario(objUsuario));
             return new ResponseEntity<>(usuarioResponse, HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -106,7 +105,9 @@ public class SeguridadController {
                 return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"CONTRASENIA_CORTA\", \"message\": \"La contraseña debe tener al menos 6 caracteres\"}");
-            }            // Crear DTO del usuario
+            }
+
+            // Crear DTO del usuario
             UsuarioDto usuarioDto = new UsuarioDto();
             usuarioDto.setNombre(username);
             usuarioDto.setMail(email);
@@ -123,9 +124,44 @@ public class SeguridadController {
             } else {
                 return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"USUARIO_EXISTENTE\", \"message\": \"El nombre de usuario ya está en uso\"}");
+                    .body("{\"error\": \"ERROR_REGISTRO\", \"message\": \"Error al registrar usuario\"}");
             }
             
+        } catch (RuntimeException e) {
+            // Manejar errores específicos del servicio
+            String errorCode;
+            String errorMessage;
+            
+            switch (e.getMessage()) {
+                case "USUARIO_EXISTENTE":
+                    errorCode = "USUARIO_EXISTENTE";
+                    errorMessage = "El nombre de usuario ya está en uso";
+                    break;
+                case "EMAIL_EXISTENTE":
+                    errorCode = "EMAIL_EXISTENTE";
+                    errorMessage = "El email ya está registrado con otro usuario activo";
+                    break;
+                case "CONTRASENIA_CORTA":
+                    errorCode = "CONTRASENIA_CORTA";
+                    errorMessage = "La contraseña debe tener al menos 6 caracteres";
+                    break;
+                case "NOMBRE_CORTO":
+                    errorCode = "NOMBRE_CORTO";
+                    errorMessage = "El nombre de usuario debe tener al menos 3 caracteres";
+                    break;
+                case "EMAIL_INVALIDO":
+                    errorCode = "EMAIL_INVALIDO";
+                    errorMessage = "El formato del email es inválido";
+                    break;
+                default:
+                    errorCode = "ERROR_REGISTRO";
+                    errorMessage = e.getMessage();
+                    break;
+            }
+            
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
         } catch (Exception e) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -143,6 +179,19 @@ public class SeguridadController {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar usuario\"}");
+        }
+    }
+
+    @GetMapping("/verificar-email/{email}")
+    public ResponseEntity<?> verificarEmail(@PathVariable String email) {
+        try {
+            boolean existe = seguridadService.existeEmailActivo(email);
+            return ResponseEntity.ok()
+                .body("{\"existe\": " + existe + "}");
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar email\"}");
         }
     }
 

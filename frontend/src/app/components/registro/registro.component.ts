@@ -35,6 +35,8 @@ export class RegistroComponent {
   isLoading = false;
   usernameExists = false;
   isCheckingUsername = false;
+  emailExists = false;
+  isCheckingEmail = false;
 
   constructor(
     private fb: FormBuilder,
@@ -53,6 +55,8 @@ export class RegistroComponent {
 
     // Configurar validación en tiempo real para el username
     this.setupUsernameValidation();
+    // Configurar validación en tiempo real para el email
+    this.setupEmailValidation();
   }
 
   // Validador personalizado para confirmar que las contraseñas coincidan
@@ -115,8 +119,42 @@ export class RegistroComponent {
       }
     });
   }
+
+  private setupEmailValidation() {
+    this.formGroup.get('email')?.valueChanges.pipe(
+      debounceTime(500), // Esperar 500ms después de que el usuario deje de escribir
+      distinctUntilChanged(), // Solo verificar si el valor cambió
+      switchMap(email => {
+        if (email && this.isValidEmail()) {
+          this.isCheckingEmail = true;
+          return this.securityService.checkEmail(email);
+        } else {
+          this.emailExists = false;
+          this.isCheckingEmail = false;
+          return of(null);
+        }
+      })
+    ).subscribe({
+      next: (response) => {
+        this.isCheckingEmail = false;
+        if (response) {
+          try {
+            const data = typeof response === 'string' ? JSON.parse(response) : response;
+            this.emailExists = data.existe === true;
+          } catch (e) {
+            this.emailExists = false;
+          }
+        }
+      },
+      error: (error) => {
+        this.isCheckingEmail = false;
+        this.emailExists = false;
+        console.error('Error verificando email:', error);
+      }
+    });
+  }
   onSubmit() {
-    if (this.formGroup.valid && !this.isLoading && !this.usernameExists) {
+    if (this.formGroup.valid && !this.isLoading && !this.usernameExists && !this.emailExists && !this.isCheckingUsername && !this.isCheckingEmail) {
       this.isLoading = true;
       const { username, email, password } = this.formGroup.value;
       
@@ -143,8 +181,7 @@ export class RegistroComponent {
           
           let mensaje = 'Error al intentar registrar usuario';
           let severidad = 'error';
-          
-          // Parse error response
+            // Parse error response
           if (error.error) {
             try {
               const errorData = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
@@ -156,7 +193,16 @@ export class RegistroComponent {
                 case 'USUARIO_EXISTENTE':
                   mensaje = 'El nombre de usuario ya está en uso';
                   break;
-                case 'ERROR_SERVIDOR':
+                case 'EMAIL_EXISTENTE':
+                  mensaje = 'El email ya está registrado con otro usuario activo';
+                  break;
+                case 'EMAIL_INVALIDO':
+                  mensaje = 'El email proporcionado no es válido';
+                  break;
+                  case 'NOMBRE_CORTO':
+                  mensaje = 'El nombre de usuario debe tener al menos 3 caracteres';
+                  break;
+                  case 'ERROR_SERVIDOR':
                   mensaje = 'Error interno del servidor. Intente nuevamente.';
                   break;
                 default:
@@ -174,22 +220,27 @@ export class RegistroComponent {
             detail: mensaje,
             life: 4000
           });
-          
-          // Reset form on certain errors
+            // Reset form on certain errors
           if (error.error?.error === 'USUARIO_EXISTENTE') {
             this.formGroup.get('username')?.setValue('');
+          }
+          if (error.error?.error === 'EMAIL_EXISTENTE') {
+            this.formGroup.get('email')?.setValue('');
           }
         }
       });    } else {
       // Mark all fields as touched to show validation errors
       this.formGroup.markAllAsTouched();
-      
-      let mensajeError = 'Por favor completa todos los campos correctamente';
+        let mensajeError = 'Por favor completa todos los campos correctamente';
       
       if (this.usernameExists) {
         mensajeError = 'El nombre de usuario ya está en uso';
       } else if (this.isCheckingUsername) {
         mensajeError = 'Esperando verificación del nombre de usuario';
+      } else if (this.emailExists) {
+        mensajeError = 'El email ya está registrado';
+      } else if (this.isCheckingEmail) {
+        mensajeError = 'Esperando verificación del email';
       }
       
       this.messageService.add({

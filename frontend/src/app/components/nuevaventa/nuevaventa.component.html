@@ -14,7 +14,9 @@
       paginatorPosition="bottom"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
       showGridlines
-      [responsive]="true">      <ng-template pTemplate="header">
+      [responsive]="true">      
+      
+      <ng-template pTemplate="header">
         <tr>
           <th class="texto">Nombre</th>
           <th class="texto">Código</th>
@@ -65,12 +67,13 @@
             <small class="text-muted" *ngIf="cantidad.producto.stockTotal">
               Stock: {{cantidad.producto.stockTotal}}
             </small>
-          </td>
+          </td>          
           <td>
-            <button pButton icon="pi pi-trash"
-                    severity="contrast"
-                    (click)="eliminarProducto(cantidad)">
-            </button>
+            <p-button icon="pi pi-trash"
+                      styleClass="p-button-rounded p-button-text p-button-danger"
+                      (click)="eliminarProducto(cantidad)"
+                      pTooltip="Eliminar">
+            </p-button>
           </td>
         </tr>
       </ng-template>      <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">

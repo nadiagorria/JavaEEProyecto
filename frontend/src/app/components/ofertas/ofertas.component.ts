@@ -25,7 +25,7 @@ import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../mode
 
 @Component({
   selector: 'app-ofertas',
-  standalone: true,  imports: [
+  standalone: true, imports: [
     CommonModule,
     FormsModule,
     DialogModule,
@@ -59,7 +59,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   // Modales
   mostrarModalPromocion: boolean = false;
   mostrarModalCombo: boolean = false;
-  mostrarModalDescuento: boolean = false;  // Formularios
+  mostrarModalDescuento: boolean = false;
+
+  // Formularios
   nuevaPromocion: Partial<PromocionDto> = {
     descripcion: '',
     descuento: 0,
@@ -85,10 +87,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     inicio: this.getTodayISOString(),
     fin: this.getTomorrowISOString(),
     producto: { id: 0, nombre: '' }
-  };// Variables para los formularios
+  };
+
+  // Variables para los formularios
   productoSeleccionadoPromocion: number = 0;
   productoSeleccionadoDescuento: number = 0;
   productosSeleccionadosCombo: number[] = [];
+
   constructor(
     private ofertaService: OfertaService,
     private productoService: ProductoService,
@@ -96,20 +101,23 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     private confirmationService: ConfirmationService,
     private router: Router
   ) { }
-  // Helper functions for date handling
+
+
+
   private getTodayISOString(): string {
     return new Date().toISOString().split('T')[0];
   }
+
   private getTomorrowISOString(): string {
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1); // Agregar un día
+    tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   }
 
   private formatDateForDisplay(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES'); // Returns dd/MM/yyyy format
+    return date.toLocaleDateString('es-ES');
   }
 
   ngOnInit() {
@@ -117,30 +125,29 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Initialize date objects to prevent calendar errors
     setTimeout(() => {
       this.initializeDates();
     }, 100);
   }
+
   private initializeDates() {
-    // Ensure all date strings are properly initialized
     const today = this.getTodayISOString();
     const tomorrow = this.getTomorrowISOString();
-    
+
     if (!this.nuevaPromocion.inicio) {
       this.nuevaPromocion.inicio = today;
     }
     if (!this.nuevaPromocion.fin) {
       this.nuevaPromocion.fin = tomorrow;
     }
-    
+
     if (!this.nuevoCombo.inicio) {
       this.nuevoCombo.inicio = today;
     }
     if (!this.nuevoCombo.fin) {
       this.nuevoCombo.fin = tomorrow;
     }
-    
+
     if (!this.nuevoDescuento.inicio) {
       this.nuevoDescuento.inicio = today;
     }
@@ -218,7 +225,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         });
       }
     });
-  }  // ==================== PROMOCIONES ====================
+  }
+
+  // ==================== PROMOCIONES ====================
   abrirModalPromocion() {
     this.nuevaPromocion = {
       descripcion: '',
@@ -230,21 +239,22 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     };
     this.productoSeleccionadoPromocion = 0;
     this.mostrarModalPromocion = true;
-  }guardarPromocion() {
+  }
+
+  guardarPromocion() {
     if (!this.validarPromocion()) {
       return;
     }
 
-    // Sincronizar el producto antes de guardar
     const productoSeleccionado = this.productos.find(p => p.id === this.productoSeleccionadoPromocion);
     if (productoSeleccionado && productoSeleccionado.id !== null) {
-      this.nuevaPromocion.producto = { 
-        id: productoSeleccionado.id, 
-        nombre: productoSeleccionado.nombre || '' 
+      this.nuevaPromocion.producto = {
+        id: productoSeleccionado.id,
+        nombre: productoSeleccionado.nombre || ''
       };
-    }    // Crear la promoción directamente (ya no necesitamos formatear fechas)
+    }
     const promocion: PromocionDto = {
-      id: 0, // Se asignará por el backend
+      id: 0,
       descripcion: this.nuevaPromocion.descripcion || '',
       descuento: this.nuevaPromocion.descuento || 0,
       activo: this.nuevaPromocion.activo || true,
@@ -252,9 +262,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       fin: this.nuevaPromocion.fin || this.getTomorrowISOString(),
       producto: this.nuevaPromocion.producto || { id: 0, nombre: '' }
     };
-    
-    // Debug: verificar qué datos se están enviando
-    console.log('Datos de promoción a enviar:', promocion);
 
     this.ofertaService.crearPromocion(promocion).subscribe({
       next: (response) => {
@@ -271,14 +278,24 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         console.error('Error al crear promoción:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
+        console.error('Error completo:', error);
+
+        let errorMessage = 'Error al crear la promoción';
+        if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al crear la promoción'
+          detail: errorMessage
         });
       }
     });
   }
+
   validarPromocion(): boolean {
     if (!this.nuevaPromocion.descripcion || this.nuevaPromocion.descripcion.trim() === '') {
       this.messageService.add({
@@ -308,7 +325,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     }
 
     return true;
-  }  // ==================== COMBOS ====================
+  }
+
+  // ==================== COMBOS ====================
   abrirModalCombo() {
     this.nuevoCombo = {
       descripcion: '',
@@ -320,20 +339,23 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     };
     this.productosSeleccionadosCombo = [];
     this.mostrarModalCombo = true;
-  }guardarCombo() {
+  }
+
+  guardarCombo() {
     if (!this.validarCombo()) {
       return;
     }
 
-    // Sincronizar los productos antes de guardar
+
     const productosCombo = this.productosSeleccionadosCombo.map((id: number) => {
       const producto = this.productos.find((p: ProductoDto) => p.id === id);
-      return { 
-        id: producto?.id || 0, 
-        nombre: producto?.nombre || '' 
-      };    }).filter((p: { id: number; nombre: string }) => p.id !== 0);    // Crear el combo directamente (ya no necesitamos formatear fechas)
+      return {
+        id: producto?.id || 0,
+        nombre: producto?.nombre || ''
+      };
+    }).filter((p: { id: number; nombre: string }) => p.id !== 0);
     const combo: ComboDto = {
-      id: 0, // Se asignará por el backend
+      id: 0,
       descripcion: this.nuevoCombo.descripcion || '',
       descuento: this.nuevoCombo.descuento || 0,
       activo: this.nuevoCombo.activo || true,
@@ -341,9 +363,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       fin: this.nuevoCombo.fin || this.getTomorrowISOString(),
       productos: productosCombo
     };
-    
-    // Debug: verificar qué datos se están enviando
-    console.log('Datos de combo a enviar:', combo);
+
 
     this.ofertaService.crearCombo(combo).subscribe({
       next: (response) => {
@@ -360,10 +380,19 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         console.error('Error al crear combo:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
+        console.error('Error completo:', error);
+
+        let errorMessage = 'Error al crear el combo';
+        if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al crear el combo'
+          detail: errorMessage
         });
       }
     });
@@ -397,7 +426,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     }
 
     return true;
-  }  // ==================== DESCUENTOS ====================
+  }
+
+  // ==================== DESCUENTOS ====================
   abrirModalDescuento() {
     this.nuevoDescuento = {
       descripcion: '',
@@ -409,21 +440,22 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     };
     this.productoSeleccionadoDescuento = 0;
     this.mostrarModalDescuento = true;
-  }guardarDescuento() {
+  }
+
+  guardarDescuento() {
     if (!this.validarDescuento()) {
       return;
     }
 
-    // Sincronizar el producto antes de guardar
     const productoSeleccionado = this.productos.find((p: ProductoDto) => p.id === this.productoSeleccionadoDescuento);
     if (productoSeleccionado && productoSeleccionado.id !== null) {
-      this.nuevoDescuento.producto = { 
-        id: productoSeleccionado.id, 
-        nombre: productoSeleccionado.nombre || '' 
+      this.nuevoDescuento.producto = {
+        id: productoSeleccionado.id,
+        nombre: productoSeleccionado.nombre || ''
       };
-    }    // Crear el descuento directamente (ya no necesitamos formatear fechas)
+    }
     const descuento: DescuentoDto = {
-      id: 0, // Se asignará por el backend
+      id: 0,
       descripcion: this.nuevoDescuento.descripcion || '',
       descuento: this.nuevoDescuento.descuento || 0,
       activo: this.nuevoDescuento.activo || true,
@@ -431,13 +463,10 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       fin: this.nuevoDescuento.fin || this.getTomorrowISOString(),
       producto: this.nuevoDescuento.producto || { id: 0, nombre: '' }
     };
-    
-    // Debug: verificar qué datos se están enviando
-    console.log('Datos de descuento a enviar:', descuento);
+
 
     this.ofertaService.crearDescuento(descuento).subscribe({
       next: (response) => {
-        console.log('Descuento creado exitosamente:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -450,14 +479,26 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         console.error('Error al crear descuento:', error);
         console.error('Status:', error.status);
         console.error('Message:', error.message);
+        console.error('Error completo:', error);
+
+        // Extraer el mensaje específico del error
+        let errorMessage = 'Error al crear el descuento';
+        if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al crear el descuento'
+          detail: errorMessage
         });
       }
     });
-  }validarDescuento(): boolean {
+  } 
+  
+  validarDescuento(): boolean {
     if (!this.nuevoDescuento.descripcion || this.nuevoDescuento.descripcion.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -489,7 +530,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   }
 
   // ==================== UTILIDADES ====================
-  
+
   onProductoChange(event: any, tipo: 'promocion' | 'descuento') {
     const producto = this.productos.find((p: ProductoDto) => p.id === event.value);
     if (producto && producto.id !== null) {
@@ -500,28 +541,30 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.productoSeleccionadoDescuento = producto.id;
         this.nuevoDescuento.producto = { id: producto.id, nombre: producto.nombre || '' };
       }
-    }  }
-  
+    }
+  }
+
   onProductosComboChange(event: any) {
     this.productosSeleccionadosCombo = event.value;
     this.nuevoCombo.productos = event.value.map((id: number) => {
       const producto = this.productos.find((p: ProductoDto) => p.id === id);
-      return { 
-        id: producto?.id || 0, 
-        nombre: producto?.nombre || '' 
+      return {
+        id: producto?.id || 0,
+        nombre: producto?.nombre || ''
       };
-    }).filter((p: { id: number; nombre: string }) => p.id !== 0);  }
-  
+    }).filter((p: { id: number; nombre: string }) => p.id !== 0);
+  }
+
   formatearFecha(fecha: string): string {
     return this.formatDateForDisplay(fecha);
   }
-  
+
   formatearProductos(productos: Pick<ProductoDto, 'id' | 'nombre'>[]): string {
     return productos.map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre).join(', ');
   }
 
   // ==================== ELIMINAR OFERTAS ====================
-    eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
+  eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
     this.confirmationService.confirm({
       message: `¿Está seguro que desea eliminar esta ${tipo}?`,
       header: 'Confirmar eliminación',
@@ -534,8 +577,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
               summary: 'Éxito',
               detail: `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} eliminada correctamente`
             });
-            
-            // Recargar la tabla correspondiente
+
             switch (tipo) {
               case 'promocion':
                 this.cargarPromociones();

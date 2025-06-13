@@ -51,33 +51,66 @@ public class UsuarioService {
 
     public Integer listadoUsuariosTotales(){
         return  usuarioRepository.cantidadUsuarios();
-    }
-
+    }    
+    
+    
     public String crearUsuario(UsuarioDto usuario, boolean isAdmin){
         String response = null;
 
-        if(usuario.getNombre() != null && usuario.getMail() != null && usuario.getContrasenia() != null && usuarioRepository.findByNombreIgnoreCase(usuario.getNombre()).isEmpty()) {
-            // Encriptar la contraseña antes de crear el usuario
-            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
-            usuario.setContrasenia(contraseniaEncriptada);
-            
-            // Crear la entidad usuario
-            Usuario nuevoUsuario = mapsDtosEntityService.mapToEntityUsuario(usuario);
-            
-            // Asignar rol según el parámetro isAdmin
-            List<RolUsuario> roles = new ArrayList<>();
-            if (isAdmin) {
-                // Asignar rol de administrador (ID = 1)
-                rolUsuarioRepository.findById(1L).ifPresent(roles::add);
-            } else {
-                // Asignar rol de cajero (ID = 2)
-                rolUsuarioRepository.findById(2L).ifPresent(roles::add);
-            }
-            nuevoUsuario.setRoles(roles);
+        // Validar que los campos requeridos no sean null
+        if(usuario.getNombre() == null || usuario.getMail() == null || usuario.getContrasenia() == null) {
+            throw new RuntimeException("Todos los campos son requeridos");
+        }
 
-            // Guardar usuario con roles
-            Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
-            response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();        }
+        // Validar que el nombre de usuario no esté duplicado
+        if(usuarioRepository.findByNombreIgnoreCase(usuario.getNombre()).isPresent()) {
+            throw new RuntimeException("USUARIO_EXISTENTE");
+        }
+
+        // Validar que el email no esté duplicado en usuarios activos
+        Optional<Usuario> usuarioConEmailActivo = usuarioRepository.findByMailIgnoreCaseAndActivoTrue(usuario.getMail());
+        if(usuarioConEmailActivo.isPresent()) {
+            throw new RuntimeException("EMAIL_EXISTENTE");
+        }
+
+        // Validar que la contraseña tenga al menos 6 caracteres
+        if(usuario.getContrasenia().length() < 6) {
+            throw new RuntimeException("CONTRASENIA_CORTA");
+        }
+
+        // Validar que el nombre de usuario tenga al menos 3 caracteres
+        if(usuario.getNombre().length() < 3) {
+            throw new RuntimeException("NOMBRE_CORTO");
+        }
+
+        // Validar que el email tenga un formato válido
+        if (!usuario.getMail().matches("^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
+            throw new RuntimeException("EMAIL_INVALIDO");
+        }
+
+        // Crear nuevo usuario
+        // Encriptar la contraseña antes de crear el usuario
+        String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
+        usuario.setContrasenia(contraseniaEncriptada);
+        
+        // Crear la entidad usuario
+        Usuario nuevoUsuario = mapsDtosEntityService.mapToEntityUsuario(usuario);
+        
+        // Asignar rol según el parámetro isAdmin
+        List<RolUsuario> roles = new ArrayList<>();
+        if (isAdmin) {
+            // Asignar rol de administrador (ID = 1)
+            rolUsuarioRepository.findById(1L).ifPresent(roles::add);
+        } else {
+            // Asignar rol de cajero (ID = 2)
+            rolUsuarioRepository.findById(2L).ifPresent(roles::add);
+        }
+        nuevoUsuario.setRoles(roles);
+
+        // Guardar usuario con roles
+        Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+        response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();
+        
         return response;
     }
 
@@ -178,7 +211,7 @@ public class UsuarioService {
      */
     public String solicitarRecuperacionPassword(String email) {
         // Verificar que el email existe
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCaseAndActivoTrue(email);
         if (usuarioOpt.isEmpty()) {
             throw new RuntimeException("No existe un usuario registrado con ese email");
         }
@@ -235,7 +268,7 @@ public class UsuarioService {
         }
 
         // Buscar el usuario
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCaseAndActivoTrue(email);
         if (usuarioOpt.isEmpty()) {
             throw new RuntimeException("Usuario no encontrado");
         }
@@ -265,7 +298,7 @@ public class UsuarioService {
      */
     private String generarCodigoRecuperacion() {
         Random random = new Random();
-        int codigo = 100000 + random.nextInt(900000); // Genera número entre 100000 y 999999
+        int codigo = 100000 + random.nextInt(900000);
         return String.valueOf(codigo);
     }
 

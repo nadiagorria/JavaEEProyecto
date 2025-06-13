@@ -101,7 +101,10 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-    }    @PostMapping("/solicitar-recuperacion")
+    }    
+    
+    
+    @PostMapping("/solicitar-recuperacion")
     @Operation(description = "Solicita recuperación de contraseña por email")
     public ResponseEntity<String> solicitarRecuperacionPassword(@RequestBody RecuperacionPasswordDto request) {
         try {

@@ -467,7 +467,6 @@ button[pButton] {
   font-size: 13px;
   font-weight: 500;
   animation: fadeIn 0.3s ease;
-
   .email-invalid {
     color: #dc3545;
     display: flex;
@@ -487,6 +486,39 @@ button[pButton] {
 
     i {
       font-size: 14px;
+    }
+  }
+
+  .email-taken {
+    color: #dc3545;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .email-available {
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .checking {
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    
+    i {
+      font-size: 12px;
     }
   }
 }

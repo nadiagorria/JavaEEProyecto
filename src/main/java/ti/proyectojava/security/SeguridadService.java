@@ -53,4 +53,8 @@ public class SeguridadService {
         return usuarioRepository.findByNombreIgnoreCase(nombreUsuario).isPresent();
     }
 
+    public boolean existeEmailActivo(String email) {
+        return usuarioRepository.findByMailIgnoreCaseAndActivoTrue(email).isPresent();
+    }
+
 }
