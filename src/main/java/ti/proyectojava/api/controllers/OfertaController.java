@@ -32,11 +32,24 @@ public class OfertaController {
     @Secured({"ADMIN"})
     @Operation(description = "Crea un nuevo Combo")
     public ResponseEntity<String> crearCombo(@RequestBody ComboDto comboDto) {
-        comboDto.setId(null);
-        String response = ofertaService.crearCombo(comboDto);
-        return response == null ?
-                new ResponseEntity<>("Error al crear Combo. ID:" + comboDto.getId(), HttpStatus.BAD_REQUEST) :
-                new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            System.out.println("DEBUG: Datos recibidos en controller - ComboDto: " + comboDto);
+            System.out.println("DEBUG: Descripción recibida: " + comboDto.getDescripcion());
+            System.out.println("DEBUG: Descuento recibido: " + comboDto.getDescuento());
+            System.out.println("DEBUG: Inicio recibido: " + comboDto.getInicio());
+            System.out.println("DEBUG: Fin recibido: " + comboDto.getFin());
+            System.out.println("DEBUG: Productos recibidos: " + comboDto.getProductos());
+            
+            comboDto.setId(null);
+            String response = ofertaService.crearCombo(comboDto);
+            return response == null ?
+                    new ResponseEntity<>("Error al crear Combo. ID:" + comboDto.getId(), HttpStatus.BAD_REQUEST) :
+                    new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.err.println("ERROR en crearCombo: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al crear combo: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
@@ -72,9 +85,22 @@ public class OfertaController {
     @Secured({"ADMIN"})
     @Operation(description = "Crea un nuevo Descuento")
     public ResponseEntity<String> crearDescuento(@RequestBody DescuentoDto descuentoDto) {
-        descuentoDto.setId(null); // Aseguramos que el ID sea nulo para crear un nuevo descuento
-        String response = ofertaService.crearDescuento(descuentoDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            System.out.println("DEBUG: Datos recibidos en controller - DescuentoDto: " + descuentoDto);
+            System.out.println("DEBUG: Descripción recibida: " + descuentoDto.getDescripcion());
+            System.out.println("DEBUG: Descuento recibido: " + descuentoDto.getDescuento());
+            System.out.println("DEBUG: Inicio recibido: " + descuentoDto.getInicio());
+            System.out.println("DEBUG: Fin recibido: " + descuentoDto.getFin());
+            System.out.println("DEBUG: Producto recibido: " + descuentoDto.getProducto());
+            
+            descuentoDto.setId(null); // Aseguramos que el ID sea nulo para crear un nuevo descuento
+            String response = ofertaService.crearDescuento(descuentoDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.err.println("ERROR en crearDescuento: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al crear descuento: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)
@@ -103,16 +129,27 @@ public class OfertaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    ////////////////////// PROMOCIÓN //////////////////////
-
-    //solo admin puede hacerlo
+    ////////////////////// PROMOCIÓN //////////////////////    //solo admin puede hacerlo
     @PostMapping("/promocion")
     @Secured({"ADMIN"})
     @Operation(description = "Crea una nueva Promoción")
     public ResponseEntity<String> crearPromocion(@RequestBody PromocionDto promocionDto) {
-        promocionDto.setId(null); // Aseguramos que el ID sea nulo para crear una nueva promoción
-        String response = ofertaService.crearPromocion(promocionDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            System.out.println("DEBUG: Datos recibidos en controller - PromocionDto: " + promocionDto);
+            System.out.println("DEBUG: Descripción recibida: " + promocionDto.getDescripcion());
+            System.out.println("DEBUG: Descuento recibido: " + promocionDto.getDescuento());
+            System.out.println("DEBUG: Inicio recibido: " + promocionDto.getInicio());
+            System.out.println("DEBUG: Fin recibido: " + promocionDto.getFin());
+            System.out.println("DEBUG: Producto recibido: " + promocionDto.getProducto());
+            
+            promocionDto.setId(null); // Aseguramos que el ID sea nulo para crear una nueva promoción
+            String response = ofertaService.crearPromocion(promocionDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.err.println("ERROR en crearPromocion: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al crear promoción: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //solo admin puede hacerlo (no es necesaria esta funcion, creo que podemos sacarla)

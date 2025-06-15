@@ -186,6 +186,19 @@ form {
     border-color: #28a745;
     box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
   }
+
+  // Input validation states with visual feedback
+  input.valid,
+  ::ng-deep .p-password.valid input {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+  }
+
+  input.invalid,
+  ::ng-deep .p-password.invalid input {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+  }
 }
 
 // Terms and conditions checkbox styling
@@ -305,51 +318,28 @@ button[pButton] {
     font-weight: 600;
     transition: all 0.3s ease;
     border-bottom: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
 
     &:hover {
       color: #212529;
       border-bottom-color: #212529;
+      
+      i {
+        transform: translateX(2px);
+      }
     }
   }
 
   @media (max-width: 480px) {
     font-size: 14px;
     margin-top: 30px;
-  }
-}
-
-/* Toast customization */
-::ng-deep .p-toast {
-  z-index: 9999;
-  
-  .p-toast-message {
-    border-radius: 8px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    
-    &.p-toast-message-error {
-      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-      border-color: #bd2130;
-    }
-    
-    &.p-toast-message-success {
-      background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-      border-color: #1c7430;
-    }
-
-    &.p-toast-message-warn {
-      background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-      border-color: #d39e00;
-      color: #212529;
-    }
-
-    .p-toast-message-text {
-      color: #ffffff;
-    }
-
-    &.p-toast-message-warn .p-toast-message-text {
-      color: #212529;
-    }
   }
 }
 
@@ -471,9 +461,64 @@ button[pButton] {
   }
 }
 
-.form-field input.invalid {
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+// Email validation styling
+.email-validation {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+
+  .email-invalid {
+    color: #dc3545;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .email-valid {
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+}
+
+// Confirm password validation styling
+.confirm-password-validation {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+
+  .password-mismatch {
+    color: #dc3545;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .password-match {
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
 }
 
 /* Checkbox field styling */

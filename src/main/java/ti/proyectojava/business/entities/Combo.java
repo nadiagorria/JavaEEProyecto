@@ -13,8 +13,6 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "COMBO")
 public class Combo extends Oferta{
-    @Column(name = "COMBO_DESCRIPCION")
-    private String descripcion;
 
     @ManyToMany(mappedBy = "combos")
     private List<Producto> productos = new ArrayList<>();

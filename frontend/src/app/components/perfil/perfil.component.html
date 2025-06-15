@@ -4,9 +4,12 @@
   <div class="grid">
     <!-- Perfil Card -->
     <div class="col-12 md:col-4 lg:col-3">
-      <p-card>
+      <p-card>        
         <div class="flex flex-column align-items-center text-center">
-          <p-avatar [image]="usuario.avatar" styleClass="mb-3" size="xlarge" shape="circle" />
+          <!-- Icono de persona con color aleatorio -->
+          <div class="avatar-icon mb-3" [style.background-color]="usuario.avatarColor">
+            <i class="pi pi-user"></i>
+          </div>
           <h2 class="text-xl font-semibold mb-2">{{usuario.nombreUsuario}}</h2>
           <div class="mb-3">
             <p-tag *ngFor="let role of usuario.roles" 
@@ -53,21 +56,26 @@
             <tr>
               <td>{{venta.fechaVenta | date:'dd/MM/yyyy HH:mm'}}</td>
               <td>${{venta.total?.toFixed(2)}}</td>
-              <td>{{venta.formaPago}}</td>
+              <td>{{venta.formaPago}}</td>              
               <td>
                 <p-button icon="pi pi-eye" 
                          (click)="verDetalleVenta(venta.id)"
-                         styleClass="p-button-rounded p-button-text">
+                         styleClass="p-button-rounded p-button-text"
+                         pTooltip="Ver detalle">
+                </p-button>
+                <p-button *ngIf="isAdmin()" 
+                          icon="pi pi-trash" 
+                          (click)="eliminarVenta(venta.id)"
+                          styleClass="p-button-rounded p-button-text p-button-danger"
+                          pTooltip="Eliminar venta">
                 </p-button>
               </td>
             </tr>
           </ng-template>
         </p-table>
       </p-card>
-    </div>
-
-    <!-- Users Table (Admin Only) -->
-    <div class="col-12 md:col-12 lg:col-12 mt-3" *ngIf="isAdmin()">
+    </div>    <!-- Users Table (Exclusive Admin Only) -->
+    <div class="col-12 md:col-12 lg:col-12 mt-3" *ngIf="isExclusiveAdmin()">
       <p-card header="Usuarios del Sistema">
         <p-table [value]="usuarios" 
                  [paginator]="true" 
@@ -75,16 +83,15 @@
                  [totalRecords]="totalUsuarios"
                  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
                  [showCurrentPageReport]="true"
-                 [tableStyle]="{ 'min-width': '50rem' }">          
-          <ng-template pTemplate="header">
+                 [tableStyle]="{ 'min-width': '50rem' }">            <ng-template pTemplate="header">
             <tr>
               <th>Nombre</th>
               <th>Email</th>
               <th>Roles</th>
               <th>Estado</th>
+              <th *ngIf="isDefaultAdmin()">Acciones</th>
             </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-usuario>
+          </ng-template>          <ng-template pTemplate="body" let-usuario>
             <tr>
               <td>{{usuario.nombre}}</td>
               <td>{{usuario.mail}}</td>
@@ -99,6 +106,28 @@
                 <p-tag [value]="usuario.activo ? 'Activo' : 'Inactivo'"
                        [severity]="usuario.activo ? 'success' : 'danger'">
                 </p-tag>
+              </td>
+              <td *ngIf="isDefaultAdmin()">
+                <div class="flex gap-2">
+                  <p-button 
+                    *ngIf="puedeOtorgarPermisos(usuario)"
+                    icon="pi pi-user-plus" 
+                    size="small"
+                    severity="success"
+                    [text]="true"
+                    (click)="otorgarPermisos(usuario.nombre)"
+                    pTooltip="Otorgar permisos de administrador">
+                  </p-button>
+                  <p-button 
+                    *ngIf="puedeRevocarPermisos(usuario)"
+                    icon="pi pi-user-minus" 
+                    size="small"
+                    severity="danger"
+                    [text]="true"
+                    (click)="revocarPermisos(usuario.nombre)"
+                    pTooltip="Revocar permisos de administrador">
+                  </p-button>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -150,9 +179,11 @@
         [feedback]="true"
         [toggleMask]="true"
         class="w-full"
-        placeholder="Ingrese nueva contraseña"/>
-      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.newPassword.length < 6">
+        placeholder="Ingrese nueva contraseña"/>      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.newPassword.length < 6">
         La contraseña debe tener al menos 6 caracteres
+      </small>
+      <small class="p-error block mt-1" *ngIf="editForm.newPassword && editForm.currentPassword && editForm.newPassword === editForm.currentPassword">
+        La nueva contraseña debe ser diferente a la actual
       </small>
     </div>
 
@@ -182,6 +213,13 @@
         (click)="guardarCambios()"
         [loading]="loading"
         [disabled]="!isValidForm() || loading"></p-button>
-    </div>
-  </ng-template>
+    </div>  </ng-template>
 </p-dialog>
+
+<!-- Toast para mensajes -->
+<p-toast position="top-right" [life]="5000"></p-toast>
+
+<!-- Diálogo de confirmación -->
+<p-confirmDialog></p-confirmDialog>
+
+

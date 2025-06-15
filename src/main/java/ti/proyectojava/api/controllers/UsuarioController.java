@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.dtos.UsuarioDto;
+import ti.proyectojava.dtos.RecuperacionPasswordDto;
 import ti.proyectojava.services.UsuarioService;
 
 @RestController
@@ -69,4 +70,61 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    @PostMapping("/otorgar-admin/{usuario}")
+    @Operation(description = "Otorga permisos de administrador a un usuario (solo el admin por defecto)")
+    @Secured({"ADMIN"})
+    public ResponseEntity<String> otorgarRolAdmin(@PathVariable(name = "usuario") String usuarioDestino) {
+        try {
+            // Obtener el usuario autenticado
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String adminUsuario = authentication.getName();
+            
+            String response = usuarioService.otorgarRolAdmin(adminUsuario, usuarioDestino);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/revocar-admin/{usuario}")
+    @Operation(description = "Revoca permisos de administrador de un usuario (solo el admin por defecto)")
+    @Secured({"ADMIN"})
+    public ResponseEntity<String> revocarRolAdmin(@PathVariable(name = "usuario") String usuarioDestino) {
+        try {
+            // Obtener el usuario autenticado
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String adminUsuario = authentication.getName();
+            
+            String response = usuarioService.revocarRolAdmin(adminUsuario, usuarioDestino);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }    @PostMapping("/solicitar-recuperacion")
+    @Operation(description = "Solicita recuperación de contraseña por email")
+    public ResponseEntity<String> solicitarRecuperacionPassword(@RequestBody RecuperacionPasswordDto request) {
+        try {
+            String response = usuarioService.solicitarRecuperacionPassword(request.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/restablecer-password")
+    @Operation(description = "Restablece la contraseña usando el código de recuperación")
+    public ResponseEntity<String> restablecerPassword(@RequestBody RecuperacionPasswordDto request) {
+        try {
+            String response = usuarioService.restablecerPassword(
+                request.getEmail(), 
+                request.getCodigo(), 
+                request.getNuevaPassword()
+            );
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

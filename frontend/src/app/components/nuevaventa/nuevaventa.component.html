@@ -48,15 +48,23 @@
             <ng-template #sinOferta>
               <div>{{ getPrecioFinal(cantidad) | currency }}</div>
             </ng-template>
-          </td>
-          <td>
-            <p-inputNumber
-              [(ngModel)]="cantidad.cantidad"
-              [showButtons]="true"
-              [min]="1"
-              mode="decimal"
-              (onInput)="aplicarOfertas()">
-            </p-inputNumber>
+          </td>          <td>
+            <div (click)="detectarClickIncremento($event, cantidad)" class="cantidad-container">
+              <p-inputNumber
+                [(ngModel)]="cantidad.cantidad"
+                [showButtons]="true"
+                [min]="1"
+                [max]="getStockDisponible(cantidad.producto)"
+                mode="decimal"
+                (onInput)="validarYAplicarOfertas($event, cantidad)"
+                (onFocus)="guardarCantidadAnterior(cantidad)"
+                (onBlur)="verificarCambioManual(cantidad)"
+                (keydown)="onInputKeydown($event, cantidad)">
+              </p-inputNumber>
+            </div>
+            <small class="text-muted" *ngIf="cantidad.producto.stockTotal">
+              Stock: {{cantidad.producto.stockTotal}}
+            </small>
           </td>
           <td>
             <button pButton icon="pi pi-trash"
@@ -80,28 +88,10 @@
 
     </p-table>
   </div>
-
   <!-- Barra de búsqueda -->
-  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">      <!-- Controles de búsqueda y escáner -->
-    <div class="w-full">
-      <div class="flex mb-3 align-items-stretch" style="gap: 0.25rem;">
-        <div class="flex-1">
-          <p-autoComplete
-            class="texto w-full"
-            [(ngModel)]="productoSeleccionado"
-            [suggestions]="productosFiltrados"
-            (completeMethod)="filtrarProductos($event)"
-            field="nombre"
-            placeholder="Buscar producto..."
-            [dropdown]="false"
-            (onSelect)="agregarALista($event)">
-            <ng-template let-producto pTemplate="item">
-              <div class="texto">
-                {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
-              </div>
-            </ng-template>
-          </p-autoComplete>
-        </div>
+  <div class="col-12 lg:col-4 lg:order-1 order-0 my-5 flex justify-content-center">
+    <!-- Controles de búsqueda y escáner -->
+    <div class="w-full search-container">      <div class="search-controls mb-3">
         <!-- Botón del escáner físico -->
         <button 
           pButton 
@@ -109,12 +99,44 @@
           [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
           [severity]="escanerActivo ? 'danger' : 'info'"
           [outlined]="!escanerActivo"
-          class="scanner-btn flex-shrink-0"
-          style="height: 42px; width: 42px; margin-left: 0.25rem;"
+          label="Escáner"
+          class="scanner-btn"
           (click)="toggleEscanerFisico()"
           pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
           tooltipPosition="bottom">
         </button>
+        <div class="flex-1">          <p-autoComplete
+            class="texto w-full"
+            [(ngModel)]="productoSeleccionado"
+            [suggestions]="productosFiltrados"
+            (completeMethod)="filtrarProductos($event)"
+            field="nombre"
+            placeholder="Buscar producto..."
+            [dropdown]="false"
+            (onSelect)="onProductoSelect($event)">
+            <ng-template let-producto pTemplate="item">
+              <div class="texto" 
+                   [class.text-gray-400]="!tieneStock(producto)"
+                   [class.cursor-not-allowed]="!tieneStock(producto)">
+                <div [class.line-through]="!tieneStock(producto)">
+                  {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+                </div>
+                <div *ngIf="!tieneStock(producto)" class="text-xs text-red-500 font-semibold">
+                  *Sin stock
+                </div>
+                <div *ngIf="tieneStock(producto)" class="text-xs text-green-600">
+                  Stock: {{producto.stockTotal}}
+                </div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="empty">
+              <div class="texto text-center p-3 text-500">
+                <i class="pi pi-search mr-2"></i>
+                No se encontraron productos
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
       </div>
       
       <!-- Indicador de estado del escáner -->
@@ -243,6 +265,15 @@
     </div>  </p-dialog>
 
 </div>
+
+<!-- Diálogo de selección de productos duplicados -->
+<app-seleccion-producto-dialog
+  [display]="displaySeleccionProducto"
+  [productos]="productosDuplicados"
+  [codigoBarras]="codigoBarrasEscaneado"
+  (productoSeleccionado)="onProductoSeleccionado($event)"
+  (dialogCerrado)="onDialogoSeleccionCerrado()">
+</app-seleccion-producto-dialog>
 
 <!-- ConfirmDialog para el ConfirmationService -->
 <p-confirmDialog></p-confirmDialog>

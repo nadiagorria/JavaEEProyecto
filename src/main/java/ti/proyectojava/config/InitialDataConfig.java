@@ -7,15 +7,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ti.proyectojava.business.entities.RolUsuario;
+import ti.proyectojava.business.entities.Usuario;
 import ti.proyectojava.business.repositories.RolUsuarioRepository;
+import ti.proyectojava.business.repositories.UsuarioRepository;
+import ti.proyectojava.services.PasswordService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
-public class InitialDataConfig {
-
-    @Autowired
+public class InitialDataConfig {    @Autowired
     private RolUsuarioRepository rolUsuarioRepository;
-
-    @Bean
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PasswordService passwordService;    @Bean
     public CommandLineRunner initRoles() {
         return args -> {
             // Verificar si ya existen roles
@@ -32,6 +40,23 @@ public class InitialDataConfig {
                 rolCajero.setId(2L);
                 rolCajero.setNombre("CAJERO");
                 rolUsuarioRepository.save(rolCajero);
+            }
+            
+            // Crear usuario administrador por defecto si no existe
+            if (usuarioRepository.findByNombreIgnoreCase("admin").isEmpty()) {
+                Usuario adminUser = new Usuario();
+                adminUser.setNombre("admin");
+                adminUser.setMail("admin@byf.com");
+                adminUser.setContrasenia(passwordService.encryptPassword("admin123"));
+                adminUser.setActivo(true);
+                
+                // Asignar solo rol ADMIN al usuario por defecto
+                List<RolUsuario> adminRoles = new ArrayList<>();
+                rolUsuarioRepository.findById(1L).ifPresent(adminRoles::add);
+                adminUser.setRoles(adminRoles);
+                
+                usuarioRepository.save(adminUser);
+                System.out.println("Usuario administrador por defecto creado: admin / admin123");
             }
         };
     }

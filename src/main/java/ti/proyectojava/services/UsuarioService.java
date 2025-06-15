@@ -1,16 +1,19 @@
 package ti.proyectojava.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.UsuarioRepository;
 import ti.proyectojava.business.repositories.RolUsuarioRepository;
-import ti.proyectojava.dtos.RolUsuarioDto;
+import ti.proyectojava.business.repositories.PasswordRecoveryRepository;
 import ti.proyectojava.dtos.UsuarioDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.Random;
 
 @Service
 public class UsuarioService {
@@ -18,12 +21,19 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolUsuarioRepository rolUsuarioRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
+    private final PasswordService passwordService;
+    private final PasswordRecoveryRepository passwordRecoveryRepository;
+    
+    @Autowired
+    private EmailService emailService;
 
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolUsuarioRepository rolUsuarioRepository, MapsDtosEntityService mapsDtosEntityService, PasswordService passwordService, PasswordRecoveryRepository passwordRecoveryRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolUsuarioRepository = rolUsuarioRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
+        this.passwordService = passwordService;
+        this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
     public ResponseListadoUsuarios listadoUsuarios(){
@@ -47,6 +57,10 @@ public class UsuarioService {
         String response = null;
 
         if(usuario.getNombre() != null && usuario.getMail() != null && usuario.getContrasenia() != null && usuarioRepository.findByNombreIgnoreCase(usuario.getNombre()).isEmpty()) {
+            // Encriptar la contraseña antes de crear el usuario
+            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getContrasenia());
+            usuario.setContrasenia(contraseniaEncriptada);
+            
             // Crear la entidad usuario
             Usuario nuevoUsuario = mapsDtosEntityService.mapToEntityUsuario(usuario);
             
@@ -60,7 +74,7 @@ public class UsuarioService {
                 rolUsuarioRepository.findById(2L).ifPresent(roles::add);
             }
             nuevoUsuario.setRoles(roles);
-            
+
             // Guardar usuario con roles
             Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
             response = "Usuario creado exitosamente. NOMBRE:" + usuarioGuardado.getNombre();        }
@@ -78,22 +92,22 @@ public class UsuarioService {
             response = "Usuario eliminado correctamente. NOMBRE:" + usuario.getNombre();
         }
         return response;
-    }    public String modificarUsuario(String nombre, UsuarioDto usuario){
-        String response = null;
-
-        Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
-        
-        // Verificar que la contraseña actual coincida con la almacenada
-        if (!aux.getContrasenia().equals(usuario.getContrasenia())) {
+    }
+    
+    public String modificarUsuario(String nombre, UsuarioDto usuario){
+        String response = null;        Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));        
+        // Verificar que la contraseña actual coincida con la almacenada (usando encriptación)
+        if (!passwordService.matchPassword(usuario.getContrasenia(), aux.getContrasenia())) {
             throw new RuntimeException("Contraseña actual incorrecta");
         }
 
         // Actualizar email
         aux.setMail(usuario.getMail());
         
-        // Si hay una nueva contraseña, actualizarla
-        if (usuario.getNuevaContrasenia() != null && !usuario.getNuevaContrasenia().isEmpty()) {
-            aux.setContrasenia(usuario.getNuevaContrasenia());
+        // Si hay una nueva contraseña, encriptarla y actualizarla
+        if (usuario.getNuevaContrasenia() != null && !usuario.getNuevaContrasenia().trim().isEmpty()) {
+            String contraseniaEncriptada = passwordService.encryptPassword(usuario.getNuevaContrasenia());
+            aux.setContrasenia(contraseniaEncriptada);
         }
 
         usuarioRepository.save(aux);
@@ -107,6 +121,179 @@ public class UsuarioService {
         return mapsDtosEntityService.mapToDtoUsuario(usuario);
     }
 
+    public String otorgarRolAdmin(String adminUsuario, String usuarioDestino) {
+        // Verificar que solo el usuario "admin" puede otorgar roles de administrador
+        if (!"admin".equals(adminUsuario)) {
+            throw new RuntimeException("Solo el administrador por defecto puede otorgar permisos de administrador");
+        }
+
+        // Verificar que el usuario destino existe
+        Usuario usuario = usuarioRepository.findByNombreIgnoreCase(usuarioDestino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + usuarioDestino));
+
+        // Verificar que el usuario tenga solo rol CAJERO
+        boolean soloTieneCajero = usuario.getRoles().size() == 1 && 
+                                 usuario.getRoles().get(0).getNombre().equals("CAJERO");
+        
+        if (!soloTieneCajero) {
+            throw new RuntimeException("Solo se pueden otorgar permisos de administrador a usuarios con rol exclusivo de CAJERO");
+        }
+
+        // Agregar rol ADMIN (manteniendo CAJERO)
+        List<RolUsuario> roles = new ArrayList<>(usuario.getRoles());
+        rolUsuarioRepository.findById(1L).ifPresent(roles::add);
+        usuario.setRoles(roles);
+        
+        usuarioRepository.save(usuario);
+        return "Permisos de administrador otorgados exitosamente a: " + usuarioDestino;
+    }
+
+    public String revocarRolAdmin(String adminUsuario, String usuarioDestino) {
+        // Verificar que solo el usuario "admin" puede revocar roles de administrador
+        if (!"admin".equals(adminUsuario)) {
+            throw new RuntimeException("Solo el administrador por defecto puede revocar permisos de administrador");
+        }
+
+        // Verificar que el usuario destino existe
+        Usuario usuario = usuarioRepository.findByNombreIgnoreCase(usuarioDestino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + usuarioDestino));
+
+        // No permitir que se modifique al propio admin
+        if ("admin".equals(usuarioDestino)) {
+            throw new RuntimeException("No se puede modificar al usuario administrador por defecto");
+        }
+
+        // Remover solo el rol ADMIN, mantener CAJERO
+        List<RolUsuario> rolesActualizados = usuario.getRoles().stream()
+                .filter(rol -> !rol.getNombre().equals("ADMIN"))
+                .collect(java.util.stream.Collectors.toList());
+        
+        usuario.setRoles(rolesActualizados);
+        usuarioRepository.save(usuario);
+        return "Permisos de administrador revocados exitosamente de: " + usuarioDestino;
+    }
+
+    /**
+     * Solicita recuperación de contraseña generando un código de recuperación
+     */
+    public String solicitarRecuperacionPassword(String email) {
+        // Verificar que el email existe
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("No existe un usuario registrado con ese email");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        // Invalidar códigos anteriores del mismo email
+        List<PasswordRecovery> codigosAnteriores = passwordRecoveryRepository.findByEmailAndUsadoFalse(email);
+        codigosAnteriores.forEach(codigo -> codigo.setUsado(true));
+        passwordRecoveryRepository.saveAll(codigosAnteriores);
+
+        // Generar código de 6 dígitos
+        String codigoRecuperacion = generarCodigoRecuperacion();
+        
+        // Crear nuevo registro de recuperación (válido por 15 minutos)
+        LocalDateTime fechaExpiracion = LocalDateTime.now().plusMinutes(15);
+        PasswordRecovery recovery = new PasswordRecovery(email, codigoRecuperacion, fechaExpiracion);
+        passwordRecoveryRepository.save(recovery);
+
+        try {
+            // Enviar código por email
+            emailService.enviarCodigoRecuperacion(email, codigoRecuperacion, usuario.getNombre());
+            return "Se ha enviado un código de recuperación a tu email (" + 
+                   enmascararEmail(email) + "). El código es válido por 15 minutos.";
+        } catch (Exception e) {
+            // Si falla el envío del email, eliminar el código generado
+            passwordRecoveryRepository.delete(recovery);
+            throw new RuntimeException("Error al enviar el email de recuperación. Verifica tu conexión e inténtalo de nuevo.");
+        }
+    }
+
+    /**
+     * Restablece la contraseña usando el código de recuperación
+     */
+    public String restablecerPassword(String email, String codigo, String nuevaPassword) {
+        // Validar que la nueva contraseña no esté vacía y tenga al menos 6 caracteres
+        if (nuevaPassword == null || nuevaPassword.trim().length() < 6) {
+            throw new RuntimeException("La nueva contraseña debe tener al menos 6 caracteres");
+        }
+
+        // Buscar código de recuperación válido
+        Optional<PasswordRecovery> recoveryOpt = passwordRecoveryRepository
+                .findByEmailAndCodigoRecuperacionAndUsadoFalse(email, codigo);
+        
+        if (recoveryOpt.isEmpty()) {
+            throw new RuntimeException("Código de recuperación inválido o ya utilizado");
+        }
+
+        PasswordRecovery recovery = recoveryOpt.get();
+        
+        // Verificar que no haya expirado
+        if (LocalDateTime.now().isAfter(recovery.getFechaExpiracion())) {
+            throw new RuntimeException("El código de recuperación ha expirado");
+        }
+
+        // Buscar el usuario
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCase(email);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        
+        // Actualizar contraseña
+        String passwordEncriptada = passwordService.encryptPassword(nuevaPassword);
+        usuario.setContrasenia(passwordEncriptada);
+        usuarioRepository.save(usuario);        // Marcar código como usado
+        recovery.setUsado(true);
+        passwordRecoveryRepository.save(recovery);
+
+        // Enviar notificación de cambio de contraseña
+        try {
+            emailService.enviarNotificacionCambioPassword(email, usuario.getNombre());
+        } catch (Exception e) {
+            // No fallar si no se puede enviar la notificación
+            System.err.println("No se pudo enviar notificación de cambio de contraseña: " + e.getMessage());
+        }
+
+        return "Contraseña restablecida exitosamente";
+    }
+
+    /**
+     * Genera un código de recuperación de 6 dígitos
+     */
+    private String generarCodigoRecuperacion() {
+        Random random = new Random();
+        int codigo = 100000 + random.nextInt(900000); // Genera número entre 100000 y 999999
+        return String.valueOf(codigo);
+    }
+
+    /**
+     * Enmascara un email para mostrar solo las primeras letras y el dominio
+     */
+    private String enmascararEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return email;
+        }
+        
+        String[] partes = email.split("@");
+        String usuario = partes[0];
+        String dominio = partes[1];
+        
+        if (usuario.length() <= 2) {
+            return usuario.charAt(0) + "*@" + dominio;
+        } else {
+            return usuario.substring(0, 2) + "***@" + dominio;
+        }
+    }
+
+    /**
+     * Limpia códigos de recuperación expirados (se puede ejecutar como tarea programada)
+     */
+    public void limpiarCodigosExpirados() {
+        passwordRecoveryRepository.deleteByFechaExpiracionBefore(LocalDateTime.now());
+    }
 
 }
 

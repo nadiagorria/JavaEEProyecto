@@ -35,7 +35,6 @@ export class HeaderComponent implements OnInit {
     this._nombreUsuario = '@' + valor;
   }
   get nombreUsuario(): string {
-    //console.log('🔍 getter nombreUsuario llamado, valor:', this._nombreUsuario);
     return this._nombreUsuario;
   }
 
@@ -43,27 +42,19 @@ export class HeaderComponent implements OnInit {
     return this.securityService.isLoggedIn();
   }
   private cargarUsuarioActual() {
-    //console.log('🔍 cargarUsuarioActual llamado');
-    //console.log('🔍 isLoggedIn:', this.securityService.isLoggedIn());
     
     if (this.securityService.isLoggedIn()) {
-      //console.log('🔍 Usuario está logueado');
       const nombreUsuario = this.securityService.getUserName();
-      //console.log('🔍 Nombre usuario obtenido:', nombreUsuario);
       
       if (nombreUsuario && nombreUsuario.trim() !== '') {
         this._nombreUsuario = '@' + nombreUsuario;
-        //console.log('🔍 _nombreUsuario establecido:', this._nombreUsuario);
       } else {
-        //console.log('❌ nombreUsuario está vacío o undefined');
         this._nombreUsuario = '@Usuario';
       }
     } else {
-      //console.log('❌ Usuario no está logueado');
       this._nombreUsuario = '';
     }
     
-    //console.log('🔍 Nombre usuario final:', this._nombreUsuario);
   }
   private configurarMenuItems() {
     this.menuItems = [
@@ -108,18 +99,11 @@ export class HeaderComponent implements OnInit {
         label: 'Ofertas',
         icon: 'pi pi-percentage',
         command: () => this.router.navigate(['/ofertas'])
-      },
-      {
-        label: 'Créditos',
-        icon: 'pi pi-credit-card',
-        command: () => this.mostrarMensaje('Créditos')
       }
     ];
   }
 
-  mostrarMensaje(seccion: string) {
-    alert(`La sección "${seccion}" estará disponible próximamente.`);
-  }
+
 
   navegarA(ruta: string): void {
     this.router.navigate([ruta]);

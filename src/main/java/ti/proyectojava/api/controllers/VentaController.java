@@ -19,7 +19,9 @@ import ti.proyectojava.services.VentaService;
 import ti.proyectojava.services.CreditoService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "api/v1/venta")
@@ -31,12 +33,28 @@ public class VentaController {    private final VentaService ventaService;
         this.ventaService = ventaService;
         this.usuarioService = usuarioService;
         this.creditoService = creditoService;
-    }
-
+    }    
+    
     @GetMapping()
-    @Secured({"ADMIN"})
-    public ResponseEntity<ResponseListadoVentas> listarVentas() {
-        ResponseListadoVentas response = ventaService.listadoVentas();
+    @Secured({"ADMIN", "CAJERO"})
+    public ResponseEntity<ResponseListadoVentas> listarVentas(Authentication authentication) {
+        String username = authentication.getName();
+        UsuarioDto usuario = usuarioService.buscarUsuario(username);
+        
+        // Verificar roles del usuario
+        boolean esAdmin = usuario.getRoles().stream()
+                .anyMatch(rol -> rol.getNombre().equals("ADMIN"));
+        
+        ResponseListadoVentas response;
+        
+        if (esAdmin) {
+            // Si es admin, ver todas las ventas
+            response = ventaService.listadoVentas();
+        } else {
+            // Si es solo cajero, ver solo sus ventas
+            response = ventaService.listadoVentasPorUsuario(username);
+        }
+        
         return ResponseEntity.ok(response);
     }
 
@@ -78,7 +96,7 @@ public class VentaController {    private final VentaService ventaService;
 
         String username = authentication.getName();
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
-        ventaDto.setUsuario(usuario.getNombre());        // Validación para pagos FIADO: verificar límites de crédito
+        ventaDto.setUsuario(usuario.getNombre());// Validación para pagos FIADO: verificar límites de crédito
         if (ventaDto.getFormaPago() == FormaDePago.FIADO) {
             if (ventaDto.getCredito() == null || ventaDto.getCredito().getId() == null) {
                 return ResponseEntity
@@ -109,15 +127,24 @@ public class VentaController {    private final VentaService ventaService;
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("id", ventaId));
-    }
-
-    //solo el admin puede usarla
+    }    //solo el admin puede usarla
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una venta")
-    public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
-        Venta venta = ventaService.eliminarVenta(id);
-        return new ResponseEntity<>("Venta eliminada. ID: " + venta.getId(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> eliminarVenta(@PathVariable Long id) {
+        try {
+            Venta venta = ventaService.eliminarVenta(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Venta eliminada correctamente");
+            response.put("ventaId", venta.getId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 
     /*//cualquiera puede hacerlo

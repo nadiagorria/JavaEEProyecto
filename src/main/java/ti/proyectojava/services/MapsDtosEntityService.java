@@ -88,15 +88,15 @@ public class MapsDtosEntityService {
         catDto.setNombre(categoria.getNombre());
         catDto.setActivo(categoria.getActivo());
 
-        if (categoria.getProductos() != null) {
+        /*if (categoria.getProductos() != null) {
             catDto.setProductos(
                     categoria.getProductos().stream()
-                            .map(producto -> mapToDtoProducto(producto, processed))
+                            .map(producto -> mapToDtoProductoSimple(producto))
                             .filter(Objects::nonNull)
                             .toList()
             );
 
-        }
+        }*/
 
         if (categoria.getCategoriaPadre() != null) {
             catDto.setCategoriaPadre(mapToDtoCategoria(categoria.getCategoriaPadre(), processed));
@@ -176,7 +176,6 @@ public class MapsDtosEntityService {
         dto.setTotal(venta.getTotal());
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setActivo(venta.getActivo());
-        dto.setFinalizada(venta.getFinalizada());
         dto.setFormaPago(venta.getFormaPago());
 
         if (venta.getUsuario() != null) {
@@ -413,9 +412,6 @@ public class MapsDtosEntityService {
         dto.setPrecioCompra(lote.getPrecioCompra());
         dto.setActivo(lote.getActivo());
 
-        if (lote.getProducto() != null) {
-            dto.setProducto(mapToDtoProducto(lote.getProducto(), processed));
-        }
 
         return dto;
     }
@@ -440,6 +436,8 @@ public class MapsDtosEntityService {
         lote = new Lote();
         lote.setNumero(dto.getNumeLote());
         lote.setStock(dto.getStock());
+
+        
         lote.setFechaVencimiento(dto.getFechaVencimiento());
         lote.setPrecioCompra(dto.getPrecioCompra());
         lote.setActivo(dto.getActivo());
@@ -743,34 +741,10 @@ public class MapsDtosEntityService {
         return notificacionUsuario;
     }
 
-    public ComboDto mapToDtoCombo(Combo combo) {
-        return mapToDtoCombo(combo, new HashSet<>());
-    }
-
-    public ComboDto mapToDtoCombo(Combo combo, Set<Object> processed) {
-        if (combo == null || processed.contains(combo)) {
-            return null;
-        }
-        processed.add(combo);
-
-        ComboDto dto = new ComboDto();
-        dto.setInicio(combo.getInicio());
-        dto.setFin(combo.getFin());
-        dto.setId(combo.getId());
-        dto.setDescripcion(combo.getDescripcion());
-        dto.setDescuento(combo.getDescuento());
-        dto.setProductos(combo.getProductos().stream()
-                .map(producto -> mapToDtoProducto(producto, processed))
-                .collect(Collectors.toList()));
-        dto.setActivo(combo.getActivo());
-        return dto;
-    }
 
     public Combo mapToEntityCombo(ComboDto comboDto) {
         return mapToEntityCombo(comboDto, new HashSet<>());
-    }
-
-    private Combo mapToEntityCombo(ComboDto comboDto, Set<Object> processed) {
+    }    private Combo mapToEntityCombo(ComboDto comboDto, Set<Object> processed) {
         if (comboDto == null || processed.contains(comboDto)) {
             return null;
         }
@@ -782,24 +756,37 @@ public class MapsDtosEntityService {
             if (comboExistente.isPresent()) {
                 return comboExistente.get();
             }
-        }
-
-
-        Combo combo = new Combo();
+        }        Combo combo = new Combo();
+        
+        // Logs para debug de fechas
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio DTO: " + comboDto.getInicio());
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin DTO: " + comboDto.getFin());
+        
         combo.setInicio(comboDto.getInicio());
         combo.setFin(comboDto.getFin());
+        
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio Entity después de asignar: " + combo.getInicio());
+        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin Entity después de asignar: " + combo.getFin());
+        
         combo.setDescuento(comboDto.getDescuento());
         combo.setActivo(comboDto.getActivo());
         combo.setDescripcion(comboDto.getDescripcion());
 
         if (comboDto.getProductos() != null) {
-            combo.setProductos(
-                    comboDto.getProductos().stream()
-                            .map(productoDto -> mapToEntityProducto(productoDto, processed))
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
-            combo.getProductos().forEach(producto -> {
+            // Para combos, solo necesitamos obtener productos existentes por ID
+            List<Producto> productos = comboDto.getProductos().stream()
+                    .filter(productoDto -> productoDto.getId() != null)
+                    .map(productoDto -> {
+                        Optional<Producto> productoOpt = productoRepository.findById(productoDto.getId());
+                        return productoOpt.orElse(null);
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            
+            combo.setProductos(productos);
+            
+            // Mantener bidireccionalidad
+            productos.forEach(producto -> {
                 if (!producto.getCombos().contains(combo)) {
                     producto.getCombos().add(combo);
                 }
@@ -809,27 +796,6 @@ public class MapsDtosEntityService {
         return combo;
     }
 
-    public DescuentoDto mapToDtoDescuento(Descuento descuento) {
-        return mapToDtoDescuento(descuento, new HashSet<>());
-    }
-
-    public DescuentoDto mapToDtoDescuento(Descuento descuento, Set<Object> processed) {
-        if (descuento == null || processed.contains(descuento)) {
-            return null;
-        }
-        processed.add(descuento);
-
-        DescuentoDto dto = new DescuentoDto();
-        dto.setInicio(descuento.getInicio());
-        dto.setFin(descuento.getFin());
-        dto.setId(descuento.getId());
-        dto.setDescuento(descuento.getDescuento());
-        if (descuento.getProducto() != null) {
-            dto.setProducto(mapToDtoProducto(descuento.getProducto(), processed));
-        }
-        dto.setActivo(descuento.getActivo());
-        return dto;
-    }
 
     public Descuento mapToEntityDescuento(DescuentoDto descuentoDto) {
         return mapToEntityDescuento(descuentoDto, new HashSet<>());
@@ -847,11 +813,10 @@ public class MapsDtosEntityService {
             if (descExistente.isPresent()) {
                 return descExistente.get();
             }
-        }
-
-        Descuento descuento = new Descuento();
+        }        Descuento descuento = new Descuento();
         descuento.setInicio(descuentoDto.getInicio());
         descuento.setFin(descuentoDto.getFin());
+        descuento.setDescripcion(descuentoDto.getDescripcion());
         descuento.setDescuento(descuentoDto.getDescuento());
         descuento.setActivo(descuentoDto.getActivo());
 
@@ -862,28 +827,6 @@ public class MapsDtosEntityService {
         return descuento;
     }
 
-    public PromocionDto mapToDtoPromocion(Promocion promocion) {
-        return mapToDtoPromocion(promocion, new HashSet<>());
-    }
-
-    public PromocionDto mapToDtoPromocion(Promocion promocion, Set<Object> processed) {
-        if (promocion == null || processed.contains(promocion)) {
-            return null;
-        }
-        processed.add(promocion);
-
-        PromocionDto dto = new PromocionDto();
-        dto.setId(promocion.getId());
-        dto.setInicio(promocion.getInicio());
-        dto.setFin(promocion.getFin());
-        dto.setDescripcion(promocion.getDescripcion());
-        dto.setDescuento(promocion.getDescuento());
-        if (promocion.getProducto() != null) {
-            dto.setProducto(mapToDtoProducto(promocion.getProducto(), processed));
-        }
-        dto.setActivo(promocion.getActivo());
-        return dto;
-    }
 
     public Promocion mapToEntityPromocion(PromocionDto promocionDto) {
         return mapToEntityPromocion(promocionDto, new HashSet<>());
@@ -909,6 +852,7 @@ public class MapsDtosEntityService {
         promocion.setFin(promocionDto.getFin());
         promocion.setDescuento(promocionDto.getDescuento());
         promocion.setActivo(promocionDto.getActivo());
+        System.out.println("me llego la descripcion a maptoentity: " + promocionDto.getDescripcion());
         promocion.setDescripcion(promocionDto.getDescripcion());
 
         if (promocionDto.getProducto() != null) {
@@ -1044,55 +988,23 @@ public class MapsDtosEntityService {
         productoDto.setStockTotal(producto.getStockTotal());
         productoDto.setActivo(producto.getActivo());
         productoDto.setNombre(producto.getNombre());
-        // NO incluir imagen en el listado para evitar problemas de tamaño
-        // productoDto.setImagen(producto.getImagen());
-        productoDto.setImagen(null); // Siempre null en listados
 
-        if (producto.getCombos() != null) {
-            productoDto.setCombos(
-                    producto.getCombos().stream()
-                            .map(e -> mapToDtoCombo(e, processed))
-                            .toList()
-            );
-        }
+        productoDto.setImagen(null);
+
 
         if (producto.getProveedor() != null) {
-            productoDto.setProveedor(mapToDtoProveedor(producto.getProveedor(), processed));
+            productoDto.setProveedor(mapToDtoProveedorSimple(producto.getProveedor()));
         }
 
         if (producto.getLotes() != null) {
             productoDto.setLotes(
                     producto.getLotes().stream()
                             .filter(lote -> lote.getActivo())
-                            .map(e -> mapToDtoLote(e, processed))
+                            .map(e -> mapToDtoLote(e))
                             .toList()
             );
         }
 
-        if (producto.getPromociones() != null) {
-            productoDto.setPromociones(
-                    producto.getPromociones().stream()
-                            .map(e -> mapToDtoPromocion(e, processed))
-                            .toList()
-            );
-        }
-
-        if (producto.getDescuentos() != null) {
-            productoDto.setDescuentos(
-                    producto.getDescuentos().stream()
-                            .map(e -> mapToDtoDescuento(e, processed))
-                            .toList()
-            );
-        }
-
-
-        if (producto.getCantidades() != null) {
-            productoDto.setCantidades(
-                    producto.getCantidades().stream()
-                            .map(e -> mapToDtoCantidad(e, processed))
-                            .toList()
-            );
-        }
 
         if (producto.getCategoria() != null) {
             productoDto.setCategoria(mapToDtoCategoria(producto.getCategoria(), processed));
@@ -1219,15 +1131,14 @@ public class MapsDtosEntityService {
         dto.setInicio(promocion.getInicio());
         dto.setFin(promocion.getFin());
         return dto;
-    }
-
-    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
+    }    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
         if (descuento == null) {
             return null;
         }
 
         DescuentoDto dto = new DescuentoDto();
         dto.setId(descuento.getId());
+        dto.setDescripcion(descuento.getDescripcion());
         dto.setDescuento(descuento.getDescuento());
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());
@@ -1238,9 +1149,7 @@ public class MapsDtosEntityService {
         }
 
         return dto;
-    }
-
-    // descuento sin producto
+    }    // descuento sin producto
     public DescuentoDto mapToDtoDescuentoSinProducto(Descuento descuento){
         if (descuento == null) {
             return null;
@@ -1248,6 +1157,7 @@ public class MapsDtosEntityService {
 
         DescuentoDto dto = new DescuentoDto();
         dto.setId(descuento.getId());
+        dto.setDescripcion(descuento.getDescripcion());
         dto.setDescuento(descuento.getDescuento());
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());
@@ -1358,7 +1268,7 @@ public class MapsDtosEntityService {
         dto.setPrecioActual(cantidad.getPrecioActual());
         dto.setCantidad(cantidad.getCantidad());
         if (cantidad.getProducto() != null) {
-            dto.setProducto(mapToDtoProducto(cantidad.getProducto(), processed));
+            dto.setProducto(mapToDtoProductoSimple(cantidad.getProducto()));
         }
 
         if (cantidad.getVenta() != null) {
@@ -1416,7 +1326,6 @@ public class MapsDtosEntityService {
 
         VentaDto dto = new VentaDto();
 
-        dto.setFinalizada(venta.getFinalizada());
         dto.setFormaPago(venta.getFormaPago());
         dto.setId(venta.getId());
         dto.setFechaVenta(venta.getFechaVenta());
@@ -1456,7 +1365,6 @@ public class MapsDtosEntityService {
         }
 
         Venta venta = new Venta();
-        venta.setFinalizada(dto.getFinalizada());
         venta.setFormaPago(dto.getFormaPago());
         venta.setFechaVenta(dto.getFechaVenta());
         venta.setTotal(dto.getTotal());

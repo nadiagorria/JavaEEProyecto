@@ -89,14 +89,24 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     categoriaId: null,
     proveedorId: null
   };
-  categorias: CategoriaDto[] = [];
-  proveedores: ProveedorDto[] = [];
-    // Existing lote modal properties
+  categorias: CategoriaDto[] = [];  proveedores: ProveedorDto[] = [];
+  
+  // Helper function for getting today's date in ISO format
+  private getTodayISOString(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // Existing lote modal properties
   mostrarModalAgregarLote: boolean = false;
-  nuevoLote: Partial<LoteDto> = {
+  nuevoLote: {
+    numeLote: string;
+    stock: number;
+    fechaVencimiento: string | undefined;
+    precioCompra: number;
+  } = {
     numeLote: '',
     stock: 0,
-    fechaVencimiento: undefined,
+    fechaVencimiento: undefined, // Optional field
     precioCompra: 0
   };
   minFechaVencimiento: string = '';
@@ -104,11 +114,13 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   // Image upload properties
   imagenSeleccionada: File | null = null;
   imagenPreviewEdicion: string | null = null;
-
   ngOnInit() {
     // Inicializar la fecha mínima de vencimiento
     const hoy = new Date();
     this.minFechaVencimiento = hoy.toISOString().split('T')[0];
+    
+    // La fecha de vencimiento se mantiene como undefined (opcional)
+    // this.nuevoLote.fechaVencimiento permanece undefined por defecto
     
     const id = Number(this.route.snapshot.paramMap.get('id'));
     
@@ -120,7 +132,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.error = 'ID de producto inválido';
       this.loading = false;
     }
-  }  cargarProducto(id: number) {
+  }cargarProducto(id: number) {
     this.loading = true;
     this.productoService.obtenerProducto(id).subscribe({      next: (response) => {
         console.log('Respuesta del backend:', response);
@@ -436,29 +448,16 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           detail: errorMessage
         });
       }
-    });  }agregarLote() {
+    });  }  agregarLote() {
     if (!this.producto || this.producto.id === null) return;
     
-    // Validación básica
     if (!this.validarFormularioLote()) {
       return;
-    }
-      // Manejar la fecha de vencimiento (ahora es opcional)
-    let fechaVencimiento: Date | undefined = undefined;
-    if (this.nuevoLote.fechaVencimiento) {
-      // Si es string, convertirlo a Date
-      if (typeof this.nuevoLote.fechaVencimiento === 'string') {
-        fechaVencimiento = new Date(this.nuevoLote.fechaVencimiento);
-      } else {
-        fechaVencimiento = this.nuevoLote.fechaVencimiento;
-      }
-    }
-
-    // Crear el objeto lote con datos validados
+    }    // Crear el objeto lote con datos validados - fecha de vencimiento opcional
     const lote: LoteDto = {
       numeLote: this.nuevoLote.numeLote || '',
       stock: this.nuevoLote.stock || 0,
-      fechaVencimiento: fechaVencimiento ?? null as unknown as Date,
+      fechaVencimiento: this.nuevoLote.fechaVencimiento || undefined,
       precioCompra: this.nuevoLote.precioCompra || 0,
       id: null,
       activo: true,
@@ -468,9 +467,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       }
     };
 
-    console.log('Enviando lote para crear:', lote);    this.loteService.crearLote(lote).subscribe({
+    
+    this.loteService.crearLote(lote).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor al crear lote:', response);
         // Extraer el ID del lote de la respuesta (formato "Lote creado. ID: XXX")
         const idMatch = response.match(/ID: (\d+)/);
         const idLote = idMatch ? idMatch[1] : 'desconocido';
@@ -492,7 +491,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         console.error('Error al agregar lote:', err);
         let errorMessage = 'Error al agregar el lote. Verifique los datos e intente nuevamente.';
         
-        // Handle different error response types (JSON or plain text)
         if (err.error) {
           if (typeof err.error === 'string') {
             errorMessage = err.error;
@@ -510,9 +508,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-  private resetearFormularioLote(): void {
-    // Resetear los valores del formulario
+  }  private resetearFormularioLote(): void {
+    // Resetear los valores del formulario - fecha de vencimiento opcional
     this.nuevoLote = {
       numeLote: '',
       stock: 0,
@@ -572,9 +569,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     });
     this.cacheImagenes.clear();
   }
-
-  getFechaVencimientoClass(fecha: string): string {
-    if (!fecha) return '';
+  getFechaVencimientoClass(fecha: string | undefined): string {
+    if (!fecha) return 'fecha-sin-vencimiento';
     
     const fechaVencimiento = new Date(fecha);
     const hoy = new Date();

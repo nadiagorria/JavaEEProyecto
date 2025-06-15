@@ -182,6 +182,13 @@ public class ProductoService {
         return null;
     }
 
+    public List<ProductoDto> buscarTodosPorCodigoBarras(String codigoBarras) {
+        List<Producto> productos = productoRepository.findAllByCodigoDeBarraAndActivoTrue(codigoBarras);
+        return productos.stream()
+                .map(mapsDtosEntityService::mapToDtoProductoSimple)
+                .collect(Collectors.toList());
+    }
+
 }
 
 

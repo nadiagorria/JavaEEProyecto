@@ -9,6 +9,7 @@
 
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-field">
+
         <p-iftalabel>
           <input 
             pInputText 
@@ -23,6 +24,7 @@
             Nombre de Usuario
           </label>
         </p-iftalabel>
+        
         <div class="field-error" *ngIf="formGroup.get('username')?.invalid && formGroup.get('username')?.touched">
           <small *ngIf="formGroup.get('username')?.errors?.['required']">
             El nombre de usuario es requerido
@@ -55,8 +57,12 @@
           </small>
           <small *ngIf="formGroup.get('contrasenia')?.errors?.['minlength']">
             Mínimo 6 caracteres
-          </small>
-        </div>
+          </small>        </div>
+      </div>      <div class="forgot-password-section">
+        <a (click)="irARecuperarPassword()" class="forgot-password-link">
+          <i class="pi pi-question-circle"></i>
+          ¿Olvidaste tu contraseña?
+        </a>
       </div>
 
       <div class="button-section">

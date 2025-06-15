@@ -1,6 +1,5 @@
 package ti.proyectojava.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,16 +10,14 @@ import ti.proyectojava.dtos.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class NotificacionUsuarioService {
-
+    
     @Autowired
     private NotificacionUsuarioRepository notificacionUsuarioRepository;
 
@@ -38,7 +35,9 @@ public class NotificacionUsuarioService {
 
     public String crearNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto) {
         return "NotificacionUsuario creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
-    }    public ResponseListadoNotificacionUsuario listadoNotificacionUsuario() {
+    }
+
+    public ResponseListadoNotificacionUsuario listadoNotificacionUsuario() {
         ResponseListadoNotificacionUsuario responseListadoNotificacionUsuario = new ResponseListadoNotificacionUsuario();
         List<NotificacionUsuarioDto> notificacionUsuarioActivos = notificacionUsuarioRepository.findByActivoTrue()
                 .stream()
@@ -46,7 +45,9 @@ public class NotificacionUsuarioService {
                 .collect(Collectors.toList());
         responseListadoNotificacionUsuario.setNotificacionUsuarios(notificacionUsuarioActivos);
         return responseListadoNotificacionUsuario;
-    }public String borrarNotificacionUsuario(Long id) {
+    }
+
+    public String borrarNotificacionUsuario(Long id) {
         String response = "";
         NotificacionUsuario notificacionUsuario = notificacionUsuarioRepository.findById(id).orElse(null);
         if (notificacionUsuario != null) {
@@ -59,33 +60,31 @@ public class NotificacionUsuarioService {
         return response;
     }
 
-    @Scheduled(cron = "0 0 3 * * ?") // Se ejecuta diariamente a las 3:00 AM
+    @Scheduled(cron = "0 30 9 * * ?", zone = "America/Montevideo")
     public void chequearNotificaciones() {
-        log.info("Iniciando verificación de notificaciones automáticas");
+        System.out.println("Iniciando verificación de notificaciones automáticas a las 9:30 AM hora Uruguay");
         
         try {
             List<Producto> productos = productoRepository.findByActivoTrue();
-            
             for (Producto producto : productos) {
-                // Verificar stock mínimo
-                verificarStockMinimo(producto);
-                
-                // Verificar lotes próximos a vencer
-                verificarLotesProximosVencer(producto);
+                verificarLotesVencenEn21Dias(producto);
             }
             
-            log.info("Verificación de notificaciones completada exitosamente");
+            System.out.println("Verificación de notificaciones completada exitosamente");
         } catch (Exception e) {
-            log.error("Error al verificar notificaciones: {}", e.getMessage(), e);
+            System.err.println("Error al verificar notificaciones: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+    
+    public void verificarStockMinimoPostVenta(Producto producto) {
+        verificarStockMinimo(producto);
     }
 
     private void verificarStockMinimo(Producto producto) {
         try {
-            // Verificar si el stock actual está por debajo del mínimo
             if (producto.getStockTotal() <= producto.getStockMin() && producto.getStockMin() > 0) {
                 
-                // Verificar si ya existe una notificación reciente para este producto
                 LocalDateTime hace24Horas = LocalDateTime.now().minusHours(24);
                 boolean yaExisteNotificacion = notificacionUsuarioRepository
                         .findByActivoTrueAndNotificaciones_FechaHoraAfter(hace24Horas)
@@ -97,71 +96,70 @@ public class NotificacionUsuarioService {
 
                 if (!yaExisteNotificacion) {
                     String titulo = "Alerta: Stock Mínimo";
-                    String mensaje = String.format("El producto '%s' ha alcanzado el stock mínimo. Stock actual: %d, Stock mínimo: %d",
+                    String mensaje = String.format("El producto '%s' tiene stock mínimo. Quedan %d unidades en total (mínimo requerido: %d)",
                             producto.getNombre(), producto.getStockTotal(), producto.getStockMin());
                     
                     crearYEnviarNotificacion(titulo, mensaje);
-                    log.info("Notificación de stock mínimo creada para producto: {} (ID: {})",
-                            producto.getNombre(), producto.getId());
+                    System.out.println("Notificación de stock mínimo creada para producto: " + producto.getNombre());
                 }
             }
         } catch (Exception e) {
-            log.warn("Error al verificar notificaciones existentes de stock mínimo: {}", e.getMessage());
+            System.err.println("Error al verificar stock mínimo: " + e.getMessage());
         }
     }
 
-    private void verificarLotesProximosVencer(Producto producto) {
+    private void verificarLotesVencenEn21Dias(Producto producto) {
         try {
             for (Lote lote : producto.getLotes()) {
                 if (lote.getActivo() != null && lote.getActivo() &&
                     lote.getFechaVencimiento() != null &&
                     lote.getStock() != null && lote.getStock() > 0) {
 
-                    // Convertir Date a LocalDate
-                    LocalDate fechaVencimiento = lote.getFechaVencimiento().toInstant()
-                            .atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate fechaVencimiento = lote.getFechaVencimiento();
                     
                     long diasFaltantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaVencimiento);
                     
-                    if (diasFaltantes <= 21 && diasFaltantes >= 0) {
-                        // Verificar si ya existe una notificación para este lote
-                        LocalDateTime hace24Horas = LocalDateTime.now().minusHours(24);
+                    boolean esPrimeraAlerta = diasFaltantes >= 19 && diasFaltantes <= 21;
+                    boolean esSegundaAlerta = diasFaltantes >= 13 && diasFaltantes <= 15;
+                    
+                    if (esPrimeraAlerta || esSegundaAlerta) {
+                        LocalDateTime hace72Horas = LocalDateTime.now().minusHours(72);
                         boolean yaExisteNotificacion = notificacionUsuarioRepository
-                                .findByActivoTrueAndNotificaciones_FechaHoraAfter(hace24Horas)
+                                .findByActivoTrueAndNotificaciones_FechaHoraAfter(hace72Horas)
                                 .stream()
                                 .anyMatch(nu -> nu.getNotificaciones().stream()
                                         .anyMatch(n -> n.getMensaje() != null && 
-                                                 (n.getMensaje().contains(lote.getNumero()))));
+                                                 n.getMensaje().contains(lote.getNumero()) &&
+                                                 ((esPrimeraAlerta && (n.getMensaje().contains("21 días") || 
+                                                                      n.getMensaje().contains("20 días") || 
+                                                                      n.getMensaje().contains("19 días"))) ||
+                                                  (esSegundaAlerta && (n.getMensaje().contains("15 días") || 
+                                                                      n.getMensaje().contains("14 días") || 
+                                                                      n.getMensaje().contains("13 días"))))));
 
                         if (!yaExisteNotificacion) {
-                            String titulo = "Alerta: Producto Próximo a Vencer";
-                            String mensaje;
-                            
-                            if (diasFaltantes == 0) {
-                                mensaje = String.format("¡URGENTE! El lote %s del producto '%s' vence HOY. Stock: %d unidades",
-                                        lote.getNumero(), producto.getNombre(), lote.getStock());
-                            } else if (diasFaltantes <= 7) {
-                                mensaje = String.format("¡URGENTE! El lote %s del producto '%s' vence en %d días. Stock: %d unidades",
-                                        lote.getNumero(), producto.getNombre(), diasFaltantes, lote.getStock());
-                            } else {
-                                mensaje = String.format("El lote %s del producto '%s' vence en %d días. Stock: %d unidades",
-                                        lote.getNumero(), producto.getNombre(), diasFaltantes, lote.getStock());
-                            }
+                            String titulo = esPrimeraAlerta ? "⚠️ Alerta: Producto Próximo a Vencer" : "🚨 Alerta Urgente: Producto Próximo a Vencer";
+                            String prioridad = esPrimeraAlerta ? "Primera alerta" : "Segunda alerta";
+                            String mensaje = String.format("%s - El lote %s del producto '%s' vence en %d días (%d unidades disponibles).",
+                                    prioridad, lote.getNumero(), producto.getNombre(), diasFaltantes, lote.getStock());
                             
                             crearYEnviarNotificacion(titulo, mensaje);
-                            log.info("Notificación de vencimiento creada para lote: {} del producto: {} (días restantes: {})",
-                                    lote.getNumero(), producto.getNombre(), diasFaltantes);
+                            System.out.println(prioridad + " - Notificación creada para lote: " + lote.getNumero());
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            log.warn("Error al verificar notificaciones existentes de vencimiento: {}", e.getMessage());
+            System.err.println("Error al verificar lotes próximos a vencer: " + e.getMessage());
         }
     }
 
     private void crearYEnviarNotificacion(String titulo, String mensaje) {
         try {
+            System.out.println("=== CREANDO NOTIFICACIÓN ===");
+            System.out.println("Título: " + titulo);
+            System.out.println("Mensaje: " + mensaje);
+            
             // Crear la notificación
             Notificacion notificacion = new Notificacion();
             notificacion.setTitulo(titulo);
@@ -170,33 +168,82 @@ public class NotificacionUsuarioService {
             
             // Guardar la notificación
             notificacion = notificacionRepository.save(notificacion);
+            System.out.println("Notificación guardada con ID: " + notificacion.getId());
             
             // Obtener todos los usuarios activos
             List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
+            System.out.println("Usuarios activos encontrados: " + usuarios.size());
             
             if (usuarios.isEmpty()) {
-                log.warn("No hay usuarios para enviar notificaciones");
+                System.out.println("No hay usuarios activos para enviar notificaciones");
                 return;
             }
             
             // Crear NotificacionUsuario para cada usuario
+            int notificacionesCreadas = 0;
             for (Usuario usuario : usuarios) {
-                NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
-                notificacionUsuario.setActivo(true);
-                notificacionUsuario.setLeido(false);
-                
-                // Establecer las relaciones
-                notificacionUsuario.getNotificaciones().add(notificacion);
-                notificacionUsuario.getUsuarios().add(usuario);
-                
-                // Guardar la relación
-                notificacionUsuarioRepository.save(notificacionUsuario);
+                try {
+                    System.out.println("Creando NotificacionUsuario para usuario: " + usuario.getNombre());
+                    
+                    NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
+                    notificacionUsuario.setActivo(true);
+                    notificacionUsuario.setLeido(false);
+                    
+                    // Establecer las relaciones bidireccionales correctamente
+                    // La notificación conoce a los NotificacionUsuario
+                    if (notificacion.getNotificacionUsuarios() == null) {
+                        notificacion.setNotificacionUsuarios(new java.util.ArrayList<>());
+                    }
+                    notificacion.getNotificacionUsuarios().add(notificacionUsuario);
+                    
+                    // El NotificacionUsuario conoce las notificaciones
+                    if (notificacionUsuario.getNotificaciones() == null) {
+                        notificacionUsuario.setNotificaciones(new java.util.ArrayList<>());
+                    }
+                    notificacionUsuario.getNotificaciones().add(notificacion);
+                    
+                    // El usuario conoce sus notificaciones
+                    if (usuario.getNotificaciones() == null) {
+                        usuario.setNotificaciones(new java.util.ArrayList<>());
+                    }
+                    usuario.getNotificaciones().add(notificacionUsuario);
+                    
+                    // El NotificacionUsuario conoce sus usuarios
+                    if (notificacionUsuario.getUsuarios() == null) {
+                        notificacionUsuario.setUsuarios(new java.util.ArrayList<>());
+                    }
+                    notificacionUsuario.getUsuarios().add(usuario);
+                      // Guardar la relación
+                    NotificacionUsuario guardada = notificacionUsuarioRepository.save(notificacionUsuario);
+                    
+                    // También guardar el usuario para asegurar que la relación bidireccional se persista
+                    usuarioRepository.save(usuario);
+                    
+                    notificacionesCreadas++;
+                    
+                    System.out.println("NotificacionUsuario creada con ID: " + guardada.getId() + 
+                        " para usuario: " + usuario.getNombre() + " (email: " + usuario.getMail() + ")");
+                    System.out.println("Usuarios asociados a la notificación: " + guardada.getUsuarios().size());
+                    System.out.println("Notificaciones del usuario: " + usuario.getNotificaciones().size());
+                    
+                } catch (Exception e) {
+                    System.err.println("Error al crear NotificacionUsuario para usuario " + usuario.getNombre() + 
+                        ": " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
             
+            System.out.println("=== RESUMEN ===");
+            System.out.println("Notificación '" + titulo + "' enviada exitosamente");
+            System.out.println("NotificacionUsuario creadas: " + notificacionesCreadas + " de " + usuarios.size() + " usuarios");
+            
         } catch (Exception e) {
-            log.error("Error al crear y enviar notificación: {}", e.getMessage(), e);
+            System.err.println("Error al crear y enviar notificación: " + e.getMessage());
+            e.printStackTrace();
         }
-    }    public ResponseListadoNotificacionUsuario obtenerNotificacionesPorUsuario(String userName) {
+    }
+
+    public ResponseListadoNotificacionUsuario obtenerNotificacionesPorUsuario(String userName) {
         try {
             ResponseListadoNotificacionUsuario response = new ResponseListadoNotificacionUsuario();
             
@@ -205,7 +252,6 @@ public class NotificacionUsuarioService {
                 .stream()
                 .map(mapsDtosEntityService::mapToDtoNotificacionUsuario)
                 .sorted((a, b) -> {
-                    // Ordenar por fecha más reciente primero
                     if (a.getNotificaciones() != null && !a.getNotificaciones().isEmpty() &&
                         b.getNotificaciones() != null && !b.getNotificaciones().isEmpty()) {
                         return b.getNotificaciones().get(0).getFechaHora()
@@ -217,18 +263,20 @@ public class NotificacionUsuarioService {
             
             response.setNotificacionUsuarios(notificacionesUsuario);
             return response;
-              } catch (Exception e) {
-            log.error("Error al obtener notificaciones del usuario {}: {}", userName, e.getMessage(), e);
+            
+        } catch (Exception e) {
+            System.err.println("Error al obtener notificaciones del usuario " + userName + ": " + e.getMessage());
             return new ResponseListadoNotificacionUsuario();
         }
-    }    public String marcarComoLeida(Long notificacionUsuarioId, String userName) {
+    }
+
+    public String marcarComoLeida(Long notificacionUsuarioId, String userName) {
         try {
             Optional<NotificacionUsuario> notificacionOpt = notificacionUsuarioRepository.findById(notificacionUsuarioId);
             
             if (notificacionOpt.isPresent()) {
                 NotificacionUsuario notificacion = notificacionOpt.get();
                 
-                // Verificar que la notificación pertenece al usuario
                 boolean perteneceAlUsuario = notificacion.getUsuarios().stream()
                     .anyMatch(u -> u.getNombre().equals(userName));
                 
@@ -244,19 +292,23 @@ public class NotificacionUsuarioService {
             }
             
         } catch (Exception e) {
-            log.error("Error al marcar notificación como leída: {}", e.getMessage(), e);
+            System.err.println("Error al marcar notificación como leída: " + e.getMessage());
             return "Error al marcar la notificación como leída";
         }
-    }    public int contarNotificacionesNoLeidas(String userName) {
+    }
+
+    public int contarNotificacionesNoLeidas(String userName) {
         try {
             return notificacionUsuarioRepository
                 .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName)
                 .size();
         } catch (Exception e) {
-            log.error("Error al contar notificaciones no leídas para {}: {}", userName, e.getMessage(), e);
+            System.err.println("Error al contar notificaciones no leídas para " + userName + ": " + e.getMessage());
             return 0;
         }
-    }    public String marcarTodasComoLeidas(String userName) {
+    }
+
+    public String marcarTodasComoLeidas(String userName) {
         try {
             List<NotificacionUsuario> notificacionesNoLeidas = notificacionUsuarioRepository
                 .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName);
@@ -269,17 +321,18 @@ public class NotificacionUsuarioService {
             return String.format("Se marcaron %d notificaciones como leídas", notificacionesNoLeidas.size());
             
         } catch (Exception e) {
-            log.error("Error al marcar todas las notificaciones como leídas para {}: {}", userName, e.getMessage(), e);
+            System.err.println("Error al marcar todas las notificaciones como leídas para " + userName + ": " + e.getMessage());
             return "Error al marcar las notificaciones como leídas";
         }
-    }    public String debugNotificaciones(String userName) {
+    }
+
+    public String debugNotificaciones(String userName) {
         StringBuilder debug = new StringBuilder();
         
         try {
             debug.append("=== DEBUG NOTIFICACIONES ===\n");
             debug.append("Usuario actual: ").append(userName).append("\n\n");
             
-            // Verificar si existe el usuario
             Usuario usuario = usuarioRepository.findByNombre(userName).orElse(null);
             if (usuario == null) {
                 debug.append("ERROR: Usuario no encontrado en la base de datos\n");
@@ -287,36 +340,12 @@ public class NotificacionUsuarioService {
             }
             debug.append("Usuario encontrado: Nombre=").append(usuario.getNombre()).append(", Activo=").append(usuario.getActivo()).append("\n\n");
             
-            // Contar todas las NotificacionUsuario
             List<NotificacionUsuario> todasLasNotificaciones = notificacionUsuarioRepository.findAll();
             debug.append("Total NotificacionUsuario en BD: ").append(todasLasNotificaciones.size()).append("\n");
             
-            // Contar NotificacionUsuario activas
             List<NotificacionUsuario> notificacionesActivas = notificacionUsuarioRepository.findByActivoTrue();
             debug.append("NotificacionUsuario activas: ").append(notificacionesActivas.size()).append("\n");
             
-            // Mostrar detalles de las NotificacionUsuario activas
-            debug.append("\n=== DETALLES DE NOTIFICACIONES ACTIVAS ===\n");
-            for (NotificacionUsuario nu : notificacionesActivas) {
-                debug.append("ID: ").append(nu.getId())
-                     .append(", Activo: ").append(nu.getActivo())
-                     .append(", Leído: ").append(nu.getLeido())
-                     .append(", Usuarios asociados: ").append(nu.getUsuarios().size())
-                     .append("\n");
-                
-                // Mostrar usuarios asociados
-                for (Usuario u : nu.getUsuarios()) {
-                    debug.append("  - Usuario: ").append(u.getMail()).append(" (Nombre: ").append(u.getNombre()).append(")\n");
-                }
-                
-                // Mostrar notificaciones asociadas
-                for (Notificacion n : nu.getNotificaciones()) {
-                    debug.append("  - Notificación: ").append(n.getTitulo())
-                           .append(" - ").append(n.getFechaHora()).append("\n");
-                }
-                debug.append("\n");
-            }
-              // Verificar consulta específica del usuario
             List<NotificacionUsuario> notificacionesDelUsuario = notificacionUsuarioRepository
                 .findByActivoTrueAndUsuarios_Nombre(userName);
             debug.append("NotificacionUsuario para el usuario ").append(userName).append(": ")
@@ -329,73 +358,53 @@ public class NotificacionUsuarioService {
             
         } catch (Exception e) {
             debug.append("ERROR durante debug: ").append(e.getMessage()).append("\n");
-            log.error("Error en debug de notificaciones", e);
+            System.err.println("Error en debug de notificaciones: " + e.getMessage());
         }
-        
-        return debug.toString();
-    }    public String debugUsuarioYNotificaciones(String userName) {
+          return debug.toString();
+    }
+
+    public String debugUsuarioYNotificaciones(String userName) {
         StringBuilder debug = new StringBuilder();
         
         try {
             debug.append("=== DEBUG USUARIO Y NOTIFICACIONES ===\n");
-            debug.append("Nombre del contexto de seguridad: ").append(userName).append("\n\n");
+            debug.append("Usuario: ").append(userName).append("\n\n");
             
-            // Verificar si existe el usuario
+            // Buscar usuario
             Usuario usuario = usuarioRepository.findByNombre(userName).orElse(null);
             if (usuario == null) {
-                debug.append("❌ ERROR: Usuario no encontrado con nombre: ").append(userName).append("\n");
-                
-                // Mostrar todos los usuarios para debug
-                List<Usuario> todosUsuarios = usuarioRepository.findAll();
-                debug.append("\n📋 Todos los usuarios en la BD:\n");
-                for (Usuario u : todosUsuarios) {
-                    debug.append("  - Nombre: ").append(u.getNombre())
-                         .append(", Email: ").append(u.getMail())
-                         .append(", Activo: ").append(u.getActivo()).append("\n");
-                }
+                debug.append("ERROR: Usuario no encontrado\n");
                 return debug.toString();
             }
             
-            debug.append("✅ Usuario encontrado:\n");
-            debug.append("  - Nombre: ").append(usuario.getNombre()).append("\n");
-            debug.append("  - Email: ").append(usuario.getMail()).append("\n");
-            debug.append("  - Activo: ").append(usuario.getActivo()).append("\n\n");
+            debug.append("Usuario encontrado:\n");
+            debug.append("- Nombre: ").append(usuario.getNombre()).append("\n");
+            debug.append("- Email: ").append(usuario.getMail()).append("\n");
+            debug.append("- Activo: ").append(usuario.getActivo()).append("\n");
+            debug.append("- Notificaciones asignadas: ").append(usuario.getNotificaciones() != null ? usuario.getNotificaciones().size() : 0).append("\n\n");
             
-            // Probar las consultas del repositorio
-            List<NotificacionUsuario> todasNotificaciones = notificacionUsuarioRepository.findAll();
-            debug.append("📊 Total NotificacionUsuario en BD: ").append(todasNotificaciones.size()).append("\n");
-            
-            List<NotificacionUsuario> notificacionesActivas = notificacionUsuarioRepository.findByActivoTrue();
-            debug.append("📊 NotificacionUsuario activas: ").append(notificacionesActivas.size()).append("\n");            List<NotificacionUsuario> notificacionesDelUsuario = notificacionUsuarioRepository
+            // Buscar notificaciones del usuario
+            List<NotificacionUsuario> notificacionesUsuario = notificacionUsuarioRepository
                 .findByActivoTrueAndUsuarios_Nombre(userName);
-            debug.append("📊 NotificacionUsuario del usuario: ").append(notificacionesDelUsuario.size()).append("\n");
+            debug.append("NotificacionUsuario encontradas: ").append(notificacionesUsuario.size()).append("\n");
             
-            List<NotificacionUsuario> notificacionesNoLeidas = notificacionUsuarioRepository
-                .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName);
-            debug.append("📊 NotificacionUsuario no leídas del usuario: ").append(notificacionesNoLeidas.size()).append("\n\n");
-            
-            // Detalles de las notificaciones del usuario
-            debug.append("=== DETALLES NOTIFICACIONES DEL USUARIO ===\n");
-            for (NotificacionUsuario nu : notificacionesDelUsuario) {
-                debug.append("NotificacionUsuario ID: ").append(nu.getId()).append("\n");
-                debug.append("  - Activo: ").append(nu.getActivo()).append("\n");
-                debug.append("  - Leído: ").append(nu.getLeido()).append("\n");
-                debug.append("  - Usuarios asociados: ").append(nu.getUsuarios().size()).append("\n");
-                
-                for (Usuario u : nu.getUsuarios()) {
-                    debug.append("    * Usuario: ").append(u.getMail()).append("\n");
-                }
-                
-                debug.append("  - Notificaciones asociadas: ").append(nu.getNotificaciones().size()).append("\n");
-                for (Notificacion n : nu.getNotificaciones()) {
-                    debug.append("    * ").append(n.getTitulo()).append(" - ").append(n.getFechaHora()).append("\n");
-                }
-                debug.append("\n");
+            for (NotificacionUsuario nu : notificacionesUsuario) {
+                debug.append("- ID: ").append(nu.getId())
+                     .append(", Leído: ").append(nu.getLeido())
+                     .append(", Activo: ").append(nu.getActivo())
+                     .append(", Usuarios: ").append(nu.getUsuarios() != null ? nu.getUsuarios().size() : 0)
+                     .append(", Notificaciones: ").append(nu.getNotificaciones() != null ? nu.getNotificaciones().size() : 0)
+                     .append("\n");
             }
             
+            // Buscar notificaciones no leídas
+            List<NotificacionUsuario> noLeidas = notificacionUsuarioRepository
+                .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName);
+            debug.append("\nNotificaciones no leídas: ").append(noLeidas.size()).append("\n");
+            
         } catch (Exception e) {
-            debug.append("❌ ERROR durante debug: ").append(e.getMessage()).append("\n");
-            log.error("Error en debug de usuario y notificaciones", e);
+            debug.append("ERROR: ").append(e.getMessage()).append("\n");
+            e.printStackTrace();
         }
         
         return debug.toString();

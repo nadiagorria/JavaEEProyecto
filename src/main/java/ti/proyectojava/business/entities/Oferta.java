@@ -3,7 +3,7 @@ package ti.proyectojava.business.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -25,8 +25,8 @@ public class Oferta {
     private Boolean activo;
 
     @Column(name = "OFERTA_INICIO")
-    private Date inicio;
+    private LocalDate inicio;
 
     @Column(name = "OFERTA_FIN")
-    private Date fin;
+    private LocalDate fin;
 }

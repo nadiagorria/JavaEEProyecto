@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, Router } from '@angular/router';
-import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { SecurityService } from '../../../services/security.service';
@@ -23,7 +22,6 @@ import { of } from 'rxjs';
             ButtonModule,
             ReactiveFormsModule,
             RouterLink,
-            CheckboxModule,
             CommonModule,
             ToastModule
             ],
@@ -31,6 +29,7 @@ import { of } from 'rxjs';
   styleUrl: './registro.component.scss',
   providers: [MessageService]
 })
+
 export class RegistroComponent {
   formGroup: FormGroup;
   isLoading = false;
@@ -42,16 +41,45 @@ export class RegistroComponent {
     private router: Router,
     private messageService: MessageService,
     private securityService: SecurityService
-  ) {
+  ) {    
+    
     this.formGroup = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      admin: [false]
-    });
+      confirmPassword: ['', [Validators.required]]
+    }, 
+    { validators: this.passwordMatchValidator });
 
     // Configurar validación en tiempo real para el username
     this.setupUsernameValidation();
+  }
+
+  // Validador personalizado para confirmar que las contraseñas coincidan
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+    } else if (confirmPassword?.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
+    }
+    
+    return null;
+  }
+
+  // Verificar si el email es válido
+  isValidEmail(): boolean {
+    const emailControl = this.formGroup.get('email');
+    return emailControl?.valid || false;
+  }
+
+  // Verificar si las contraseñas coinciden
+  passwordsMatch(): boolean {
+    const password = this.formGroup.get('password')?.value;
+    const confirmPassword = this.formGroup.get('confirmPassword')?.value;
+    return password === confirmPassword;
   }
 
   private setupUsernameValidation() {
@@ -90,9 +118,10 @@ export class RegistroComponent {
   onSubmit() {
     if (this.formGroup.valid && !this.isLoading && !this.usernameExists) {
       this.isLoading = true;
-      const { username, email, password, admin } = this.formGroup.value;
+      const { username, email, password } = this.formGroup.value;
       
-      this.securityService.register(username, email, password, admin).subscribe({
+      // Always register as CAJERO (admin = false)
+      this.securityService.register(username, email, password, false).subscribe({
         next: (response) => {
           this.isLoading = false;
           

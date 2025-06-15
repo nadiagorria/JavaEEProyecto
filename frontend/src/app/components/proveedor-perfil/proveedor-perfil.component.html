@@ -11,20 +11,19 @@
       <div class="papaBoton">
         <p-button label="Editar Proveedor" severity="secondary" (click)="showDialogEditar()"></p-button>
           <p-dialog header="Editar Proveedor" [(visible)]="visibleEditar" [modal]="true" [breakpoints]="{ '400px': '80vw' }" [draggable]="false" [resizable]="true">
-              <div class="flex flex-column w-full gap-3">
-                <div class="w-full">
+              <div class="flex flex-column w-full gap-3">                <div class="w-full">
                   <label for="nombre" class="block mb-2">Nombre</label>
-                  <input  pInputText class="w-full" placeholder={{ proveedor.nombre }} style="font-size: 1.2rem;" [(ngModel)]="nombreEdicion"/>
+                  <input  pInputText class="w-full" [placeholder]="proveedor.nombre" style="font-size: 1.2rem;" [(ngModel)]="nombreEdicion"/>
                 </div>
                 
                 <div class="w-full">
                   <label for="telefono" class="block mb-2">Teléfono</label>
-                  <input  pInputText class="w-full" placeholder={{ proveedor.telefono }} style="font-size: 1.2rem;" [(ngModel)]="telefonoEdicion"/>
+                  <input  pInputText class="w-full" [placeholder]="proveedor.telefono" style="font-size: 1.2rem;" [(ngModel)]="telefonoEdicion"/>
                 </div>
 
                 <div class="w-full">
                   <label for="correo" class="block mb-2">Correo</label>
-                  <input pInputText class="w-full" placeholder={{ proveedor.correo }} style="font-size: 1.2rem;" [(ngModel)]="correoEdicion"/>
+                  <input pInputText class="w-full" [placeholder]="proveedor.correo" style="font-size: 1.2rem;" [(ngModel)]="correoEdicion"/>
                 </div>
                 
                 <div class="w-full flex justify-content-end mt-3">

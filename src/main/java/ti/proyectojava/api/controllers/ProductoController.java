@@ -14,6 +14,7 @@ import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.dtos.ProductoDto;
 import ti.proyectojava.services.ProductoService;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/v1/producto")
@@ -245,6 +246,19 @@ public class ProductoController {
         ProductoDto producto = productoService.buscarPorCodigoBarras(codigoBarras);
         if (producto != null) {
             return new ResponseEntity<>(producto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //todos pueden usarla
+    @GetMapping("/buscar/codigo/todos/{codigoBarras}")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta funcion busca todos los productos con el mismo código de barras")
+    public ResponseEntity<List<ProductoDto>> buscarTodosPorCodigoBarras(@PathVariable String codigoBarras) {
+        List<ProductoDto> productos = productoService.buscarTodosPorCodigoBarras(codigoBarras);
+        if (!productos.isEmpty()) {
+            return new ResponseEntity<>(productos, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

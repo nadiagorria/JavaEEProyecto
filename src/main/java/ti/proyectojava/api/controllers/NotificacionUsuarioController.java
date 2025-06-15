@@ -144,4 +144,16 @@ public class NotificacionUsuarioController {
             return ResponseEntity.ok("Error en debug de seguridad: " + e.getMessage());
         }
     }
+
+    @PostMapping("/verificar-vencimientos")
+    @Secured({"ADMIN"})
+    @Operation(description = "Ejecuta manualmente la verificación de lotes próximos a vencer")
+    public ResponseEntity<String> ejecutarVerificacionVencimientos(){
+        try {
+            notificacionUsuarioService.chequearNotificaciones();
+            return new ResponseEntity<>("Verificación de vencimientos ejecutada correctamente. Se han generado las notificaciones correspondientes.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al ejecutar la verificación: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
