@@ -9,6 +9,8 @@ import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
@@ -39,7 +41,9 @@ interface ClienteCredito {
     TableModule,
     DialogModule,
     TooltipModule,
+    ToastModule,
     ],
+  providers: [MessageService],
   templateUrl: './clientes-credito.component.html',
   styleUrl: './clientes-credito.component.scss'
 })
@@ -49,14 +53,14 @@ export class ClientesCreditoComponent {
   creditos: CreditoDto[] = [];
   creditosFiltrados: CreditoDto[] = [];
 
-  totalRecords: number = 0;
-  constructor(
+  totalRecords: number = 0;  constructor(
     private route: ActivatedRoute,
     private router: Router,
     private creditoService: CreditoService,
     private entidadService: EntidadService,
-    private securityService: SecurityService
-  ) {}  
+    private securityService: SecurityService,
+    private messageService: MessageService
+  ) {}
   
   ngOnInit(): void {
     if (!this.securityService.isLoggedIn()) {
@@ -119,7 +123,6 @@ export class ClientesCreditoComponent {
     this.minimo = 0;
     this.maximo = 0;
   }
-
   //Cliente
   nombre: string = '';
   telefono: string = '';
@@ -129,15 +132,39 @@ export class ClientesCreditoComponent {
   maximo: number = 0;
   
   saveCliente() {
-    // Validar que los campos requeridos estén completos
-    if (!this.nombre || !this.telefono) {
-      alert('Por favor, complete al menos el nombre y teléfono del cliente.');
+    // Validar campos requeridos
+    if (!this.nombre || this.nombre.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El nombre del cliente es obligatorio'
+      });
+      return;
+    }
+
+    // Validar que el crédito máximo sea mayor que el mínimo
+    if (this.maximo > 0 && this.minimo > 0 && this.maximo <= this.minimo) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validación de créditos',
+        detail: 'El crédito máximo debe ser mayor que el crédito mínimo'
+      });
+      return;
+    }
+
+    // Validar que los montos sean positivos
+    if (this.minimo < 0 || this.maximo < 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validación de montos',
+        detail: 'Los montos de crédito no pueden ser negativos'
+      });
       return;
     }
 
     const clienteCreditoDto: clienteCreditoDto = {
-      nombre: this.nombre,
-      telefono: this.telefono,
+      nombre: this.nombre.trim(),
+      telefono: this.telefono.trim(),
       precioTotal: 0,
       pagoHastaAhora: 0,
       minimo: this.minimo,
@@ -152,6 +179,12 @@ export class ClientesCreditoComponent {
         this.minimo = 0;
         this.maximo = 0;
         
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Cliente a crédito creado exitosamente'
+        });
+        
         // Actualizar la lista de créditos sin recargar la página
         this.cargarCreditos();
       },
@@ -159,11 +192,16 @@ export class ClientesCreditoComponent {
         console.error('Error al crear cliente y crédito:', err);
         let mensajeError = 'Error al crear cliente y crédito';
         if (err.error && typeof err.error === 'string') {
-          mensajeError += ': ' + err.error;
+          mensajeError = err.error;
         } else if (err.message) {
-          mensajeError += ': ' + err.message;
+          mensajeError = err.message;
         }
-        alert(mensajeError);
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: mensajeError
+        });
       }
     });
   }

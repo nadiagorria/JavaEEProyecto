@@ -9,6 +9,8 @@ import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
@@ -31,7 +33,9 @@ import { SecurityService } from 'src/services/security.service';
     TableModule,
     DialogModule,
     TooltipModule,
+    ToastModule,
     ],
+  providers: [MessageService],
   templateUrl: './proveedores.component.html',
   styleUrl: './proveedores.component.scss'
 })
@@ -41,13 +45,13 @@ export class ProveedoresComponent {
   proveedores: ProveedorDto[] = [];
   proveedoresFiltrados: ProveedorDto[] = [];
   totalRecords: number = 0;
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private creditoService: CreditoService,
     private entidadService: EntidadService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -106,47 +110,78 @@ export class ProveedoresComponent {
     this.telefono = '';
     this.correo = '';
   }
-
   //Proveedor
   nombre: string = '';
   telefono: string = '';
   correo: string = '';
-  
+
+  private validarEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
 
   saveProveedor() {
-
-    if (!this.nombre || !this.telefono || !this.correo) {
-      alert('Por favor, complete todos los campos.');
+    // Validar campos requeridos
+    if (!this.nombre || this.nombre.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El nombre del proveedor es obligatorio'
+      });
       return;
+    }
+
+    // Validar email si se proporciona
+    if (this.correo && this.correo.trim() !== '') {
+      if (!this.validarEmail(this.correo)) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Email inválido',
+          detail: 'Por favor ingrese un email válido (ejemplo@correo.com)'
+        });
+        return;
+      }
     }
 
     const proveedor: ProveedorDto = {
       id: null,
-      nombre: this.nombre,
-      telefono: this.telefono,
-      correo: this.correo,
+      nombre: this.nombre.trim(),
+      telefono: this.telefono.trim(),
+      correo: this.correo.trim(),
       productosDto: [],
       activo: true,
     };
-        this.entidadService.crearProveedor(proveedor).subscribe({
+        
+    this.entidadService.crearProveedor(proveedor).subscribe({
       next: (data: any) => {
         this.visible = false;
         this.nombre = '';
         this.telefono = '';
         this.correo = ''; 
-        console.log('Proveedor creado exitosamente', data);
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Proveedor creado exitosamente'
+        });
         
         // Actualizar la lista de proveedores sin recargar la página
         this.cargarProveedores();
-      },      error: (err: any) => {
+      },      
+      error: (err: any) => {
         console.error('Error al crear proveedor:', err);
         let mensajeError = 'Error al crear proveedor';
         if (err.error && typeof err.error === 'string') {
-          mensajeError += ': ' + err.error;
+          mensajeError = err.error;
         } else if (err.message) {
-          mensajeError += ': ' + err.message;
+          mensajeError = err.message;
         }
-        alert(mensajeError);
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: mensajeError
+        });
       }
     });
   }
