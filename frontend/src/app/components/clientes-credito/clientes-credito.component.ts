@@ -8,12 +8,14 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
 import { EntidadService } from 'src/services/entidad.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SecurityService } from 'src/services/security.service';
 
 interface ClienteCredito {
   id: number;
@@ -36,6 +38,7 @@ interface ClienteCredito {
     MenuModule,
     TableModule,
     DialogModule,
+    TooltipModule,
     ],
   templateUrl: './clientes-credito.component.html',
   styleUrl: './clientes-credito.component.scss'
@@ -47,27 +50,57 @@ export class ClientesCreditoComponent {
   creditosFiltrados: CreditoDto[] = [];
 
   totalRecords: number = 0;
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private creditoService: CreditoService,
-    private entidadService: EntidadService
-  ) {}
+    private entidadService: EntidadService,
+    private securityService: SecurityService
+  ) {}  
+  
   ngOnInit(): void {
+    if (!this.securityService.isLoggedIn()) {
+      // Si no está autenticado, redirigir al login
+      this.router.navigate(['/login']);
+      return;
+    }
     this.cargarCreditos();
   }
-
+  
   cargarCreditos(): void {
     this.creditoService.listarCreditos().subscribe({
       next: (data: any) => {
-        this.creditos = data.creditos;
+        console.log('Respuesta del servidor:', data); // Para debugging
+        
+        // Manejar diferentes estructuras de respuesta
+        if (data && Array.isArray(data)) {
+          // Si la respuesta es directamente un array
+          this.creditos = data;
+        } else if (data && data.creditos && Array.isArray(data.creditos)) {
+          // Si la respuesta tiene la propiedad creditos
+          this.creditos = data.creditos;
+        } else {
+          console.warn('La respuesta no tiene el formato esperado:', data);
+          this.creditos = [];
+        }
+        
         this.creditosFiltrados = [...this.creditos];
         this.totalRecords = this.creditos.length;
-      },
-      error: (err: any) => {
+        console.log('Créditos cargados:', this.creditos); // Para debugging
+      },      error: (err: any) => {
         console.error('Error al listar créditos:', err);
+        
+        if (err.status === 403) {
+          // Error de autorización, probablemente la sesión expiró
+          alert('Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.');
+          this.securityService.logout();
+          return;
+        }
+        
         alert('Error al listar créditos: ' + (err.message || err.status));
+        this.creditos = [];
+        this.creditosFiltrados = [];
+        this.totalRecords = 0;
       }
     });
   }
@@ -76,6 +109,15 @@ export class ClientesCreditoComponent {
 
   mostarModal(){
     this.visible = true;
+  }
+
+  cerrarDialog() {
+    this.visible = false;
+    // Limpiar los campos del formulario
+    this.nombre = '';
+    this.telefono = '';
+    this.minimo = 0;
+    this.maximo = 0;
   }
 
   //Cliente

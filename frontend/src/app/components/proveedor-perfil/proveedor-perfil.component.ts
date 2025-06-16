@@ -6,11 +6,12 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProveedorDto } from 'src/models';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface ComprasCliente {
   id: number;
@@ -21,7 +22,7 @@ interface ComprasCliente {
 
 @Component({
   selector: 'app-proveedor-perfil',
-  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule],
+  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule],
   templateUrl: './proveedor-perfil.component.html',
   styleUrl: './proveedor-perfil.component.scss'
 })
@@ -39,10 +40,10 @@ export class ProveedorPerfilComponent {
   totalRecords: number = 0;
 
   visibleEditar: boolean = false;
-
   constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -51,9 +52,20 @@ export class ProveedorPerfilComponent {
       this.proveedor = data;
     });
   }
-
   showDialogEditar() {
+    // Inicializar los campos de edición con los valores actuales del proveedor
+    this.nombreEdicion = this.proveedor.nombre;
+    this.telefonoEdicion = this.proveedor.telefono;
+    this.correoEdicion = this.proveedor.correo;
     this.visibleEditar = true;
+  }
+
+  cerrarDialogEditar() {
+    this.visibleEditar = false;
+    // Resetear los campos a los valores originales
+    this.nombreEdicion = '';
+    this.telefonoEdicion = '';
+    this.correoEdicion = '';
   }
 
   nombreEdicion: string = '';
@@ -77,9 +89,7 @@ export class ProveedorPerfilComponent {
     if (!emailRegex.test(this.proveedor.correo)) {
       alert('Por favor, ingrese un correo electrónico válido.');
       return;
-    }
-
-    this.entidadService.editarProveedor(this.proveedor).subscribe({
+    }    this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
         console.log('Proveedor editado:', data);
         this.visibleEditar = false;
@@ -90,6 +100,12 @@ export class ProveedorPerfilComponent {
       }
     });
 
+  }
+
+  verProducto(productoId: number) {
+    if (productoId) {
+      this.router.navigate(['/producto', productoId]);
+    }
   }
 
 }

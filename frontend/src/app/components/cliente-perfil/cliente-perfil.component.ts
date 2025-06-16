@@ -52,9 +52,18 @@ export class ClientePerfilComponent {
   showDialog() {
     this.visible = true;
   }
-
   showDialogEditar() {
+    // Inicializar los campos de edición con los valores actuales del cliente
+    this.nombreEdicion = this.cliente.nombre;
+    this.telefonoEdicion = this.cliente.telefono;
     this.visibleEditar = true;
+  }
+
+  cerrarDialogEditar() {
+    this.visibleEditar = false;
+    // Resetear los campos a los valores originales
+    this.nombreEdicion = '';
+    this.telefonoEdicion = '';
   }
 
   pago : number = 0;
@@ -77,10 +86,9 @@ export class ClientePerfilComponent {
   nombreEdicion: string = '';
   telefonoEdicion: string = '';
 
-
   editarCliente() {
-    if (!this.nombreEdicion && !this.telefonoEdicion) {
-      alert('Debe ingresar al menos un campo para editar.');
+    if (!this.nombreEdicion || !this.telefonoEdicion) {
+      alert('Por favor, complete todos los campos.');
       return;
     }
 
