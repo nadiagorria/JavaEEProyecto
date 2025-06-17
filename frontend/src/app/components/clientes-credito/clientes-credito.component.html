@@ -9,7 +9,7 @@
         </p-inputgroup-addon>
       </p-inputgroup>
     </div>    <div class="actions-section">      <p-button 
-        label="+ Añadir Nuevo" 
+        label="Añadir Nuevo" 
         icon="pi pi-plus"
         styleClass="custom-add-button"
         (click)="mostarModal()">
@@ -128,15 +128,16 @@
           <th>Pago hasta ahora</th>
           <th>Acciones</th>
         </tr>
-      </ng-template>      <ng-template pTemplate="body" let-credito>
+      </ng-template>      
+      <ng-template pTemplate="body" let-credito>
         <tr>
           <td>{{ credito.cliente.id }}</td>
           <td>{{ credito.cliente.nombre }}</td>
           <td>{{ credito.cliente.telefono }}</td>
-          <td>{{ credito.minimo }}</td>
-          <td>{{ credito.maximo }}</td>
-          <td>{{ credito.precioTotal }}</td>
-          <td>{{ credito.pagoHastaAhora }}</td>
+            <td>$ {{ credito.minimo }}</td>
+            <td>$ {{ credito.maximo }}</td>
+            <td>$ {{ credito.precioTotal }}</td>
+            <td>$ {{ credito.pagoHastaAhora }}</td>
           <td>
             <p-button 
               icon="pi pi-eye" 

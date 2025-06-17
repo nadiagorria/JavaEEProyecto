@@ -12,14 +12,13 @@
       </p-inputgroup>
     </div>    <div class="actions-section">
       <p-button 
-        label="+ Añadir Nuevo" 
+        label="Añadir Nuevo" 
         icon="pi pi-plus"
         styleClass="custom-add-button"
         (click)="mostarModal()">
       </p-button>
     </div>
-  </article>
-  <!-- Modal de añadir proveedor -->  <p-dialog 
+  </article>  <!-- Modal de añadir proveedor -->  <p-dialog 
     header="Añadir Nuevo Proveedor" 
     [(visible)]="visible" 
     [modal]="true" 
@@ -28,8 +27,8 @@
     [draggable]="false"
     [resizable]="false"
     [closable]="true"
-    styleClass="form-dialog"
-    appendTo="body">    
+    styleClass="lote-dialog"
+    appendTo="body">
     <form class="form-content">
       <div class="form-group">
         <label for="nombre">Nombre del Proveedor *</label>

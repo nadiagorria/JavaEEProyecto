@@ -227,10 +227,11 @@ public class MapsDtosEntityService {
         if (credito.getVentas() != null) {
             dto.setVentas(credito.getVentas().stream()
                     .map(venta -> mapToDtoVentaPlano(venta))
-                    .filter(Objects::nonNull)
+                    .filter(venta -> venta != null && venta.getActivo())
                     .collect(Collectors.toList())
             );
         }
+
 
         return dto;
     }

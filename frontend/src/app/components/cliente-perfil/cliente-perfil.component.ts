@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { CreditoService } from 'src/services/credito.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
-  selector: 'app-cliente-perfil',
-  imports: [FormsModule, 
+  selector: 'app-cliente-perfil',  imports: [FormsModule, 
     HeaderComponent, 
     FooterComponent, 
     ButtonModule, 
@@ -23,7 +25,10 @@ import { CreditoService } from 'src/services/credito.service';
     InputGroupAddonModule, 
     TableModule, 
     DialogModule, 
-    CommonModule],
+    CommonModule,
+    InputTextModule,
+    ToastModule],
+  providers: [MessageService],
   templateUrl: './cliente-perfil.component.html',
   styleUrl: './cliente-perfil.component.scss'
 })
@@ -32,11 +37,11 @@ export class ClientePerfilComponent {
   cliente!: ClienteDto;
 
   totalRecords: number = 0;
-
   constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
-    private creditoService: CreditoService
+    private creditoService: CreditoService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -67,28 +72,65 @@ export class ClientePerfilComponent {
   }
 
   pago : number = 0;
-
   pagoButton() {
+    // Validar que el monto de pago no sea mayor a la deuda actual ni negativo
+    if (this.pago <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Monto inválido',
+        detail: 'El monto a pagar debe ser mayor a cero.'
+      });
+      return;
+    }
+    
+    if (this.pago > this.cliente.credito.precioTotal) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Monto excesivo',
+        detail: 'El monto a pagar no puede ser mayor a la deuda actual.'
+      });
+      return;
+    }
+    
     console.log(this.pago, "aaa", this.cliente.credito.id);
     this.creditoService.pagarCredito(this.cliente.credito.id, this.pago).subscribe(
       response => {
         // Manejar respuesta si es necesario
         console.log('Pago realizado', response);
+        // Refrescar los datos del cliente después del pago
+        this.entidadService.getCliente(this.cliente.id).subscribe(data => {
+          this.cliente = data;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Pago exitoso',
+            detail: `Pago de $${this.pago} realizado correctamente.`
+          });
+        });
       },
       error => {
         // Manejar error si ocurre
         console.error('Error al pagar', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error en el pago',
+          detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.'
+        });
       }
     );
     this.visible = false;
+    // Resetear el valor del pago
+    this.pago = 0;
   }
 
   nombreEdicion: string = '';
   telefonoEdicion: string = '';
-
   editarCliente() {
     if (!this.nombreEdicion || !this.telefonoEdicion) {
-      alert('Por favor, complete todos los campos.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor, complete todos los campos obligatorios.'
+      });
       return;
     }
 
@@ -99,11 +141,20 @@ export class ClientePerfilComponent {
     this.entidadService.editarCliente(this.cliente).subscribe({
       next: (data: any) => {
         console.log('Cliente editado:', data);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Cliente actualizado',
+          detail: 'Los datos del cliente se han actualizado correctamente.'
+        });
         this.visibleEditar = false;
       },
       error: (err: any) => {
         console.error('Error al editar cliente:', err);
-        alert('Error al editar cliente: ' + (err.message || err.status));
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al editar',
+          detail: 'Ocurrió un error al actualizar los datos del cliente.'
+        });
       }
     });
   }

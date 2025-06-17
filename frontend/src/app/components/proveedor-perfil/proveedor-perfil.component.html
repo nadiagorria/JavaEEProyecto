@@ -1,4 +1,5 @@
 <app-header></app-header>
+<p-toast></p-toast>
 <main>
   <article class="flex">
     <div class="w-full Tarjetas">
@@ -7,45 +8,64 @@
         <p>Telefono: {{ proveedor.telefono }}</p>
         <p>Email: {{ proveedor.correo }}</p>
       </div>      <div class="papaBoton">
-        <p-button label="Editar Proveedor" severity="secondary" (click)="showDialogEditar()"></p-button>
-        <p-dialog 
+        <p-button label="Editar Proveedor" severity="secondary" (click)="showDialogEditar()"></p-button>        <p-dialog 
           header="Editar Proveedor" 
           [(visible)]="visibleEditar" 
           [modal]="true" 
-          [style]="{width: '400px'}"
+          [style]="{width: '450px'}"
+          [contentStyle]="{overflow: 'auto'}"
           [draggable]="false"
-          [resizable]="false">
+          [resizable]="false"
+          [closable]="true"
+          styleClass="lote-dialog"
+          appendTo="body">
+          
+          <div class="proveedor-info">
+            <div class="proveedor-info-avatar">
+              <i class="pi pi-building"></i>
+            </div>
+            <span class="proveedor-info-id">ID Proveedor: #{{ proveedor.id }}</span>
+          </div>
           
           <div class="flex flex-column gap-3">
             <div class="field">
               <label for="nombre" class="block mb-2">Nombre</label>
-              <input 
-                id="nombre" 
-                pInputText 
-                class="w-full" 
-                [(ngModel)]="nombreEdicion"
-                placeholder="Ingrese el nombre del proveedor"/>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-building"></i>
+                <input 
+                  id="nombre" 
+                  pInputText 
+                  class="w-full" 
+                  [(ngModel)]="nombreEdicion"
+                  placeholder="Ingrese el nombre del proveedor"/>
+              </span>
             </div>
             
             <div class="field">
               <label for="telefono" class="block mb-2">Teléfono</label>
-              <input 
-                id="telefono" 
-                pInputText 
-                class="w-full" 
-                [(ngModel)]="telefonoEdicion"
-                placeholder="Ingrese el teléfono"/>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-phone"></i>
+                <input 
+                  id="telefono" 
+                  pInputText 
+                  class="w-full" 
+                  [(ngModel)]="telefonoEdicion"
+                  placeholder="Ingrese el teléfono"/>
+              </span>
             </div>
 
             <div class="field">
               <label for="correo" class="block mb-2">Correo Electrónico</label>
-              <input 
-                id="correo" 
-                pInputText 
-                class="w-full" 
-                [(ngModel)]="correoEdicion"
-                type="email"
-                placeholder="Ingrese el correo electrónico"/>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-envelope"></i>
+                <input 
+                  id="correo" 
+                  pInputText 
+                  class="w-full" 
+                  [(ngModel)]="correoEdicion"
+                  type="email"
+                  placeholder="Ingrese el correo electrónico"/>
+              </span>
             </div>
           </div>
           
@@ -78,7 +98,6 @@
     <h1 class="tituloTabla">Productos</h1>
   
     <p-table
-      class="tituloTabla"
       [value]="proveedor.productosDto || []"
       [paginator]="true"
       [rows]="5"
@@ -101,16 +120,16 @@
           <td>{{ producto.id || 'N/A' }}</td>
           <td>{{ producto.codigoDeBarra || 'N/A' }}</td>
           <td>{{ producto.nombre || 'N/A' }}</td>
-          <td>{{ producto.stockTotal !== undefined && producto.stockTotal !== null ? producto.stockTotal : 'N/A' }}</td>
-          <td>
+          <td>{{ producto.stockTotal !== undefined && producto.stockTotal !== null ? producto.stockTotal : 'N/A' }}</td>          <td>
             <p-button 
-              icon="pi pi-eye" 
+              icon="pi pi-box" 
               severity="info" 
               size="small" 
               [text]="true"
               (click)="verProducto(producto.id)"
-              pTooltip="Ver producto"
-              tooltipPosition="top">
+              pTooltip="Ver detalles del producto"
+              tooltipPosition="top"
+              styleClass="action-button">
             </p-button>
           </td>
         </tr>

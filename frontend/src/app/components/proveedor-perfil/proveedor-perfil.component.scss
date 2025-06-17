@@ -1,5 +1,6 @@
 html, body {
   overflow-x: hidden;
+  font-family: "Montserrat", sans-serif;
 }
 
 main {
@@ -7,98 +8,331 @@ main {
   margin-bottom: 15px;
   margin-left: 10vw;
   margin-right: 10vw;
-
   padding-top: 10px;
   padding-bottom: 8px;
   padding-left: 2vw;
   padding-right: 2vw;
-
-
 }
 
 .tarjeta-1 {
-  color: black;
+  color: #2c3e50;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #64748b;
 }
 
 .titulo {
   font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
 }
 
-.papaNumeros {
-  height: 87px;
+.tarjeta-1 p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
 }
-
-
-.texito {
-  margin-bottom: 3px;
-  font-size: 0.9rem;
-}
-
 
 .papaBoton{
   margin-top: 40px;
+  
+  ::ng-deep .p-button {
+    background-color: #64748b !important;
+    border-color: #64748b !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      background-color: #475569 !important;
+      border-color: #475569 !important;
+      transform: translateY(-1px) !important;
+    }
+  }
 }
 
-.imagen {
-  height: 280px;
-  width: 25vw;
-  margin-right: 5vw;
-}
-
-// Estilos para el ícono del proveedor
+// Estilos para el ícono del proveedor - más sobrio y elegante, separado más de las cards
 .avatar-icon {
-  width: 10vw;
-  height: 120px;
-  border-radius: 50%;
+  width: 25vw;
+  height: 280px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   margin-right: 5vw;
+  margin-left: 3rem; // Separación adicional de las cards
 
   i {
-    font-size: 3rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 5rem;
+    color: #64748b;
+    opacity: 0.8;
   }
-
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  &.proveedor-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   }
 }
 
-.tablaMargen {
-  margin-top: 50px;
-  margin-bottom: 15px;
+
+
+
+
+// Estilos para el modal de edición
+::ng-deep .p-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+    
+    .p-dialog-title {
+      font-weight: 700;
+      color: #2c3e50;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 2rem;
+    background: white;
+    
+    .field label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+      input {
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        border-color: #64748b;
+        box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
+      }
+    }
+  }
+  
+  .p-dialog-footer {
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 8px 8px;
+    
+    .p-button {
+      border-radius: 6px;
+      font-weight: 600;
+        &.p-button-text {
+        color: #6c757d;
+        
+        &:hover {
+          background: rgba(108, 117, 125, 0.1);
+          color: #495057;
+        }
+      }
+      
+      &[severity="secondary"] {
+        background-color: #64748b;
+        border-color: #64748b;
+        
+        &:hover {
+          background-color: #475569;
+          border-color: #475569;
+        }
+      }
+    }
+  }
 }
 
-.tituloTabla {
-  color: black;
+// Estilo para el modal similar al de lote
+::ng-deep .lote-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    
+    .p-dialog-title {
+      font-weight: 600;
+      color: white;
+    }
+    
+    .p-dialog-header-icon {
+      color: white;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 1.5rem;
+    border: none;
+    overflow: auto;
+    
+    .field label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.75rem;
+    }
+    
+    input {
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      transition: all 0.2s ease;
+      padding: 0.75rem;
+        &:focus {
+        border-color: #64748b;
+        box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
+      }
+    }
+  }
+  
+  .p-dialog-footer {
+    border: none;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    
+    .p-button {
+      border-radius: 6px;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+        &.p-button-success, &[severity="secondary"] {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        border: none;
+        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+  
+  // Animación para la apertura del modal
+  &.p-dialog-mask {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  &.p-dialog {
+    animation: slideInDown 0.3s ease-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: visible;
+  }
 }
 
-tr, td, th {
-  background: #D6D6D6;
-  color: black;
+// Keyframes para animaciones
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.paginador {
-  color: black;
-  height: 20px;
-  margin-top: 15px;
-  margin-bottom: 30px;
-  justify-content: end;
-  gap: 0.5vw;
+@keyframes slideInDown {
+  from {
+    transform: translate3d(0, -30px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
 }
 
-.margenPaginador {
-    margin-right: 1vw;
+// Estilos para botones de acción en la tabla
+::ng-deep .action-button {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+    &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    background: rgba(100, 116, 139, 0.1) !important;
+    color: #64748b !important;
+  }
 }
 
+// Estilos para el modal de edición de proveedor
+.proveedor-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  .proveedor-info-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+    border: 3px solid white;
+    
+    i {
+      font-size: 2.5rem;
+      color: white;
+    }
+  }
+  
+  .proveedor-info-id {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    background-color: #f8f9fa;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid #dee2e6;
+  }
+}
 
+// Estilos para los campos de texto con iconos en proveedor
+::ng-deep .p-input-icon-left {
+  width: 100%;
+  
+  i {
+    color: #64748b;
+    opacity: 0.7;
+  }
+  
+  input {
+    padding-left: 2.5rem !important;
+    
+    &:focus + i {
+      color: #475569;
+      opacity: 1;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  main {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+  }
+  
+  .avatar-icon {
+    width: 100%;
+    height: 200px;
+    margin-right: 0;
+    margin-top: 1rem;
+    
+    i {
+      font-size: 4rem;
+    }
+  }
+  
+  article.flex {
+    flex-direction: column;
+  }
+}

@@ -12,6 +12,9 @@ import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
 
 interface ComprasCliente {
   id: number;
@@ -22,7 +25,8 @@ interface ComprasCliente {
 
 @Component({
   selector: 'app-proveedor-perfil',
-  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule],
+  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule, ToastModule, InputTextModule],
+  providers: [MessageService],
   templateUrl: './proveedor-perfil.component.html',
   styleUrl: './proveedor-perfil.component.scss'
 })
@@ -39,11 +43,11 @@ export class ProveedorPerfilComponent {
 
   totalRecords: number = 0;
 
-  visibleEditar: boolean = false;
-  constructor(
+  visibleEditar: boolean = false;  constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -72,10 +76,13 @@ export class ProveedorPerfilComponent {
   telefonoEdicion: string = '';
   correoEdicion: string = '';
 
-
   editarProveedor() {
     if (!this.nombreEdicion || !this.telefonoEdicion || !this.correoEdicion) {
-      alert('Por favor, complete todos los campos.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor, complete todos los campos obligatorios.'
+      });
       return;
     }
     
@@ -87,16 +94,31 @@ export class ProveedorPerfilComponent {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.proveedor.correo)) {
-      alert('Por favor, ingrese un correo electrónico válido.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Por favor, ingrese un correo electrónico válido.'
+      });
       return;
-    }    this.entidadService.editarProveedor(this.proveedor).subscribe({
+    }    
+
+    this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
         console.log('Proveedor editado:', data);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Proveedor actualizado',
+          detail: 'Los datos del proveedor se han actualizado correctamente.'
+        });
         this.visibleEditar = false;
       },
       error: (err: any) => {
         console.error('Error al editar proveedor:', err);
-        alert('Error al editar proveedor: ' + (err.message || err.status));
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al editar',
+          detail: 'Ocurrió un error al actualizar los datos del proveedor.'
+        });
       }
     });
 
