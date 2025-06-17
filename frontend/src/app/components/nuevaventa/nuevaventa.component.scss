@@ -123,3 +123,232 @@
 .cursor-not-allowed {
   cursor: not-allowed !important;
 }
+
+/* Estilos para el modal de finalizar venta */
+:host ::ng-deep .p-dialog {
+  .p-dialog-content {
+    padding: 0 !important;
+    overflow-y: auto;
+    height: calc(450px - 130px); /* Altura fija menos header y footer */
+  }
+  
+  .p-dialog-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    height: 65px;
+    flex-shrink: 0;
+  }
+  
+  .p-dialog-footer {
+    padding: 1rem 1.5rem !important;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    height: 65px;
+    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* Mejoras específicas para el contenido del modal */
+.modal-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1.5rem !important;
+}
+
+/* Estilos para el grid del modal */
+:host ::ng-deep .p-dialog .grid {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  
+  .col-12,
+  .col-6 {
+    padding: 0.5rem;
+    flex: 0 0 auto;
+  }
+  
+  .col-6 {
+    width: 50%;
+    max-width: 50%;
+  }
+  
+  .col-12 {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Forzar grid horizontal en el modal */
+:host ::ng-deep .p-dialog .modal-content .grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+:host ::ng-deep .p-dialog .modal-content .grid .col-6 {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: none !important;
+}
+
+/* Mejoras para los dropdowns en el modal */
+:host ::ng-deep .p-dialog .p-dropdown {
+  width: 100%;
+  min-height: 40px;
+}
+
+:host ::ng-deep .p-dialog .p-dropdown-panel {
+  z-index: 10000;
+}
+
+/* Estilo para dropdown deshabilitado */
+:host ::ng-deep .p-dialog .p-dropdown.p-disabled {
+  opacity: 0.6;
+  background: #f8f9fa;
+}
+
+:host ::ng-deep .p-dialog .p-dropdown.p-disabled .p-dropdown-label {
+  color: #6c757d;
+}
+
+/* Estilos responsive para el modal */
+@media (max-width: 768px) {
+  :host ::ng-deep .p-dialog {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    height: 450px !important;
+    margin: 0.5rem;
+    
+    .p-dialog-header {
+      padding: 1rem;
+      height: 60px;
+    }
+    
+    .p-dialog-footer {
+      padding: 0.75rem 1rem;
+      height: 60px;
+    }
+
+    .p-dialog-content {
+      height: calc(450px - 120px) !important;
+    }
+  }
+  
+  .modal-content {
+    padding: 1rem !important;
+  }
+
+  /* Mantener grid horizontal incluso en móvil */
+  :host ::ng-deep .p-dialog .modal-content .grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem;
+  }
+}
+
+/* Forzar el tamaño inicial correcto del modal */
+:host ::ng-deep .p-dialog[style*="width"] {
+  animation: modalResize 0.1s ease-out;
+  transform-origin: center;
+}
+
+@keyframes modalResize {
+  from {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Asegurar que el contenido tenga el espacio necesario inmediatamente */
+:host ::ng-deep .p-dialog-content {
+  height: calc(450px - 130px) !important;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos para el botón de confirmar venta */
+:host ::ng-deep .p-dialog-footer .confirm-btn {
+  background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+  border: none !important;
+  box-shadow: 0 3px 8px rgba(73, 80, 87, 0.2) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn:hover:not(.p-disabled) {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
+  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn:active:not(.p-disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(73, 80, 87, 0.2) !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn .p-button-label {
+  font-size: 1rem !important;
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn .p-button-icon {
+  font-size: 1.1rem !important;
+  margin-right: 0.5rem !important;  color: #ffffff !important;
+}
+
+/* Estilos para el botón de finalizar venta (fuera del modal) */
+:host ::ng-deep .finalizar-btn {
+  background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+  border: none !important;
+  box-shadow: 0 3px 8px rgba(73, 80, 87, 0.2) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .finalizar-btn:hover:not(.p-disabled) {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
+  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+:host ::ng-deep .finalizar-btn:active:not(.p-disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(73, 80, 87, 0.2) !important;
+}
+
+:host ::ng-deep .finalizar-btn .p-button-label {
+  font-size: 1rem !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+:host ::ng-deep .finalizar-btn .p-button-icon {
+  font-size: 1.1rem !important;
+  margin-right: 0.5rem !important;
+  color: #ffffff !important;
+}
+
+/* Estilo cuando está deshabilitado */
+:host ::ng-deep .finalizar-btn.p-disabled {
+  background: #6c757d !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}

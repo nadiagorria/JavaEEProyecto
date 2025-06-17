@@ -65,7 +65,6 @@
       paginatorPosition="bottom" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} créditos"
       showGridlines [responsive]="true"> <ng-template pTemplate="header">
         <tr>
-          <th>Id</th>
           <th>Nombre</th>
           <th>Telefono</th>
           <th>Crédito Minimo</th>
@@ -77,7 +76,6 @@
       </ng-template>
       <ng-template pTemplate="body" let-credito>
         <tr>
-          <td>{{ credito.cliente.id }}</td>
           <td>{{ credito.cliente.nombre }}</td>
           <td>{{ credito.cliente.telefono }}</td>
           <td>$ {{ credito.minimo }}</td>

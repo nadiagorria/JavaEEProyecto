@@ -53,7 +53,6 @@
       paginatorPosition="bottom" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} proveedores"
       showGridlines [responsive]="true"> <ng-template pTemplate="header">
         <tr>
-          <th>Id</th>
           <th>Nombre</th>
           <th>Telefono</th>
           <th>Correo</th>
@@ -61,7 +60,6 @@
         </tr>
       </ng-template> <ng-template pTemplate="body" let-proveedor>
         <tr>
-          <td>{{ proveedor.id }}</td>
           <td>{{ proveedor.nombre }}</td>
           <td>{{ proveedor.telefono }}</td>
           <td>{{ proveedor.correo }}</td>
