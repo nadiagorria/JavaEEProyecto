@@ -41,11 +41,17 @@ public class CategoriaController {
         }
     }
 
-    //esta funcion solo la puede usar un admin
-    @PutMapping("/borrar/{nombre}")
+    //esta funcion solo la puede usar un admin    @PutMapping("/borrar/{nombre}")
     @Secured({"ADMIN"})
     public ResponseEntity<Void> borrarCategoria(@PathVariable (name = "nombre") String nombre){
         categoriaService.borrarCategoria(nombre);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }    //esta funcion solo la puede usar un admin
+    @PutMapping("/desvincular-productos/{nombre}")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta función desvincula todos los productos de una categoría")
+    public ResponseEntity<Void> desvincularProductosDeCategoria(@PathVariable(name = "nombre") String nombre) {
+        categoriaService.desvincularProductosDeCategoria(nombre);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     }

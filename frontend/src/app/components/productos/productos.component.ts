@@ -374,24 +374,41 @@ export class ProductosComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  eliminarCategoria() {
+  }  eliminarCategoria() {
     if (this.categoriaSeleccionada == null) return;
-    this.categoriaService.eliminarCategoria(this.categoriaSeleccionada).subscribe({
+    
+    // Encontrar el nombre de la categoría seleccionada
+    const categoriaAEliminar = this.categorias.find(cat => cat.id === this.categoriaSeleccionada);
+    if (!categoriaAEliminar || !categoriaAEliminar.nombre) {
+      alert('No se pudo encontrar la categoría seleccionada');
+      return;
+    }
+    
+    // Primero desvincular los productos
+    this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.nombre).subscribe({
       next: () => {
-        // Actualiza la lista de categorías tras eliminar
-        this.categoriaService.listarCategorias().subscribe({
-          next: (response) => {
-            this.categorias = response.categorias;
+        // Luego proceder con la eliminación de la categoría
+        this.categoriaService.eliminarCategoria(this.categoriaSeleccionada!).subscribe({
+          next: () => {
+            // Actualiza la lista de categorías tras eliminar
+            this.categoriaService.listarCategorias().subscribe({
+              next: (response) => {
+                this.categorias = response.categorias;
+              }
+            });
+            this.cargarProductos(); // Recargar productos para ver los cambios en las categorías
+            this.categoriaSeleccionada = null;
+            this.mostrarModalEliminarCategoria = false;
+          },
+          error: (error) => {
+            alert('Error al eliminar la categoría');
+            console.error('Error al eliminar categoría:', error);
           }
         });
-        this.categoriaSeleccionada = null;
-        this.mostrarModalEliminarCategoria = false;
       },
       error: (error) => {
-        alert('Error al eliminar la categoría');
-        console.error('Error al eliminar categoría:', error);
+        alert('Error al desvincular los productos de la categoría');
+        console.error('Error al desvincular productos:', error);
       }
     });
   }

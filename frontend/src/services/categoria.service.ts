@@ -33,4 +33,7 @@ export class CategoriaService {
   seleccionarCategoria(id: number): Observable<CategoriaDto> {
     return this.http.get<CategoriaDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
   }
+  desvincularProductosDeCategoria(nombreCategoria: string): Observable<void> {
+    return this.http.put<void>(`${this.urlService.baseUrl}${this.endpoint}/desvincular-productos/${nombreCategoria}`, {});
+  }
 }
