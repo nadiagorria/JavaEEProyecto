@@ -386,9 +386,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     
     // Primero desvincular los productos
     this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.nombre).subscribe({
-      next: () => {
-        // Luego proceder con la eliminación de la categoría
-        this.categoriaService.eliminarCategoria(this.categoriaSeleccionada!).subscribe({
+      next: () => {        // Luego proceder con la eliminación de la categoría
+        this.categoriaService.eliminarCategoria(categoriaAEliminar.nombre).subscribe({
           next: () => {
             // Actualiza la lista de categorías tras eliminar
             this.categoriaService.listarCategorias().subscribe({

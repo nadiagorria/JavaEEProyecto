@@ -45,7 +45,7 @@ public class CategoriaService {
         }
         return response;
     }    public String borrarCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(nombreCategoria);
+        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
@@ -56,34 +56,8 @@ public class CategoriaService {
         }
 
         return response;
-    }
-
-    public String desvincularProductosDeCategoria(Long categoriaId) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
-        String response = null;
-
-        if (categoriaOpt.isPresent()) {
-            Categoria categoria = categoriaOpt.get();
-            
-            // Obtener la lista de productos y desvincularlos
-            List<Producto> productos = categoria.getProductos();
-            for (Producto producto : productos) {
-                producto.setCategoria(null);
-            }
-            
-            // La categoría ya no tiene productos asociados
-            categoria.setProductos(new ArrayList<>());
-            
-            // Guardar los cambios
-            categoriaRepository.save(categoria);
-            response = "Productos desvinculados correctamente de la categoría: " + categoria.getNombre();
-        }
-
-        return response;
-    }
-
-    public String desvincularProductosDeCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(nombreCategoria);
+    }    public String desvincularProductosDeCategoria(String nombreCategoria) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
