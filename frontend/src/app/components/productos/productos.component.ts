@@ -15,6 +15,7 @@ import { UrlService } from '../../../services/url.service';
 import { SecurityService } from '../../../services/security.service';
 import { ProductoDto } from 'src/models/producto.dto';
 import { ProveedorDto } from 'src/models/proveedor.dto';
+import { CategoriaDto } from 'src/models/categoria.dto';
 import { HeaderComponent } from '../header/header.component';
 
 @Component({
@@ -138,9 +139,29 @@ export class ProductosComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Método para obtener todas las subcategorías de una categoría (incluyendo subcategorías anidadas)
+  private obtenerSubcategoriasRecursivas(categoriaId: number): number[] {
+    const subcategoriaIds: number[] = [];
+    const categoria = this.categorias.find(cat => cat.id === categoriaId);
+    
+    if (categoria && categoria.subcategorias) {
+      for (const sub of categoria.subcategorias) {
+        const subId = typeof sub.id === 'string' ? parseInt(sub.id) : sub.id;
+        if (subId !== null) {
+          subcategoriaIds.push(subId);
+          // Recursivamente obtener subcategorías
+          const subIds = this.obtenerSubcategoriasRecursivas(subId);
+          subcategoriaIds.push(...subIds);
+        }
+      }
+    }
+    
+    return subcategoriaIds;
+  }
+
   // Método para aplicar filtros y búsqueda
   aplicarFiltros() {
-    // Comenzar com todos os produtos
+    // Comenzar con todos los productos
     let resultado = [...this.productos];
     
     // Aplicar filtro de búsqueda si hay un término
@@ -155,7 +176,10 @@ export class ProductosComponent implements OnInit, OnDestroy {
     // Aplicar filtro de categoría si hay una seleccionada
     if (this.categoriaFiltro !== null) {
       console.log('Filtrando por categoría:', this.categoriaFiltro);
-      console.log('Tipo de categoriaFiltro:', typeof this.categoriaFiltro);
+      
+      // Obtener todas las subcategorías de la categoría seleccionada
+      const categoriasAFiltrar = [this.categoriaFiltro, ...this.obtenerSubcategoriasRecursivas(this.categoriaFiltro)];
+      console.log('Categorías a filtrar (incluyendo subcategorías):', categoriasAFiltrar);
       
       resultado = resultado.filter(producto => {
         if (!producto.categoria) return false;
@@ -164,11 +188,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
           ? parseInt(producto.categoria.id) 
           : producto.categoria.id;
           
-        console.log('Producto:', producto.nombre, 
-                    'CategoriaID:', producto.categoria.id,
-                    'Tipo:', typeof producto.categoria.id);
-                    
-        return categoriaIdProducto === this.categoriaFiltro;
+        return categoriaIdProducto !== null && categoriasAFiltrar.includes(categoriaIdProducto);
       });
     }
     
