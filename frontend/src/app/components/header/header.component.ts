@@ -72,15 +72,24 @@ export class HeaderComponent implements OnInit {
         label: 'Nueva Venta',
         icon: 'pi pi-plus',
         command: () => this.router.navigate(['/nuevaventa'])
-      },
-      {
+      }
+    ];
+
+    // Solo agregar estadísticas si el usuario es admin
+    if (this.isAdmin()) {
+      this.menuItems.push({
         label: 'Estadísticas',
         icon: 'pi pi-chart-bar',
         command: () => this.router.navigate(['/stats'])
-      },
+      });
+    }
+
+    // Agregar separador y resto de opciones
+    this.menuItems.push(
       {
         separator: true
-      },      {
+      },      
+      {
         label: 'Productos',
         icon: 'pi pi-box',
         command: () => this.router.navigate(['/productos'])
@@ -100,7 +109,19 @@ export class HeaderComponent implements OnInit {
         icon: 'pi pi-percentage',
         command: () => this.router.navigate(['/ofertas'])
       }
-    ];
+    );
+  }
+
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    
+    if (!roles) {
+      return false;
+    }
+    
+    const hasAdminRole = roles.includes('ADMIN');
+    
+    return hasAdminRole;
   }
 
 

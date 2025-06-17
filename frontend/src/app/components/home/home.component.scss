@@ -164,3 +164,24 @@ main {
   z-index: 1;
 }
 
+// Estilos para botones desactivados
+.cartelGrande.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  
+  &:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #BBBBBB;
+  }
+  
+  &::before {
+    display: none;
+  }
+  
+  .iconos, .tituloCartel, .textoCartel {
+    color: #999999;
+  }
+}
+
