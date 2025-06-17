@@ -1,51 +1,167 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 .margen{
-  margin:10vh;
-  }
+  margin: 0;
+  padding: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
 .texto{
   font-family: "Source Sans 3", sans-serif;
 }
 
-/* Estilos adicionales para el componente nuevaventa */
-
-/* Container para la búsqueda y escáner */
 .search-container {
-  padding: 0 1rem; /* Espacio desde los bordes de la pantalla */
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
 }
 
 .search-controls {
   display: flex;
   align-items: stretch;
-  gap: 0.5rem; /* Distancia pequeña entre barra de búsqueda y botón */
+  gap: 1rem;
 }
 
-/* Estilos para el mensaje de "no encontrado" en el autoComplete */
-.p-autocomplete-empty-message {
-  padding: 1rem;
-  text-align: center;
-  color: #6c757d;
-  font-style: italic;
+:host ::ng-deep .p-autocomplete {
+  width: 100% !important;
 }
 
-/* Estilos para el escáner de códigos de barras */
-.scanner-btn {
-  min-width: auto !important;
-  max-width: none !important;
+:host ::ng-deep .p-autocomplete .p-autocomplete-input {
+  border: 2px solid #e9ecef !important;
+  border-radius: 12px !important;
+  padding: 0.875rem 1rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  background: #ffffff !important;
+  color: #495057 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s ease !important;
+}
+
+:host ::ng-deep .p-autocomplete .p-autocomplete-input:focus {
+  border-color: #6c757d !important;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  outline: none !important;
+}
+
+:host ::ng-deep .p-autocomplete .p-autocomplete-input::placeholder {
+  color: #adb5bd !important;
+  font-style: italic !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel {
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  background: #ffffff !important;
+  margin-top: 4px !important;
+  max-height: 200px !important;
+  overflow: hidden !important;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 300px !important;
   width: auto !important;
-  height: 42px !important;
-  padding: 0 1rem !important;
-  border-radius: 8px;
+  contain: layout !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items {
+  max-height: 200px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-track {
+  background: #f8f9fa !important;
+  border-radius: 3px !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb {
+  background: #ced4da !important;
+  border-radius: 3px !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd !important;
+}
+
+:host ::ng-deep .p-autocomplete-item {
+  padding: 1rem !important;
+  border-bottom: 1px solid #f8f9fa !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+:host ::ng-deep .p-autocomplete-item:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  transform: translateX(4px) !important;
+  border-left: 3px solid #6c757d !important;
+}
+
+:host ::ng-deep .p-autocomplete-item:last-child {
+  border-bottom: none !important;
+}
+
+:host ::ng-deep .p-autocomplete-item .text-gray-400 {
+  opacity: 0.6 !important;
+}
+
+:host ::ng-deep .p-autocomplete-item .cursor-not-allowed {
+  background: #f8f9fa !important;
+  color: #6c757d !important;
+}
+
+:host ::ng-deep .p-autocomplete-item .cursor-not-allowed:hover {
+  background: #f8f9fa !important;
+  transform: none !important;
+  border-left: none !important;
+}
+
+.p-autocomplete-empty-message {
+  padding: 2rem 1rem !important;
+  text-align: center !important;
+  color: #6c757d !important;
+  font-style: italic !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+  border-radius: 8px !important;
+  margin: 0.5rem !important;
+}
+
+.scanner-btn {
+  height: 48px !important;
+  padding: 0 1.5rem !important;
+  border-radius: 12px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out !important;
   white-space: nowrap;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2) !important;
 }
 
 .scanner-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(108, 117, 125, 0.3) !important;
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%) !important;
 }
 
 .scanner-btn i {
@@ -64,37 +180,22 @@
 }
 
 @keyframes scanner-glow {
-  0% {
-    box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 15px rgba(33, 150, 243, 0.6);
-  }
+  0% { box-shadow: 0 0 5px rgba(33, 150, 243, 0.3); }
+  100% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.6); }
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive adjustments for scanner controls */
 @media (max-width: 768px) {
   .search-container {
-    padding: 0 0.75rem; /* Menor espacio en móvil */
+    padding: 1rem 0.75rem;
   }
   
   .scanner-btn {
-    min-width: auto !important;
     padding: 0 0.75rem !important;
     font-size: 0.9rem;
   }
@@ -103,33 +204,53 @@
     font-size: 0.9rem;
     margin-right: 0.25rem;
   }
+  
+  :host ::ng-deep .p-autocomplete-panel {
+    min-width: 280px !important;
+    max-width: 90vw !important;
+  }
 }
 
-/* Estilos para productos sin stock */
-.producto-sin-stock {
-  color: #9e9e9e !important;
-  cursor: not-allowed !important;
-  opacity: 0.6;
+/* Estilos adicionales para corregir problemas del autocomplete */
+:host ::ng-deep .p-autocomplete-panel {
+  max-height: 200px !important;
+  overflow: hidden !important;
+  contain: layout style !important;
 }
 
-.producto-sin-stock:hover {
-  background-color: #f5f5f5 !important;
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items {
+  max-height: 200px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
-.text-gray-400 {
-  color: #9ca3af !important;
+/* Estilos mejorados para el scrollbar del autocomplete */
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar {
+  width: 6px !important;
 }
 
-.cursor-not-allowed {
-  cursor: not-allowed !important;
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-track {
+  background: #f8f9fa !important;
+  border-radius: 3px !important;
 }
 
-/* Estilos para el modal de finalizar venta */
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb {
+  background: #ced4da !important;
+  border-radius: 3px !important;
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd !important;
+}
+
+/* Estilos del modal */
 :host ::ng-deep .p-dialog {
+  z-index: 1040 !important;
+  
   .p-dialog-content {
     padding: 0 !important;
     overflow-y: auto;
-    height: calc(450px - 130px); /* Altura fija menos header y footer */
+    height: calc(450px - 130px);
   }
   
   .p-dialog-header {
@@ -151,7 +272,6 @@
   }
 }
 
-/* Mejoras específicas para el contenido del modal */
 .modal-content {
   height: 100%;
   display: flex;
@@ -160,54 +280,38 @@
   padding: 1.5rem !important;
 }
 
-/* Estilos para el grid del modal */
-:host ::ng-deep .p-dialog .grid {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  
-  .col-12,
-  .col-6 {
-    padding: 0.5rem;
-    flex: 0 0 auto;
-  }
-  
-  .col-6 {
-    width: 50%;
-    max-width: 50%;
-  }
-  
-  .col-12 {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-/* Forzar grid horizontal en el modal */
+/* Estilos para el grid del modal - ASEGURAR QUE ESTÉN LADO A LADO */
 :host ::ng-deep .p-dialog .modal-content .grid {
   display: grid !important;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  align-items: start;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem !important;
+  align-items: start !important;
+  margin: 0 !important;
+  width: 100% !important;
 }
 
 :host ::ng-deep .p-dialog .modal-content .grid .col-6 {
   width: 100% !important;
   max-width: 100% !important;
   flex: none !important;
+  padding: 0 !important;
 }
 
-/* Mejoras para los dropdowns en el modal */
 :host ::ng-deep .p-dialog .p-dropdown {
-  width: 100%;
-  min-height: 40px;
+  width: 100% !important;
+  min-height: 40px !important;
 }
 
+/* Estilos del dropdown del cliente en el modal */
 :host ::ng-deep .p-dialog .p-dropdown-panel {
-  z-index: 10000;
+  z-index: 1060 !important;
+  position: fixed !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
 }
 
-/* Estilo para dropdown deshabilitado */
 :host ::ng-deep .p-dialog .p-dropdown.p-disabled {
   opacity: 0.6;
   background: #f8f9fa;
@@ -217,138 +321,199 @@
   color: #6c757d;
 }
 
-/* Estilos responsive para el modal */
+/* Estilos modernos para los botones */
+:host ::ng-deep .finalizar-btn {
+  background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.15) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.875rem 2rem !important;
+  border-radius: 10px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: #ffffff !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-size: 0.9rem !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+:host ::ng-deep .finalizar-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+:host ::ng-deep .finalizar-btn:hover:not(.p-disabled) {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
+  box-shadow: 0 6px 20px rgba(73, 80, 87, 0.25) !important;
+  transform: translateY(-2px) !important;
+}
+
+:host ::ng-deep .finalizar-btn:hover:not(.p-disabled)::before {
+  left: 100%;
+}
+
+:host ::ng-deep .finalizar-btn:active:not(.p-disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(73, 80, 87, 0.2) !important;
+}
+
+:host ::ng-deep .finalizar-btn.p-disabled {
+  background: linear-gradient(135deg, #adb5bd 0%, #ced4da 100%) !important;
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.15) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.875rem 2rem !important;
+  border-radius: 10px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: #ffffff !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-size: 0.9rem !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn:hover:not(.p-disabled) {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%) !important;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.25) !important;
+  transform: translateY(-2px) !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn:hover:not(.p-disabled)::before {
+  left: 100%;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn:active:not(.p-disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2) !important;
+}
+
+:host ::ng-deep .p-dialog-footer .confirm-btn.p-disabled {
+  background: linear-gradient(135deg, #adb5bd 0%, #ced4da 100%) !important;
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Botón de cancelar con estilo consistente */
+:host ::ng-deep .p-dialog-footer .p-button.p-button-outlined {
+  background: transparent !important;
+  border: 2px solid #6c757d !important;
+  color: #6c757d !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.75rem !important;
+  border-radius: 10px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-size: 0.9rem !important;
+}
+
+:host ::ng-deep .p-dialog-footer .p-button.p-button-outlined:hover {
+  background: #6c757d !important;
+  color: #ffffff !important;
+  border-color: #6c757d !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+:host ::ng-deep .p-dialog-footer .p-button.p-button-outlined:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.15) !important;
+}
+
+/* Asegurar que el overlay del modal no interfiera */
+:host ::ng-deep .p-dialog-mask {
+  z-index: 1040 !important;
+}
+
 @media (max-width: 768px) {
+  .search-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .scanner-btn {
+    padding: 0 0.75rem !important;
+    font-size: 0.9rem;
+  }
+  
+  .scanner-btn i {
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
+  }
+  
+  :host ::ng-deep .p-autocomplete-panel {
+    min-width: 280px !important;
+    max-width: 90vw !important;
+    max-height: 150px !important;
+  }
+  
+  :host ::ng-deep .p-autocomplete-panel .p-autocomplete-items {
+    max-height: 150px !important;
+  }
+  
   :host ::ng-deep .p-dialog {
     width: 95vw !important;
     max-width: 95vw !important;
     height: 450px !important;
     margin: 0.5rem;
-    
-    .p-dialog-header {
-      padding: 1rem;
-      height: 60px;
-    }
-    
-    .p-dialog-footer {
-      padding: 0.75rem 1rem;
-      height: 60px;
-    }
-
-    .p-dialog-content {
-      height: calc(450px - 120px) !important;
-    }
   }
   
   .modal-content {
     padding: 1rem !important;
   }
-
-  /* Mantener grid horizontal incluso en móvil */
+  /* En móviles también mantener los elementos lado a lado si hay espacio */
   :host ::ng-deep .p-dialog .modal-content .grid {
     grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Botones más compactos en móviles */
+  :host ::ng-deep .finalizar-btn {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  :host ::ng-deep .p-dialog-footer .confirm-btn {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  :host ::ng-deep .p-dialog-footer .p-button.p-button-outlined {
+    padding: 0.65rem 1.25rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Footer del modal más compacto en móviles */
+  :host ::ng-deep .p-dialog .p-dialog-footer {
+    padding: 0.75rem 1rem !important;
     gap: 0.5rem;
   }
-}
-
-/* Forzar el tamaño inicial correcto del modal */
-:host ::ng-deep .p-dialog[style*="width"] {
-  animation: modalResize 0.1s ease-out;
-  transform-origin: center;
-}
-
-@keyframes modalResize {
-  from {
-    transform: scale(0.9);
-    opacity: 0.8;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Asegurar que el contenido tenga el espacio necesario inmediatamente */
-:host ::ng-deep .p-dialog-content {
-  height: calc(450px - 130px) !important;
-  min-height: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Estilos para el botón de confirmar venta */
-:host ::ng-deep .p-dialog-footer .confirm-btn {
-  background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-  border: none !important;
-  box-shadow: 0 3px 8px rgba(73, 80, 87, 0.2) !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  padding: 0.75rem 1.5rem !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
-  color: #ffffff !important;
-}
-
-:host ::ng-deep .p-dialog-footer .confirm-btn:hover:not(.p-disabled) {
-  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
-  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.25) !important;
-  transform: translateY(-1px) !important;
-}
-
-:host ::ng-deep .p-dialog-footer .confirm-btn:active:not(.p-disabled) {
-  transform: translateY(0) !important;
-  box-shadow: 0 2px 6px rgba(73, 80, 87, 0.2) !important;
-}
-
-:host ::ng-deep .p-dialog-footer .confirm-btn .p-button-label {
-  font-size: 1rem !important;
-  color: #ffffff !important;
-}
-
-:host ::ng-deep .p-dialog-footer .confirm-btn .p-button-icon {
-  font-size: 1.1rem !important;
-  margin-right: 0.5rem !important;  color: #ffffff !important;
-}
-
-/* Estilos para el botón de finalizar venta (fuera del modal) */
-:host ::ng-deep .finalizar-btn {
-  background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-  border: none !important;
-  box-shadow: 0 3px 8px rgba(73, 80, 87, 0.2) !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  padding: 0.75rem 1.5rem !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
-  color: #ffffff !important;
-}
-
-:host ::ng-deep .finalizar-btn:hover:not(.p-disabled) {
-  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
-  box-shadow: 0 4px 12px rgba(73, 80, 87, 0.25) !important;
-  transform: translateY(-1px) !important;
-}
-
-:host ::ng-deep .finalizar-btn:active:not(.p-disabled) {
-  transform: translateY(0) !important;
-  box-shadow: 0 2px 6px rgba(73, 80, 87, 0.2) !important;
-}
-
-:host ::ng-deep .finalizar-btn .p-button-label {
-  font-size: 1rem !important;
-  color: #ffffff !important;
-  font-weight: 600 !important;
-}
-
-:host ::ng-deep .finalizar-btn .p-button-icon {
-  font-size: 1.1rem !important;
-  margin-right: 0.5rem !important;
-  color: #ffffff !important;
-}
-
-/* Estilo cuando está deshabilitado */
-:host ::ng-deep .finalizar-btn.p-disabled {
-  background: #6c757d !important;
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
 }

@@ -88,10 +88,9 @@
           (click)="toggleEscanerFisico()"
           pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
           tooltipPosition="bottom">
-        </button>
-        <div class="flex-1"> <p-autoComplete class="texto w-full" [(ngModel)]="productoSeleccionado"
+        </button>        <div class="flex-1"> <p-autoComplete class="texto w-full" [(ngModel)]="productoSeleccionado"
             [suggestions]="productosFiltrados" (completeMethod)="filtrarProductos($event)" field="nombre"
-            placeholder="Buscar producto..." [dropdown]="false" (onSelect)="onProductoSelect($event)">
+            placeholder="Buscar producto..." [dropdown]="false" (onSelect)="onProductoSelect($event)" scrollHeight="200px" appendTo="body">
             <ng-template let-producto pTemplate="item">
               <div class="texto" [class.text-gray-400]="!tieneStock(producto)"
                 [class.cursor-not-allowed]="!tieneStock(producto)">
@@ -143,9 +142,8 @@
 
   </div> <p-dialog header="Finalizar Venta" class="texto" [(visible)]="displayDialog"
     [style]="{width: '650px', height: '450px'}" [modal]="true" [closable]="false" [draggable]="false"
-    [resizable]="false" [contentStyle]="{'padding': '0', 'overflow-y': 'auto'}">
-
-    <div class="modal-content p-fluid px-4 py-3"> <!-- Row para forma de pago y cliente -->
+    [resizable]="false" [contentStyle]="{'padding': '0', 'overflow-y': 'auto'}">    <div class="modal-content p-fluid px-4 py-3">
+      <!-- Row para forma de pago y cliente -->
       <div class="grid gap-3 mb-3">
         <div class="col-6">
           <label for="formaPago" class="block text-sm font-medium text-900 mb-2">Forma de Pago *</label>
@@ -161,7 +159,7 @@
           </label>
           <p-dropdown id="cliente" class="texto w-full" [(ngModel)]="creditoSeleccionado" [options]="creditos"
             optionLabel="cliente.nombre" placeholder="Seleccionar cliente..." [required]="esPagoFiado()" [filter]="true"
-            [disabled]="!esPagoFiado()" filterBy="cliente.nombre" [showClear]="true" scrollHeight="120px">
+            [disabled]="!esPagoFiado()" filterBy="cliente.nombre" [showClear]="true" scrollHeight="120px" appendTo="body">
             <ng-template let-credito pTemplate="item">
               <div class="texto">
                 <div class="font-semibold">{{credito.cliente.nombre}}</div>
