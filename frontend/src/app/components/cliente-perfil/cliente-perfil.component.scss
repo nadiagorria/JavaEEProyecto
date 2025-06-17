@@ -130,17 +130,24 @@ main {
 .cartelEditar {
   margin-top: 30px;
   
-  ::ng-deep .p-button {
-    background-color: #64748b !important;
-    border-color: #64748b !important;
-    color: white !important;
-    border-radius: 8px !important;
+  .p-button-outlined {
+    border: 2px solid #17a2b8 !important;
+    color: #17a2b8 !important;
+    background: transparent !important;
     padding: 0.75rem 1.5rem !important;
+    border-radius: 6px !important;
     font-weight: 600 !important;
+    transition: all 0.3s ease !important;
     
     &:hover {
-      background-color: #475569 !important;
-      border-color: #475569 !important;
+      background: #17a2b8 !important;
+      color: white !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3) !important;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5) !important;
     }
   }
 }
@@ -581,22 +588,18 @@ main {
   }
 }
 
-// Estilos para los campos de texto con iconos
-::ng-deep .p-input-icon-left {
-  width: 100%;
+// Estilos para los labels con iconos
+::ng-deep .lote-dialog .p-dialog-content .field label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   
   i {
     color: #64748b;
-    opacity: 0.7;
-  }
-  
-  input {
-    padding-left: 2.5rem !important;
-    
-    &:focus + i {
-      color: #475569;
-      opacity: 1;
-    }
+    font-size: 0.9rem;
   }
 }
 
@@ -628,4 +631,6 @@ main {
     }
   }
 }
+
+
 

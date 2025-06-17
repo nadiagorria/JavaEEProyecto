@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -30,8 +31,9 @@ interface ClienteCredito {
 }
 
 @Component({
-  selector: 'app-clientes-credito',
-  imports: [FormsModule, 
+  selector: 'app-clientes-credito',  imports: [
+    CommonModule,
+    FormsModule, 
     HeaderComponent,
     FooterComponent,
     InputGroupModule,
@@ -251,5 +253,17 @@ export class ClientesCreditoComponent {
         }
       });
     } 
+  }
+
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    
+    if (!roles) {
+      return false;
+    }
+    
+    const hasAdminRole = roles.includes('ADMIN');
+    
+    return hasAdminRole;
   }
 }

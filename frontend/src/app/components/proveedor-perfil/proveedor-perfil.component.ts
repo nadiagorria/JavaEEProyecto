@@ -13,8 +13,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
+import { SecurityService } from 'src/services/security.service';
+import { ProductoService } from 'src/services/producto.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 interface ComprasCliente {
   id: number;
@@ -24,9 +27,9 @@ interface ComprasCliente {
 }
 
 @Component({
-  selector: 'app-proveedor-perfil',
-  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule, ToastModule, InputTextModule],
-  providers: [MessageService],
+  selector: 'app-proveedor-perfil',  
+  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule, ToastModule, InputTextModule, ConfirmDialogModule],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './proveedor-perfil.component.html',
   styleUrl: './proveedor-perfil.component.scss'
 })
@@ -47,7 +50,10 @@ export class ProveedorPerfilComponent {
     private route: ActivatedRoute,
     private entidadService: EntidadService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private securityService: SecurityService,
+    private productoService: ProductoService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -128,6 +134,60 @@ export class ProveedorPerfilComponent {
     if (productoId) {
       this.router.navigate(['/producto', productoId]);
     }
+  }
+
+  // Función para verificar si el usuario es admin
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    if (!roles) {
+      return false;
+    }
+    return roles.includes('ADMIN');
+  }
+  // Función para eliminar un producto (solo admin)
+  eliminarProducto(productoId: number) {
+    if (!this.isAdmin()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Sin permisos',
+        detail: 'No tienes permisos para eliminar productos.'
+      });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.productoService.eliminarProducto(productoId).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Producto eliminado',
+              detail: 'El producto ha sido eliminado correctamente.'
+            });            // Refrescar los datos del proveedor para actualizar la tabla
+            if (this.proveedor.id) {
+              this.entidadService.getProveedor(this.proveedor.id).subscribe(data => {
+                this.proveedor = data;
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error al eliminar producto:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error al eliminar',
+              detail: 'Ocurrió un error al eliminar el producto. Intente nuevamente.'
+            });
+          }
+        });
+      }
+    });
   }
 
 }

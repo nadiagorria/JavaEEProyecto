@@ -1,14 +1,23 @@
 <app-header></app-header>
 <p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <main>
   <article class="flex">
     <div class="w-full Tarjetas">
       <div class="tarjeta-1">
         <h1 class="titulo">{{ proveedor.nombre }}</h1>
         <p>Telefono: {{ proveedor.telefono }}</p>
-        <p>Email: {{ proveedor.correo }}</p>
-      </div>      <div class="papaBoton">
-        <p-button label="Editar Proveedor" severity="secondary" (click)="showDialogEditar()"></p-button>        <p-dialog 
+        <p>Email: {{ proveedor.correo }}</p>      </div>      <div class="papaBoton" *ngIf="isAdmin()">
+        <button 
+          pButton 
+          type="button" 
+          label="Editar" 
+          icon="pi pi-pencil"
+          class="p-button-outlined p-button-info"
+          (click)="showDialogEditar()">
+        </button>
+        
+        <p-dialog 
           header="Editar Proveedor" 
           [(visible)]="visibleEditar" 
           [modal]="true" 
@@ -26,46 +35,42 @@
             </div>
             <span class="proveedor-info-id">ID Proveedor: #{{ proveedor.id }}</span>
           </div>
-          
-          <div class="flex flex-column gap-3">
+            <div class="flex flex-column gap-3">
             <div class="field">
-              <label for="nombre" class="block mb-2">Nombre</label>
-              <span class="p-input-icon-left w-full">
-                <i class="pi pi-building"></i>
-                <input 
-                  id="nombre" 
-                  pInputText 
-                  class="w-full" 
-                  [(ngModel)]="nombreEdicion"
-                  placeholder="Ingrese el nombre del proveedor"/>
-              </span>
+              <label for="nombre" class="block mb-2">
+                <i class="pi pi-building"></i> Nombre
+              </label>
+              <input 
+                id="nombre" 
+                pInputText 
+                class="w-full" 
+                [(ngModel)]="nombreEdicion"
+                placeholder="Ingrese el nombre del proveedor"/>
             </div>
             
             <div class="field">
-              <label for="telefono" class="block mb-2">Teléfono</label>
-              <span class="p-input-icon-left w-full">
-                <i class="pi pi-phone"></i>
-                <input 
-                  id="telefono" 
-                  pInputText 
-                  class="w-full" 
-                  [(ngModel)]="telefonoEdicion"
-                  placeholder="Ingrese el teléfono"/>
-              </span>
+              <label for="telefono" class="block mb-2">
+                <i class="pi pi-phone"></i> Teléfono
+              </label>
+              <input 
+                id="telefono" 
+                pInputText 
+                class="w-full" 
+                [(ngModel)]="telefonoEdicion"
+                placeholder="Ingrese el teléfono"/>
             </div>
 
             <div class="field">
-              <label for="correo" class="block mb-2">Correo Electrónico</label>
-              <span class="p-input-icon-left w-full">
-                <i class="pi pi-envelope"></i>
-                <input 
-                  id="correo" 
-                  pInputText 
-                  class="w-full" 
-                  [(ngModel)]="correoEdicion"
-                  type="email"
-                  placeholder="Ingrese el correo electrónico"/>
-              </span>
+              <label for="correo" class="block mb-2">
+                <i class="pi pi-envelope"></i> Correo Electrónico
+              </label>
+              <input 
+                id="correo" 
+                pInputText 
+                class="w-full" 
+                [(ngModel)]="correoEdicion"
+                type="email"
+                placeholder="Ingrese el correo electrónico"/>
             </div>
           </div>
           
@@ -121,16 +126,29 @@
           <td>{{ producto.codigoDeBarra || 'N/A' }}</td>
           <td>{{ producto.nombre || 'N/A' }}</td>
           <td>{{ producto.stockTotal !== undefined && producto.stockTotal !== null ? producto.stockTotal : 'N/A' }}</td>          <td>
-            <p-button 
-              icon="pi pi-box" 
-              severity="info" 
-              size="small" 
-              [text]="true"
-              (click)="verProducto(producto.id)"
-              pTooltip="Ver detalles del producto"
-              tooltipPosition="top"
-              styleClass="action-button">
-            </p-button>
+            <div class="flex gap-1">
+              <p-button 
+                icon="pi pi-eye" 
+                severity="info" 
+                size="small" 
+                [text]="true"
+                (click)="verProducto(producto.id)"
+                pTooltip="Ver detalles del producto"
+                tooltipPosition="top"
+                styleClass="p-button-rounded p-button-text">
+              </p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                size="small" 
+                [text]="true"
+                (click)="eliminarProducto(producto.id)"
+                pTooltip="Eliminar producto"
+                tooltipPosition="top"
+                styleClass="p-button-rounded p-button-text p-button-danger"
+                *ngIf="isAdmin()">
+              </p-button>
+            </div>
           </td>
         </tr>
       </ng-template>

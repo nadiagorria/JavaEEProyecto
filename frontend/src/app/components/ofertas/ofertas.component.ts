@@ -19,6 +19,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { OfertaService } from '../../../services/oferta.service';
 import { ProductoService } from '../../../services/producto.service';
+import { SecurityService } from '../../../services/security.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../models';
@@ -97,15 +98,27 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   constructor(
     private ofertaService: OfertaService,
     private productoService: ProductoService,
+    private securityService: SecurityService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router
   ) { }
 
 
-
   private getTodayISOString(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    
+    if (!roles) {
+      return false;
+    }
+    
+    const hasAdminRole = roles.includes('ADMIN');
+    
+    return hasAdminRole;
   }
 
   private getTomorrowISOString(): string {

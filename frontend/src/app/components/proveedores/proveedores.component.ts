@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -22,8 +23,9 @@ import { SecurityService } from 'src/services/security.service';
 
 
 @Component({
-  selector: 'app-proveedores',
-  imports: [FormsModule, 
+  selector: 'app-proveedores',  imports: [
+    CommonModule,
+    FormsModule, 
     HeaderComponent,
     FooterComponent,
     InputGroupModule,
@@ -228,5 +230,17 @@ export class ProveedoresComponent {
         }
       });
     }
+  }
+
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    
+    if (!roles) {
+      return false;
+    }
+    
+    const hasAdminRole = roles.includes('ADMIN');
+    
+    return hasAdminRole;
   }
 }

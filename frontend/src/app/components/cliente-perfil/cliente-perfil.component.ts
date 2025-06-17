@@ -7,14 +7,17 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 import { ClienteDto } from 'src/models/cliente.dto';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { CreditoService } from 'src/services/credito.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { SecurityService } from 'src/services/security.service';
+import { VentaService } from 'src/services/venta.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-cliente-perfil',  imports: [FormsModule, 
@@ -27,8 +30,9 @@ import { MessageService } from 'primeng/api';
     DialogModule, 
     CommonModule,
     InputTextModule,
-    ToastModule],
-  providers: [MessageService],
+    ToastModule,
+    ConfirmDialogModule],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './cliente-perfil.component.html',
   styleUrl: './cliente-perfil.component.scss'
 })
@@ -41,7 +45,11 @@ export class ClientePerfilComponent {
     private route: ActivatedRoute,
     private entidadService: EntidadService,
     private creditoService: CreditoService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router,
+    private securityService: SecurityService,
+    private ventaService: VentaService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -154,6 +162,66 @@ export class ClientePerfilComponent {
           severity: 'error',
           summary: 'Error al editar',
           detail: 'Ocurrió un error al actualizar los datos del cliente.'
+        });
+      }
+    });
+  }
+
+  // Función para verificar si el usuario es admin
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    if (!roles) {
+      return false;
+    }
+    return roles.includes('ADMIN');
+  }
+
+  // Función para ver detalles de una venta
+  verVenta(ventaId: number) {
+    if (ventaId) {
+      this.router.navigate(['/verventa', ventaId]);
+    }
+  }
+  // Función para eliminar una venta (solo admin)
+  eliminarVenta(ventaId: number) {
+    if (!this.isAdmin()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Sin permisos',
+        detail: 'No tienes permisos para eliminar ventas.'
+      });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: '¿Está seguro de que desea eliminar esta venta? Esta acción no se puede deshacer.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.ventaService.eliminarVenta(ventaId).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Venta eliminada',
+              detail: 'La venta ha sido eliminada correctamente.'
+            });
+            // Refrescar los datos del cliente para actualizar la tabla
+            this.entidadService.getCliente(this.cliente.id).subscribe(data => {
+              this.cliente = data;
+            });
+          },
+          error: (error) => {
+            console.error('Error al eliminar venta:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error al eliminar',
+              detail: 'Ocurrió un error al eliminar la venta. Intente nuevamente.'
+            });
+          }
         });
       }
     });

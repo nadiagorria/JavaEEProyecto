@@ -1,5 +1,6 @@
 <app-header></app-header>
 <p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <main *ngIf="cliente">
   <article class="flex" >
     <div class="w-full Tarjetas">
@@ -86,10 +87,15 @@
     <div class="cliente-avatar">
       <i class="pi pi-user cliente-icon"></i>
     </div>
-
-  </article>
-  <article class="w-full cartelEditar">
-    <p-button label="Editar Cliente" severity="secondary" (click)="showDialogEditar()"></p-button>    <p-dialog 
+  </article>  <article class="w-full cartelEditar" *ngIf="isAdmin()">
+    <button 
+      pButton 
+      type="button" 
+      label="Editar" 
+      icon="pi pi-pencil"
+      class="p-button-outlined p-button-info"
+      (click)="showDialogEditar()">
+    </button><p-dialog 
       header="Editar Cliente" 
       [(visible)]="visibleEditar" 
       [modal]="true" 
@@ -107,32 +113,29 @@
         </div>
         <span class="cliente-info-id">ID Cliente: #{{ cliente.id }}</span>
       </div>
-      
-      <div class="flex flex-column gap-3">
+        <div class="flex flex-column gap-3">
         <div class="field">
-          <label for="nombre" class="block mb-2">Nombre</label>
-          <span class="p-input-icon-left w-full">
-            <i class="pi pi-user"></i>
-            <input 
-              id="nombre" 
-              pInputText 
-              class="w-full" 
-              [(ngModel)]="nombreEdicion"
-              placeholder="Ingrese el nombre del cliente"/>
-          </span>
+          <label for="nombre" class="block mb-2">
+            <i class="pi pi-user"></i> Nombre
+          </label>
+          <input 
+            id="nombre" 
+            pInputText 
+            class="w-full" 
+            [(ngModel)]="nombreEdicion"
+            placeholder="Ingrese el nombre del cliente"/>
         </div>
         
         <div class="field">
-          <label for="telefono" class="block mb-2">Teléfono</label>
-          <span class="p-input-icon-left w-full">
-            <i class="pi pi-phone"></i>
-            <input 
-              id="telefono" 
-              pInputText 
-              class="w-full" 
-              [(ngModel)]="telefonoEdicion"
-              placeholder="Ingrese el teléfono"/>
-          </span>
+          <label for="telefono" class="block mb-2">
+            <i class="pi pi-phone"></i> Teléfono
+          </label>
+          <input 
+            id="telefono" 
+            pInputText 
+            class="w-full" 
+            [(ngModel)]="telefonoEdicion"
+            placeholder="Ingrese el teléfono"/>
         </div>
       </div>
       
@@ -174,6 +177,7 @@
           <th>Id</th>
           <th>Fecha</th>
           <th>Total</th>
+          <th>Acciones</th>
         </tr>
       </ng-template>
 
@@ -181,7 +185,32 @@
         <tr>
           <td>{{ venta.id }}</td>
           <td>{{ venta.fechaVenta | date:'dd/MM/yyyy' }}</td>
-          <td>{{ venta.total }}</td>
+          <td>${{ venta.total }}</td>
+          <td>
+            <div class="flex gap-1">
+              <p-button 
+                icon="pi pi-eye" 
+                severity="info" 
+                size="small" 
+                [text]="true"
+                (click)="verVenta(venta.id)"
+                pTooltip="Ver detalles de la venta"
+                tooltipPosition="top"
+                styleClass="p-button-rounded p-button-text">
+              </p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                size="small" 
+                [text]="true"
+                (click)="eliminarVenta(venta.id)"
+                pTooltip="Eliminar venta"
+                tooltipPosition="top"
+                styleClass="p-button-rounded p-button-text p-button-danger"
+                *ngIf="isAdmin()">
+              </p-button>
+            </div>
+          </td>
         </tr>
       </ng-template>
     </p-table>
