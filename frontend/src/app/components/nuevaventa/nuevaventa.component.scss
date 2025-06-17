@@ -6,15 +6,56 @@
   box-sizing: border-box;
 }
 
-.margen{
+.margen {
   margin: 0;
   padding: 1rem;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-.texto{
+.texto {
   font-family: "Source Sans 3", sans-serif;
+}
+
+:host ::ng-deep .grid.no-gutters {
+  margin: 0 !important;
+  gap: 0 !important;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 180px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+:host ::ng-deep .grid.no-gutters>div {
+  padding: 0.75rem !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+
+:host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-8 {
+  overflow: auto !important;
+  flex: 0 0 66.666667% !important;
+  max-width: 66.666667% !important;
+}
+
+:host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-4 {
+  overflow: visible !important;
+  position: relative !important;
+  contain: layout !important;
+  flex: 0 0 33.333333% !important;
+  max-width: 33.333333% !important;
+}
+
+.search-sidebar {
+  height: auto;
+  overflow: visible;
+  padding-right: 0.5rem;
+  padding-bottom: 180px;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  contain: layout !important;
 }
 
 .search-container {
@@ -25,16 +66,42 @@
   padding: 1.5rem;
   margin-bottom: 1rem;
   backdrop-filter: blur(10px);
+  width: 100% !important;
+  max-width: 100% !important;
+  position: relative;
+  box-sizing: border-box !important;
+  contain: layout style !important;
+}
+
+.fixed.bottom-0.right-0 {
+  bottom: 1rem !important;
+  right: 1rem !important;
+  z-index: 1000 !important;
 }
 
 .search-controls {
   display: flex;
   align-items: stretch;
   gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.search-controls .flex-1 {
+  flex: 1 !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 130px) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 
 :host ::ng-deep .p-autocomplete {
   width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
 :host ::ng-deep .p-autocomplete .p-autocomplete-input {
@@ -47,6 +114,9 @@
   color: #495057 !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   transition: all 0.3s ease !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 :host ::ng-deep .p-autocomplete .p-autocomplete-input:focus {
@@ -142,13 +212,16 @@
 }
 
 .scanner-btn {
-  height: 48px !important;
-  padding: 0 1.5rem !important;
-  border-radius: 12px !important;
+  height: 42px !important;
+  padding: 0 1rem !important;
+  border-radius: 10px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  flex-grow: 0;
+  min-width: auto !important;
+  max-width: 110px !important;
   transition: all 0.3s ease-in-out !important;
   white-space: nowrap;
   background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
@@ -156,6 +229,7 @@
   color: #ffffff !important;
   font-weight: 500 !important;
   box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2) !important;
+  box-sizing: border-box !important;
 }
 
 .scanner-btn:hover {
@@ -165,8 +239,8 @@
 }
 
 .scanner-btn i {
-  font-size: 1rem;
-  margin-right: 0.5rem;
+  font-size: 0.9rem;
+  margin-right: 0.4rem;
 }
 
 .scanner-status {
@@ -180,38 +254,91 @@
 }
 
 @keyframes scanner-glow {
-  0% { box-shadow: 0 0 5px rgba(33, 150, 243, 0.3); }
-  100% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.6); }
+  0% {
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.6);
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  .search-container {
+    position: sticky !important;
+    top: 1rem !important;
+    width: calc(100% - 1rem) !important;
+    max-width: calc(100% - 1rem) !important;
+  }
 }
 
 @media (max-width: 768px) {
+  :host ::ng-deep .grid.no-gutters {
+    flex-direction: column !important;
+  }
+
+  :host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-8,
+  :host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-4 {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+
+  .search-sidebar {
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    order: -1;
+    padding-bottom: 120px;
+  }
+
+  .search-container {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  :host ::ng-deep .grid.no-gutters {
+    padding-bottom: 120px !important;
+  }
+
   .search-container {
     padding: 1rem 0.75rem;
+    margin-bottom: 1.5rem;
   }
-  
+
   .scanner-btn {
     padding: 0 0.75rem !important;
     font-size: 0.9rem;
   }
-  
+
   .scanner-btn i {
     font-size: 0.9rem;
     margin-right: 0.25rem;
   }
-  
+
   :host ::ng-deep .p-autocomplete-panel {
     min-width: 280px !important;
     max-width: 90vw !important;
   }
 }
 
-/* Estilos adicionales para corregir problemas del autocomplete */
 :host ::ng-deep .p-autocomplete-panel {
   max-height: 200px !important;
   overflow: hidden !important;
@@ -224,7 +351,6 @@
   overflow-x: hidden !important;
 }
 
-/* Estilos mejorados para el scrollbar del autocomplete */
 :host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar {
   width: 6px !important;
 }
@@ -243,23 +369,22 @@
   background: #adb5bd !important;
 }
 
-/* Estilos del modal */
 :host ::ng-deep .p-dialog {
   z-index: 1040 !important;
-  
+
   .p-dialog-content {
     padding: 0 !important;
     overflow-y: auto;
     height: calc(450px - 130px);
   }
-  
+
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid #e9ecef;
     height: 65px;
     flex-shrink: 0;
   }
-  
+
   .p-dialog-footer {
     padding: 1rem 1.5rem !important;
     border-top: 1px solid #e9ecef;
@@ -280,7 +405,6 @@
   padding: 1.5rem !important;
 }
 
-/* Estilos para el grid del modal - ASEGURAR QUE ESTÉN LADO A LADO */
 :host ::ng-deep .p-dialog .modal-content .grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
@@ -302,7 +426,6 @@
   min-height: 40px !important;
 }
 
-/* Estilos del dropdown del cliente en el modal */
 :host ::ng-deep .p-dialog .p-dropdown-panel {
   z-index: 1060 !important;
   position: fixed !important;
@@ -321,7 +444,6 @@
   color: #6c757d;
 }
 
-/* Estilos modernos para los botones */
 :host ::ng-deep .finalizar-btn {
   background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
   border: none !important;
@@ -422,7 +544,6 @@
   box-shadow: none !important;
 }
 
-/* Botón de cancelar con estilo consistente */
 :host ::ng-deep .p-dialog-footer .p-button.p-button-outlined {
   background: transparent !important;
   border: 2px solid #6c757d !important;
@@ -449,7 +570,6 @@
   box-shadow: 0 2px 6px rgba(108, 117, 125, 0.15) !important;
 }
 
-/* Asegurar que el overlay del modal no interfiera */
 :host ::ng-deep .p-dialog-mask {
   z-index: 1040 !important;
 }
@@ -458,50 +578,49 @@
   .search-container {
     padding: 1rem 0.75rem;
   }
-  
+
   .scanner-btn {
     padding: 0 0.75rem !important;
     font-size: 0.9rem;
   }
-  
+
   .scanner-btn i {
     font-size: 0.9rem;
     margin-right: 0.25rem;
   }
-  
+
   :host ::ng-deep .p-autocomplete-panel {
     min-width: 280px !important;
     max-width: 90vw !important;
     max-height: 150px !important;
   }
-  
+
   :host ::ng-deep .p-autocomplete-panel .p-autocomplete-items {
     max-height: 150px !important;
   }
-  
+
   :host ::ng-deep .p-dialog {
     width: 95vw !important;
     max-width: 95vw !important;
     height: 450px !important;
     margin: 0.5rem;
   }
-  
+
   .modal-content {
     padding: 1rem !important;
   }
-  /* En móviles también mantener los elementos lado a lado si hay espacio */
+
   :host ::ng-deep .p-dialog .modal-content .grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.75rem !important;
   }
 
-  /* Botones más compactos en móviles */
   :host ::ng-deep .finalizar-btn {
     padding: 0.75rem 1.5rem !important;
     font-size: 0.85rem !important;
   }
 
-  :host ::ng-deep .p-dialog-footer .confirm-btn {
+  :host ::ng-deep .p_dialog_footer .confirm-btn {
     padding: 0.75rem 1.5rem !important;
     font-size: 0.85rem !important;
   }
@@ -511,7 +630,6 @@
     font-size: 0.85rem !important;
   }
 
-  /* Footer del modal más compacto en móviles */
   :host ::ng-deep .p-dialog .p-dialog-footer {
     padding: 0.75rem 1rem !important;
     gap: 0.5rem;
