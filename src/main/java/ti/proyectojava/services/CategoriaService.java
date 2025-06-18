@@ -44,7 +44,9 @@ public class CategoriaService {
 
         }
         return response;
-    }    public String borrarCategoria(String nombreCategoria) {
+    }
+
+    public String borrarCategoria(String nombreCategoria) {
         Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
         String response = null;
 
