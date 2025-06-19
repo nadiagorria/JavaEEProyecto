@@ -21,7 +21,7 @@
                  [responsive]="true"
                  class="texto">          <ng-template pTemplate="header">
             <tr>
-              <th>Fecha</th>
+              <th >Fecha</th>
               <th>Total</th>
               <th>Forma de Pago</th>
               <th>Usuario</th>
@@ -31,19 +31,19 @@
           <ng-template pTemplate="body" let-venta>
             <tr>
               <td>
-                <!-- Usando el pipe date con un valor string ISO para formatear como fecha -->
                 {{venta.fechaVenta ? (venta.fechaVenta | date:'medium') : 'Sin fecha'}}
               </td>
               <td>{{venta.total | currency}}</td>
               <td>{{venta.formaPago}}</td>
-              <td>{{venta.usuario}}</td>              <td>
+              <td>{{venta.usuario}}</td>              
+              <td>
                 <p-button icon="pi pi-eye" 
-                          class="p-button-text p-button-rounded" 
+                          styleClass="p-button-text p-button-rounded" 
                           (click)="verVenta(venta.id)"
                           pTooltip="Ver detalle"></p-button>
                 <p-button *ngIf="isAdmin" 
                           icon="pi pi-trash" 
-                          class="p-button-text p-button-rounded p-button-danger" 
+                          styleClass="p-button-text p-button-rounded p-button-danger" 
                           (click)="eliminarVenta(venta.id)"
                           pTooltip="Eliminar venta"></p-button>
               </td>

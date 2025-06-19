@@ -32,6 +32,8 @@ public class EntidadController {
     public ResponseEntity<?> seleccionarEntidad(@RequestBody Long id) {
         return ResponseEntity.ok(entidadService.seleccionarEntidad(id));
     }    //solo puede usarlo un admin
+
+
     @PutMapping("/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una Persona")
@@ -44,13 +46,13 @@ public class EntidadController {
 
     //////////////////////CLIENTE////////////////////////////
 
-    // esta funcion la puede usar cualquiera
+    /*// esta funcion la puede usar cualquiera
     @GetMapping("/clientes/listar")
     @Secured({"ADMIN", "CAJERO"})
     public ResponseEntity<ResponseListadoClientes> getClientes(){
         ResponseListadoClientes response = entidadService.listadoClientes();
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 
     //solo puede usarlo un admin
     @PostMapping("/cliente")

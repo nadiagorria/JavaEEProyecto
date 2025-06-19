@@ -48,6 +48,10 @@ public class CreditoService {
 
         Credito aux = creditoRepository.findById(id).orElseThrow(() -> new RuntimeException("Credito no existe. ID:" + id));
 
+        if (pago < 0 || pago > aux.getPrecioTotal()) {
+            throw new RuntimeException("El pago debe ser positivo y no puede exceder el total adeudado.");
+        }
+
         float total = pago + aux.getPagoHastaAhora();
         aux.setPagoHastaAhora(total);
 

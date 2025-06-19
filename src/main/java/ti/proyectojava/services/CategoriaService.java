@@ -9,6 +9,7 @@ import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CategoriaRepository;
 import ti.proyectojava.dtos.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class CategoriaService {
     }
 
     public String borrarCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(nombreCategoria);
+        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
@@ -60,8 +61,29 @@ public class CategoriaService {
         }
 
         return response;
-    }
+    }    public String desvincularProductosDeCategoria(String nombreCategoria) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
+        String response = null;
 
+        if (categoriaOpt.isPresent()) {
+            Categoria categoria = categoriaOpt.get();
+            
+            // Obtener la lista de productos y desvincularlos
+            List<Producto> productos = categoria.getProductos();
+            for (Producto producto : productos) {
+                producto.setCategoria(null);
+            }
+            
+            // La categoría ya no tiene productos asociados
+            categoria.setProductos(new ArrayList<>());
+            
+            // Guardar los cambios
+            categoriaRepository.save(categoria);
+            response = "Productos desvinculados correctamente de la categoría: " + categoria.getNombre();
+        }
+
+        return response;
+    }
 
     public ResponseListadoCategorias listadoCategoriasTop(int n) {
         ResponseListadoCategorias response = new ResponseListadoCategorias();

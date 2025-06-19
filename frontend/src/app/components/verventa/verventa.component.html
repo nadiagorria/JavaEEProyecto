@@ -15,37 +15,114 @@
         <p class="texto mt-2 text-red-500">{{error}}</p>
         <button class="btn btn-primary mt-2" (click)="volver()">Volver a Ventas</button>
       </div>
-    </div>
-
+    </div>   
+    
     <!-- Información de la venta -->
-    <div class="col-12 mb-3 pl-5" *ngIf="venta && !loading && !error">
-      <h2 class="texto">Detalles de la Venta</h2>
+    <div class="col-12 mb-4 px-3" *ngIf="venta && !loading && !error">
+      <h2 class="texto text-center mb-4">Detalles de la Venta</h2>
+      
+      <!-- Card de información principal -->
       <div class="grid">
-        <div class="col-12 md:col-6">
-          <p class="texto">Fecha: {{venta.fechaVenta | date:'medium'}}</p>
-          <p class="texto">Usuario: {{venta.usuario}}</p>
-          <p class="texto">Forma de Pago: {{venta.formaPago}}</p>
-        </div>
-        <div class="col-12 md:col-6">
-          <div *ngIf="venta.cantidades">
-            <p class="texto font-semibold mb-2">Ofertas aplicadas en esta venta:</p>
-            <div class="flex flex-wrap gap-2">
-              <ng-container *ngFor="let cantidad of venta.cantidades">
-                <div *ngIf="tieneOfertasVigentes(cantidad.producto)">
-                  <p-tag 
-                    [value]="cantidad.producto.nombre"
-                    [severity]="getSeveridadOferta(cantidad.producto)"
-                    [pTooltip]="getTextoOfertas(cantidad.producto)"
-                    tooltipPosition="bottom"
-                    class="mr-1 mb-1">
-                  </p-tag>
+        <div class="col-12 lg:col-8">          <p-card>
+            <ng-template pTemplate="header">
+              <div class="bg-gray-600 text-white p-3 text-center">
+                <i class="pi pi-shopping-cart mr-2"></i>
+                <span class="font-semibold">Información de la Venta</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="flex align-items-center mb-3">
+                  <i class="pi pi-calendar text-primary mr-3" style="font-size: 1.2rem;"></i>
+                  <div>
+                    <span class="text-sm text-500 block">Fecha</span>
+                    <span class="texto font-semibold">{{venta.fechaVenta | date:'medium'}}</span>
+                  </div>
                 </div>
-              </ng-container>
+                
+                <div class="flex align-items-center mb-3">
+                  <i class="pi pi-user text-primary mr-3" style="font-size: 1.2rem;"></i>
+                  <div>
+                    <span class="text-sm text-500 block">Usuario</span>
+                    <span class="texto font-semibold">{{venta.usuario}}</span>
+                  </div>
+                </div>
+                
+                <div class="flex align-items-center mb-3">
+                  <i class="pi pi-credit-card text-primary mr-3" style="font-size: 1.2rem;"></i>
+                  <div>
+                    <span class="text-sm text-500 block">Forma de Pago</span>
+                    <p-tag [value]="venta.formaPago" 
+                           [severity]="venta.formaPago === 'FIADO' ? 'warning' : 'success'">
+                    </p-tag>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12 md:col-6" *ngIf="venta.formaPago === 'FIADO'">
+                <div class="bg-orange-50 border-left-3 border-orange-500 p-3 border-round">
+                  <h4 class="texto mb-3 text-orange-700">
+                    <i class="pi pi-user-plus mr-2"></i>Información del Cliente
+                  </h4>
+                  
+                  <div class="flex align-items-center mb-2">
+                    <i class="pi pi-user text-orange-600 mr-2"></i>
+                    <div>
+                      <span class="text-sm text-600 block">Cliente</span>
+                      <span class="texto font-semibold">{{venta.credito.cliente.nombre}}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="flex align-items-center">
+                    <i class="pi pi-phone text-orange-600 mr-2"></i>
+                    <div>
+                      <span class="text-sm text-600 block">Contacto</span>
+                      <span class="texto font-semibold">{{venta.credito.cliente.telefono}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p *ngIf="!tieneAlgunaOferta()" class="text-muted text-sm">No se aplicaron ofertas en esta venta</p>
-          </div>
+          </p-card>
         </div>
-      </div>    </div>
+        
+        <!-- Card de ofertas -->
+        <div class="col-12 lg:col-4">          
+          <p-card *ngIf="venta.cantidades">
+            <ng-template pTemplate="header">
+              <div class="bg-gray-500 text-white p-3 text-center">
+                <i class="pi pi-tag mr-2"></i>
+                <span class="font-semibold">Ofertas Aplicadas</span>
+              </div>
+            </ng-template>
+            
+            <div class="text-center" *ngIf="tieneAlgunaOferta(); else sinOfertas">
+              <div class="flex flex-wrap gap-2 justify-content-center">
+                <ng-container *ngFor="let cantidad of venta.cantidades">
+                  <div *ngIf="tieneOfertasVigentes(cantidad.producto)">
+                    <p-tag 
+                      [value]="cantidad.producto.nombre"
+                      [severity]="getSeveridadOferta(cantidad.producto)"
+                      [pTooltip]="getTextoOfertas(cantidad.producto)"
+                      tooltipPosition="bottom"
+                      class="mb-2">
+                    </p-tag>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            
+            <ng-template #sinOfertas>
+              <div class="text-center text-500">
+                <i class="pi pi-info-circle mb-2" style="font-size: 2rem;"></i>
+                <p class="texto">No se aplicaron ofertas en esta venta</p>
+              </div>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+    </div>
 
     <div class="col-12 flex justify-content-center" *ngIf="venta && !loading && !error">
       <div class="md:col-8 lg:col-11">

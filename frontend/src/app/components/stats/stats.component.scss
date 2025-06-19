@@ -10,64 +10,6 @@
   --accent-hover: #0056b3;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-bg: #1a1a1a;
-    --card-bg: #2a2a2a;
-    --light-card-bg: #353535;
-    --text-primary: #ffffff;
-    --text-secondary: #b3b3b3;
-    --border-primary: #444444;
-    --accent-color: #4a9eff;
-    --accent-hover: #357abd;
-  }
-}
-
-// Forzar aplicación de variables CSS en dark mode
-@media (prefers-color-scheme: dark) {
-  // Estilos específicos para elementos que puedan no estar herediendo correctamente
-  app-stats {
-    color-scheme: dark;
-  }
-  
-  .stats-container {
-    background-color: var(--primary-bg) !important;
-    color: var(--text-primary) !important;
-  }
-  
-  .miniCartel, .cartel {
-    background-color: var(--card-bg) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--border-primary) !important;
-  }
-  
-  .blancoMiniCartel {
-    background-color: var(--light-card-bg) !important;
-    color: var(--text-primary) !important;
-  }
-  
-  .textoMiniCartel, .titulo-ingresos {
-    color: var(--text-secondary) !important;
-  }
-  
-  .numero1MiniCartel, .monto-total, .logoCartel, .icon-accent {
-    color: var(--text-primary) !important;
-  }
-  
-  .logoMiniCartel {
-    color: var(--text-secondary) !important;
-  }
-  
-  .producto-item, .categoria-item {
-    color: var(--text-secondary) !important;
-    border-bottom-color: var(--border-primary) !important;
-    
-    &:hover {
-      color: var(--text-primary) !important;
-    }
-  }
-}
-
 html, body {
   overflow-x: hidden;
   background-color: var(--primary-bg);
@@ -233,7 +175,7 @@ main {
 }
 
 .icon-accent {
-  color: var(--text-primary) !important;
+  color: var(--text-primary);
 }
 
 .papaNumeros {
@@ -390,15 +332,15 @@ main {
 }
 
 .blancoMiniCartel {
-  background: var(--light-card-bg) !important;
-  border: 1px solid var(--border-primary) !important;
+  background: var(--light-card-bg);
+  border: 1px solid var(--border-primary);
   
   .payment-icon {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
   }
   
   &::before {
-    background: var(--text-primary) !important;
+    background: var(--text-primary);
   }
 }
 

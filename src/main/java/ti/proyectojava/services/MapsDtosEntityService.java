@@ -169,6 +169,19 @@ public class MapsDtosEntityService {
         return categoria;
     }
 
+    public CreditoDto mapToDtoCreditoParaCliente(Credito credito) {
+        if (credito == null) return null;
+
+        CreditoDto dto = new CreditoDto();
+        dto.setId(credito.getId());
+
+        if (credito.getCliente() != null) {
+            dto.setCliente(mapToDtoClientePlano(credito.getCliente()));
+        }
+
+        return dto;
+    }
+
     public VentaDto mapToDtoVentaPlano(Venta venta) {
         if (venta == null) return null;
         VentaDto dto = new VentaDto();
@@ -189,9 +202,39 @@ public class MapsDtosEntityService {
                     .collect(Collectors.toList())
             );
         }
+
+        if (venta.getCredito() != null) {
+            dto.setCredito(mapToDtoCreditoParaCliente(venta.getCredito()));
+        }
+
         return dto;
     }
 
+
+    public CreditoDto mapToDtoCreditoPlano(Credito credito){
+        if (credito == null) {
+            return null;
+        }
+
+        CreditoDto dto = new CreditoDto();
+        dto.setActivo(credito.getActivo());
+        dto.setId(credito.getId());
+        dto.setPrecioTotal(credito.getPrecioTotal());
+        dto.setMinimo(credito.getMinimo());
+        dto.setMaximo(credito.getMaximo());
+        dto.setPagoHastaAhora(credito.getPagoHastaAhora());
+
+        if (credito.getVentas() != null) {
+            dto.setVentas(credito.getVentas().stream()
+                    .map(venta -> mapToDtoVentaPlano(venta))
+                    .filter(venta -> venta != null && venta.getActivo())
+                    .collect(Collectors.toList())
+            );
+        }
+
+
+        return dto;
+    }
 
     public CreditoDto mapToDtoCredito(Credito credito) {
         return mapToDtoCredito(credito, new HashSet<>());
@@ -220,7 +263,7 @@ public class MapsDtosEntityService {
         }
 
         if (credito.getCliente() != null) {
-            dto.setCliente(mapToDtoCliente(credito.getCliente(), processed));
+            dto.setCliente(mapToDtoClientePlano(credito.getCliente()));
         }
 
         return dto;
@@ -272,6 +315,23 @@ public class MapsDtosEntityService {
         return credito;
     }
 
+
+    public ClienteDto mapToDtoClientePlano(Cliente cliente){
+        if (cliente == null) {
+            return null;
+        }
+
+        ClienteDto dto = new ClienteDto();
+        dto.setId(cliente.getId());
+        dto.setNombre(cliente.getNombre());
+        dto.setTelefono(cliente.getTelefono());
+        dto.setActivo(cliente.isActivo());
+
+
+        return dto;
+    }
+
+
     public ClienteDto mapToDtoCliente(Cliente cliente) {
         return mapToDtoCliente(cliente, new HashSet<>());
     }
@@ -289,7 +349,7 @@ public class MapsDtosEntityService {
         dto.setActivo(cliente.isActivo());
 
         if (cliente.getCredito() != null) {
-            dto.setCredito(mapToDtoCredito(cliente.getCredito(), processed));
+            dto.setCredito(mapToDtoCreditoPlano(cliente.getCredito()));
         }
 
         return dto;
@@ -1309,7 +1369,7 @@ public class MapsDtosEntityService {
 
         if (venta.getCantidades() != null) {
             dto.setCantidades(venta.getCantidades().stream()
-                    .map(e -> mapToDtoCantidad(e, processed))
+                    .map(e -> mapToDtoCantidadSimple(e))
                     .collect(Collectors.toList()));
         }
 

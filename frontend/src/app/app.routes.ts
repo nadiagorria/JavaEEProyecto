@@ -64,7 +64,7 @@ export const routes: Routes = [
     path: 'proveedor/:id',
     component: ProveedorPerfilComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { roles: ['ADMIN', 'CAJERO'] }
   },
 
   {
@@ -81,7 +81,7 @@ export const routes: Routes = [
   { path: 'ofertas', 
     component: OfertasComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { roles: ['ADMIN', 'CAJERO'] }
    },
 
   { path: 'producto/:id',

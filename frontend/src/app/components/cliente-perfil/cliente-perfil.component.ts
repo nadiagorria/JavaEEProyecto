@@ -7,15 +7,20 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TableModule } from 'primeng/table';
 import { ClienteDto } from 'src/models/cliente.dto';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { CreditoService } from 'src/services/credito.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { SecurityService } from 'src/services/security.service';
+import { VentaService } from 'src/services/venta.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
-  selector: 'app-cliente-perfil',
-  imports: [FormsModule, 
+  selector: 'app-cliente-perfil',  imports: [FormsModule, 
     HeaderComponent, 
     FooterComponent, 
     ButtonModule, 
@@ -23,7 +28,11 @@ import { CreditoService } from 'src/services/credito.service';
     InputGroupAddonModule, 
     TableModule, 
     DialogModule, 
-    CommonModule],
+    CommonModule,
+    InputTextModule,
+    ToastModule,
+    ConfirmDialogModule],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './cliente-perfil.component.html',
   styleUrl: './cliente-perfil.component.scss'
 })
@@ -32,11 +41,15 @@ export class ClientePerfilComponent {
   cliente!: ClienteDto;
 
   totalRecords: number = 0;
-
   constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
-    private creditoService: CreditoService
+    private creditoService: CreditoService,
+    private messageService: MessageService,
+    private router: Router,
+    private securityService: SecurityService,
+    private ventaService: VentaService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -67,28 +80,65 @@ export class ClientePerfilComponent {
   }
 
   pago : number = 0;
-
   pagoButton() {
+    // Validar que el monto de pago no sea mayor a la deuda actual ni negativo
+    if (this.pago <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Monto inválido',
+        detail: 'El monto a pagar debe ser mayor a cero.'
+      });
+      return;
+    }
+    
+    if (this.pago > this.cliente.credito.precioTotal) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Monto excesivo',
+        detail: 'El monto a pagar no puede ser mayor a la deuda actual.'
+      });
+      return;
+    }
+    
     console.log(this.pago, "aaa", this.cliente.credito.id);
     this.creditoService.pagarCredito(this.cliente.credito.id, this.pago).subscribe(
       response => {
         // Manejar respuesta si es necesario
         console.log('Pago realizado', response);
+        // Refrescar los datos del cliente después del pago
+        this.entidadService.getCliente(this.cliente.id).subscribe(data => {
+          this.cliente = data;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Pago exitoso',
+            detail: `Pago de $${this.pago} realizado correctamente.`
+          });
+        });
       },
       error => {
         // Manejar error si ocurre
         console.error('Error al pagar', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error en el pago',
+          detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.'
+        });
       }
     );
     this.visible = false;
+    // Resetear el valor del pago
+    this.pago = 0;
   }
 
   nombreEdicion: string = '';
   telefonoEdicion: string = '';
-
   editarCliente() {
     if (!this.nombreEdicion || !this.telefonoEdicion) {
-      alert('Por favor, complete todos los campos.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor, complete todos los campos obligatorios.'
+      });
       return;
     }
 
@@ -99,11 +149,80 @@ export class ClientePerfilComponent {
     this.entidadService.editarCliente(this.cliente).subscribe({
       next: (data: any) => {
         console.log('Cliente editado:', data);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Cliente actualizado',
+          detail: 'Los datos del cliente se han actualizado correctamente.'
+        });
         this.visibleEditar = false;
       },
       error: (err: any) => {
         console.error('Error al editar cliente:', err);
-        alert('Error al editar cliente: ' + (err.message || err.status));
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al editar',
+          detail: 'Ocurrió un error al actualizar los datos del cliente.'
+        });
+      }
+    });
+  }
+
+  // Función para verificar si el usuario es admin
+  isAdmin(): boolean {
+    const roles = this.securityService.getUserRoles();
+    if (!roles) {
+      return false;
+    }
+    return roles.includes('ADMIN');
+  }
+
+  // Función para ver detalles de una venta
+  verVenta(ventaId: number) {
+    if (ventaId) {
+      this.router.navigate(['/verventa', ventaId]);
+    }
+  }
+  // Función para eliminar una venta (solo admin)
+  eliminarVenta(ventaId: number) {
+    if (!this.isAdmin()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Sin permisos',
+        detail: 'No tienes permisos para eliminar ventas.'
+      });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: '¿Está seguro de que desea eliminar esta venta? Esta acción no se puede deshacer.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.ventaService.eliminarVenta(ventaId).subscribe({
+          next: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Venta eliminada',
+              detail: 'La venta ha sido eliminada correctamente.'
+            });
+            // Refrescar los datos del cliente para actualizar la tabla
+            this.entidadService.getCliente(this.cliente.id).subscribe(data => {
+              this.cliente = data;
+            });
+          },
+          error: (error) => {
+            console.error('Error al eliminar venta:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error al eliminar',
+              detail: 'Ocurrió un error al eliminar la venta. Intente nuevamente.'
+            });
+          }
+        });
       }
     });
   }
