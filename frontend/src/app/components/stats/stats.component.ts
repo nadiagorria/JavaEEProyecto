@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { ProductoService } from 'src/services/producto.service';
+import { CategoriaService } from 'src/services/categoria.service';
 import { CategoriaDto, ProductoDto, VentaDto} from 'src/models';
 import { VentaService } from 'src/services/venta.service';
 import { UsuarioService } from 'src/services/usuario.service';
@@ -23,7 +24,7 @@ export class StatsComponent implements OnInit {
   usuariosTotales: number = 0;
   
   productosMasPopulares: ProductoDto[] = [];
-  categoriasMasPopulares: Pick<CategoriaDto, "id" | "nombre">[] = [];
+  categoriasMasPopulares: CategoriaDto[] = [];
   ventas: VentaDto[] = [];
   ventasFiltradas: VentaDto[] = [];
 
@@ -61,6 +62,7 @@ export class StatsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private productoservice: ProductoService,
+    private categoriaservice: CategoriaService,
     private ventaservice: VentaService,
     private usuarioservice: UsuarioService
   ) {
@@ -90,21 +92,25 @@ export class StatsComponent implements OnInit {
         console.log('Respuesta completa de productos:', data);
         this.productosMasPopulares = data.productos || [];
         console.log('Productos más populares:', this.productosMasPopulares);
-        
-        this.categoriasMasPopulares = [];
-        
-        this.productosMasPopulares.forEach(producto => {
-          if (producto.categoria) {
-            this.categoriasMasPopulares.push(producto.categoria);
-          }
-        });
-
-        // Cargar ventas después de productos
-        this.cargarVentas();
       },
       error => {
         console.error('Error al cargar productos populares:', error);
-        // Cargar ventas incluso si falla la carga de productos
+      }
+    );    
+    
+    // Cargar categorías populares directamente del endpoint
+    this.categoriaservice.listarTopCategorias(this.n).subscribe(
+      data => {
+        console.log('Respuesta completa de categorías:', data);
+        this.categoriasMasPopulares = data.categorias || [];
+        console.log('Categorías más populares:', this.categoriasMasPopulares);
+        
+        // Cargar ventas después de categorías
+        this.cargarVentas();
+      },
+      error => {
+        console.error('Error al cargar categorías populares:', error);
+        // Cargar ventas incluso si falla la carga de categorías
         this.cargarVentas();
       }
     );

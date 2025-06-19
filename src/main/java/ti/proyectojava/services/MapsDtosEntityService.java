@@ -1207,37 +1207,6 @@ public class MapsDtosEntityService {
         return dto;
     }
 
-    public ProductoDto mapToDtoProductoCategoria(Producto producto) {
-        if (producto == null) {
-            return null;
-        }
-
-        ProductoDto dto = new ProductoDto();
-
-        dto.setId(producto.getId());
-        dto.setCodigoDeBarra(producto.getCodigoDeBarra());
-        dto.setNombre(producto.getNombre());
-        dto.setPrecioCompra(producto.getPrecioCompra());
-        dto.setPrecioVenta(producto.getPrecioVenta());
-        dto.setCombos(null);
-        dto.setPromociones(null);
-        dto.setDescuentos(null);
-
-        if(dto.getCantidades() != null){
-            dto.setCantidades(producto.getCantidades().stream()
-                    .map(this::mapToDtoCantidadSimple)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-
-        if (producto.getCategoria() != null) {
-            dto.setCategoria(mapToDtoCategoriaSimple(producto.getCategoria()));
-        }
-
-        return dto;
-    }
-
-    
     public CantidadDto mapToDtoCantidadSimple(Cantidad cantidad) {
         if (cantidad == null) {
             return null;

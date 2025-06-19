@@ -27,6 +27,15 @@ public class CategoriaController {
         ResponseListadoCategorias response = categoriaService.listadoCategorias();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    // obtener las 3 categorías con más productos vendidos
+    @GetMapping("/top")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Obtiene las top N categorías con más productos vendidos")
+    public ResponseEntity<ResponseListadoCategorias> getTopCategorias(@RequestParam int n){
+        ResponseListadoCategorias response = categoriaService.listadoCategoriasTop(n);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     // esta funcion solo la puede usar un admin
     @PostMapping

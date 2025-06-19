@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoCategorias;
 import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
+import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CategoriaRepository;
 import ti.proyectojava.dtos.*;
 
@@ -15,11 +16,13 @@ import java.util.Optional;
 public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
+    private final CantidadRepository cantidadRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository, MapsDtosEntityService mapsDtosEntityService)
+    public CategoriaService(CategoriaRepository categoriaRepository, MapsDtosEntityService mapsDtosEntityService, CantidadRepository cantidadRepository)
     {
         this.categoriaRepository = categoriaRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
+        this.cantidadRepository = cantidadRepository;
     }
 
     public ResponseListadoCategorias listadoCategorias() {
@@ -60,9 +63,20 @@ public class CategoriaService {
     }
 
 
-    //////////////
+    public ResponseListadoCategorias listadoCategoriasTop(int n) {
+        ResponseListadoCategorias response = new ResponseListadoCategorias();
 
+        List<Object[]> topResults = cantidadRepository.findTopBestSellingCategories();
+        List<CategoriaDto> topCategoriasVendidas = topResults.stream()
+                .limit(n)
+                .map(result -> {
+                    Categoria categoria = (Categoria) result[0];
+                    return mapsDtosEntityService.mapToDtoCategoria(categoria);
+                })
+                .collect(java.util.stream.Collectors.toList());
 
+        response.setCategorias(topCategoriasVendidas);
 
-
+        return response;
+    }
 }

@@ -264,11 +264,11 @@ public class ProductoController {
         }
     }
 
-    @GetMapping("/listarCategorias")
+    @GetMapping("/top")
     @Secured({"ADMIN", "CAJERO"})
-    @Operation(description = "Esta funcion lista los top N productos más vendidos con sus categorías")
-    public ResponseEntity<ResponseListadoProductos> getProductosCategorias(@RequestParam int n) {
-        ResponseListadoProductos response = productoService.listadoProductosCategorias(n);
+    @Operation(description = "Esta funcion lista los top N productos más vendidos")
+    public ResponseEntity<ResponseListadoProductos> getTopProductos(@RequestParam int n) {
+        ResponseListadoProductos response = productoService.listadoProductosTop(n);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -14,6 +14,7 @@ export class CategoriaService {
     private http: HttpClient,
     private urlService: UrlService
   ) {}
+
   crearCategoria(categoria: CategoriaDto): Observable<string> {
     return this.http.post<string>(`${this.urlService.baseUrl}${this.endpoint}`, categoria);
   }
@@ -28,6 +29,10 @@ export class CategoriaService {
 
   listarCategorias(): Observable<{categorias: CategoriaDto[]}> {
     return this.http.get<{categorias: CategoriaDto[]}>(`${this.urlService.baseUrl}${this.endpoint}`);
+  }
+  
+  listarTopCategorias(n: number): Observable<{categorias: CategoriaDto[]}> {
+    return this.http.get<{categorias: CategoriaDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/top?n=${n}`);
   }
 
   seleccionarCategoria(id: number): Observable<CategoriaDto> {

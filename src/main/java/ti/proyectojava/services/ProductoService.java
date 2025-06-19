@@ -52,24 +52,24 @@ public class ProductoService {
         response.setProductos(productosActivos);
 
         return response;
-    }   
-      public ResponseListadoProductos listadoProductosCategorias(int n) {
+    }      
+    
+    public ResponseListadoProductos listadoProductosTop(int n) {
         ResponseListadoProductos response = new ResponseListadoProductos();
 
-        // Obtener los top n productos más vendidos con sus categorías
         List<Object[]> topResults = cantidadRepository.findTopBestSellingProducts();
         List<ProductoDto> topMasVendidos = topResults.stream()
                 .limit(n)
                 .map(result -> {
                     Producto producto = (Producto) result[0];
-                    return mapsDtosEntityService.mapToDtoProductoCategoria(producto);
+                    return mapsDtosEntityService.mapToDtoProductoSimple(producto);
                 })
                 .collect(Collectors.toList());
 
         response.setProductos(topMasVendidos);
 
         return response;
-    }    public String crearProducto(ProductoDto productoDto) {
+    }public String crearProducto(ProductoDto productoDto) {
         return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 

@@ -19,4 +19,11 @@ public interface CantidadRepository extends JpaRepository<Cantidad, Long> {
            "GROUP BY c.producto " +
            "ORDER BY totalVendido DESC")
     List<Object[]> findTopBestSellingProducts();
+    
+    @Query("SELECT p.categoria, SUM(c.cantidad) as totalVendido FROM Cantidad c " +
+           "JOIN c.producto p " +
+           "WHERE p.activo = true AND p.categoria.activo = true " +
+           "GROUP BY p.categoria " +
+           "ORDER BY totalVendido DESC")
+    List<Object[]> findTopBestSellingCategories();
 }
