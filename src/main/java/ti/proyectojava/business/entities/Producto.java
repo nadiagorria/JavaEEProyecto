@@ -51,7 +51,7 @@ public class Producto {
     private List<Descuento> descuentos = new ArrayList<>();
     
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CATEGORIA_NOMBRE")
+    @JoinColumn(name = "CATEGORIA_ID")
     private Categoria categoria;
 
     @ManyToOne

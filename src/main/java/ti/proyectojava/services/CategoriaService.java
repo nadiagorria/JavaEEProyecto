@@ -61,7 +61,9 @@ public class CategoriaService {
         }
 
         return response;
-    }    public String desvincularProductosDeCategoria(String nombreCategoria) {
+    }    
+    
+    public String desvincularProductosDeCategoria(String nombreCategoria) {
         Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
         String response = null;
 
