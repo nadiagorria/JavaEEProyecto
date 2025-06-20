@@ -189,6 +189,43 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Modifica el stock total de un producto de forma manual
+     * ADVERTENCIA: Solo debe ser usado por administradores supremos
+     * Las modificaciones incorrectas pueden afectar estadísticas y cálculos
+     */
+    public void modificarStockTotal(Long productoId, Integer nuevoStockTotal) {
+        log.warn("MODIFICACIÓN MANUAL DE STOCK - Producto ID: {}, Nuevo Stock: {}", productoId, nuevoStockTotal);
+        
+        Optional<Producto> productoOptional = productoRepository.findById(productoId);
+        if (productoOptional.isEmpty()) {
+            throw new RuntimeException("Producto no encontrado. ID: " + productoId);
+        }
+
+        if (nuevoStockTotal < 0) {
+            throw new RuntimeException("El stock total no puede ser negativo");
+        }
+
+        Producto producto = productoOptional.get();
+        if (!producto.getActivo()) {
+            throw new RuntimeException("No se puede modificar el stock de un producto inactivo");
+        }
+
+        int stockAnterior = producto.getStockTotal();
+        producto.setStockTotal(nuevoStockTotal);
+        
+        // Actualizar stock disponible si es necesario
+        // Si el nuevo stock total es menor al disponible, ajustar el disponible
+        if (producto.getStockTotal() > nuevoStockTotal) {
+            producto.setStockTotal(nuevoStockTotal);
+        }
+        
+        productoRepository.save(producto);
+        
+        log.info("Stock modificado para producto '{}' (ID: {}). Stock anterior: {}, Stock nuevo: {}", 
+                producto.getNombre(), productoId, stockAnterior, nuevoStockTotal);
+    }
+
 }
 
 

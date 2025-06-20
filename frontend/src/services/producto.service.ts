@@ -78,4 +78,10 @@ export class ProductoService {
   buscarTopNProductos(n: number): Observable<{productos: ProductoDto[]}> {
     return this.http.get<{productos: ProductoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/top?n=${n}`);
   }
+  // Método para modificar stock total (solo admin supremo)
+  modificarStockTotal(id: number, stockTotal: number): Observable<string> {
+    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/stock`, stockTotal, {
+      responseType: 'text'
+    });
+  }
 }

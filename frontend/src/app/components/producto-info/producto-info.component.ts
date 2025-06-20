@@ -109,6 +109,21 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     return hasAdminRole;
   }
 
+  // Función para verificar si es admin supremo (solo ADMIN, no CAJERO)
+  isAdminSupremo(): boolean {
+    const roles = this.securityService.getUserRoles();
+    
+    if (!roles || !Array.isArray(roles)) {
+      return false;
+    }
+    
+    // Admin supremo es quien tiene SOLO el rol ADMIN (no CAJERO)
+    const hasAdminRole = roles.includes('ADMIN');
+    const hasCajeroRole = roles.includes('CAJERO');
+    
+    return hasAdminRole && !hasCajeroRole;
+  }
+
   // Existing lote modal properties
   mostrarModalAgregarLote: boolean = false;
   nuevoLote: {
@@ -123,6 +138,11 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     precioCompra: 0
   };
   minFechaVencimiento: string = '';
+
+  // Modal de modificar stock properties
+  mostrarModalModificarStock: boolean = false;
+  nuevoStockTotal: number = 0;
+  stockOriginal: number = 0;
 
   imagenSeleccionada: File | null = null;
   imagenPreviewEdicion: string | null = null;
@@ -616,6 +636,60 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       return 'stock-medio';
     }
     return 'stock-bajo';
+  }
+
+  // Funciones para modal de modificar stock
+  abrirModalModificarStock(): void {
+    if (!this.producto) return;
+    
+    this.stockOriginal = this.producto.stockTotal;
+    this.nuevoStockTotal = this.producto.stockTotal;
+    this.mostrarModalModificarStock = true;
+  }
+
+  modificarStockTotal(): void {
+    if (!this.producto || !this.producto.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se puede modificar el stock del producto'
+      });
+      return;
+    }
+
+    if (this.nuevoStockTotal < 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El stock total no puede ser negativo'
+      });
+      return;
+    }
+
+    this.productoService.modificarStockTotal(this.producto.id, this.nuevoStockTotal).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Stock total modificado correctamente'
+        });
+        
+        // Actualizar el producto local
+        if (this.producto) {
+          this.producto.stockTotal = this.nuevoStockTotal;
+        }
+        
+        this.mostrarModalModificarStock = false;
+      },
+      error: (error) => {
+        console.error('Error al modificar stock:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error || 'Error al modificar el stock total'
+        });
+      }
+    });
   }
 
   onImagenSeleccionada(event: any) {

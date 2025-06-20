@@ -195,7 +195,9 @@ public class ProductoController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-    }    //solo admin puede usarlo
+    }
+
+    //solo admin puede usarlo
     @PutMapping("/{id}/editar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion edita un producto")
@@ -270,6 +272,23 @@ public class ProductoController {
     public ResponseEntity<ResponseListadoProductos> getTopProductos(@RequestParam int n) {
         ResponseListadoProductos response = productoService.listadoProductosTop(n);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Solo admin supremo (exclusivamente ADMIN) puede modificar stock total
+    @PutMapping("/{id}/stock")
+    @Secured({"ADMIN"})
+    @Operation(description = "Esta función permite modificar el stock total de un producto (solo admin supremo)")
+    public ResponseEntity<String> modificarStockTotal(
+            @PathVariable Long id, 
+            @RequestBody Integer nuevoStockTotal) {
+        try {
+            productoService.modificarStockTotal(id, nuevoStockTotal);
+            return new ResponseEntity<>("Stock modificado correctamente", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
