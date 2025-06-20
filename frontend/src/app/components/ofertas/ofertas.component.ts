@@ -578,17 +578,22 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
   // ==================== ELIMINAR OFERTAS ====================
   eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
+    // Determinar el artículo correcto según el género
+    const articulo = tipo === 'promocion' ? 'esta' : 'este';
+    
     this.confirmationService.confirm({
-      message: `¿Está seguro que desea eliminar esta ${tipo}?`,
+      message: `¿Está seguro que desea eliminar ${articulo} ${tipo}?`,
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.ofertaService.eliminarOferta(id).subscribe({
           next: (response) => {
+            // Determinar el artículo para el mensaje de éxito
+            const articuloEliminado = tipo === 'promocion' ? 'eliminada' : 'eliminado';
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} eliminada correctamente`
+              detail: `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} ${articuloEliminado} correctamente`
             });
 
             switch (tipo) {
@@ -605,10 +610,12 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           },
           error: (error) => {
             console.error(`Error al eliminar ${tipo}:`, error);
+            // Usar el artículo correcto en el mensaje de error
+            const articuloError = tipo === 'promocion' ? 'la' : 'el';
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `Error al eliminar la ${tipo}`
+              detail: `Error al eliminar ${articuloError} ${tipo}`
             });
           }
         });
