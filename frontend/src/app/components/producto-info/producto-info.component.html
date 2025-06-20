@@ -2,36 +2,20 @@
 
 <div class="main-content">
   <div class="container p-4">
-      <!-- Header simple -->
+    <!-- Header simple -->
     <div class="header-section mb-3">
       <div class="flex justify-content-between align-items-center">
-        <h2 class="page-title">Información del Producto</h2>        
-          <!-- Edit and Delete buttons - Solo para ADMIN -->
+        <h2 class="page-title">Información del Producto</h2>
+        <!-- Edit and Delete buttons - Solo para ADMIN -->
         <div class="flex gap-2" *ngIf="producto && !loading && !error && isAdmin()">
-          <button 
-            pButton 
-            type="button" 
-            label="Editar" 
-            icon="pi pi-pencil"
-            class="p-button-outlined p-button-info"
+          <button pButton type="button" label="Editar" icon="pi pi-pencil" class="p-button-outlined p-button-info"
             (click)="abrirModalEditar()">
           </button>
           <!-- Botón Modificar Stock - Solo para Admin Supremo -->
-          <button 
-            pButton 
-            type="button" 
-            label="Modificar Stock" 
-            icon="pi pi-sort-numeric-down"
-            class="p-button-outlined p-button-warning"
-            (click)="abrirModalModificarStock()"
-            *ngIf="isAdminSupremo()">
+          <button pButton type="button" label="Modificar Stock" icon="pi pi-sort-numeric-down"
+            class="p-button-outlined p-button-warning" (click)="abrirModalModificarStock()" *ngIf="isAdminSupremo()">
           </button>
-          <button 
-            pButton 
-            type="button" 
-            label="Eliminar" 
-            icon="pi pi-trash"
-            class="p-button-outlined p-button-danger"
+          <button pButton type="button" label="Eliminar" icon="pi pi-trash" class="p-button-outlined p-button-danger"
             (click)="confirmarEliminarProducto()">
           </button>
         </div>
@@ -52,60 +36,59 @@
 
     <!-- Contenido principal -->
     <div *ngIf="producto && !loading && !error" class="producto-container">
-        <!-- Card principal del producto -->
+      <!-- Card principal del producto -->
       <div class="producto-card mb-3">
         <div class="grid">
           <!-- Imagen del producto -->
           <div class="col-12 md:col-4">
             <div class="imagen-container">
-              <img [src]="imagenUrl || '/placeholder-image.webp'" 
-                   alt="Imagen de {{ producto.nombre }}" 
-                   class="producto-imagen" />
+              <img [src]="imagenUrl || '/placeholder-image.webp'" alt="Imagen de {{ producto.nombre }}"
+                class="producto-imagen" />
             </div>
           </div>
 
           <!-- Información del producto -->
           <div class="col-12 md:col-8 p-3">
             <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-            
+
             <div class="detalles-lista">
               <div class="detalle-item">
                 <strong>Código de Barras:</strong> {{ producto.codigoDeBarra }}
-              </div>              <div class="detalle-item">
+              </div>
+              <div class="detalle-item">
                 <strong>Proveedor:</strong> {{ producto.proveedor?.nombre || 'Sin proveedor' }}
               </div>
               <div class="detalle-item">
-                <strong>Stock Total:</strong> 
+                <strong>Stock Total:</strong>
                 <span class="stock-badge" [class]="getStockClass(producto.stockTotal)">
                   {{ producto.stockTotal }}
                 </span>
-              </div>              <div class="detalle-item">
+              </div>
+              <div class="detalle-item">
                 <strong>Categoría:</strong> {{ producto.categoria?.nombre || 'Sin categoría' }}
               </div>
-            </div>            <div class="precio-section mt-3">
+            </div>
+            <div class="precio-section mt-3">
               <div class="precio-item">
                 <span class="precio-label">Precio de Venta:</span>
                 <span class="precio-valor">{{ producto.precioVenta | currency:'USD':'symbol':'1.2-2' }}</span>
               </div>
               <div class="precio-item mt-2">
                 <span class="precio-label">Precio de Compra Actual:</span>
-                <span class="precio-valor precio-compra">{{ producto.precioCompra | currency:'USD':'symbol':'1.2-2' }}</span>
+                <span class="precio-valor precio-compra">{{ producto.precioCompra | currency:'USD':'symbol':'1.2-2'
+                  }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>      
-      
+      </div>
+
       <!-- Tabla de lotes con paginación -->
       <div class="col-12 mt-5">
-        <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true" *ngIf="isAdmin()"></button>        
-        <p-table
-          [value]="producto.lotes || []"
-          [paginator]="true"
-          [rows]="5"
-          [rowsPerPageOptions]="[5, 10]"
-          showGridlines
-          responsiveLayout="scroll"
+        <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true"
+          *ngIf="isAdmin()"></button>
+        <p-table [value]="producto.lotes || []" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10]"
+          showGridlines responsiveLayout="scroll"
           currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} lotes"
           [totalRecords]="producto.lotes.length || 0">
 
@@ -123,24 +106,20 @@
             <tr>
               <td>{{ lote.numeLote }}</td>
               <td>
-                <span *ngIf="lote.fechaVencimiento; else sinFecha" 
-                      [class]="getFechaVencimientoClass(lote.fechaVencimiento)">
+                <span *ngIf="lote.fechaVencimiento; else sinFecha"
+                  [class]="getFechaVencimientoClass(lote.fechaVencimiento)">
                   {{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}
                 </span>
                 <ng-template #sinFecha>
                   <span class="fecha-sin-vencimiento">Sin fecha de vencimiento</span>
                 </ng-template>
-              </td>
+              </td>              
               <td>{{ lote.precioCompra | currency }}</td>
-              <td>{{ lote.stock }}</td>              <td>
-                <p-button icon="pi pi-trash" 
-                          styleClass="p-button-rounded p-button-text p-button-danger" 
-                          (click)="confirmarEliminarLote(lote.id!)" 
-                          [disabled]="!lote.id"
-                          pTooltip="Eliminar lote"
-                          *ngIf="isAdmin()">
+              <td>{{ lote.stock }}</td>
+              <td *ngIf="isAdmin()">
+                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"                  
+                (click)="confirmarEliminarLote(lote.id!)" [disabled]="!lote.id" pTooltip="Eliminar lote">
                 </p-button>
-                <span *ngIf="!isAdmin()" class="text-muted">-</span>
               </td>
             </tr>
           </ng-template>
@@ -152,94 +131,53 @@
 </div>
 
 <!-- Modal de Editar Producto -->
-<p-dialog
-  header="Editar Producto"
-  [(visible)]="mostrarModalEditar"
-  [modal]="true"
-  [style]="{width: '550px'}"
-  [contentStyle]="{overflow: 'auto'}"
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="producto-dialog"
-  appendTo="body">
+<p-dialog header="Editar Producto" [(visible)]="mostrarModalEditar" [modal]="true" [style]="{width: '550px'}"
+  [contentStyle]="{overflow: 'auto'}" [closable]="true" [draggable]="false" [resizable]="false"
+  styleClass="producto-dialog" appendTo="body">
 
   <div class="modal-editar-content">
     <form class="producto-form">
       <!-- Información Básica -->
       <div class="form-section">
         <div class="section-title">Información Básica</div>
-        
+
         <div class="form-group">
           <label for="nombre">Nombre del Producto</label>
-          <input
-            id="nombre"
-            type="text"
-            pInputText
-            placeholder="Ingrese el nombre del producto"
-            [(ngModel)]="editandoProducto.nombre"
-            name="nombre"
-            class="w-full" />
+          <input id="nombre" type="text" pInputText placeholder="Ingrese el nombre del producto"
+            [(ngModel)]="editandoProducto.nombre" name="nombre" class="w-full" />
         </div>
 
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
               <label for="precioVenta">Precio de Venta</label>
-              <input
-                id="precioVenta"
-                type="number"
-                pInputText
-                placeholder="0.00"
-                [(ngModel)]="editandoProducto.precioVenta"
-                name="precioVenta"
-                min="0"
-                step="0.01"
-                class="w-full" />
+              <input id="precioVenta" type="number" pInputText placeholder="0.00"
+                [(ngModel)]="editandoProducto.precioVenta" name="precioVenta" min="0" step="0.01" class="w-full" />
             </div>
           </div>
-          
+
           <div class="form-col">
             <div class="form-group">
               <label for="stockMin">Stock Mínimo</label>
-              <input
-                id="stockMin"
-                type="number"
-                pInputText
-                placeholder="0"
-                [(ngModel)]="editandoProducto.stockMin"
-                name="stockMin"
-                min="0"
-                class="w-full" />
+              <input id="stockMin" type="number" pInputText placeholder="0" [(ngModel)]="editandoProducto.stockMin"
+                name="stockMin" min="0" class="w-full" />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Relaciones -->      <div class="form-section">
-        <div class="section-title">Categoría y Proveedor</div>          <div class="form-group">          <label for="categoria">Categoría</label>          <p-dropdown
-            [options]="categorias"
-            [(ngModel)]="editandoProducto.categoriaId"
-            name="categoria"
-            optionLabel="nombre"
-            optionValue="id"
-            placeholder="Seleccionar categoría"
-            class="w-full"
-            [showClear]="true"
-            scrollHeight="182px"
-            appendTo="body">
+      <!-- Relaciones -->
+      <div class="form-section">
+        <div class="section-title">Categoría y Proveedor</div>
+        <div class="form-group"> <label for="categoria">Categoría</label> 
+          <p-dropdown [options]="categorias"
+            [(ngModel)]="editandoProducto.categoriaId" name="categoria" optionLabel="nombre" optionValue="id"
+            placeholder="Seleccionar categoría" class="w-full" [showClear]="true" scrollHeight="182px" appendTo="body">
           </p-dropdown>
-        </div>        <div class="form-group">          <label for="proveedor">Proveedor</label>          <p-dropdown
-            [options]="proveedores"
-            [(ngModel)]="editandoProducto.proveedorId"
-            name="proveedor"
-            optionLabel="nombre"
-            optionValue="id"
-            placeholder="Seleccionar proveedor"
-            class="w-full"
-            [showClear]="true"
-            scrollHeight="182px"
-            appendTo="body">
+        </div>
+        <div class="form-group"> <label for="proveedor">Proveedor</label> <p-dropdown [options]="proveedores"
+            [(ngModel)]="editandoProducto.proveedorId" name="proveedor" optionLabel="nombre" optionValue="id"
+            placeholder="Seleccionar proveedor" class="w-full" [showClear]="true" scrollHeight="182px" appendTo="body">
           </p-dropdown>
         </div>
       </div>
@@ -247,138 +185,71 @@
       <!-- Image Upload Section -->
       <div class="form-section">
         <div class="section-title">Imagen del Producto</div>
-        
+
         <div class="form-group">
           <label for="imagen">Imagen del producto (opcional)</label>
-          <input
-            type="file"
-            id="imagen"
-            accept="image/*"
-            (change)="onImagenSeleccionada($event)"
-            name="imagen" />
-          <small class="help-text">Este campo es opcional. Solo se actualizará la imagen si selecciona una nueva.</small>
+          <input type="file" id="imagen" accept="image/*" (change)="onImagenSeleccionada($event)" name="imagen" />
+          <small class="help-text">Este campo es opcional. Solo se actualizará la imagen si selecciona una
+            nueva.</small>
         </div>
 
         <!-- Image Preview -->
         <div class="image-preview mb-3" *ngIf="imagenPreviewEdicion || imagenUrl">
-          <img [src]="imagenPreviewEdicion || imagenUrl" 
-               alt="Vista previa" 
-               style="max-width: 200px; max-height: 200px; object-fit: contain;" 
-               (error)="onImageError($event)" />
+          <img [src]="imagenPreviewEdicion || imagenUrl" alt="Vista previa"
+            style="max-width: 200px; max-height: 200px; object-fit: contain;" (error)="onImageError($event)" />
         </div>
       </div>
     </form>
   </div>
 
   <ng-template pTemplate="footer">
-    <button 
-      pButton 
-      type="button" 
-      label="Cancelar" 
-      class="p-button-text"
-      (click)="mostrarModalEditar = false">
-    </button>    <button 
-      pButton 
-      type="button" 
-      label="Guardar Cambios" 
-      class="p-button-success"
-      (click)="editarProducto()">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="mostrarModalEditar = false">
+    </button> <button pButton type="button" label="Guardar Cambios" class="p-button-success" (click)="editarProducto()">
     </button>
   </ng-template>
 </p-dialog>
 
 <!-- Modal de PrimeNG -->
-<p-dialog
-  header="Agregar Lote"
-  [(visible)]="mostrarModalAgregarLote"
-  [modal]="true"
-  [style]="{width: '400px'}"
-  [contentStyle]="{overflow: 'auto'}"
-  [closable]="true"
-  styleClass="producto_dialog"
-  appendTo="body">
+<p-dialog header="Agregar Lote" [(visible)]="mostrarModalAgregarLote" [modal]="true" [style]="{width: '400px'}"
+  [contentStyle]="{overflow: 'auto'}" [closable]="true" styleClass="producto_dialog" appendTo="body">
 
   <form class="lote-form">
     <div class="form-group">
       <label for="numeLote">Número de Lote *</label>
-      <input
-        id="numeLote"
-        type="text"
-        pInputText
-        placeholder="Ej: L001-2024"
-        [(ngModel)]="nuevoLote.numeLote"
-        name="numeLote"
-        class="w-full" />
+      <input id="numeLote" type="text" pInputText placeholder="Ej: L001-2024" [(ngModel)]="nuevoLote.numeLote"
+        name="numeLote" class="w-full" />
     </div>
 
     <div class="form-group">
       <label for="stock">Stock *</label>
-      <input
-        id="stock"
-        type="number"
-        pInputText
-        placeholder="0"
-        [(ngModel)]="nuevoLote.stock"
-        name="stock"
-        min="0"
+      <input id="stock" type="number" pInputText placeholder="0" [(ngModel)]="nuevoLote.stock" name="stock" min="0"
         class="w-full" />
-    </div>    <div class="form-group">
+    </div>
+    <div class="form-group">
       <label for="fechaVencimiento">Fecha de Vencimiento (Opcional)</label>
-      <input
-        id="fechaVencimiento"
-        type="date"
-        pInputText
-        [(ngModel)]="nuevoLote.fechaVencimiento"
-        name="fechaVencimiento"
-        class="w-full"
-        [min]="minFechaVencimiento" />
+      <input id="fechaVencimiento" type="date" pInputText [(ngModel)]="nuevoLote.fechaVencimiento"
+        name="fechaVencimiento" class="w-full" [min]="minFechaVencimiento" />
       <small class="help-text">Deje vacío si el producto no tiene fecha de vencimiento</small>
     </div>
 
     <div class="form-group">
       <label for="precioCompra">Precio de Compra *</label>
-      <input
-        id="precioCompra"
-        type="number"
-        pInputText
-        placeholder="0.00"
-        [(ngModel)]="nuevoLote.precioCompra"
-        name="precioCompra"
-        min="0"
-        step="0.01"
-        class="w-full" />
+      <input id="precioCompra" type="number" pInputText placeholder="0.00" [(ngModel)]="nuevoLote.precioCompra"
+        name="precioCompra" min="0" step="0.01" class="w-full" />
     </div>
   </form>
 
   <ng-template pTemplate="footer">
-    <button 
-      pButton 
-      type="button" 
-      label="Cancelar" 
-      class="p-button-text"
-      (click)="mostrarModalAgregarLote = false">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="mostrarModalAgregarLote = false">
     </button>
-    <button 
-      pButton 
-      type="button" 
-      label="Agregar" 
-      class="p-button-success"
-      (click)="agregarLote()">
-    </button>  </ng-template>
+    <button pButton type="button" label="Agregar" class="p-button-success" (click)="agregarLote()">
+    </button> </ng-template>
 </p-dialog>
 
 <!-- Modal de Modificar Stock Total - Solo Admin Supremo -->
-<p-dialog
-  header="⚠️ Modificar Stock Total - ADVERTENCIA"
-  [(visible)]="mostrarModalModificarStock"
-  [modal]="true"
-  [style]="{width: '500px'}"
-  [contentStyle]="{overflow: 'auto'}"
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="stock-dialog"
-  appendTo="body">
+<p-dialog header="⚠️ Modificar Stock Total - ADVERTENCIA" [(visible)]="mostrarModalModificarStock" [modal]="true"
+  [style]="{width: '500px'}" [contentStyle]="{overflow: 'auto'}" [closable]="true" [draggable]="false"
+  [resizable]="false" styleClass="stock-dialog" appendTo="body">
 
   <div class="modal-stock-content">
     <!-- Advertencia prominente -->
@@ -416,16 +287,8 @@
     <!-- Formulario de modificación -->
     <div class="form-group">
       <label for="nuevoStock">Nuevo Stock Total *</label>
-      <input
-        id="nuevoStock"
-        type="number"
-        pInputText
-        placeholder="Ingrese el nuevo stock total"
-        [(ngModel)]="nuevoStockTotal"
-        name="nuevoStock"
-        min="0"
-        class="w-full"
-        [class.error]="nuevoStockTotal < 0" />
+      <input id="nuevoStock" type="number" pInputText placeholder="Ingrese el nuevo stock total"
+        [(ngModel)]="nuevoStockTotal" name="nuevoStock" min="0" class="w-full" [class.error]="nuevoStockTotal < 0" />
       <small class="help-text">
         Diferencia: {{ nuevoStockTotal - stockOriginal >= 0 ? '+' : '' }}{{ nuevoStockTotal - stockOriginal }}
       </small>
@@ -433,19 +296,9 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <button 
-      pButton 
-      type="button" 
-      label="Cancelar" 
-      class="p-button-text"
-      (click)="mostrarModalModificarStock = false">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="mostrarModalModificarStock = false">
     </button>
-    <button 
-      pButton 
-      type="button" 
-      label="Confirmar Modificación" 
-      class="p-button-danger"
-      (click)="modificarStockTotal()"
+    <button pButton type="button" label="Confirmar Modificación" class="p-button-danger" (click)="modificarStockTotal()"
       [disabled]="nuevoStockTotal < 0 || nuevoStockTotal === stockOriginal">
     </button>
   </ng-template>

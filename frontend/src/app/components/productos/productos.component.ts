@@ -50,6 +50,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
   productos: ProductoDto[] = [];
   productosFiltrados: ProductoDto[] = []; // Array para productos filtrados
   categorias: any[] = [];
+  categoriasConTodas: any[] = []; // Array para el dropdown con opción "Todas las categorías"
   proveedores: ProveedorDto[] = [];
   terminoBusqueda: string = ''; // Término de búsqueda
   categoriaFiltro: number | null = null; // Categoría seleccionada para filtrar
@@ -88,7 +89,13 @@ export class ProductosComponent implements OnInit, OnDestroy {
             }
           }
           return cat;
-        });
+        }).sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenar alfabéticamente
+        
+        // Crear array para dropdown con "Todas las categorías"
+        this.categoriasConTodas = [
+          {id: '', nombre: 'Todas las categorías'},
+          ...this.categorias
+        ];
         
         console.log('=== DEBUG CATEGORIAS CARGADAS ===');
         console.log('Categorías completas:', this.categorias);
@@ -205,9 +212,13 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
   // Método para manejar cambios en el filtro de categoría
   onCategoriaChange(event: any) {
-    console.log('Valor seleccionado:', event.target.value);
+    console.log('Evento onChange del dropdown:', event);
+    // Para p-dropdown, el valor está directamente en event.value
+    const valor = event.value !== undefined ? event.value : event;
+    console.log('Valor seleccionado:', valor);
+    
     // Si el valor es una cadena vacía o null, establecer como null
-    this.categoriaFiltro = event.target.value === '' ? null : Number(event.target.value);
+    this.categoriaFiltro = valor === '' || valor === null ? null : Number(valor);
     console.log('categoriaFiltro después de conversión:', this.categoriaFiltro);
     this.aplicarFiltros();
   }
@@ -434,7 +445,13 @@ export class ProductosComponent implements OnInit, OnDestroy {
     // Validar formulario
     const validacion = this.validarFormularioProducto();
     if (!validacion.valido) {
-      this.mensajeError = validacion.mensaje;
+      // Mostrar toast de error de validación
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario Incompleto',
+        detail: validacion.mensaje,
+        life: 5000
+      });
       return;
     }
 
@@ -442,13 +459,23 @@ export class ProductosComponent implements OnInit, OnDestroy {
     const token = localStorage.getItem('token');
     
     if (!token) {
-      this.mensajeError = 'No se encuentra autenticado. Por favor, inicie sesión nuevamente.';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Autenticación',
+        detail: 'No se encuentra autenticado. Por favor, inicie sesión nuevamente.',
+        life: 5000
+      });
       return;
     }
     
     // Verificar si el usuario está logueado y obtener sus roles
     if (!this.securityService.isLoggedIn()) {
-      this.mensajeError = 'No se encuentra autenticado. Por favor, inicie sesión nuevamente.';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Autenticación',
+        detail: 'No se encuentra autenticado. Por favor, inicie sesión nuevamente.',
+        life: 5000
+      });
       return;
     }
     
@@ -456,7 +483,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
     const isAdmin = userRoles && userRoles.includes('ADMIN');
     
     if (!isAdmin) {
-      this.mensajeError = 'No tiene permisos para crear productos. Se requiere rol de administrador.';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Permisos',
+        detail: 'No tiene permisos para crear productos. Se requiere rol de administrador.',
+        life: 5000
+      });
       return;
     }
 
@@ -528,7 +560,14 @@ export class ProductosComponent implements OnInit, OnDestroy {
           this.cargarProductos();
           // Limpiar el cache de imágenes para forzar la recarga
           this.limpiarCacheImagenes();
-          this.mensajeExito = 'Producto creado exitosamente';
+          
+          // Mostrar toast de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Producto Creado',
+            detail: 'El producto se ha creado exitosamente',
+            life: 3000
+          });
         },
         error: (error) => {
           console.error('Error al crear producto:', error);
@@ -543,12 +582,25 @@ export class ProductosComponent implements OnInit, OnDestroy {
             mensajeError = error.message;
           }
           
-          this.mensajeError = mensajeError;
+          // Mostrar toast de error
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: mensajeError,
+            life: 5000
+          });
         }
       });
     }).catch((error) => {
       console.error('Error al convertir imagen:', error);
-      this.mensajeError = 'Error al procesar la imagen';
+      
+      // Mostrar toast de error
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Imagen',
+        detail: 'Error al procesar la imagen',
+        life: 5000
+      });
     });
   }
 
@@ -695,4 +747,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
       reader.readAsDataURL(this.imagenSeleccionada);
     });
   }
+
+  // Función para verificar si el usuario es admin
+  get esAdmin(): boolean {
+    const userRoles = this.securityService.getUserRoles();
+    return userRoles && userRoles.includes('ADMIN');
+  }
+
+
 }
