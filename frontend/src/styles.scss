@@ -9,7 +9,32 @@ html, body {
   font-family: "Montserrat", sans-serif;
 }
 
-
+/* Arreglo para tablas de clientes-crédito y proveedores */
+.table-container-fix {
+  position: relative;
+  z-index: auto;
+  
+  /* Fuerza a que el contenedor no corte los elementos hijos */
+  overflow: visible;
+  
+  /* Asegura que el div interno tampoco cause problemas */
+  > div {
+    overflow: visible;
+    position: static;
+  }
+  
+  /* Ajustes para el dropdown del paginador */
+  .p-paginator {
+    .p-dropdown {
+      z-index: 9999;
+    }
+    
+    .p-dropdown-panel {
+      transform: translateY(0) !important;
+      z-index: 9999 !important;
+    }
+  }
+}
 
 /* Clases específicas para diferentes estilos de tabla */
 .tabla-azul .p-datatable-thead > tr > th {
@@ -21,13 +46,15 @@ html, body {
 .p-datatable {
   border: 1px solid #ecf0f1;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible; /* Cambiado de 'hidden' a 'visible' para permitir que elementos hijos se muestren fuera del contenedor */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   
   .p-datatable-header {
     background: #f8f9fa;
     border-bottom: 2px solid #ecf0f1;
     padding: 15px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
   }
   
   .p-datatable-thead > tr > th {
@@ -39,6 +66,14 @@ html, body {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+  }
+  
+  .p-datatable-thead > tr > th:first-child {
+    border-top-left-radius: 12px;
+  }
+  
+  .p-datatable-thead > tr > th:last-child {
+    border-top-right-radius: 12px;
   }
   
   .p-datatable-tbody > tr {
@@ -53,13 +88,153 @@ html, body {
       background-color: #fdfdfd;
     }
   }
-  
-  .p-datatable-tbody > tr > td {
+    .p-datatable-tbody > tr > td {
     padding: 12px;
     border: none;
     font-size: 0.9rem;
     vertical-align: middle;
   }
+  
+  .p-datatable-tbody > tr:last-child > td:first-child {
+    border-bottom-left-radius: 12px;
+  }
+  
+  .p-datatable-tbody > tr:last-child > td:last-child {
+    border-bottom-right-radius: 12px;
+  }
+  
+  .p-datatable-wrapper {
+    overflow: visible !important; /* Asegura que los elementos hijos puedan mostrarse fuera del contenedor */
+    position: relative;
+    border-radius: 12px;
+  }
+  
+  .p-paginator {
+    position: relative;
+    z-index: 999; /* Valor alto de z-index para asegurar que está por encima de otros elementos */
+    overflow: visible !important;
+    
+    .p-dropdown-panel {
+      position: absolute;
+      top: 100%;
+      z-index: 1000; /* Asegura que el dropdown esté por encima de todo */
+    }
+    
+    .p-dropdown {
+      position: relative;
+      z-index: 999;
+      
+      .p-dropdown-items-wrapper {
+        overflow: visible !important;
+      }
+    }
+    
+    .p-paginator-bottom {
+      overflow: visible !important;
+    }
+  }
+}
+
+/* Asegura que cualquier dropdown en la tabla pueda mostrarse sin ser cortado */
+.p-dropdown-panel {
+  position: absolute;
+  z-index: 1000 !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+/* Estilo global para asegurar que los dropdowns se muestren correctamente */
+.p-dropdown {
+  .p-dropdown-panel {
+    margin: 0;
+    z-index: 1000 !important;
+    transform: none !important;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+/* Arregla cualquier contenedor que pueda estar causando el problema */
+.p-component-overlay {
+  z-index: 1001 !important; /* Asegura que los overlays estén siempre visibles */
+}
+
+/* Asegura que el dropdown del paginador sea visible */
+body .p-dropdown-panel {
+  z-index: 1002 !important; /* Valor muy alto para asegurar que está por encima de todo */
+}
+
+/* Estilos para el paginador de PrimeNG */
+.p-paginator {
+  background: #f8f9fa;
+  border-top: 1px solid #ecf0f1;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 999;
+  overflow: visible !important;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  
+  .p-paginator-element {
+    margin: 0 0.125rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    
+    &.p-highlight {
+      background: #34495e;
+      color: white;
+    }
+    
+    &:not(.p-highlight):hover {
+      background: rgba(52, 73, 94, 0.1);
+    }
+  }
+  
+  .p-paginator-pages {
+    display: flex;
+    
+    .p-paginator-page {
+      margin: 0 0.125rem;
+    }
+  }
+  
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    color: #34495e;
+    
+    &:hover {
+      background: rgba(52, 73, 94, 0.1);
+    }
+    
+    &.p-disabled {
+      opacity: 0.5;
+      cursor: default;
+      
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+}
+
+/* Asegura que el contenedor del paginador tenga un contexto de apilamiento adecuado */
+.p-datatable-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.p-datatable-footer {
+  position: relative;
+  z-index: 2;
 }
 
 /* Estilos universales para iconos de acción */
@@ -104,6 +279,7 @@ img[src*="placeholder.webp"] {
   width: 100% !important;
   height: 100% !important;
 }
+
 
 /* Toast customization global */
 .p-toast {

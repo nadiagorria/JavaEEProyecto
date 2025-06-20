@@ -215,59 +215,7 @@
     }
   }
   
-  // Tablas
-  .p-datatable {
-    border: 1px solid #ecf0f1;
-    border-radius: 12px;
-    overflow: hidden;
-    
-    .p-datatable-header {
-      background: #f8f9fa;
-      border-bottom: 2px solid #ecf0f1;
-      padding: 15px 20px;
-    }
-    
-    .p-datatable-thead > tr > th {
-      background: #34495e;
-      color: white;
-      font-weight: 600;
-      padding: 15px 12px;
-      border: none;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .p-datatable-tbody > tr {
-      border-bottom: 1px solid #ecf0f1;
-      transition: background-color 0.3s ease;
-      
-      &:hover {
-        background-color: rgba(52, 152, 219, 0.05);
-      }
-      
-      > td {
-        padding: 15px 12px;
-        border: none;
-        font-size: 0.9rem;
-        vertical-align: middle;
-      }
-    }
-    
-    .p-paginator {
-      background: #f8f9fa;
-      border-top: 1px solid #ecf0f1;
-      padding: 15px 20px;
-      
-      .p-paginator-pages .p-paginator-page {
-        &.p-highlight {
-          background: #3498db;
-          color: white;
-        }
-      }
-    }
-  }
-  
+
   // Diálogos
   .p-dialog {
     border-radius: 12px;
