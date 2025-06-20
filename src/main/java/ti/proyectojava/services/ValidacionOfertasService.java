@@ -40,6 +40,11 @@ public class ValidacionOfertasService {
             return;
         }
 
+        // Validar que la promoción tenga al menos 2 unidades (mínimo 2x1)
+        if (promocionDto.getDescuento() < 2) {
+            throw new RuntimeException("No se puede crear la promoción: la cantidad mínima de unidades debe ser 2 (para promociones tipo 2x1, 3x2, etc.). Valor recibido: " + promocionDto.getDescuento());
+        }
+
         Long productoId = promocionDto.getProducto().getId();
         Long promocionId = promocionDto.getId() != null ? promocionDto.getId() : -1L;
         LocalDate fechaInicio = promocionDto.getInicio();

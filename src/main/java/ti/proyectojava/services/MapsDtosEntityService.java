@@ -1134,6 +1134,7 @@ public class MapsDtosEntityService {
         dto.setActivo(combo.getActivo());
         dto.setInicio(combo.getInicio());
         dto.setFin(combo.getFin());
+        dto.setFechaEliminado(combo.getFechaEliminado());
 
         if (combo.getProductos() != null) {
             dto.setProductos(combo.getProductos().stream()
@@ -1156,6 +1157,7 @@ public class MapsDtosEntityService {
         dto.setActivo(combo.getActivo());
         dto.setInicio(combo.getInicio());
         dto.setFin(combo.getFin());
+        dto.setFechaEliminado(combo.getFechaEliminado());
         return dto;
     }
 
@@ -1171,6 +1173,7 @@ public class MapsDtosEntityService {
         dto.setActivo(promocion.getActivo());
         dto.setInicio(promocion.getInicio());
         dto.setFin(promocion.getFin());
+        dto.setFechaEliminado(promocion.getFechaEliminado());
 
         if (promocion.getProducto() != null) {
             dto.setProducto(mapToDtoProductoSimple(promocion.getProducto()));
@@ -1191,6 +1194,7 @@ public class MapsDtosEntityService {
         dto.setActivo(promocion.getActivo());
         dto.setInicio(promocion.getInicio());
         dto.setFin(promocion.getFin());
+        dto.setFechaEliminado(promocion.getFechaEliminado());
         return dto;
     }    public DescuentoDto mapToDtoDescuentoSimple(Descuento descuento){
         if (descuento == null) {
@@ -1204,6 +1208,7 @@ public class MapsDtosEntityService {
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());
         dto.setFin(descuento.getFin());
+        dto.setFechaEliminado(descuento.getFechaEliminado());
 
         if (descuento.getProducto() != null) {
             dto.setProducto(mapToDtoProductoSimple(descuento.getProducto()));
@@ -1223,6 +1228,7 @@ public class MapsDtosEntityService {
         dto.setActivo(descuento.getActivo());
         dto.setInicio(descuento.getInicio());
         dto.setFin(descuento.getFin());
+        dto.setFechaEliminado(descuento.getFechaEliminado());
         // NO incluir producto para evitar referencias circulares
         return dto;
     }

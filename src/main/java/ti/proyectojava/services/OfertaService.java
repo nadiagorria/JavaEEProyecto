@@ -9,6 +9,7 @@ import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -43,6 +44,7 @@ public class OfertaService {
         if (ofertaAct.isPresent()) {
             Oferta oferta = ofertaAct.get();
             oferta.setActivo(false);
+            oferta.setFechaEliminado(LocalDateTime.now());
             ofertaRepository.save(oferta);
             response = "Oferta eliminado correctamente. ID:" +  oferta.getId();
         }

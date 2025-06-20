@@ -163,13 +163,31 @@ export class VerventaComponent implements OnInit {
    * Verifica si una oferta estaba vigente en la fecha de la venta
    */
   esOfertaVigenteEnFecha(oferta: ComboDto | PromocionDto | DescuentoDto): boolean {
-    if (!oferta.activo) return false;
-    
     const fechaVenta = new Date(this.venta.fechaVenta);
     const inicioOferta = new Date(oferta.inicio);
     const finOferta = new Date(oferta.fin);
     
-    return fechaVenta >= inicioOferta && fechaVenta <= finOferta;
+    // Verificar que la venta esté dentro del plazo de validez de la oferta
+    const dentroDelPlazo = fechaVenta >= inicioOferta && fechaVenta <= finOferta;
+    
+    if (!dentroDelPlazo) {
+      return false;
+    }
+    
+    // Si la oferta está activa, estaba vigente
+    if (oferta.activo) {
+      return true;
+    }
+    
+    // Si la oferta está inactiva (eliminada), verificar si fue eliminada después de la venta
+    if (oferta.fechaEliminado) {
+      const fechaEliminacion = new Date(oferta.fechaEliminado);
+      // La oferta estaba vigente si la venta se realizó antes de que se eliminara
+      return fechaVenta <= fechaEliminacion;
+    }
+    
+    // Si no hay fecha de eliminación pero está inactiva, no considerarla vigente
+    return false;
   }
 
   /**

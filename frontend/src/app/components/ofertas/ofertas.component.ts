@@ -326,13 +326,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         detail: 'Debe seleccionar un producto'
       });
       return false;
-    }
-
-    if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento <= 0) {
+    }    
+    
+    if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento < 2) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'La cantidad de unidades debe ser mayor a 0'
+        detail: 'La cantidad de unidades mínima debe ser 2 (para promociones tipo 2x1, 3x2, etc.)'
       });
       return false;
     }

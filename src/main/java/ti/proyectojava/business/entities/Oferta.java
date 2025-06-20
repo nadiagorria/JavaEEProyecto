@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -29,4 +30,7 @@ public class Oferta {
 
     @Column(name = "OFERTA_FIN")
     private LocalDate fin;
+
+    @Column(name = "OFERTA_FECHA_ELIMINADO")
+    private LocalDateTime fechaEliminado;
 }

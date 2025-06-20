@@ -163,11 +163,11 @@
 
       <!-- Unidades requeridas -->
       <div class="form-group">
-        <label for="unidadesPromocion">Unidades Requeridas *</label>
-        <p-inputNumber [(ngModel)]="nuevaPromocion.descuento" name="unidadesPromocion" [min]="1" [max]="100"
+        <label for="unidadesPromocion">Unidades Requeridas *</label>        
+        <p-inputNumber [(ngModel)]="nuevaPromocion.descuento" name="unidadesPromocion" [min]="2" [max]="100"
           placeholder="Cantidad de unidades" class="form-control">
         </p-inputNumber>
-        <small class="form-text">Por ejemplo: Si es 3, significa "lleva 3 paga 2"</small>
+        <small class="form-text">Por ejemplo: Si es 2, significa "lleva 2 paga 1" (mínimo 2 unidades)</small>
       </div>
 
       <!-- Fechas -->
