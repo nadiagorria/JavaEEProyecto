@@ -177,7 +177,7 @@ public class ProductoService {
     public ProductoDto buscarPorCodigoBarras(String codigoBarras) {
         Optional<Producto> producto = productoRepository.findByCodigoDeBarraAndActivoTrue(codigoBarras);
         if (producto.isPresent()) {
-            return mapsDtosEntityService.mapToDtoProductoSimple(producto.get());
+            return mapsDtosEntityService.mapToDtoProducto(producto.get());
         }
         return null;
     }
@@ -185,7 +185,7 @@ public class ProductoService {
     public List<ProductoDto> buscarTodosPorCodigoBarras(String codigoBarras) {
         List<Producto> productos = productoRepository.findAllByCodigoDeBarraAndActivoTrue(codigoBarras);
         return productos.stream()
-                .map(mapsDtosEntityService::mapToDtoProductoSimple)
+                .map(mapsDtosEntityService::mapToDtoProducto)
                 .collect(Collectors.toList());
     }
 

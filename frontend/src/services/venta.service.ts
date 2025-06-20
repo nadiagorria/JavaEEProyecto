@@ -16,10 +16,6 @@ export class VentaService {
     private urlService: UrlService
   ) { }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  }
   
   crearVenta(venta: VentaDto): Observable<{id: number}> {
     return this.http.post<{id: number}>(`${this.urlService.baseUrl}${this.endpoint}/crear`, venta);
