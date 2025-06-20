@@ -21,6 +21,7 @@ import { LoteService } from 'src/services/lote.service';
 import { CategoriaService } from 'src/services/categoria.service';
 import { EntidadService } from 'src/services/entidad.service';
 import { SecurityService } from 'src/services/security.service';
+import { BarcodeScannerService } from 'src/services/barcode-scanner.service';
 import { ProductoDto } from 'src/models/producto.dto';
 import { LoteDto } from 'src/models/lote.dto';
 import { CategoriaDto } from 'src/models/categoria.dto';
@@ -31,6 +32,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 interface EditandoProducto {
   id: number | null;
   nombre: string;
+  codigoDeBarra: string;
   precioVenta: number;
   stockMin: number;
   categoriaId: number | null;
@@ -73,19 +75,20 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         private entidadService: EntidadService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private securityService: SecurityService
+        private securityService: SecurityService,
+        private barcodeScannerService: BarcodeScannerService
       ) { }
 
   producto?: ProductoDto;
   error: string = '';
   loading: boolean = true;
   imagenUrl: string = '';
-  cacheImagenes = new Map<number, string>();
-  // Edit modal properties
+  cacheImagenes = new Map<number, string>();  // Edit modal properties
   mostrarModalEditar: boolean = false;
   editandoProducto: EditandoProducto = {
     id: null,
     nombre: '',
+    codigoDeBarra: '',
     precioVenta: 0,
     stockMin: 0,
     categoriaId: null,
@@ -146,6 +149,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   imagenSeleccionada: File | null = null;
   imagenPreviewEdicion: string | null = null;
+  private barcodeScannerSubscription: any;
+
   ngOnInit() {
     const hoy = new Date();
     this.minFechaVencimiento = hoy.toISOString().split('T')[0];
@@ -160,6 +165,13 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.error = 'ID de producto inválido';
       this.loading = false;
     }
+
+    // Suscribirse al escáner de códigos de barras
+    this.barcodeScannerSubscription = this.barcodeScannerService.lastScannedCode$.subscribe(code => {
+      if (code && this.mostrarModalEditar) {
+        this.editandoProducto.codigoDeBarra = code;
+      }
+    });
   }cargarProducto(id: number) {
     this.loading = true;
     this.productoService.obtenerProducto(id).subscribe({      next: (response) => {
@@ -282,10 +294,10 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (this.proveedores.length === 0) {
       this.cargarProveedores();
     }
-    
-    this.editandoProducto = {
+      this.editandoProducto = {
       id: this.producto.id,
       nombre: this.producto.nombre,
+      codigoDeBarra: this.producto.codigoDeBarra,
       precioVenta: this.producto.precioVenta,
       stockMin: this.producto.stockMin,
       categoriaId: this.producto.categoria?.id || null,
@@ -303,7 +315,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Por favor completa todos los campos requeridos'
+        detail: 'No se puede procesar la edición del producto. Todos los campos deben ser válidos.'
       });
       return;
     }
@@ -315,12 +327,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     const proveedorSeleccionado = this.proveedores.find(p => p.id === this.editandoProducto.proveedorId);
 
     console.log('Categoría encontrada:', categoriaSeleccionada);
-    console.log('Proveedor encontrado:', proveedorSeleccionado);
-
+    console.log('Proveedor encontrado:', proveedorSeleccionado);    
     const productoParaEditar: ProductoDto = {
       ...this.producto!,
       id: this.editandoProducto.id,
       nombre: this.editandoProducto.nombre!,
+      codigoDeBarra: this.editandoProducto.codigoDeBarra!,
       precioVenta: this.editandoProducto.precioVenta!,
       stockMin: this.editandoProducto.stockMin!,
       categoria: categoriaSeleccionada || null,
@@ -383,6 +395,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   private finalizarEdicion(): void {
     this.mostrarModalEditar = false;
+    // Desactivar el escáner de códigos de barras
+    this.barcodeScannerService.deactivateScanner();
+    
     // Solo recargar producto si no se actualizó imagen (porque ya se actualizó inmediatamente)
     if (this.producto!.id !== null && !this.imagenSeleccionada) {
       this.cargarProducto(this.producto!.id);
@@ -407,10 +422,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   private validarFormularioEdicion(): boolean {
     return !!(
       this.editandoProducto.nombre &&
+      this.editandoProducto.codigoDeBarra &&
       this.editandoProducto.precioVenta !== undefined &&
       this.editandoProducto.precioVenta > 0 &&
       this.editandoProducto.stockMin !== undefined &&
-      this.editandoProducto.stockMin >= 0
+      this.editandoProducto.stockMin >= 0 &&
+      this.editandoProducto.codigoDeBarra.trim() !== ''
     );
   }
 
@@ -604,6 +621,11 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.limpiarCacheImagenes();
+    
+    // Limpiar suscripción al escáner de códigos de barras
+    if (this.barcodeScannerSubscription) {
+      this.barcodeScannerSubscription.unsubscribe();
+    }
   }
 
   private limpiarCacheImagenes(): void {
@@ -710,5 +732,21 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (imgElement && !imgElement.src.includes('placeholder-image.webp')) {
       imgElement.src = '/placeholder-image.webp';
     }
+  }
+
+  // Función para activar el escáner de código de barras
+  activarEscanerCodigoBarras(): void {
+    this.barcodeScannerService.activateScanner();
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Escáner Activado',
+      detail: 'Escanee un código de barras para capturarlo',
+      life: 3000
+    });
+  }
+
+  // Función para desactivar el escáner de código de barras
+  desactivarEscaner(): void {
+    this.barcodeScannerService.deactivateScanner();
   }
 }

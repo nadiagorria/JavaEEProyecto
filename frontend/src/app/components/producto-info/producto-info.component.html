@@ -113,12 +113,12 @@
                 <ng-template #sinFecha>
                   <span class="fecha-sin-vencimiento">Sin fecha de vencimiento</span>
                 </ng-template>
-              </td>              
+              </td>
               <td>{{ lote.precioCompra | currency }}</td>
               <td>{{ lote.stock }}</td>
               <td *ngIf="isAdmin()">
-                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"                  
-                (click)="confirmarEliminarLote(lote.id!)" [disabled]="!lote.id" pTooltip="Eliminar lote">
+                <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"
+                  (click)="confirmarEliminarLote(lote.id!)" [disabled]="!lote.id" pTooltip="Eliminar lote">
                 </p-button>
               </td>
             </tr>
@@ -133,7 +133,7 @@
 <!-- Modal de Editar Producto -->
 <p-dialog header="Editar Producto" [(visible)]="mostrarModalEditar" [modal]="true" [style]="{width: '550px'}"
   [contentStyle]="{overflow: 'auto'}" [closable]="true" [draggable]="false" [resizable]="false"
-  styleClass="producto-dialog" appendTo="body">
+  styleClass="producto-dialog" appendTo="body" (onHide)="desactivarEscaner()">
 
   <div class="modal-editar-content">
     <form class="producto-form">
@@ -145,6 +145,11 @@
           <label for="nombre">Nombre del Producto</label>
           <input id="nombre" type="text" pInputText placeholder="Ingrese el nombre del producto"
             [(ngModel)]="editandoProducto.nombre" name="nombre" class="w-full" />
+        </div>
+        <div class="form-group">
+          <label for="codigoDeBarra">Código de Barras</label>
+          <input id="codigoDeBarra" type="text" pInputText placeholder="Ingrese el código de barras"
+            [(ngModel)]="editandoProducto.codigoDeBarra" name="codigoDeBarra" class="w-full" />
         </div>
 
         <div class="form-row">
@@ -169,10 +174,10 @@
       <!-- Relaciones -->
       <div class="form-section">
         <div class="section-title">Categoría y Proveedor</div>
-        <div class="form-group"> <label for="categoria">Categoría</label> 
-          <p-dropdown [options]="categorias"
-            [(ngModel)]="editandoProducto.categoriaId" name="categoria" optionLabel="nombre" optionValue="id"
-            placeholder="Seleccionar categoría" class="w-full" [showClear]="true" scrollHeight="182px" appendTo="body">
+        <div class="form-group"> <label for="categoria">Categoría</label>
+          <p-dropdown [options]="categorias" [(ngModel)]="editandoProducto.categoriaId" name="categoria"
+            optionLabel="nombre" optionValue="id" placeholder="Seleccionar categoría" class="w-full" [showClear]="true"
+            scrollHeight="182px" appendTo="body">
           </p-dropdown>
         </div>
         <div class="form-group"> <label for="proveedor">Proveedor</label> <p-dropdown [options]="proveedores"
@@ -200,50 +205,77 @@
         </div>
       </div>
     </form>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="mostrarModalEditar = false">
+  </div> <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" class="p-button-text"
+      (click)="mostrarModalEditar = false; desactivarEscaner()">
     </button> <button pButton type="button" label="Guardar Cambios" class="p-button-success" (click)="editarProducto()">
     </button>
   </ng-template>
 </p-dialog>
 
 <!-- Modal de PrimeNG -->
-<p-dialog header="Agregar Lote" [(visible)]="mostrarModalAgregarLote" [modal]="true" [style]="{width: '400px'}"
-  [contentStyle]="{overflow: 'auto'}" [closable]="true" styleClass="producto_dialog" appendTo="body">
+<p-dialog header="Agregar Lote" [(visible)]="mostrarModalAgregarLote" [modal]="true" [style]="{width: '500px'}"
+  [contentStyle]="{overflow: 'auto'}" [closable]="true" [draggable]="false" [resizable]="false"
+  styleClass="producto_dialog" appendTo="body">
 
-  <form class="lote-form">
-    <div class="form-group">
-      <label for="numeLote">Número de Lote *</label>
-      <input id="numeLote" type="text" pInputText placeholder="Ej: L001-2024" [(ngModel)]="nuevoLote.numeLote"
-        name="numeLote" class="w-full" />
-    </div>
+  <div class="modal-editar-content">
+    <form class="lote-form">
+      <!-- Información del Lote -->
+      <div class="form-section">
+        <div class="section-title">Información del Lote</div>
 
-    <div class="form-group">
-      <label for="stock">Stock *</label>
-      <input id="stock" type="number" pInputText placeholder="0" [(ngModel)]="nuevoLote.stock" name="stock" min="0"
-        class="w-full" />
-    </div>
-    <div class="form-group">
-      <label for="fechaVencimiento">Fecha de Vencimiento (Opcional)</label>
-      <input id="fechaVencimiento" type="date" pInputText [(ngModel)]="nuevoLote.fechaVencimiento"
-        name="fechaVencimiento" class="w-full" [min]="minFechaVencimiento" />
-      <small class="help-text">Deje vacío si el producto no tiene fecha de vencimiento</small>
-    </div>
+        <div class="form-group">
+          <label for="numeLote">Número de Lote <span style="color: red;">*</span></label>
+          <input id="numeLote" type="text" pInputText placeholder="Ej: L001-2024" [(ngModel)]="nuevoLote.numeLote"
+            name="numeLote" class="w-full" />
+        </div>
 
-    <div class="form-group">
-      <label for="precioCompra">Precio de Compra *</label>
-      <input id="precioCompra" type="number" pInputText placeholder="0.00" [(ngModel)]="nuevoLote.precioCompra"
-        name="precioCompra" min="0" step="0.01" class="w-full" />
-    </div>
-  </form>
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="stock">Stock <span style="color: red;">*</span></label>
+              <input id="stock" type="number" pInputText placeholder="0" [(ngModel)]="nuevoLote.stock" name="stock" min="0"
+                class="w-full" />
+            </div>
+          </div>
+
+          <div class="form-col">
+            <div class="form-group">
+              <label for="precioCompra">Precio de Compra <span style="color: red;">*</span></label>
+              <input id="precioCompra" type="number" pInputText placeholder="0.00" [(ngModel)]="nuevoLote.precioCompra"
+                name="precioCompra" min="0" step="0.01" class="w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vencimiento -->
+      <div class="form-section">
+        <div class="section-title">Fecha de Vencimiento</div>
+        <div class="form-group">
+          <label for="fechaVencimiento">Fecha de Vencimiento (Opcional)</label>
+          <input id="fechaVencimiento" type="date" pInputText [(ngModel)]="nuevoLote.fechaVencimiento"
+            name="fechaVencimiento" class="w-full" [min]="minFechaVencimiento" />
+          <small class="help-text">Deje vacío si el producto no tiene fecha de vencimiento</small>
+        </div>
+      </div>
+
+      <!-- Campos obligatorios -->
+      <div class="form-group mt-3">
+        <div class="campos-obligatorios">
+          <i class="pi pi-info-circle"></i>
+          <span>Los campos marcados con <span style="color: red;">*</span> son obligatorios</span>
+        </div>
+      </div>
+    </form>
+  </div>
 
   <ng-template pTemplate="footer">
     <button pButton type="button" label="Cancelar" class="p-button-text" (click)="mostrarModalAgregarLote = false">
     </button>
     <button pButton type="button" label="Agregar" class="p-button-success" (click)="agregarLote()">
-    </button> </ng-template>
+    </button>
+  </ng-template>
 </p-dialog>
 
 <!-- Modal de Modificar Stock Total - Solo Admin Supremo -->

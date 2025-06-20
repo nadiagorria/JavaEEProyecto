@@ -121,23 +121,8 @@
   .producto-card .imagen-container { height: 200px; }
 }
 
-// Estilos para el formulario del modal
-.lote-form {
-  .form-group {
-    margin-bottom: 1rem;
-    
-    label {
-      display: block;
-      font-weight: 500;
-      color: #495057;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-  }
-}
-
-// Estilos para el modal de editar producto
-.producto-form {
+// Estilos unificados para formularios
+.producto-form, .lote-form {
   .form-group {
     margin-bottom: 1.5rem;
     
@@ -176,16 +161,20 @@
         padding-right: 2rem;
       }
     }
+    
+    .help-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.5rem;
+      display: block;
+    }
   }
   
   // Styling para inputs específicos
   input[type="number"] {
     padding-right: 2rem;
   }
-}
-
-// Contenedor del modal con mejor espaciado
-.modal-editar-content {
+  
   .form-row {
     display: flex;
     gap: 1rem;
@@ -211,8 +200,20 @@
       letter-spacing: 0.5px;
     }
   }
+  
+  .campos-obligatorios {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+    
+    i {
+      color: #dc3545;
+    }
+  }
 }
-.producto-dialog {
+.producto-dialog, .producto_dialog {
   .p-dialog-content {
     overflow: auto !important;
     max-height: 80vh;

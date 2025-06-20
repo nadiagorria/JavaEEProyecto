@@ -96,7 +96,9 @@ public class ProductoService {
             return producto.get().getImagen();
         }
         return null;
-    }    public String actualizarImagenProducto(Long id, byte[] imagen) {
+    }
+
+    public String actualizarImagenProducto(Long id, byte[] imagen) {
         Optional<Producto> optionalProducto = productoRepository.findById(id);
         if (optionalProducto.isPresent()) {
             Producto producto = optionalProducto.get();
@@ -141,10 +143,13 @@ public class ProductoService {
             if (productoDto.getPrecioVenta() != 0) {
                 productoActual.setPrecioVenta(productoDto.getPrecioVenta());
             }
-            if (productoDto.getStockMin() != 0) {
-                productoActual.setStockMin(productoDto.getStockMin());
+
+            productoActual.setStockMin(productoDto.getStockMin());
+
+            if (productoDto.getCodigoDeBarra() != null) {
+                productoActual.setCodigoDeBarra(productoDto.getCodigoDeBarra());
             }
-            
+
             // Update categoria if provided
             if (productoDto.getCategoria() != null) {
                 productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
