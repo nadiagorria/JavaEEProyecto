@@ -1,3 +1,6 @@
+// Importar estilos compartidos para modales
+@use '../../../styles/modal-styles.scss';
+
 .texto {
   font-family: "Source Sans 3", sans-serif;
 }
@@ -7,15 +10,6 @@
   font-weight: 600;
   margin-bottom: 2rem;
   font-size: 2rem;
-}
-
-// Estilos para el formulario del modal
-.form-content {
-  margin: 1rem 0;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
 }
 
 // Responsive
@@ -144,8 +138,7 @@
 .form-content {
   .form-group {
     margin-bottom: 1.5rem;
-    
-    label {
+      label {
       display: block;
       font-weight: 600;
       color: #2c3e50;
@@ -156,12 +149,6 @@
         content: " *";
         color: #dc3545;
         font-weight: 400;
-      }
-      
-      // Remover asterisco para campos opcionales
-      &[for="telefono"]::after,
-      &[for="correo"]::after {
-        content: "";
       }
     }
     

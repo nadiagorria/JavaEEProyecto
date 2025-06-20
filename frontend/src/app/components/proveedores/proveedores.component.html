@@ -21,31 +21,41 @@
           </p-button>
         </div>
       </div>
-    </div>
-
-    <!-- Modal de añadir proveedor -->
-    <p-dialog header="Añadir Nuevo Proveedor" [(visible)]="visible" [modal]="true" [style]="{width: '450px'}" 
+    </div>    <!-- Modal de añadir proveedor -->
+    <p-dialog header="Añadir Nuevo Proveedor" [(visible)]="visible" [modal]="true" [style]="{width: '500px'}" 
       [contentStyle]="{overflow: 'auto'}" [draggable]="false" [resizable]="false" [closable]="true" 
-      styleClass="lote-dialog" appendTo="body">
-      <form class="form-content">
-        <div class="form-group">
-          <label for="nombre">Nombre del Proveedor</label>
-          <input id="nombre" pInputText [(ngModel)]="nombre" name="nombre" class="w-full"
-            placeholder="Ingrese el nombre del proveedor" autocomplete="off" />
-        </div>
+      styleClass="form-dialog" appendTo="body">
+        <div class="modal-content">
+        <form class="form-content">
+          <!-- Información Básica -->
+          <div class="form-section">
+            <div class="section-title">Información del Proveedor</div>            
+            <div class="form-group">
+              <label for="nombre">Nombre del Proveedor</label>
+              <input id="nombre" pInputText [(ngModel)]="nombre" name="nombre" class="w-full"
+                placeholder="Ingrese el nombre del proveedor" autocomplete="off" />
+            </div>
 
-        <div class="form-group">
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" pInputText [(ngModel)]="telefono" name="telefono" class="w-full"
-            placeholder="Ej: +569 1234 5678" autocomplete="off" />
-        </div>
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input id="telefono" pInputText [(ngModel)]="telefono" name="telefono" class="w-full"
+                placeholder="Ej: +569 1234 5678" autocomplete="off" />
+            </div>
 
-        <div class="form-group">
-          <label for="correo">Correo Electrónico</label>
-          <input id="correo" pInputText [(ngModel)]="correo" name="correo" class="w-full" placeholder="ejemplo@correo.com"
-            type="email" autocomplete="off" />
-        </div>
-      </form>
+            <div class="form-group">
+              <label for="correo">Correo Electrónico</label>
+              <input id="correo" pInputText [(ngModel)]="correo" name="correo" class="w-full" placeholder="ejemplo@correo.com"
+                type="email" autocomplete="off" />
+            </div>
+          </div>
+
+          <!-- Campos obligatorios -->
+          <div class="campos-obligatorios">
+            <i class="pi pi-info-circle"></i>
+            <span>Los campos marcados con <span style="color: red;">*</span> son obligatorios</span>
+          </div>
+        </form>
+      </div>
 
       <ng-template pTemplate="footer">
         <button pButton type="button" label="Cancelar" class="p-button-text" (click)="cerrarDialog()">
