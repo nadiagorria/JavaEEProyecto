@@ -1,9 +1,7 @@
 package ti.proyectojava.services;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoCategorias;
-import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CategoriaRepository;
@@ -49,22 +47,22 @@ public class CategoriaService {
         return response;
     }
 
-    public String borrarCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
+    
+
+    public String borrarCategoria(Long id) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
             Categoria categoria = categoriaOpt.get();
             categoria.setActivo(false);
             categoriaRepository.save(categoria);
-            response = "Categoría eliminada correctamente. NOMBRE:" + categoria.getNombre();
-        }
-
-        return response;
-    }    
+            response = "Categoría eliminada correctamente. ID:" + categoria.getId() + ", NOMBRE:" + categoria.getNombre();
+        }        return response;
+    }
     
-    public String desvincularProductosDeCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
+    public String desvincularProductosDeCategoria(Long id) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
@@ -81,7 +79,7 @@ public class CategoriaService {
             
             // Guardar los cambios
             categoriaRepository.save(categoria);
-            response = "Productos desvinculados correctamente de la categoría: " + categoria.getNombre();
+            response = "Productos desvinculados correctamente de la categoría ID:" + categoria.getId() + ", NOMBRE:" + categoria.getNombre();
         }
 
         return response;

@@ -388,17 +388,18 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }  eliminarCategoria() {
     if (this.categoriaSeleccionada == null) return;
     
-    // Encontrar el nombre de la categoría seleccionada
+    // Encontrar la categoría seleccionada
     const categoriaAEliminar = this.categorias.find(cat => cat.id === this.categoriaSeleccionada);
-    if (!categoriaAEliminar || !categoriaAEliminar.nombre) {
+    if (!categoriaAEliminar || !categoriaAEliminar.id) {
       alert('No se pudo encontrar la categoría seleccionada');
       return;
     }
     
     // Primero desvincular los productos
-    this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.nombre).subscribe({
-      next: () => {        // Luego proceder con la eliminación de la categoría
-        this.categoriaService.eliminarCategoria(categoriaAEliminar.nombre).subscribe({
+    this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.id).subscribe({
+      next: () => {
+        // Luego proceder con la eliminación de la categoría
+        this.categoriaService.eliminarCategoria(categoriaAEliminar.id).subscribe({
           next: () => {
             // Actualiza la lista de categorías tras eliminar
             this.categoriaService.listarCategorias().subscribe({
