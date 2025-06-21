@@ -23,10 +23,6 @@ export class EntidadService {
         { params },);
   }
 
-  crearCliente(cliente: ClienteDto): Observable<String> {
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/cliente`, cliente, 
-      { responseType: 'text' });
-  }
 
   crearClienteCredito(clienteCreditoDto: clienteCreditoDto): Observable<String> {
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/clienteCredito`, 

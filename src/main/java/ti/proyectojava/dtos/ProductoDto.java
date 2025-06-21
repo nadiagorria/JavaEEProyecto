@@ -38,5 +38,4 @@ public class ProductoDto {
     private List<CantidadDto> cantidades;
 
     private Boolean activo;
-
 }

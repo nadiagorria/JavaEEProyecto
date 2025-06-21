@@ -6,11 +6,17 @@ import java.util.List;
 
 @Data
 public class CategoriaDto {
+
     private Long id;
+
     private String nombre;
+
     private Boolean activo;
+
     private List<CategoriaDto> subcategorias;
+
     private CategoriaDto categoriaPadre;
+
     private List<ProductoDto> productos;
 
 }

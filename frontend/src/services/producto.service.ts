@@ -15,17 +15,14 @@ export class ProductoService {
     private urlService: UrlService
   ) { }  
   
-  crearProducto(producto: ProductoDto): Observable<string> {
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-json`, producto, {
-      responseType: 'text'
-    });
-  }
+
   // Nuevo método que usa el endpoint optimizado con DTO completo
   crearProductoConDto(producto: ProductoDto): Observable<any> {
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-dto`, producto, {
       responseType: 'text'
     });
   }
+
   crearProductoConImagen(formData: FormData): Observable<any> {
     // No establecer Content-Type manualmente para FormData
     // Angular lo hará automáticamente y incluirá el boundary
@@ -67,9 +64,6 @@ export class ProductoService {
     return this.http.get<{productos: ProductoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/listar`);
   }
   
-  buscarPorCodigoBarras(codigoBarras: string): Observable<ProductoDto | null> {
-    return this.http.get<ProductoDto>(`${this.urlService.baseUrl}${this.endpoint}/buscar/codigo/${codigoBarras}`);
-  }  
 
   buscarTodosPorCodigoBarras(codigoBarras: string): Observable<ProductoDto[]> {
     return this.http.get<ProductoDto[]>(`${this.urlService.baseUrl}${this.endpoint}/buscar/codigo/todos/${codigoBarras}`);

@@ -11,17 +11,11 @@ import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CreditoRepository;
 import ti.proyectojava.business.repositories.ProductoRepository;
 import ti.proyectojava.business.repositories.VentaRepository;
-import ti.proyectojava.dtos.CantidadDto;
-import ti.proyectojava.dtos.CreditoDto;
 import ti.proyectojava.dtos.VentaDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,7 +41,6 @@ public class VentaService {
     public VentaDto obtenerVentaPorId(Long ventaId) {
         Venta venta = ventaRepository.findById(ventaId).orElseThrow(() -> new RuntimeException("Venta no existe"));
         
-        // Verificar si la venta está activa
         if (!venta.getActivo()) {
             throw new RuntimeException("La venta ha sido eliminada y no está disponible");
         }
@@ -58,35 +51,29 @@ public class VentaService {
     public Long crearVenta(VentaDto ventaDto) {
         System.out.println("VentaService - estableciendo fecha y hora actual para la venta");
         
-        // Siempre establecer la fecha y hora actual al crear una venta
         LocalDateTime ahora = LocalDateTime.now();
         ventaDto.setFechaVenta(ahora);
         System.out.println("VentaService - fechaVenta asignada: " + ventaDto.getFechaVenta());
         
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
-        
-        // Descontar stock de los productos vendidos
-        // Crear una copia de la lista para evitar ConcurrentModificationException
+
         List<Cantidad> cantidades = new ArrayList<>(ventaGuardada.getCantidades());
         for (Cantidad cantidad : cantidades) {
             Producto producto = cantidad.getProducto();
             int stockActual = producto.getStockTotal();
             int cantidadVendida = cantidad.getCantidad();
             
-            // Verificar que hay suficiente stock
             if (stockActual < cantidadVendida) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombre() + 
                     ". Stock disponible: " + stockActual + ", Cantidad solicitada: " + cantidadVendida);
             }
             
-            // Descontar el stock del producto
             producto.setStockTotal(stockActual - cantidadVendida);
             productoRepository.save(producto);
             
             log.info("Stock actualizado para producto {}: {} -> {}", 
                 producto.getNombre(), stockActual, producto.getStockTotal());
             
-            // Verificar stock mínimo después de la venta
             try {
                 notificacionUsuarioService.verificarStockMinimoPostVenta(producto);
             } catch (Exception e) {
@@ -108,19 +95,16 @@ public class VentaService {
         Venta venta = ventaRepository.findById(ventaId)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID: " + ventaId));
         
-        // Verificar que la venta esté activa antes de eliminarla
         if (!venta.getActivo()) {
             throw new RuntimeException("La venta ya está eliminada. ID: " + ventaId);
         }
-          // Devolver el stock de los productos vendidos
-        // Crear una copia de la lista para evitar ConcurrentModificationException
+
         List<Cantidad> cantidades = new ArrayList<>(venta.getCantidades());
         for (Cantidad cantidad : cantidades) {
             Producto producto = cantidad.getProducto();
             int stockActual = producto.getStockTotal();
             int cantidadDevolver = cantidad.getCantidad();
             
-            // Incrementar el stock total del producto
             producto.setStockTotal(stockActual + cantidadDevolver);
             productoRepository.save(producto);
             
@@ -128,11 +112,10 @@ public class VentaService {
                      producto.getId(), cantidadDevolver, producto.getStockTotal());
         }
         
-        // Si la venta era a crédito, reducir el monto del crédito
         if (venta.getCredito() != null) {
             Credito credito = venta.getCredito();
             float nuevoPrecioTotal = credito.getPrecioTotal() - venta.getTotal();
-            credito.setPrecioTotal(Math.max(0, nuevoPrecioTotal)); // Evitar valores negativos
+            credito.setPrecioTotal(Math.max(0, nuevoPrecioTotal));
             creditoRepository.save(credito);
             
             log.info("Crédito actualizado para cliente ID {}: reducido en {}. Nuevo total: {}", 
@@ -145,72 +128,12 @@ public class VentaService {
                  ventaId, venta.getCantidades().size());
         
         return ventaRepository.save(venta);
-    }    public String eliminarCantidadDeVenta(Long ventaId, Long cantidadId) {
-        Venta venta = ventaRepository.findById(ventaId)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
-
-
-        Cantidad cantidad = cantidadRepository.findById(cantidadId)
-                .orElseThrow(() -> new RuntimeException("Cantidad no encontrada. ID:" + cantidadId));
-
-        if (!cantidad.getVenta().getId().equals(ventaId)) {
-            throw new RuntimeException("La cantidad no pertenece a la venta especificada.");
-        }
-
-        // Devolver el stock del producto
-        Producto producto = cantidad.getProducto();
-        int stockActual = producto.getStockTotal();
-        int cantidadDevolver = cantidad.getCantidad();
-        
-        producto.setStockTotal(stockActual + cantidadDevolver);
-        productoRepository.save(producto);
-        
-        log.info("Stock devuelto para producto {}: {} unidades. Nuevo stock: {}", 
-                 producto.getNombre(), cantidadDevolver, producto.getStockTotal());
-
-        float montoRestado = cantidad.getProducto().getPrecioVenta() * cantidad.getCantidad();
-        venta.setTotal(venta.getTotal() - montoRestado);
-
-        venta.getCantidades().remove(cantidad);
-        cantidadRepository.delete(cantidad);
-
-        ventaRepository.save(venta);
-
-        return "Producto eliminado de la venta correctamente. ID Venta: " + ventaId;
     }
 
 
-    public String finalizarVenta(Long ventaId) {
-        Venta venta = ventaRepository.findById(ventaId)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada. ID:" + ventaId));
-
-        if (venta.getCantidades().isEmpty()) {
-            throw new RuntimeException("No se pueden finalizar ventas sin productos. ID:" + ventaId);
-        }
-
-        // Calcular el total
-        float totalVenta = venta.getCantidades().stream()
-                .map(cantidad -> cantidad.getProducto().getPrecioVenta() * cantidad.getCantidad())
-                .reduce(0f, Float::sum);
-
-        venta.setTotal(totalVenta);
-
-        // si está asociada a un crédito
-        if (venta.getCredito() != null) {
-            Credito credito = venta.getCredito();
-            float nuevoPrecioTotal = credito.getPrecioTotal() + totalVenta;
-            credito.setPrecioTotal(nuevoPrecioTotal);
-            creditoRepository.save(credito);
-        }
-
-        
-        ventaRepository.save(venta);
-
-        return "Venta finalizada correctamente. ID:" + venta.getId();
-    }    public ResponseListadoVentas listadoVentas() {
+    public ResponseListadoVentas listadoVentas() {
         ResponseListadoVentas responseListadoVentas = new ResponseListadoVentas();
 
-        // Obtener solo las ventas activas
         List<VentaDto> ventasActivas = ventaRepository.findByActivoTrue()
                 .stream()
                 .map(mapsDtosEntityService::mapToDtoVentaPlano)
@@ -219,10 +142,11 @@ public class VentaService {
         responseListadoVentas.setVentas(ventasActivas);
 
         return responseListadoVentas;
-    }    public ResponseListadoVentas listadoVentasPorUsuario(String nombreUsuario) {
+    }
+
+    public ResponseListadoVentas listadoVentasPorUsuario(String nombreUsuario) {
         ResponseListadoVentas responseListadoVentas = new ResponseListadoVentas();
 
-        // Obtener solo las ventas activas del usuario específico
         List<VentaDto> ventasUsuario = ventaRepository.findByActivoTrueAndUsuarioNombre(nombreUsuario)
                 .stream()
                 .map(mapsDtosEntityService::mapToDtoVentaPlano)

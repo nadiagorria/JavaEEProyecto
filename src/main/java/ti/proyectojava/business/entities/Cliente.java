@@ -1,11 +1,9 @@
 package ti.proyectojava.business.entities;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Objects;
 
 @Data
 @Entity

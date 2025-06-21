@@ -77,12 +77,6 @@ export class OfertaService {
     return this.http.get<ResponseListadoDescuentos>(`${this.urlService.baseUrl}${this.endpoint}/listarDescuentos`);
   }
 
-  /**
-   * Lista los descuentos de un producto específico
-   */
-  getDescuentosByProducto(productoId: number): Observable<ResponseListadoDescuentos> {
-    return this.http.get<ResponseListadoDescuentos>(`${this.urlService.baseUrl}${this.endpoint}/descuentos/producto/${productoId}`);
-  }
 
   // ==================== PROMOCIONES ====================
   /**
@@ -105,12 +99,6 @@ export class OfertaService {
     return this.http.get<ResponseListadoPromociones>(`${this.urlService.baseUrl}${this.endpoint}/listarPromociones`);
   }
 
-  /**
-   * Lista las promociones de un producto específico
-   */
-  getPromocionesByProducto(productoId: number): Observable<ResponseListadoPromociones> {
-    return this.http.get<ResponseListadoPromociones>(`${this.urlService.baseUrl}${this.endpoint}/promociones/producto/${productoId}`);
-  }
 
   // ==================== GENERAL ====================
   /**

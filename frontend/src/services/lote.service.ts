@@ -11,7 +11,9 @@ export class LoteService {
   private endpoint: string = '/lote';  constructor(
     private http: HttpClient,
     private urlService: UrlService
-  ) {}  crearLote(lote: LoteDto): Observable<any> {
+  ) {}  
+  
+  crearLote(lote: LoteDto): Observable<any> {
     // Con LocalDate en el backend, ya no necesitamos formatear nada
     // El backend automáticamente parsea strings ISO (YYYY-MM-DD)
     console.log('🚀 SERVICIO - Payload completo:', lote);

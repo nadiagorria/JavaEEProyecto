@@ -2,9 +2,7 @@ package ti.proyectojava.services;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import ti.proyectojava.api.responses.ResponseListadoCategorias;
 import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
@@ -69,14 +67,15 @@ public class ProductoService {
         response.setProductos(topMasVendidos);
 
         return response;
-    }public String crearProducto(ProductoDto productoDto) {
+    }
+
+    public String crearProducto(ProductoDto productoDto) {
         return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 
     public String crearProductoConImagen(ProductoDto productoDto, Long categoriaId, Long proveedorId) {
         Producto producto = mapsDtosEntityService.mapToEntityProducto(productoDto);
         
-        // Asignar categoría y proveedor si se proporcionan
         if (categoriaId != null) {
             // Aquí deberías inyectar el repositorio de categorías para buscar por ID
             // Por simplicidad, se asume que la categoría ya está en el DTO

@@ -16,45 +16,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class InitialDataConfig {    @Autowired
+public class InitialDataConfig {
+    @Autowired
     private RolUsuarioRepository rolUsuarioRepository;
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
-    private PasswordService passwordService;    @Bean
+    private PasswordService passwordService;
+
+    @Bean
     public CommandLineRunner initRoles() {
         return args -> {
-            // Verificar si ya existen roles
             if (rolUsuarioRepository.count() == 0) {
 
-                // Crear rol ADMIN
                 RolUsuario rolAdmin = new RolUsuario();
                 rolAdmin.setId(1L);
                 rolAdmin.setNombre("ADMIN");
                 rolUsuarioRepository.save(rolAdmin);
 
-                // Crear rol CAJERO
                 RolUsuario rolCajero = new RolUsuario();
                 rolCajero.setId(2L);
                 rolCajero.setNombre("CAJERO");
                 rolUsuarioRepository.save(rolCajero);
             }
-            
-            // Crear usuario administrador por defecto si no existe
+
             if (usuarioRepository.findByNombreIgnoreCase("admin").isEmpty()) {
                 Usuario adminUser = new Usuario();
                 adminUser.setNombre("admin");
                 adminUser.setMail("admin@byf.com");
                 adminUser.setContrasenia(passwordService.encryptPassword("admin123"));
                 adminUser.setActivo(true);
-                
-                // Asignar solo rol ADMIN al usuario por defecto
+
                 List<RolUsuario> adminRoles = new ArrayList<>();
                 rolUsuarioRepository.findById(1L).ifPresent(adminRoles::add);
                 adminUser.setRoles(adminRoles);
-                
+
                 usuarioRepository.save(adminUser);
                 System.out.println("Usuario administrador por defecto creado: admin / admin123");
             }
@@ -66,10 +64,9 @@ public class InitialDataConfig {    @Autowired
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Aplica a todos los endpoints
-                        .allowedOrigins("http://localhost:4200") // Tu frontend Angular
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*");
             }
         };
     }

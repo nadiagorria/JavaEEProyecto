@@ -20,56 +20,39 @@ public class FiltroJWTAutorizacion extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try{
-            if(varlidarUsoDeToken(request, response)){
+        try {
+            if (varlidarUsoDeToken(request, response)) {
                 Claims claims = validarToken(request);
-                if(claims.get("authorities") != null){
+                if (claims.get("authorities") != null) {
                     crearAutenticacion(claims);
-                }else {
+                } else {
                     SecurityContextHolder.clearContext();
                 }
-            }else{
+            } else {
                 SecurityContextHolder.clearContext();
             }
             filterChain.doFilter(request, response);
-        }catch (ExpiredJwtException |
-                UnsupportedJwtException |
-                MalformedJwtException ex
-        ){
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException ex) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            ((HttpServletResponse)response).sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    ex.getMessage()
-            );
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
         }
     }
 
-    private void crearAutenticacion(Claims claims){
-        List<String> autorizaciones = (List<String>)claims.get("authorities");
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(),
-                null,
-                autorizaciones.stream().map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-        );
-        SecurityContextHolder.getContext().setAuthentication(
-                authenticationToken
-        );
+    private void crearAutenticacion(Claims claims) {
+        List<String> autorizaciones = (List<String>) claims.get("authorities");
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, autorizaciones.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private Claims validarToken(HttpServletRequest request){
-        String tokenCliente = request.getHeader("Authorization")
-                .replace("Bearer ", "");
-        return Jwts.parser().setSigningKey(CLAVE.getBytes())
-                .parseClaimsJws(tokenCliente).getBody();
+    private Claims validarToken(HttpServletRequest request) {
+        String tokenCliente = request.getHeader("Authorization").replace("Bearer ", "");
+        return Jwts.parser().setSigningKey(CLAVE.getBytes()).parseClaimsJws(tokenCliente).getBody();
     }
 
 
-    private boolean varlidarUsoDeToken(HttpServletRequest request,
-                                       HttpServletResponse response){
+    private boolean varlidarUsoDeToken(HttpServletRequest request, HttpServletResponse response) {
         String autenticacion = request.getHeader("Authorization");
-        if(autenticacion == null || !autenticacion.startsWith("Bearer ")){
+        if (autenticacion == null || !autenticacion.startsWith("Bearer ")) {
             return false;
         }
         return true;

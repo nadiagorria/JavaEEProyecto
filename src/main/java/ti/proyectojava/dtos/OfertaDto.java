@@ -9,10 +9,16 @@ import java.time.LocalDateTime;
 public class OfertaDto {
 
     private Long id;
+
     private String descripcion;
+
     private Float descuento;
+
     private Boolean activo;
+
     private LocalDate inicio;
+
     private LocalDate fin;
+
     private LocalDateTime fechaEliminado;
 }

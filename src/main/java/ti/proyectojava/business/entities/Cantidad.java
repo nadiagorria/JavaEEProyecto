@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "CANTIDAD")
-public class Cantidad{
+public class Cantidad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +24,7 @@ public class Cantidad{
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name="VENTA_ID")
+    @JoinColumn(name = "VENTA_ID")
     private Venta venta;
 }
 

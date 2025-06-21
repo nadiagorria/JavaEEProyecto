@@ -10,10 +10,10 @@ import java.util.Optional;
 
 @Repository
 public interface PasswordRecoveryRepository extends JpaRepository<PasswordRecovery, Long> {
-    
+
     Optional<PasswordRecovery> findByEmailAndCodigoRecuperacionAndUsadoFalse(String email, String codigo);
-    
+
     List<PasswordRecovery> findByEmailAndUsadoFalse(String email);
-    
+
     void deleteByFechaExpiracionBefore(LocalDateTime fecha);
 }

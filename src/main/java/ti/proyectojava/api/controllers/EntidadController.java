@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import ti.proyectojava.api.responses.ResponseListadoClientes;
 import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.dtos.*;
@@ -19,19 +18,11 @@ import java.util.List;
 public class EntidadController {
 
     private final EntidadService entidadService;
-    private Entidad entidadActual;
 
     public EntidadController(EntidadService entidadService) {
         this.entidadService = entidadService;
-        this.entidadActual = null;
-    }
 
-    //cualquiera lo usa
-    @GetMapping("/persona/")
-    @Secured({"ADMIN", "CAJERO"})
-    public ResponseEntity<?> seleccionarEntidad(@RequestBody Long id) {
-        return ResponseEntity.ok(entidadService.seleccionarEntidad(id));
-    }    //solo puede usarlo un admin
+    }
 
 
     @PutMapping("/eliminar")
@@ -43,25 +34,8 @@ public class EntidadController {
         return ResponseEntity.ok("Persona eliminado correctamente. ID:" + entidad.getId());
     }
 
+//  CLIENTE
 
-    //////////////////////CLIENTE////////////////////////////
-
-    /*// esta funcion la puede usar cualquiera
-    @GetMapping("/clientes/listar")
-    @Secured({"ADMIN", "CAJERO"})
-    public ResponseEntity<ResponseListadoClientes> getClientes(){
-        ResponseListadoClientes response = entidadService.listadoClientes();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }*/
-
-    //solo puede usarlo un admin
-    @PostMapping("/cliente")
-    @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion crea un nuevo Cliente")
-    public ResponseEntity<String> crearCliente(@RequestBody ClienteDto clienteDto) {
-        String response = entidadService.crearCliente(clienteDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 
     @PostMapping("/clienteCredito")
     @Secured({"ADMIN"})
@@ -75,33 +49,29 @@ public class EntidadController {
         }
     }
 
-    //solo puede usarlo un admin
     @PutMapping("/editarcliente")
     @Secured({"ADMIN"})
     public ResponseEntity<String> editarCliente(@RequestBody ClienteDto clienteDto) {
         String result = entidadService.editarCliente(clienteDto);
         return ResponseEntity.ok(result);
-    }    
-    
-    //cualquiera lo usa
+    }
+
     @GetMapping("/seleccionarCliente")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion selecciona un cliente")
-    public ResponseEntity<?> seleccionarCliente(@RequestParam Long id) {
+    public ResponseEntity<ClienteDto> seleccionarCliente(@RequestParam Long id) {
         return ResponseEntity.ok(entidadService.seleccionarCliente(id));
     }
 
-    /////////////////////////////PROVEEDOR/////////////////////////////////
+//  PROVEEDOR
 
-    // esta funcion la puede usar cualquiera
     @GetMapping("/proveedor/listar")
     @Secured({"ADMIN", "CAJERO"})
-    public ResponseEntity<ResponseListadoProveedores> getProveedores(){
+    public ResponseEntity<ResponseListadoProveedores> getProveedores() {
         ResponseListadoProveedores response = entidadService.listadoProveedores();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //solo puede usarlo un admin
     @PostMapping("/proveedor")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
@@ -111,15 +81,13 @@ public class EntidadController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    //solo puede usarlo un admin
     @PutMapping("/editarproveedor")
     @Secured({"ADMIN"})
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);
-    }    
-    
-    //cualquiera lo usa
+    }
+
     @GetMapping("{id}/seleccionarProveedor/")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion selecciona un proveedor")
@@ -129,9 +97,9 @@ public class EntidadController {
             return ResponseEntity.ok(provee);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }}
-        
-    //cualquiera lo usa
+        }
+    }
+
     @GetMapping("/listarProveedores")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion lista todos los proveedores activos")

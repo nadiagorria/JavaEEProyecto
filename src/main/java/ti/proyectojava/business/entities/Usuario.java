@@ -12,11 +12,11 @@ import java.util.ArrayList;
 @Table(name = "USUARIO")
 public class Usuario {
 
-    @Column (name = "USUARIO_MAIL")
+    @Column(name = "USUARIO_MAIL")
     private String mail;
 
     @Id
-    @Column (name = "USUARIO_NOMBRE")
+    @Column(name = "USUARIO_NOMBRE")
     private String nombre;
 
     @Column(name = "USUARIO_CONTRASENIA")
@@ -25,18 +25,12 @@ public class Usuario {
     @Column(name = "USUARIO_ACTIVO")
     private Boolean activo;
 
-    @ManyToMany (cascade = CascadeType.ALL)
-    @JoinTable(name = "USUARIOS_ROLES",
-            joinColumns = @JoinColumn (name = "USUARIO"),
-            inverseJoinColumns = @JoinColumn (name = "ROL_ID"))
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "USUARIOS_ROLES", joinColumns = @JoinColumn(name = "USUARIO"), inverseJoinColumns = @JoinColumn(name = "ROL_ID"))
     private List<RolUsuario> roles = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(
-            name = "USUARIONOTIFICACION",
-            joinColumns = @JoinColumn(name = "USUARIO_NOMBRE"),
-            inverseJoinColumns = @JoinColumn(name = "NOTIFICACIONUSUARIO_ID")
-    )
+    @JoinTable(name = "USUARIONOTIFICACION", joinColumns = @JoinColumn(name = "USUARIO_NOMBRE"), inverseJoinColumns = @JoinColumn(name = "NOTIFICACIONUSUARIO_ID"))
     private List<NotificacionUsuario> notificaciones = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)

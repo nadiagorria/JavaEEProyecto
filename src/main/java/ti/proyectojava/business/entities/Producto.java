@@ -49,7 +49,7 @@ public class Producto {
 
     @OneToMany(mappedBy = "producto")
     private List<Descuento> descuentos = new ArrayList<>();
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CATEGORIA_ID")
     private Categoria categoria;

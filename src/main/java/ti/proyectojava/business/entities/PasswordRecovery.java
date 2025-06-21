@@ -15,26 +15,26 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordRecovery {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String email;
-    
+
     @Column(nullable = false)
     private String codigoRecuperacion;
-    
+
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
-    
+
     @Column(nullable = false)
     private LocalDateTime fechaExpiracion;
-    
+
     @Column(nullable = false)
     private boolean usado = false;
-    
+
     public PasswordRecovery(String email, String codigoRecuperacion, LocalDateTime fechaExpiracion) {
         this.email = email;
         this.codigoRecuperacion = codigoRecuperacion;

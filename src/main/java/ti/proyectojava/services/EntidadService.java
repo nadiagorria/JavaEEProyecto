@@ -3,7 +3,6 @@ package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ti.proyectojava.api.responses.ResponseListadoClientes;
 import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Credito;
@@ -29,65 +28,46 @@ public class EntidadService {
     private final ProveedorRepository proveedorRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
 
-    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService){
+    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.entidadRepository = entidadRepository;
-        this.clienteRepository=clienteRepository;
-        this.proveedorRepository=proveedorRepository;
+        this.clienteRepository = clienteRepository;
+        this.proveedorRepository = proveedorRepository;
         this.creditoRepository = creditoRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public Entidad seleccionarEntidad(Long id) {
-        // Compruebo si es Cliente
         Optional<Cliente> cliente = clienteRepository.findById(id);
         if (cliente.isPresent()) {
             return cliente.get();
         }
 
-        // Si no es cliente, probamos con proveedor
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
             return proveedor.get();
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
     }
 
     public Entidad eliminarPersona(Entidad entidad) {
         entidad.setActivo(false);
-        
 
-        if(entidad instanceof Cliente) {
+
+        if (entidad instanceof Cliente) {
             Cliente cliente = (Cliente) entidad;
-            if(cliente.getCredito() != null) {
+            if (cliente.getCredito() != null) {
                 Credito credito = cliente.getCredito();
                 credito.setActivo(false);
                 creditoRepository.save(credito);
             }
-        } 
+        }
         entidadRepository.save(entidad);
         return entidad;
     }
 
 
-    //////////////////////////////////CLIENTE////////////////////////////////////////
+//  CLIENTE
 
-    /*public ResponseListadoClientes listadoClientes(){
-        ResponseListadoClientes response = new ResponseListadoClientes();
-
-        List<ClienteDto> clientesActivos = clienteRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoCliente)
-                .toList();
-
-        response.setClientes(clientesActivos);
-
-        return response;
-    }*/
-
-    public String crearCliente(ClienteDto clienteDto) {
-            return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
-    }
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
 
@@ -129,28 +109,22 @@ public class EntidadService {
         } else {
             return "Cliente no encontrado con ID:" + clienteDto.getId();
         }
-    }    
+    }
 
     public ClienteDto seleccionarCliente(Long id) {
-        // Compruebo si es Cliente
         Optional<Cliente> cliente = clienteRepository.findById(id);
         if (cliente.isPresent()) {
             return mapsDtosEntityService.mapToDtoCliente(cliente.get());
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
     }
 
-    //////////////////////////////////PROVEEDOR///////////////////////////////////
+//  PROVEEDOR
 
-
-    public ResponseListadoProveedores listadoProveedores(){
+    public ResponseListadoProveedores listadoProveedores() {
         ResponseListadoProveedores response = new ResponseListadoProveedores();
 
-        List<ProveedorDto> proveedoresActivos = proveedorRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoProveedorSimple)
-                .toList();
+        List<ProveedorDto> proveedoresActivos = proveedorRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoProveedorSimple).toList();
 
         response.setProveedores(proveedoresActivos);
 
@@ -158,7 +132,7 @@ public class EntidadService {
     }
 
     public String crearProveedor(ProveedorDto proveedorDto) {
-            return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
+        return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
     }
 
     public String editarProveedor(ProveedorDto proveedorDto) {
@@ -174,22 +148,19 @@ public class EntidadService {
         } else {
             return "Cliente no encontrado. ID:" + proveedorDto.getId();
         }
-    }    
-    
+    }
+
     public ProveedorDto seleccionarProveedor(Long id) {
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
             return mapsDtosEntityService.mapToDtoProveedor(proveedor.get());
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
     }
 
     public List<ProveedorDto> listarProveedores() {
         List<Proveedor> proveedores = proveedorRepository.findByActivoTrue();
-        return proveedores.stream()
-                .map(mapsDtosEntityService::mapToDtoProveedor)
-                .collect(Collectors.toList());
+        return proveedores.stream().map(mapsDtosEntityService::mapToDtoProveedor).collect(Collectors.toList());
     }
 
 

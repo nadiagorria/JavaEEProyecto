@@ -24,33 +24,33 @@ public class EmailService {
             message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("🔐 Código de Recuperación de Contraseña - " + appName);
-            
+
             String cuerpoMensaje = String.format(
-                "Hola %s,\n\n" +
-                "Has solicitado restablecer tu contraseña en %s.\n\n" +
-                "Tu código de recuperación es: %s\n\n" +
-                "⏰ Este código es válido por 15 minutos solamente.\n\n" +
-                "🔒 Por tu seguridad:\n" +
-                "- No compartas este código con nadie\n" +
-                "- Si no solicitaste este cambio, puedes ignorar este email\n" +
-                "- Tu contraseña actual sigue siendo válida hasta que uses este código\n\n" +
-                "Saludos,\n" +
-                "Equipo %s\n\n" +
-                "---\n" +
-                "Este es un email automático, por favor no respondas a este mensaje.",
-                nombreUsuario != null ? nombreUsuario : "Usuario",
-                appName,
-                codigo,
-                appName
+                    "Hola %s,\n\n" +
+                            "Has solicitado restablecer tu contraseña en %s.\n\n" +
+                            "Tu código de recuperación es: %s\n\n" +
+                            "⏰ Este código es válido por 15 minutos solamente.\n\n" +
+                            "🔒 Por tu seguridad:\n" +
+                            "- No compartas este código con nadie\n" +
+                            "- Si no solicitaste este cambio, puedes ignorar este email\n" +
+                            "- Tu contraseña actual sigue siendo válida hasta que uses este código\n\n" +
+                            "Saludos,\n" +
+                            "Equipo %s\n\n" +
+                            "---\n" +
+                            "Este es un email automático, por favor no respondas a este mensaje.",
+                    nombreUsuario != null ? nombreUsuario : "Usuario",
+                    appName,
+                    codigo,
+                    appName
             );
-            
+
             message.setText(cuerpoMensaje);
-            
+
             emailSender.send(message);
-            
+
             // Log para confirmar envío (sin mostrar el código por seguridad)
             System.out.println("✅ Email de recuperación enviado exitosamente a: " + toEmail);
-            
+
         } catch (Exception e) {
             System.err.println("❌ Error al enviar email a " + toEmail + ": " + e.getMessage());
             throw new RuntimeException("Error al enviar el email de recuperación. Verifica tu configuración de email.");
@@ -63,34 +63,30 @@ public class EmailService {
             message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("✅ Contraseña Cambiada Exitosamente - " + appName);
-            
+
             String cuerpoMensaje = String.format(
-                "Hola %s,\n\n" +
-                "Te confirmamos que tu contraseña en %s ha sido cambiada exitosamente.\n\n" +
-                "🔒 Tu cuenta ahora está protegida con la nueva contraseña.\n\n" +
-                "⚠️ Si no realizaste este cambio:\n" +
-                "- Contacta inmediatamente al administrador del sistema\n" +
-                "- Cambia tu contraseña nuevamente por seguridad\n\n" +
-                "Fecha y hora del cambio: %s\n\n" +
-                "Saludos,\n" +
-                "Equipo %s\n\n" +
-                "---\n" +
-                "Este es un email automático, por favor no respondas a este mensaje.",
-                nombreUsuario != null ? nombreUsuario : "Usuario",
-                appName,
-                java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                appName
+                    "Hola %s,\n\n" +
+                            "Te confirmamos que tu contraseña en %s ha sido cambiada exitosamente.\n\n" +
+                            "🔒 Tu cuenta ahora está protegida con la nueva contraseña.\n\n" +
+                            "⚠️ Si no realizaste este cambio:\n" +
+                            "- Contacta inmediatamente al administrador del sistema\n" +
+                            "- Cambia tu contraseña nuevamente por seguridad\n\n" +
+                            "Fecha y hora del cambio: %s\n\n" +
+                            "Saludos,\n" +
+                            "Equipo %s\n\n" +
+                            "---\n" +
+                            "Este es un email automático, por favor no respondas a este mensaje.",
+                    nombreUsuario != null ? nombreUsuario : "Usuario",
+                    appName,
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                    appName
             );
-            
+
             message.setText(cuerpoMensaje);
-            
+
             emailSender.send(message);
-            
-            System.out.println("✅ Notificación de cambio de contraseña enviada a: " + toEmail);
-            
+
         } catch (Exception e) {
-            // No lanzamos excepción aquí porque es solo una notificación
-            System.err.println("⚠️ No se pudo enviar notificación de cambio de contraseña a " + toEmail + ": " + e.getMessage());
         }
     }
 }

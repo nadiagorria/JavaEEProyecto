@@ -6,8 +6,10 @@ import java.util.List;
 
 @Data
 public class RolUsuarioDto {
-    private Long id;
-    private String nombre;
-    private List<UsuarioDto> usuarios;
 
+    private Long id;
+
+    private String nombre;
+
+    private List<UsuarioDto> usuarios;
 }

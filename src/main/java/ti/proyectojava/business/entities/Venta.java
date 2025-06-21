@@ -3,9 +3,7 @@ package ti.proyectojava.business.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 

@@ -22,6 +22,6 @@ public class RolUsuario implements Serializable {
     private String nombre;
 
     @JsonIgnore
-    @ManyToMany (mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     private List<Usuario> usuarios = new ArrayList<>();
 }
