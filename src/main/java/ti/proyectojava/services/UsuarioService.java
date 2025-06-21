@@ -36,7 +36,8 @@ public class UsuarioService {
         this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
-    public ResponseListadoUsuarios listadoUsuarios() {
+    public ResponseListadoUsuarios listadoUsuarios()
+    {
         ResponseListadoUsuarios responseListadoUsuarios = new ResponseListadoUsuarios();
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoUsuarioPlano).toList();

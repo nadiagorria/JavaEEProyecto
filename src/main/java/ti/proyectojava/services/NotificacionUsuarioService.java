@@ -33,20 +33,6 @@ public class NotificacionUsuarioService {
     @Autowired
     private MapsDtosEntityService mapsDtosEntityService;
 
-    public String crearNotificacionUsuario(NotificacionUsuarioDto notificacionUsuarioDto) {
-        return "NotificacionUsuario creado. ID: " + notificacionUsuarioRepository.save(mapsDtosEntityService.mapToEntityNotificacionUsuario(notificacionUsuarioDto)).getId();
-    }
-
-    public ResponseListadoNotificacionUsuario listadoNotificacionUsuario() {
-        ResponseListadoNotificacionUsuario responseListadoNotificacionUsuario = new ResponseListadoNotificacionUsuario();
-        List<NotificacionUsuarioDto> notificacionUsuarioActivos = notificacionUsuarioRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoNotificacionUsuario)
-                .collect(Collectors.toList());
-        responseListadoNotificacionUsuario.setNotificacionUsuarios(notificacionUsuarioActivos);
-        return responseListadoNotificacionUsuario;
-    }
-
     public String borrarNotificacionUsuario(Long id) {
         String response = "";
         NotificacionUsuario notificacionUsuario = notificacionUsuarioRepository.findById(id).orElse(null);
@@ -160,17 +146,14 @@ public class NotificacionUsuarioService {
             System.out.println("Título: " + titulo);
             System.out.println("Mensaje: " + mensaje);
             
-            // Crear la notificación
             Notificacion notificacion = new Notificacion();
             notificacion.setTitulo(titulo);
             notificacion.setMensaje(mensaje);
             notificacion.setFechaHora(LocalDateTime.now());
             
-            // Guardar la notificación
             notificacion = notificacionRepository.save(notificacion);
             System.out.println("Notificación guardada con ID: " + notificacion.getId());
             
-            // Obtener todos los usuarios activos
             List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
             System.out.println("Usuarios activos encontrados: " + usuarios.size());
             
@@ -179,7 +162,6 @@ public class NotificacionUsuarioService {
                 return;
             }
             
-            // Crear NotificacionUsuario para cada usuario
             int notificacionesCreadas = 0;
             for (Usuario usuario : usuarios) {
                 try {
@@ -189,34 +171,28 @@ public class NotificacionUsuarioService {
                     notificacionUsuario.setActivo(true);
                     notificacionUsuario.setLeido(false);
                     
-                    // Establecer las relaciones bidireccionales correctamente
-                    // La notificación conoce a los NotificacionUsuario
+
                     if (notificacion.getNotificacionUsuarios() == null) {
                         notificacion.setNotificacionUsuarios(new java.util.ArrayList<>());
                     }
                     notificacion.getNotificacionUsuarios().add(notificacionUsuario);
                     
-                    // El NotificacionUsuario conoce las notificaciones
                     if (notificacionUsuario.getNotificaciones() == null) {
                         notificacionUsuario.setNotificaciones(new java.util.ArrayList<>());
                     }
                     notificacionUsuario.getNotificaciones().add(notificacion);
                     
-                    // El usuario conoce sus notificaciones
                     if (usuario.getNotificaciones() == null) {
                         usuario.setNotificaciones(new java.util.ArrayList<>());
                     }
                     usuario.getNotificaciones().add(notificacionUsuario);
                     
-                    // El NotificacionUsuario conoce sus usuarios
                     if (notificacionUsuario.getUsuarios() == null) {
                         notificacionUsuario.setUsuarios(new java.util.ArrayList<>());
                     }
                     notificacionUsuario.getUsuarios().add(usuario);
-                      // Guardar la relación
                     NotificacionUsuario guardada = notificacionUsuarioRepository.save(notificacionUsuario);
                     
-                    // También guardar el usuario para asegurar que la relación bidireccional se persista
                     usuarioRepository.save(usuario);
                     
                     notificacionesCreadas++;
@@ -326,87 +302,4 @@ public class NotificacionUsuarioService {
         }
     }
 
-    public String debugNotificaciones(String userName) {
-        StringBuilder debug = new StringBuilder();
-        
-        try {
-            debug.append("=== DEBUG NOTIFICACIONES ===\n");
-            debug.append("Usuario actual: ").append(userName).append("\n\n");
-            
-            Usuario usuario = usuarioRepository.findByNombre(userName).orElse(null);
-            if (usuario == null) {
-                debug.append("ERROR: Usuario no encontrado en la base de datos\n");
-                return debug.toString();
-            }
-            debug.append("Usuario encontrado: Nombre=").append(usuario.getNombre()).append(", Activo=").append(usuario.getActivo()).append("\n\n");
-            
-            List<NotificacionUsuario> todasLasNotificaciones = notificacionUsuarioRepository.findAll();
-            debug.append("Total NotificacionUsuario en BD: ").append(todasLasNotificaciones.size()).append("\n");
-            
-            List<NotificacionUsuario> notificacionesActivas = notificacionUsuarioRepository.findByActivoTrue();
-            debug.append("NotificacionUsuario activas: ").append(notificacionesActivas.size()).append("\n");
-            
-            List<NotificacionUsuario> notificacionesDelUsuario = notificacionUsuarioRepository
-                .findByActivoTrueAndUsuarios_Nombre(userName);
-            debug.append("NotificacionUsuario para el usuario ").append(userName).append(": ")
-                 .append(notificacionesDelUsuario.size()).append("\n");
-            
-            List<NotificacionUsuario> notificacionesNoLeidasDelUsuario = notificacionUsuarioRepository
-                .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName);
-            debug.append("NotificacionUsuario no leídas para el usuario ").append(userName).append(": ")
-                 .append(notificacionesNoLeidasDelUsuario.size()).append("\n");
-            
-        } catch (Exception e) {
-            debug.append("ERROR durante debug: ").append(e.getMessage()).append("\n");
-            System.err.println("Error en debug de notificaciones: " + e.getMessage());
-        }
-          return debug.toString();
-    }
-
-    public String debugUsuarioYNotificaciones(String userName) {
-        StringBuilder debug = new StringBuilder();
-        
-        try {
-            debug.append("=== DEBUG USUARIO Y NOTIFICACIONES ===\n");
-            debug.append("Usuario: ").append(userName).append("\n\n");
-            
-            // Buscar usuario
-            Usuario usuario = usuarioRepository.findByNombre(userName).orElse(null);
-            if (usuario == null) {
-                debug.append("ERROR: Usuario no encontrado\n");
-                return debug.toString();
-            }
-            
-            debug.append("Usuario encontrado:\n");
-            debug.append("- Nombre: ").append(usuario.getNombre()).append("\n");
-            debug.append("- Email: ").append(usuario.getMail()).append("\n");
-            debug.append("- Activo: ").append(usuario.getActivo()).append("\n");
-            debug.append("- Notificaciones asignadas: ").append(usuario.getNotificaciones() != null ? usuario.getNotificaciones().size() : 0).append("\n\n");
-            
-            // Buscar notificaciones del usuario
-            List<NotificacionUsuario> notificacionesUsuario = notificacionUsuarioRepository
-                .findByActivoTrueAndUsuarios_Nombre(userName);
-            debug.append("NotificacionUsuario encontradas: ").append(notificacionesUsuario.size()).append("\n");
-            
-            for (NotificacionUsuario nu : notificacionesUsuario) {
-                debug.append("- ID: ").append(nu.getId())
-                     .append(", Leído: ").append(nu.getLeido())
-                     .append(", Activo: ").append(nu.getActivo())
-                     .append(", Usuarios: ").append(nu.getUsuarios() != null ? nu.getUsuarios().size() : 0)
-                     .append(", Notificaciones: ").append(nu.getNotificaciones() != null ? nu.getNotificaciones().size() : 0)
-                     .append("\n");
-            }
-            
-            // Buscar notificaciones no leídas
-            List<NotificacionUsuario> noLeidas = notificacionUsuarioRepository
-                .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName);
-            debug.append("\nNotificaciones no leídas: ").append(noLeidas.size()).append("\n");
-            
-        } catch (Exception e) {
-            debug.append("ERROR: ").append(e.getMessage()).append("\n");
-            e.printStackTrace();
-        }
-        
-        return debug.toString();
-    }
 }

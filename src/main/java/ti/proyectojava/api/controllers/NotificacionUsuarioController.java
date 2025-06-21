@@ -24,8 +24,8 @@ public class NotificacionUsuarioController {
 
 
     @PutMapping("/{id}/eliminar")
-    @Secured({"ADMIN"})
-    @Operation(description = "Esta Funcion elimina una nueva NotificacionUsuario")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta Funcion elimina una NotificacionUsuario")
     public ResponseEntity<String> borrarNotificacionUsuario(@PathVariable Long id){
         String lote = notificacionUsuarioService.borrarNotificacionUsuario(id);
 

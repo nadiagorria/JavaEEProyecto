@@ -11,7 +11,6 @@ import ti.proyectojava.dtos.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class OfertaService {
     private final MapsDtosEntityService mapsDtosEntityService;
     private final ValidacionOfertasService validacionOfertasService;
 
-    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, MapsDtosEntityService mapsDtosEntityService, ValidacionOfertasService validacionOfertasService){
+    private OfertaService(OfertaRepository ofertaRepository, ComboRepository comboRepository, DescuentoRepository descuentoRepository, PromocionRepository promocionRepository, MapsDtosEntityService mapsDtosEntityService, ValidacionOfertasService validacionOfertasService) {
         this.ofertaRepository = ofertaRepository;
         this.comboRepository = comboRepository;
         this.descuentoRepository = descuentoRepository;
@@ -46,31 +45,26 @@ public class OfertaService {
             oferta.setActivo(false);
             oferta.setFechaEliminado(LocalDateTime.now());
             ofertaRepository.save(oferta);
-            response = "Oferta eliminado correctamente. ID:" +  oferta.getId();
+            response = "Oferta eliminado correctamente. ID:" + oferta.getId();
         }
         return response;
     }
 
-    /// COMBOS ///////////////    
+//  COMBO
 
     public String crearCombo(ComboDto comboDto) {
-        // Validar conflictos de ofertas antes de crear
         validacionOfertasService.validarConflictosCombo(comboDto);
-        
-        // Si el ID es null, es un nuevo combo
-        if(comboDto.getId() == null || comboRepository.findById(comboDto.getId()).isEmpty()){
+
+        if (comboDto.getId() == null || comboRepository.findById(comboDto.getId()).isEmpty()) {
             return "Combo creado. ID:" + comboRepository.save(mapsDtosEntityService.mapToEntityCombo(comboDto)).getId();
         }
         return null;
-    }    
-    
+    }
+
     public ResponseListadoCombos listadoCombo() {
         ResponseListadoCombos response = new ResponseListadoCombos();
 
-        List<ComboDto> combosActivos = comboRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoComboSimple)
-                .toList();
+        List<ComboDto> combosActivos = comboRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoComboSimple).toList();
 
         response.setCombos(combosActivos);
 
@@ -80,84 +74,49 @@ public class OfertaService {
     public ResponseListadoCombos getCombosByProducto(Long productoId) {
         ResponseListadoCombos response = new ResponseListadoCombos();
 
-        List<ComboDto> combos = comboRepository.findByProductos_Id(productoId)
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoComboSimple)
-                .collect(Collectors.toList());
+        List<ComboDto> combos = comboRepository.findByProductos_Id(productoId).stream().map(mapsDtosEntityService::mapToDtoComboSimple).collect(Collectors.toList());
 
         response.setCombos(combos);
         return response;
     }
 
 
-    //////////////////////////////////DESCUENTO///////////////////////////////////    
-    
+//  DESCUENTO
+
     public String crearDescuento(DescuentoDto descuentoDto) {
-        // Validar conflictos de ofertas antes de crear
         validacionOfertasService.validarConflictosDescuento(descuentoDto);
-        
+
         return "Descuento creado. ID:" + descuentoRepository.save(mapsDtosEntityService.mapToEntityDescuento(descuentoDto)).getId();
     }
-    
+
     public ResponseListadoDescuentos listadoDescuentos() {
         ResponseListadoDescuentos response = new ResponseListadoDescuentos();
 
-        List<DescuentoDto> descuentosActivos = descuentoRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoDescuentoSimple)
-                .toList();
+        List<DescuentoDto> descuentosActivos = descuentoRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoDescuentoSimple).toList();
 
         response.setDescuentos(descuentosActivos);
 
         return response;
     }
 
-    public ResponseListadoDescuentos getDescuentosByProducto(Long productoId) {
-        ResponseListadoDescuentos response = new ResponseListadoDescuentos();
 
-        List<DescuentoDto> descuentos = descuentoRepository.findByProducto_Id(productoId)
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoDescuentoSimple)
-                .collect(Collectors.toList());
+//  PROMOCION
 
-        response.setDescuentos(descuentos);
-        return response;
-    }
+    public String crearPromocion(PromocionDto promocionDto) {
+        validacionOfertasService.validarConflictosPromocion(promocionDto);
 
-
-//////////////////////////////////PROMOCIONES///////////////////////////////////
-
-public String crearPromocion(PromocionDto promocionDto) {
-        // Validar conflictos de ofertas antes de crear        
-    validacionOfertasService.validarConflictosPromocion(promocionDto);
-        
         System.out.println("Creando promoción: " + promocionDto.getDescripcion());
         return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
-    }    
-    
+    }
+
 
     public ResponseListadoPromociones listadoPromociones() {
         ResponseListadoPromociones response = new ResponseListadoPromociones();
 
-        List<PromocionDto> promocionesActivos = promocionRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoPromocionSimple)
-                .toList();
+        List<PromocionDto> promocionesActivos = promocionRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoPromocionSimple).toList();
 
         response.setPromociones(promocionesActivos);
 
-        return response;
-    }
-
-    public ResponseListadoPromociones getPromocionesByProducto(Long productoId) {
-        ResponseListadoPromociones response = new ResponseListadoPromociones();
-
-        List<PromocionDto> promociones = promocionRepository.findByProducto_Id(productoId)
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoPromocionSimple)
-                .collect(Collectors.toList());
-
-        response.setPromociones(promociones);
         return response;
     }
 

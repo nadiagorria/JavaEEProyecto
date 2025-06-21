@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { NotificacionService } from '../../../services/notificacion.service';
 import { SecurityService } from '../../../services/security.service';
 import { NotificacionUsuarioDto } from '../../../models/notificacion-usuario.dto';
@@ -11,7 +14,8 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-notificaciones',
   standalone: true,
-  imports: [CommonModule, ButtonModule, BadgeModule, DialogModule],
+  imports: [CommonModule, ButtonModule, BadgeModule, DialogModule, ToastModule, TooltipModule],
+  providers: [MessageService],
   templateUrl: './notificaciones.component.html',
   styleUrl: './notificaciones.component.scss'
 })
@@ -27,7 +31,8 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificacionService: NotificacionService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +102,28 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   cerrarDialog(): void {
     this.mostrarDialog = false;
     this.notificacionSeleccionada = null;
+  }
+
+  eliminarNotificacion(notificacion: NotificacionUsuarioDto, event?: Event): void {
+    // Prevenir que se abra el modal cuando se hace click en eliminar
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (notificacion.id) {
+      this.notificacionService.eliminarNotificacionYActualizar(notificacion.id);
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Notificación eliminada correctamente'
+      });
+
+      // Si es la notificación que está en el modal, cerrar el modal
+      if (this.notificacionSeleccionada?.id === notificacion.id) {
+        this.cerrarDialog();
+      }
+    }
   }
 
   formatearFecha(fechaHora: any): string {

@@ -72,8 +72,14 @@ export class NotificacionService {
       { responseType: 'text' }
     );
   }  
-  
 
+  eliminarNotificacion(id: number): Observable<string> {
+    return this.http.put(
+      `${this.baseUrl}/NotificacionesUsuarios/${id}/eliminar`,
+      {},
+      { responseType: 'text' }
+    );
+  }
   private actualizarNotificaciones(): void {
     if (!this.securityService.isLoggedIn()) {
       return;
@@ -143,6 +149,21 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('Error al marcar todas como leídas:', error);
+      }
+    });
+  }
+
+  eliminarNotificacionYActualizar(id: number): void {
+    if (!this.securityService.isLoggedIn()) {
+      return;
+    }
+
+    this.eliminarNotificacion(id).subscribe({
+      next: () => {
+        this.actualizarNotificaciones();
+      },
+      error: (error) => {
+        console.error('Error al eliminar notificación:', error);
       }
     });
   }
