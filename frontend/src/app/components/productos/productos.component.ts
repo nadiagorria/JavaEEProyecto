@@ -89,7 +89,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
             }
           }
           return cat;
-        }).sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenar alfabéticamente
+        }); // Ya vienen ordenadas desde el backend
         
         // Crear array para dropdown con "Todas las categorías"
         this.categoriasConTodas = [
@@ -391,34 +391,52 @@ export class ProductosComponent implements OnInit, OnDestroy {
     // Encontrar la categoría seleccionada
     const categoriaAEliminar = this.categorias.find(cat => cat.id === this.categoriaSeleccionada);
     if (!categoriaAEliminar || !categoriaAEliminar.id) {
-      alert('No se pudo encontrar la categoría seleccionada');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo encontrar la categoría seleccionada'
+      });
       return;
     }
     
     // Primero desvincular los productos
     this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.id).subscribe({
-      next: () => {
-        // Luego proceder con la eliminación de la categoría
-        this.categoriaService.eliminarCategoria(categoriaAEliminar.id).subscribe({
-          next: () => {
-            // Actualiza la lista de categorías tras eliminar
-            this.categoriaService.listarCategorias().subscribe({
-              next: (response) => {
-                this.categorias = response.categorias;
-              }
+      next: () => {        // Luego proceder con la eliminación de la categoría
+        this.categoriaService.eliminarCategoria(categoriaAEliminar.id!).subscribe({
+          next: (response) => {
+            // Mostrar toast de éxito con el mensaje del backend
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: response // Ahora response es un string directo
             });
-            this.cargarProductos(); // Recargar productos para ver los cambios en las categorías
+            
+            // Recargar la lista de categorías automáticamente
+            this.cargarCategorias();
+            
+            // Recargar productos para ver los cambios en las categorías
+            this.cargarProductos();
+            
+            // Limpiar selección y cerrar modal
             this.categoriaSeleccionada = null;
             this.mostrarModalEliminarCategoria = false;
           },
           error: (error) => {
-            alert('Error al eliminar la categoría');
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al eliminar categoría: ' + (error.error || error.message)
+            });
             console.error('Error al eliminar categoría:', error);
           }
         });
       },
       error: (error) => {
-        alert('Error al desvincular los productos de la categoría');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al desvincular los productos de la categoría'
+        });
         console.error('Error al desvincular productos:', error);
       }
     });

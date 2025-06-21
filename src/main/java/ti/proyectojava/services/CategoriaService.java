@@ -30,6 +30,7 @@ public class CategoriaService {
         List<CategoriaDto> categoriasActivas = categoriaRepository.findByActivoTrue()
                 .stream()
                 .map(mapsDtosEntityService::mapToDtoCategoria)
+                .sorted((c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre())) // Ordenar alfabéticamente
                 .toList();
 
         response.setCategorias(categoriasActivas);
@@ -51,14 +52,15 @@ public class CategoriaService {
 
     public String borrarCategoria(Long id) {
         Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
-        String response = null;
-
+        
         if (categoriaOpt.isPresent()) {
             Categoria categoria = categoriaOpt.get();
             categoria.setActivo(false);
             categoriaRepository.save(categoria);
-            response = "Categoría eliminada correctamente. ID:" + categoria.getId() + ", NOMBRE:" + categoria.getNombre();
-        }        return response;
+            return "Categoría eliminada correctamente";
+        }
+        
+        return "No se encontró la categoría con ID: " + id;
     }
     
     public String desvincularProductosDeCategoria(Long id) {
