@@ -40,6 +40,27 @@ public class EntidadController {
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Cliente y su Credito")
     public ResponseEntity<String> crearClienteCredito(@RequestBody ClienteCreditoDto clienteCreditoDto) {
+
+        if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
+            return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
+            return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (clienteCreditoDto.getMinimo() < 0) {
+            return new ResponseEntity<>("El crédito mínimo no puede ser negativo", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (clienteCreditoDto.getMaximo() <= 0) {
+            return new ResponseEntity<>("El crédito máximo debe ser mayor a 0", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (clienteCreditoDto.getMaximo() <= clienteCreditoDto.getMinimo()) {
+            return new ResponseEntity<>("El crédito máximo debe ser mayor que el crédito mínimo", HttpStatus.BAD_REQUEST);
+        }
+        
         String response = entidadService.crearClienteCredito(clienteCreditoDto);
         if (response == null) {
             return new ResponseEntity<>("Error al crear cliente o credito", HttpStatus.BAD_REQUEST);
@@ -51,6 +72,15 @@ public class EntidadController {
     @PutMapping("/editarcliente")
     @Secured({"ADMIN"})
     public ResponseEntity<String> editarCliente(@RequestBody ClienteDto clienteDto) {
+
+        if (clienteDto.getNombre() == null || clienteDto.getNombre().trim().isEmpty()) {
+            return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
+            return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
         String result = entidadService.editarCliente(clienteDto);
         return ResponseEntity.ok(result);
     }

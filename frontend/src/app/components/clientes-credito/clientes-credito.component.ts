@@ -11,7 +11,8 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
@@ -45,8 +46,9 @@ interface ClienteCredito {
     DialogModule,
     TooltipModule,
     ToastModule,
+    ConfirmDialogModule,
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './clientes-credito.component.html',
   styleUrl: './clientes-credito.component.scss',
 })
@@ -61,7 +63,8 @@ export class ClientesCreditoComponent {
     private creditoService: CreditoService,
     private entidadService: EntidadService,
     private securityService: SecurityService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -90,16 +93,22 @@ export class ClientesCreditoComponent {
       },
       error: (err: any) => {
         console.error('Error al listar créditos:', err);
-
         if (err.status === 403) {
-          alert(
-            'Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.'
-          );
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Sesión expirada',
+            detail:
+              'Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.',
+          });
           this.securityService.logout();
           return;
         }
 
-        alert('Error al listar créditos: ' + (err.message || err.status));
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al listar créditos: ' + (err.message || err.status),
+        });
         this.creditos = [];
         this.creditosFiltrados = [];
         this.totalRecords = 0;
@@ -129,6 +138,7 @@ export class ClientesCreditoComponent {
   maximo: number = 0;
 
   saveCliente() {
+    // Validación del nombre (obligatorio)
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -138,20 +148,42 @@ export class ClientesCreditoComponent {
       return;
     }
 
-    if (this.maximo > 0 && this.minimo > 0 && this.maximo <= this.minimo) {
+    // Validación del teléfono (obligatorio)
+    if (!this.telefono || this.telefono.trim() === '') {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validación de créditos',
-        detail: 'El crédito máximo debe ser mayor que el crédito mínimo',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del cliente es obligatorio',
       });
       return;
     }
 
-    if (this.minimo < 0 || this.maximo < 0) {
+    // Validación de crédito mínimo (obligatorio y mayor a 0)
+    if (this.minimo === null || this.minimo === undefined || this.minimo < 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validación de montos',
-        detail: 'Los montos de crédito no pueden ser negativos',
+        summary: 'Campo requerido',
+        detail: 'El crédito mínimo es obligatorio y debe ser mayor o igual a 0',
+      });
+      return;
+    }
+
+    // Validación de crédito máximo (obligatorio y mayor a 0)
+    if (this.maximo === null || this.maximo === undefined || this.maximo <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El crédito máximo es obligatorio y debe ser mayor a 0',
+      });
+      return;
+    }
+
+    // Validación de relación entre créditos
+    if (this.maximo <= this.minimo) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validación de créditos',
+        detail: 'El crédito máximo debe ser mayor que el crédito mínimo',
       });
       return;
     }
@@ -215,36 +247,52 @@ export class ClientesCreditoComponent {
 
   mostrarDetalles(id: number) {
     this.router.navigate(['/cliente', id]);
-  }
+  }  eliminarCliente(id: number) {
+    this.confirmationService.confirm({
+      message: '¿Está seguro que desea eliminar este cliente?',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.entidadService.eliminarPersona(id).subscribe({
+          next: (data: any) => {
+            console.log('Cliente eliminado exitosamente', data);
 
-  eliminarCliente(id: number) {
-    if (confirm('¿Está seguro que desea eliminar este cliente?')) {
-      this.entidadService.eliminarPersona(id).subscribe({
-        next: (data: any) => {
-          console.log('Cliente eliminado exitosamente', data);
+            this.creditos = this.creditos.filter((c) => c.cliente.id !== id);
+            this.creditosFiltrados = this.creditosFiltrados.filter(
+              (c) => c.cliente.id !== id
+            );
+            this.totalRecords = this.creditosFiltrados.length;
 
-          this.creditos = this.creditos.filter((c) => c.cliente.id !== id);
-          this.creditosFiltrados = this.creditosFiltrados.filter(
-            (c) => c.cliente.id !== id
-          );
-          this.totalRecords = this.creditosFiltrados.length;
+            this.cargarCreditos();
 
-          this.cargarCreditos();
+            // Reemplazar alert() por toast
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Cliente eliminado exitosamente',
+            });
+          },
+          error: (err: any) => {
+            console.error('Error al eliminar cliente:', err);
+            let mensajeError = 'Error al eliminar cliente';
+            if (err.error && typeof err.error === 'string') {
+              mensajeError += ': ' + err.error;
+            } else if (err.message) {
+              mensajeError += ': ' + err.message;
+            }
 
-          alert('Cliente eliminado exitosamente');
-        },
-        error: (err: any) => {
-          console.error('Error al eliminar cliente:', err);
-          let mensajeError = 'Error al eliminar cliente';
-          if (err.error && typeof err.error === 'string') {
-            mensajeError += ': ' + err.error;
-          } else if (err.message) {
-            mensajeError += ': ' + err.message;
-          }
-          alert(mensajeError);
-        },
-      });
-    }
+            // Reemplazar alert() por toast
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: mensajeError,
+            });
+          },
+        });
+      }
+    });
   }
 
   isAdmin(): boolean {

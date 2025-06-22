@@ -70,10 +70,31 @@ public class EntidadService {
 
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
+        
+        // Validaciones adicionales de negocio
+        if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+        
+        if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
+        }
+        
+        if (clienteCreditoDto.getMinimo() < 0) {
+            throw new IllegalArgumentException("El crédito mínimo no puede ser negativo");
+        }
+        
+        if (clienteCreditoDto.getMaximo() <= 0) {
+            throw new IllegalArgumentException("El crédito máximo debe ser mayor a 0");
+        }
+        
+        if (clienteCreditoDto.getMaximo() <= clienteCreditoDto.getMinimo()) {
+            throw new IllegalArgumentException("El crédito máximo debe ser mayor que el crédito mínimo");
+        }
 
         ClienteDto clienteDto = new ClienteDto();
-        clienteDto.setNombre(clienteCreditoDto.getNombre());
-        clienteDto.setTelefono(clienteCreditoDto.getTelefono());
+        clienteDto.setNombre(clienteCreditoDto.getNombre().trim());
+        clienteDto.setTelefono(clienteCreditoDto.getTelefono().trim());
         clienteDto.setActivo(true);
 
         Cliente cliente = mapsDtosEntityService.mapToEntityCliente(clienteDto);
@@ -99,11 +120,20 @@ public class EntidadService {
 
 
     public String editarCliente(ClienteDto clienteDto) {
+
+        if (clienteDto.getNombre() == null || clienteDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+        
+        if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
+        }
+        
         Optional<Cliente> optionalCliente = clienteRepository.findById(clienteDto.getId());
         if (optionalCliente.isPresent()) {
             Cliente cliente = optionalCliente.get();
-            cliente.setNombre(clienteDto.getNombre());
-            cliente.setTelefono(clienteDto.getTelefono());
+            cliente.setNombre(clienteDto.getNombre().trim());
+            cliente.setTelefono(clienteDto.getTelefono().trim());
             clienteRepository.save(cliente);
             return "Cliente actualizado con ID:" + cliente.getId();
         } else {
@@ -142,7 +172,7 @@ public class EntidadService {
             proveedor.setNombre(proveedorDto.getNombre());
             proveedor.setTelefono(proveedorDto.getTelefono());
             proveedor.setCorreo(proveedorDto.getCorreo());
-            // No actualizamos ID ni relaciones por simplicidad
+
             proveedorRepository.save(proveedor);
             return "Cliente actualizado. ID:" + proveedor.getId();
         } else {
