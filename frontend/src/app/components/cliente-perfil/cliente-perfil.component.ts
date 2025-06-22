@@ -20,7 +20,9 @@ import { VentaService } from 'src/services/venta.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
-  selector: 'app-cliente-perfil', imports: [FormsModule,
+  selector: 'app-cliente-perfil',
+  imports: [
+    FormsModule,
     HeaderComponent,
     FooterComponent,
     ButtonModule,
@@ -31,13 +33,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     CommonModule,
     InputTextModule,
     ToastModule,
-    ConfirmDialogModule],
+    ConfirmDialogModule,
+  ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './cliente-perfil.component.html',
-  styleUrl: './cliente-perfil.component.scss'
+  styleUrl: './cliente-perfil.component.scss',
 })
 export class ClientePerfilComponent {
-
   cliente!: ClienteDto;
 
   totalRecords: number = 0;
@@ -50,11 +52,11 @@ export class ClientePerfilComponent {
     private securityService: SecurityService,
     private ventaService: VentaService,
     private confirmationService: ConfirmationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.entidadService.getCliente(id).subscribe(data => {
+    this.entidadService.getCliente(id).subscribe((data) => {
       this.cliente = data;
     });
   }
@@ -84,7 +86,7 @@ export class ClientePerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Monto inválido',
-        detail: 'El monto a pagar debe ser mayor a cero.'
+        detail: 'El monto a pagar debe ser mayor a cero.',
       });
       return;
     }
@@ -93,33 +95,35 @@ export class ClientePerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Monto excesivo',
-        detail: 'El monto a pagar no puede ser mayor a la deuda actual.'
+        detail: 'El monto a pagar no puede ser mayor a la deuda actual.',
       });
       return;
     }
 
-    console.log(this.pago, "aaa", this.cliente.credito.id);
-    this.creditoService.pagarCredito(this.cliente.credito.id, this.pago).subscribe(
-      response => {
-        console.log('Pago realizado', response);
-        this.entidadService.getCliente(this.cliente.id).subscribe(data => {
-          this.cliente = data;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Pago exitoso',
-            detail: `Pago de $${this.pago} realizado correctamente.`
+    console.log(this.pago, 'aaa', this.cliente.credito.id);
+    this.creditoService
+      .pagarCredito(this.cliente.credito.id, this.pago)
+      .subscribe(
+        (response) => {
+          console.log('Pago realizado', response);
+          this.entidadService.getCliente(this.cliente.id).subscribe((data) => {
+            this.cliente = data;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Pago exitoso',
+              detail: `Pago de $${this.pago} realizado correctamente.`,
+            });
           });
-        });
-      },
-      error => {
-        console.error('Error al pagar', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error en el pago',
-          detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.'
-        });
-      }
-    );
+        },
+        (error) => {
+          console.error('Error al pagar', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error en el pago',
+            detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.',
+          });
+        }
+      );
     this.visible = false;
     this.pago = 0;
   }
@@ -131,7 +135,7 @@ export class ClientePerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campos incompletos',
-        detail: 'Por favor, complete todos los campos obligatorios.'
+        detail: 'Por favor, complete todos los campos obligatorios.',
       });
       return;
     }
@@ -146,7 +150,7 @@ export class ClientePerfilComponent {
         this.messageService.add({
           severity: 'success',
           summary: 'Cliente actualizado',
-          detail: 'Los datos del cliente se han actualizado correctamente.'
+          detail: 'Los datos del cliente se han actualizado correctamente.',
         });
         this.visibleEditar = false;
       },
@@ -155,9 +159,9 @@ export class ClientePerfilComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
-          detail: 'Ocurrió un error al actualizar los datos del cliente.'
+          detail: 'Ocurrió un error al actualizar los datos del cliente.',
         });
-      }
+      },
     });
   }
 
@@ -180,13 +184,14 @@ export class ClientePerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
-        detail: 'No tienes permisos para eliminar ventas.'
+        detail: 'No tienes permisos para eliminar ventas.',
       });
       return;
     }
 
     this.confirmationService.confirm({
-      message: '¿Está seguro de que desea eliminar esta venta? Esta acción no se puede deshacer.',
+      message:
+        '¿Está seguro de que desea eliminar esta venta? Esta acción no se puede deshacer.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -199,24 +204,26 @@ export class ClientePerfilComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Venta eliminada',
-              detail: 'La venta ha sido eliminada correctamente.'
+              detail: 'La venta ha sido eliminada correctamente.',
             });
 
-            this.entidadService.getCliente(this.cliente.id).subscribe(data => {
-              this.cliente = data;
-            });
+            this.entidadService
+              .getCliente(this.cliente.id)
+              .subscribe((data) => {
+                this.cliente = data;
+              });
           },
           error: (error) => {
             console.error('Error al eliminar venta:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
-              detail: 'Ocurrió un error al eliminar la venta. Intente nuevamente.'
+              detail:
+                'Ocurrió un error al eliminar la venta. Intente nuevamente.',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
-
 }

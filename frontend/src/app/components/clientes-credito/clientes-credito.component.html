@@ -6,38 +6,79 @@
     </div>
 
     <div class="col-12 flex justify-content-center mb-3">
-      <div class="md:col-8 lg:col-11 flex justify-content-between align-items-center">
+      <div
+        class="md:col-8 lg:col-11 flex justify-content-between align-items-center"
+      >
         <div class="search-section">
           <p-inputgroup class="search-input">
-            <input pInputText placeholder="Buscar por nombre" [(ngModel)]="busqueda" />
+            <input
+              pInputText
+              placeholder="Buscar por nombre"
+              [(ngModel)]="busqueda"
+            />
             <p-inputgroup-addon>
-              <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="buscarCliente()" />
+              <p-button
+                icon="pi pi-search"
+                severity="secondary"
+                variant="text"
+                (click)="buscarCliente()"
+              />
             </p-inputgroup-addon>
           </p-inputgroup>
         </div>
         <div class="actions-section" *ngIf="isAdmin()">
-          <p-button label="Añadir Nuevo" icon="pi pi-plus" styleClass="custom-add-button" (click)="mostarModal()">
+          <p-button
+            label="Añadir Nuevo"
+            icon="pi pi-plus"
+            styleClass="custom-add-button"
+            (click)="mostarModal()"
+          >
           </p-button>
         </div>
       </div>
-    </div>    <!-- Modal de añadir cliente -->
-    <p-dialog header="Añadir Nuevo Cliente" [(visible)]="visible" [modal]="true"
-      [style]="{width: '500px'}" [contentStyle]="{overflow: 'auto'}" [draggable]="false" [resizable]="false"
-      [closable]="true" styleClass="form-dialog" appendTo="body">
-        <div class="modal-content">
+    </div>
+    <!-- Modal de añadir cliente -->
+    <p-dialog
+      header="Añadir Nuevo Cliente"
+      [(visible)]="visible"
+      [modal]="true"
+      [style]="{ width: '500px' }"
+      [contentStyle]="{ overflow: 'auto' }"
+      [draggable]="false"
+      [resizable]="false"
+      [closable]="true"
+      styleClass="form-dialog"
+      appendTo="body"
+    >
+      <div class="modal-content">
         <form class="form-content">
           <!-- Información Básica -->
           <div class="form-section">
-            <div class="section-title">Información del Cliente</div>            <div class="form-group">
+            <div class="section-title">Información del Cliente</div>
+            <div class="form-group">
               <label for="nombre">Nombre del Cliente</label>
-              <input id="nombre" pInputText [(ngModel)]="nombre" name="nombre" class="w-full"
-                placeholder="Ingrese el nombre del cliente" autocomplete="off" />
+              <input
+                id="nombre"
+                pInputText
+                [(ngModel)]="nombre"
+                name="nombre"
+                class="w-full"
+                placeholder="Ingrese el nombre del cliente"
+                autocomplete="off"
+              />
             </div>
 
             <div class="form-group">
               <label for="telefono">Teléfono</label>
-              <input id="telefono" pInputText [(ngModel)]="telefono" name="telefono" class="w-full"
-                placeholder="Ej: +569 1234 5678" autocomplete="off" />
+              <input
+                id="telefono"
+                pInputText
+                [(ngModel)]="telefono"
+                name="telefono"
+                class="w-full"
+                placeholder="Ej: +569 1234 5678"
+                autocomplete="off"
+              />
             </div>
           </div>
 
@@ -48,16 +89,36 @@
               <div class="form-col">
                 <div class="form-group">
                   <label for="minimo">Crédito Mínimo</label>
-                  <input id="minimo" pInputText [(ngModel)]="minimo" name="minimo" class="w-full" placeholder="0"
-                    type="number" min="0" step="0.01" autocomplete="off" />
+                  <input
+                    id="minimo"
+                    pInputText
+                    [(ngModel)]="minimo"
+                    name="minimo"
+                    class="w-full"
+                    placeholder="0"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    autocomplete="off"
+                  />
                 </div>
               </div>
 
               <div class="form-col">
                 <div class="form-group">
                   <label for="maximo">Crédito Máximo</label>
-                  <input id="maximo" pInputText [(ngModel)]="maximo" name="maximo" class="w-full" placeholder="0"
-                    type="number" min="0" step="0.01" autocomplete="off" />
+                  <input
+                    id="maximo"
+                    pInputText
+                    [(ngModel)]="maximo"
+                    name="maximo"
+                    class="w-full"
+                    placeholder="0"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    autocomplete="off"
+                  />
                 </div>
               </div>
             </div>
@@ -66,31 +127,51 @@
           <!-- Campos obligatorios -->
           <div class="campos-obligatorios">
             <i class="pi pi-info-circle"></i>
-            <span>Los campos marcados con <span style="color: red;">*</span> son obligatorios</span>
+            <span
+              >Los campos marcados con <span style="color: red">*</span> son
+              obligatorios</span
+            >
           </div>
         </form>
       </div>
 
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Cancelar" class="p-button-text" (click)="cerrarDialog()">
-        </button>
-        <button pButton type="button" label="Guardar Cliente" class="p-button-success" (click)="saveCliente()">
-        </button>
+        <button
+          pButton
+          type="button"
+          label="Cancelar"
+          class="p-button-text"
+          (click)="cerrarDialog()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Guardar Cliente"
+          class="p-button-success"
+          (click)="saveCliente()"
+        ></button>
       </ng-template>
     </p-dialog>
-    
+
     <div class="col-12 flex justify-content-center">
       <div class="md:col-8 lg:col-11">
-        <p-table [value]="creditosFiltrados && creditosFiltrados.length > 0 ? creditosFiltrados : creditos || []"
-                [paginator]="true" 
-                [rows]="5" 
-                [totalRecords]="totalRecords" 
-                [rowsPerPageOptions]="[5, 10, 20]"
-                paginatorPosition="bottom" 
-                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} créditos"
-                showGridlines
-                [responsive]="true"
-                class="texto">          <ng-template pTemplate="header">
+        <p-table
+          [value]="
+            creditosFiltrados && creditosFiltrados.length > 0
+              ? creditosFiltrados
+              : creditos || []
+          "
+          [paginator]="true"
+          [rows]="5"
+          [totalRecords]="totalRecords"
+          [rowsPerPageOptions]="[5, 10, 20]"
+          paginatorPosition="bottom"
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} créditos"
+          showGridlines
+          [responsive]="true"
+          class="texto"
+        >
+          <ng-template pTemplate="header">
             <tr>
               <th>Nombre</th>
               <th>Telefono</th>
@@ -110,13 +191,28 @@
               <td>$ {{ credito.precioTotal }}</td>
               <td>$ {{ credito.pagoHastaAhora }}</td>
               <td>
-                <p-button icon="pi pi-eye" severity="info" size="small" [text]="true"
-                  (click)="mostrarDetalles(credito.cliente.id)" pTooltip="Ver cliente" tooltipPosition="top"
-                  styleClass="p-button-rounded p-button-text mr-2">
+                <p-button
+                  icon="pi pi-eye"
+                  severity="info"
+                  size="small"
+                  [text]="true"
+                  (click)="mostrarDetalles(credito.cliente.id)"
+                  pTooltip="Ver cliente"
+                  tooltipPosition="top"
+                  styleClass="p-button-rounded p-button-text mr-2"
+                >
                 </p-button>
-                <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true"
-                  (click)="eliminarCliente(credito.cliente.id)" pTooltip="Eliminar cliente" tooltipPosition="top"
-                  styleClass="p-button-rounded p-button-text" *ngIf="isAdmin()">
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  [text]="true"
+                  (click)="eliminarCliente(credito.cliente.id)"
+                  pTooltip="Eliminar cliente"
+                  tooltipPosition="top"
+                  styleClass="p-button-rounded p-button-text"
+                  *ngIf="isAdmin()"
+                >
                 </p-button>
               </td>
             </tr>
