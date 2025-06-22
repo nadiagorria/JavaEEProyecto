@@ -92,7 +92,6 @@
                   <th>Descuento</th>
                   <th>Inicio</th>
                   <th>Fin</th>
-                  <th>Estado</th>
                   <th *ngIf="isAdmin()">Acciones</th>
                 </tr>
               </ng-template>
@@ -103,12 +102,7 @@
                   <td>{{ combo.descuento }}%</td>
                   <td>{{ combo.inicio | date : "dd/MM/yyyy" }}</td>
                   <td>{{ combo.fin | date : "dd/MM/yyyy" }}</td>
-                  <td>
-                    <p-tag
-                      [value]="combo.activo ? 'Activo' : 'Inactivo'"
-                      [severity]="combo.activo ? 'success' : 'secondary'"
-                    ></p-tag>
-                  </td>
+
                   <td *ngIf="isAdmin()">
                     <p-button
                       icon="pi pi-trash"
@@ -151,7 +145,6 @@
                   <th>Descuento</th>
                   <th>Inicio</th>
                   <th>Fin</th>
-                  <th>Estado</th>
                   <th *ngIf="isAdmin()">Acciones</th>
                 </tr>
               </ng-template>
@@ -162,12 +155,6 @@
                   <td>{{ descuento.descuento }}%</td>
                   <td>{{ descuento.inicio | date : "dd/MM/yyyy" }}</td>
                   <td>{{ descuento.fin | date : "dd/MM/yyyy" }}</td>
-                  <td>
-                    <p-tag
-                      [value]="descuento.activo ? 'Activo' : 'Inactivo'"
-                      [severity]="descuento.activo ? 'success' : 'secondary'"
-                    ></p-tag>
-                  </td>
                   <td *ngIf="isAdmin()">
                     <p-button
                       icon="pi pi-trash"

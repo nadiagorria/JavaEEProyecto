@@ -99,13 +99,10 @@ export class ClientePerfilComponent {
       });
       return;
     }
-
-    console.log(this.pago, 'aaa', this.cliente.credito.id);
     this.creditoService
       .pagarCredito(this.cliente.credito.id, this.pago)
       .subscribe(
         (response) => {
-          console.log('Pago realizado', response);
           this.entidadService.getCliente(this.cliente.id).subscribe((data) => {
             this.cliente = data;
             this.messageService.add({
@@ -146,7 +143,6 @@ export class ClientePerfilComponent {
 
     this.entidadService.editarCliente(this.cliente).subscribe({
       next: (data: any) => {
-        console.log('Cliente editado:', data);
         this.messageService.add({
           severity: 'success',
           summary: 'Cliente actualizado',

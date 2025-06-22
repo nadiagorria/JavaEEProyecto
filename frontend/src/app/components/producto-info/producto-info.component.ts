@@ -173,7 +173,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.productoService.obtenerProducto(id).subscribe({
       next: (response) => {
-        console.log('Respuesta del backend:', response);
         console.log('Lotes del producto:', response.lotes);
         this.producto = response;
 
