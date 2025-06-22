@@ -388,6 +388,48 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
+    if (this.editForm.email !== this.usuario.email) {
+      this.loading = true;
+      this.securityService.checkEmail(this.editForm.email).subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          // Parsear la respuesta JSON
+          let responseData;
+          if (typeof response === 'string') {
+            responseData = JSON.parse(response);
+          } else {
+            responseData = response;
+          }
+          
+          // Si el email existe, mostrar error
+          if (responseData.existe === true) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Email ya en uso',
+              detail: 'El email ingresado ya está siendo utilizado por otro usuario',
+              life: 5000,
+            });
+          } else {
+            // Si el email no existe, proceder con la actualización
+            this.procederConActualizacion();
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error de verificación',
+            detail: 'Error al verificar el email',
+            life: 4000,
+          });
+        }
+      });
+    } else {
+      this.procederConActualizacion();
+    }
+  }
+
+  private procederConActualizacion() {
     const cambios = {
       email: this.editForm.email,
       currentPassword: this.editForm.currentPassword,
@@ -438,6 +480,11 @@ export class PerfilComponent implements OnInit {
               errorMessage =
                 'La contraseña actual que ingresaste no es correcta';
               severity = 'warn';
+            } else if (error.error.includes('El email ya está siendo utilizado')) {
+              summary = 'Email ya en uso';
+              errorMessage =
+                'El email ingresado ya está siendo utilizado por otro usuario';
+              severity = 'error';
             } else {
               errorMessage = error.error;
             }
@@ -502,7 +549,7 @@ export class PerfilComponent implements OnInit {
       next: (userData: any) => {
         if (userData.ventas) {
           this.ventas = userData.ventas
-            .filter((v: any) => v.activo) // Solo ventas activas
+            .filter((v: any) => v.activo)
             .map((v: any) => ({
               id: v.id,
               fechaVenta: new Date(v.fechaVenta),
@@ -525,20 +572,7 @@ export class PerfilComponent implements OnInit {
 
   verDetalleVenta(ventaId: number | null) {
     if (ventaId) {
-      this.ventaService.obtenerVenta(ventaId).subscribe({
-        next: (ventaDetalle) => {
-          console.log('Detalles de la venta:', ventaDetalle);
-          alert(
-            `Venta ID: ${ventaId}\nTotal: $${
-              ventaDetalle.total
-            }\nFecha: ${new Date(ventaDetalle.fechaVenta).toLocaleString()}`
-          );
-        },
-        error: (error) => {
-          console.error('Error al obtener detalles de la venta:', error);
-          alert('Error al obtener los detalles de la venta');
-        },
-      });
+      this.router.navigate(['/verventa', ventaId]);
     }
   }
 }

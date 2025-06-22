@@ -112,11 +112,19 @@ public class UsuarioService {
         return response;
     }
 
+    
     public String modificarUsuario(String nombre, UsuarioDto usuario) {
         String response = null;
         Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
         if (!passwordService.matchPassword(usuario.getContrasenia(), aux.getContrasenia())) {
             throw new RuntimeException("Contraseña actual incorrecta");
+        }
+
+        if (!aux.getMail().equalsIgnoreCase(usuario.getMail())) {
+            Optional<Usuario> usuarioConEmail = usuarioRepository.findByMailIgnoreCaseAndActivoTrue(usuario.getMail());
+            if (usuarioConEmail.isPresent()) {
+                throw new RuntimeException("El email ya está siendo utilizado por otro usuario");
+            }
         }
 
         aux.setMail(usuario.getMail());
