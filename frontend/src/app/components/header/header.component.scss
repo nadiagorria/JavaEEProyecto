@@ -22,7 +22,6 @@
   color: var(--text-color) !important;
 }
 
-
 ::ng-deep .p-menubar .p-menubar-root-list {
   display: flex;
   align-items: center;
@@ -55,13 +54,11 @@
   margin-right: 2vw;
 }
 
-
 ::ng-deep .p-menubar .p-menubar-end {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 
 app-notificaciones {
   display: flex;
@@ -83,20 +80,18 @@ app-notificaciones {
   border-left: 1.5px solid rgba(68, 68, 68, 0.6);
   background: rgba(68, 68, 68, 0.4);
   border-radius: 5px;
-
- }
-
-.textoView {
-    margin-left: 1vw;
-    margin-top: 0.5vw;
 }
 
+.textoView {
+  margin-left: 1vw;
+  margin-top: 0.5vw;
+}
 
 hr {
   border: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.3);   margin: 0.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  margin: 0.5rem 0;
 }
-
 
 ::ng-deep .p-overlaypanel {
   .p-overlaypanel-content {
@@ -108,29 +103,28 @@ hr {
   .p-menu-list {
     padding: 0.5rem 0;
   }
-  
+
   .p-menuitem {
     .p-menuitem-link {
       padding: 0.75rem 1rem;
       transition: all 0.3s ease;
-      
+
       &:hover {
         background-color: var(--surface-hover);
         color: var(--primary-color);
       }
-      
+
       .p-menuitem-icon {
         margin-right: 0.5rem;
         font-size: 1rem;
       }
-      
+
       .p-menuitem-text {
         font-weight: 500;
       }
     }
   }
 }
-
 
 .texto {
   padding-left: 0; // Remover el padding excesivo
@@ -144,17 +138,15 @@ hr {
   gap: 0.25rem; // Reducir gap para mejor espacio
 }
 
-
 ::ng-deep .p-button.p-button-text {
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   &:focus {
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
   }
 }
-
 
 ::ng-deep .p-menubar .p-menubar-root-list {
   display: flex;
@@ -162,7 +154,6 @@ hr {
   width: 100%;
   justify-content: space-between;
 }
-
 
 ::ng-deep .p-menubar .p-menubar-start {
   flex: 0 0 auto;
@@ -172,12 +163,6 @@ hr {
   flex: 0 0 auto;
 }
 
-
 .flex-1 {
   flex: 1;
 }
-
-
-
-
-

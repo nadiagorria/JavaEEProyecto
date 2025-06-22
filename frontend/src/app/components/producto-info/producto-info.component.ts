@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';   
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -39,15 +39,14 @@ interface EditandoProducto {
   proveedorId: number | null;
 }
 
-
 @Component({
   selector: 'app-producto-info',
-  standalone: true,  
+  standalone: true,
   imports: [
-    CommonModule, 
-    TableModule, 
-    ButtonModule, 
-    DialogModule, 
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    DialogModule,
     FormsModule,
     CardModule,
     TagModule,
@@ -59,31 +58,31 @@ interface EditandoProducto {
     ToastModule,
     FileUploadModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './producto-info.component.html',
-  styleUrls: ['./producto-info.component.scss']
+  styleUrls: ['./producto-info.component.scss'],
 })
 export class ProductoInfoComponent implements OnInit, OnDestroy {
   constructor(
-        private productoService: ProductoService,
-        private route: ActivatedRoute,
-        public router: Router,
-        private loteService: LoteService,
-        private categoriaService: CategoriaService,
-        private entidadService: EntidadService,
-        private messageService: MessageService,
-        private confirmationService: ConfirmationService,
-        private securityService: SecurityService,
-        private barcodeScannerService: BarcodeScannerService
-      ) { }
+    private productoService: ProductoService,
+    private route: ActivatedRoute,
+    public router: Router,
+    private loteService: LoteService,
+    private categoriaService: CategoriaService,
+    private entidadService: EntidadService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private securityService: SecurityService,
+    private barcodeScannerService: BarcodeScannerService
+  ) {}
 
   producto?: ProductoDto;
   error: string = '';
   loading: boolean = true;
   imagenUrl: string = '';
-  cacheImagenes = new Map<number, string>();  // Edit modal properties
+  cacheImagenes = new Map<number, string>(); // Edit modal properties
   mostrarModalEditar: boolean = false;
   editandoProducto: EditandoProducto = {
     id: null,
@@ -92,41 +91,39 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     precioVenta: 0,
     stockMin: 0,
     categoriaId: null,
-    proveedorId: null
+    proveedorId: null,
   };
-  categorias: CategoriaDto[] = [];  proveedores: ProveedorDto[] = [];
-    
+  categorias: CategoriaDto[] = [];
+  proveedores: ProveedorDto[] = [];
+
   private getTodayISOString(): string {
     return new Date().toISOString().split('T')[0];
   }
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles) {
       return false;
     }
-    
+
     const hasAdminRole = roles.includes('ADMIN');
-    
+
     return hasAdminRole;
   }
 
-
   isAdminSupremo(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles || !Array.isArray(roles)) {
       return false;
     }
-    
 
     const hasAdminRole = roles.includes('ADMIN');
     const hasCajeroRole = roles.includes('CAJERO');
-    
+
     return hasAdminRole && !hasCajeroRole;
   }
-
 
   mostrarModalAgregarLote: boolean = false;
   nuevoLote: {
@@ -137,11 +134,10 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   } = {
     numeLote: '',
     stock: 0,
-    fechaVencimiento: undefined, 
-    precioCompra: 0
+    fechaVencimiento: undefined,
+    precioCompra: 0,
   };
   minFechaVencimiento: string = '';
-
 
   mostrarModalModificarStock: boolean = false;
   nuevoStockTotal: number = 0;
@@ -154,9 +150,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const hoy = new Date();
     this.minFechaVencimiento = hoy.toISOString().split('T')[0];
-    
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     if (id && !isNaN(id)) {
       this.cargarProducto(id);
       this.cargarCategorias();
@@ -166,32 +162,34 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.loading = false;
     }
 
-
-    this.barcodeScannerSubscription = this.barcodeScannerService.lastScannedCode$.subscribe(code => {
-      if (code && this.mostrarModalEditar) {
-        this.editandoProducto.codigoDeBarra = code;
-      }
-    });
-  }cargarProducto(id: number) {
+    this.barcodeScannerSubscription =
+      this.barcodeScannerService.lastScannedCode$.subscribe((code) => {
+        if (code && this.mostrarModalEditar) {
+          this.editandoProducto.codigoDeBarra = code;
+        }
+      });
+  }
+  cargarProducto(id: number) {
     this.loading = true;
-    this.productoService.obtenerProducto(id).subscribe({      next: (response) => {
+    this.productoService.obtenerProducto(id).subscribe({
+      next: (response) => {
         console.log('Respuesta del backend:', response);
         console.log('Lotes del producto:', response.lotes);
         this.producto = response;
-        
+
         if (this.producto.lotes) {
           this.producto.lotes.sort((a, b) => {
             if (!a.fechaVencimiento) return 1;
             if (!b.fechaVencimiento) return -1;
-            
+
             const fechaA = new Date(a.fechaVencimiento);
             const fechaB = new Date(b.fechaVencimiento);
             return fechaA.getTime() - fechaB.getTime();
           });
         }
-        
+
         this.loading = false;
-        
+
         if (this.producto.id) {
           this.cargarImagenProducto(this.producto.id);
         }
@@ -202,23 +200,27 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         console.error('Error al cargar productos:', error);
         this.error = 'Error al cargar el producto';
         this.loading = false;
-      }
+      },
     });
   }
   private verificarPrecios(): void {
     if (!this.producto || !this.producto.lotes) return;
 
     const lotesConPrecioMayor = this.producto.lotes.filter(
-      lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
+      (lote) => lote.activo && lote.precioCompra > this.producto!.precioVenta
     );
 
     if (lotesConPrecioMayor.length > 0) {
-      lotesConPrecioMayor.forEach(lote => {
+      lotesConPrecioMayor.forEach((lote) => {
         this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
-          detail: `Lote ${lote.numeLote}: El precio de venta actual (${this.producto!.precioVenta}) es menor al precio de compra (${lote.precioCompra}). Esto resulta en pérdidas.`,
-          life: 10000
+          detail: `Lote ${lote.numeLote}: El precio de venta actual (${
+            this.producto!.precioVenta
+          }) es menor al precio de compra (${
+            lote.precioCompra
+          }). Esto resulta en pérdidas.`,
+          life: 10000,
         });
       });
     }
@@ -228,16 +230,20 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (!this.producto || !this.producto.lotes) return;
 
     const lotesConPrecioMayor = this.producto.lotes.filter(
-      lote => lote.activo && lote.precioCompra > this.producto!.precioVenta
+      (lote) => lote.activo && lote.precioCompra > this.producto!.precioVenta
     );
 
     if (lotesConPrecioMayor.length > 0) {
-      lotesConPrecioMayor.forEach(lote => {
+      lotesConPrecioMayor.forEach((lote) => {
         this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
-          detail: `Lote ${lote.numeLote}: El precio de venta actual (${this.producto!.precioVenta}) es menor al precio de compra (${lote.precioCompra}). Esto resulta en pérdidas.`,
-          life: 10000
+          detail: `Lote ${lote.numeLote}: El precio de venta actual (${
+            this.producto!.precioVenta
+          }) es menor al precio de compra (${
+            lote.precioCompra
+          }). Esto resulta en pérdidas.`,
+          life: 10000,
         });
       });
     }
@@ -258,7 +264,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error al cargar imagen:', error);
         this.imagenUrl = '/placeholder-image.webp';
-      }
+      },
     });
   }
   private cargarCategorias(): void {
@@ -269,7 +275,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al cargar categorías:', error);
-      }
+      },
     });
   }
 
@@ -281,33 +287,39 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al cargar proveedores:', error);
-      }
+      },
     });
   }
   abrirModalEditar(): void {
     if (!this.producto) return;
-    
+
     if (this.categorias.length === 0) {
       this.cargarCategorias();
     }
-    
+
     if (this.proveedores.length === 0) {
       this.cargarProveedores();
     }
-      this.editandoProducto = {
+    this.editandoProducto = {
       id: this.producto.id,
       nombre: this.producto.nombre,
       codigoDeBarra: this.producto.codigoDeBarra,
       precioVenta: this.producto.precioVenta,
       stockMin: this.producto.stockMin,
       categoriaId: this.producto.categoria?.id || null,
-      proveedorId: this.producto.proveedor?.id || null
+      proveedorId: this.producto.proveedor?.id || null,
     };
-    
+
     console.log('Editando producto:', this.editandoProducto);
-    console.log('Categoría seleccionada ID:', this.editandoProducto.categoriaId);
-    console.log('Proveedor seleccionado ID:', this.editandoProducto.proveedorId);
-    
+    console.log(
+      'Categoría seleccionada ID:',
+      this.editandoProducto.categoriaId
+    );
+    console.log(
+      'Proveedor seleccionado ID:',
+      this.editandoProducto.proveedorId
+    );
+
     this.mostrarModalEditar = true;
   }
   editarProducto(): void {
@@ -315,19 +327,30 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'No se puede procesar la edición del producto. Todos los campos deben ser válidos.'
+        detail:
+          'No se puede procesar la edición del producto. Todos los campos deben ser válidos.',
       });
       return;
     }
 
-    console.log('Guardando producto con categoriaId:', this.editandoProducto.categoriaId);
-    console.log('Guardando producto con proveedorId:', this.editandoProducto.proveedorId);
+    console.log(
+      'Guardando producto con categoriaId:',
+      this.editandoProducto.categoriaId
+    );
+    console.log(
+      'Guardando producto con proveedorId:',
+      this.editandoProducto.proveedorId
+    );
 
-    const categoriaSeleccionada = this.categorias.find(c => c.id === this.editandoProducto.categoriaId);
-    const proveedorSeleccionado = this.proveedores.find(p => p.id === this.editandoProducto.proveedorId);
+    const categoriaSeleccionada = this.categorias.find(
+      (c) => c.id === this.editandoProducto.categoriaId
+    );
+    const proveedorSeleccionado = this.proveedores.find(
+      (p) => p.id === this.editandoProducto.proveedorId
+    );
 
     console.log('Categoría encontrada:', categoriaSeleccionada);
-    console.log('Proveedor encontrado:', proveedorSeleccionado);    
+    console.log('Proveedor encontrado:', proveedorSeleccionado);
     const productoParaEditar: ProductoDto = {
       ...this.producto!,
       id: this.editandoProducto.id,
@@ -336,7 +359,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       precioVenta: this.editandoProducto.precioVenta!,
       stockMin: this.editandoProducto.stockMin!,
       categoria: categoriaSeleccionada || null,
-      proveedor: proveedorSeleccionado || null
+      proveedor: proveedorSeleccionado || null,
     };
 
     console.log('Producto para editar:', productoParaEditar);
@@ -344,40 +367,47 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.productoService.editarProducto(productoParaEditar).subscribe({
       next: () => {
         if (this.imagenSeleccionada) {
-          this.productoService.actualizarImagenProducto(this.editandoProducto.id!, this.imagenSeleccionada).subscribe({
-            next: () => {
+          this.productoService
+            .actualizarImagenProducto(
+              this.editandoProducto.id!,
+              this.imagenSeleccionada
+            )
+            .subscribe({
+              next: () => {
+                if (this.imagenPreviewEdicion) {
+                  this.cacheImagenes.delete(this.editandoProducto.id!);
 
-              if (this.imagenPreviewEdicion) {
+                  this.imagenUrl = this.imagenPreviewEdicion;
 
-                this.cacheImagenes.delete(this.editandoProducto.id!);
+                  this.cacheImagenes.set(
+                    this.editandoProducto.id!,
+                    this.imagenPreviewEdicion
+                  );
+                }
 
-                this.imagenUrl = this.imagenPreviewEdicion;
-
-                this.cacheImagenes.set(this.editandoProducto.id!, this.imagenPreviewEdicion);
-              }
-              
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Éxito',
-                detail: 'Producto e imagen actualizados correctamente'
-              });
-              this.finalizarEdicion();
-            },
-            error: (error) => {
-              console.error('Error al actualizar la imagen:', error);
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Advertencia',
-                detail: 'Producto actualizado pero hubo un error al actualizar la imagen'
-              });
-              this.finalizarEdicion();
-            }
-          });
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Éxito',
+                  detail: 'Producto e imagen actualizados correctamente',
+                });
+                this.finalizarEdicion();
+              },
+              error: (error) => {
+                console.error('Error al actualizar la imagen:', error);
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Advertencia',
+                  detail:
+                    'Producto actualizado pero hubo un error al actualizar la imagen',
+                });
+                this.finalizarEdicion();
+              },
+            });
         } else {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Producto actualizado correctamente'
+            detail: 'Producto actualizado correctamente',
           });
           this.finalizarEdicion();
         }
@@ -387,9 +417,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo editar el producto'
+          detail: 'No se pudo editar el producto',
         });
-      }
+      },
     });
   }
 
@@ -397,22 +427,19 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.mostrarModalEditar = false;
 
     this.barcodeScannerService.deactivateScanner();
-    
 
     if (this.producto!.id !== null && !this.imagenSeleccionada) {
       this.cargarProducto(this.producto!.id);
     } else if (this.producto!.id !== null && this.imagenSeleccionada) {
-
       this.productoService.obtenerProducto(this.producto!.id).subscribe({
         next: (response) => {
-
           const imagenActual = this.imagenUrl;
           this.producto = response;
           this.imagenUrl = imagenActual;
         },
         error: (error) => {
           console.error('Error al recargar datos del producto:', error);
-        }
+        },
       });
     }
     this.imagenSeleccionada = null;
@@ -440,7 +467,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       rejectLabel: 'Cancelar',
       accept: () => {
         this.eliminarProducto();
-      }
+      },
     });
   }
 
@@ -452,7 +479,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Producto eliminado correctamente'
+          detail: 'Producto eliminado correctamente',
         });
         setTimeout(() => {
           this.router.navigate(['/productos']);
@@ -463,22 +490,23 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo eliminar el producto'
+          detail: 'No se pudo eliminar el producto',
         });
-      }
+      },
     });
   }
 
   confirmarEliminarLote(loteId: number) {
     this.confirmationService.confirm({
-      message: '¿Está seguro de que desea eliminar este lote? Esta acción no se puede deshacer.',
+      message:
+        '¿Está seguro de que desea eliminar este lote? Esta acción no se puede deshacer.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
         this.eliminarLote(loteId);
-      }
+      },
     });
   }
 
@@ -486,14 +514,17 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (!this.producto || this.producto.id === null) return;
     this.loteService.eliminarLote(loteId).subscribe({
       next: () => {
-        this.producto!.lotes = this.producto!.lotes.filter(l => l.id !== loteId);
+        this.producto!.lotes = this.producto!.lotes.filter(
+          (l) => l.id !== loteId
+        );
         if (this.producto!.id !== null) {
           this.cargarProducto(this.producto!.id);
         }
-      },      error: (err) => {
+      },
+      error: (err) => {
         console.error('Error al eliminar lote:', err);
         let errorMessage = 'Error al eliminar el lote';
-        
+
         if (err.error) {
           if (typeof err.error === 'string') {
             errorMessage = err.error;
@@ -503,19 +534,21 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         } else if (err.message) {
           errorMessage = err.message;
         }
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage
+          detail: errorMessage,
         });
-      }
-    });  }  agregarLote() {
+      },
+    });
+  }
+  agregarLote() {
     if (!this.producto || this.producto.id === null) return;
-    
+
     if (!this.validarFormularioLote()) {
       return;
-    }    
+    }
     const lote: LoteDto = {
       numeLote: this.nuevoLote.numeLote || '',
       stock: this.nuevoLote.stock || 0,
@@ -523,34 +556,35 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       precioCompra: this.nuevoLote.precioCompra || 0,
       id: null,
       activo: true,
-      producto: { 
-        id: this.producto.id, 
-        nombre: this.producto.nombre 
-      }
+      producto: {
+        id: this.producto.id,
+        nombre: this.producto.nombre,
+      },
     };
 
-    
     this.loteService.crearLote(lote).subscribe({
       next: (response) => {
         const idMatch = response.match(/ID: (\d+)/);
         const idLote = idMatch ? idMatch[1] : 'desconocido';
-        
+
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: `Lote #${idLote} agregado correctamente`
+          detail: `Lote #${idLote} agregado correctamente`,
         });
-        
+
         if (this.producto!.id !== null) {
           this.cargarProducto(this.producto!.id);
         }
-        
+
         this.mostrarModalAgregarLote = false;
         this.resetearFormularioLote();
-      },      error: (err) => {
+      },
+      error: (err) => {
         console.error('Error al agregar lote:', err);
-        let errorMessage = 'Error al agregar el lote. Verifique los datos e intente nuevamente.';
-        
+        let errorMessage =
+          'Error al agregar el lote. Verifique los datos e intente nuevamente.';
+
         if (err.error) {
           if (typeof err.error === 'string') {
             errorMessage = err.error;
@@ -560,30 +594,30 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         } else if (err.message) {
           errorMessage = err.message;
         }
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage
+          detail: errorMessage,
         });
-      }
+      },
     });
-  }  
-  
+  }
+
   private resetearFormularioLote(): void {
     this.nuevoLote = {
       numeLote: '',
       stock: 0,
       fechaVencimiento: undefined,
-      precioCompra: 0
+      precioCompra: 0,
     };
   }
-  private validarFormularioLote(): boolean {    
+  private validarFormularioLote(): boolean {
     if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
-        detail: 'El número de lote es obligatorio'
+        detail: 'El número de lote es obligatorio',
       });
       return false;
     }
@@ -592,27 +626,33 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
-        detail: 'El stock debe ser mayor que cero'
+        detail: 'El stock debe ser mayor que cero',
       });
       return false;
     }
 
-
-    if (this.nuevoLote.precioCompra === undefined || this.nuevoLote.precioCompra < 0) {
+    if (
+      this.nuevoLote.precioCompra === undefined ||
+      this.nuevoLote.precioCompra < 0
+    ) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
-        detail: 'El precio de compra debe ser un valor válido'
+        detail: 'El precio de compra debe ser un valor válido',
       });
       return false;
-    }    
+    }
 
-    if (this.producto && this.nuevoLote.precioCompra && this.nuevoLote.precioCompra > this.producto.precioVenta) {
+    if (
+      this.producto &&
+      this.nuevoLote.precioCompra &&
+      this.nuevoLote.precioCompra > this.producto.precioVenta
+    ) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia de Precios',
         detail: `El precio de compra del nuevo lote (${this.nuevoLote.precioCompra}) es mayor al precio de venta actual (${this.producto.precioVenta}). Esto resultará en pérdidas.`,
-        life: 10000
+        life: 10000,
       });
     }
 
@@ -621,7 +661,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.limpiarCacheImagenes();
-    
 
     if (this.barcodeScannerSubscription) {
       this.barcodeScannerSubscription.unsubscribe();
@@ -629,18 +668,20 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   }
 
   private limpiarCacheImagenes(): void {
-    this.cacheImagenes.forEach(url => {
+    this.cacheImagenes.forEach((url) => {
       URL.revokeObjectURL(url);
     });
     this.cacheImagenes.clear();
   }
   getFechaVencimientoClass(fecha: string | undefined): string {
     if (!fecha) return 'fecha-sin-vencimiento';
-    
+
     const fechaVencimiento = new Date(fecha);
     const hoy = new Date();
-    const diferenciaDias = Math.ceil((fechaVencimiento.getTime() - hoy.getTime()) / (1000 * 3600 * 24));
-    
+    const diferenciaDias = Math.ceil(
+      (fechaVencimiento.getTime() - hoy.getTime()) / (1000 * 3600 * 24)
+    );
+
     if (diferenciaDias < 0) {
       return 'fecha-vencida';
     } else if (diferenciaDias <= 7) {
@@ -660,10 +701,9 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     return 'stock-bajo';
   }
 
-
   abrirModalModificarStock(): void {
     if (!this.producto) return;
-    
+
     this.stockOriginal = this.producto.stockTotal;
     this.nuevoStockTotal = this.producto.stockTotal;
     this.mostrarModalModificarStock = true;
@@ -674,7 +714,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'No se puede modificar el stock del producto'
+        detail: 'No se puede modificar el stock del producto',
       });
       return;
     }
@@ -683,42 +723,43 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'El stock total no puede ser negativo'
+        detail: 'El stock total no puede ser negativo',
       });
       return;
     }
 
-    this.productoService.modificarStockTotal(this.producto.id, this.nuevoStockTotal).subscribe({
-      next: (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Stock total modificado correctamente'
-        });
-        
+    this.productoService
+      .modificarStockTotal(this.producto.id, this.nuevoStockTotal)
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Stock total modificado correctamente',
+          });
 
-        if (this.producto) {
-          this.producto.stockTotal = this.nuevoStockTotal;
-        }
-        
-        this.mostrarModalModificarStock = false;
-      },
-      error: (error) => {
-        console.error('Error al modificar stock:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.error || 'Error al modificar el stock total'
-        });
-      }
-    });
+          if (this.producto) {
+            this.producto.stockTotal = this.nuevoStockTotal;
+          }
+
+          this.mostrarModalModificarStock = false;
+        },
+        error: (error) => {
+          console.error('Error al modificar stock:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.error || 'Error al modificar el stock total',
+          });
+        },
+      });
   }
 
   onImagenSeleccionada(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.imagenSeleccionada = file;
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagenPreviewEdicion = e.target?.result as string;
@@ -734,17 +775,15 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     }
   }
 
-
   activarEscanerCodigoBarras(): void {
     this.barcodeScannerService.activateScanner();
     this.messageService.add({
       severity: 'info',
       summary: 'Escáner Activado',
       detail: 'Escanee un código de barras para capturarlo',
-      life: 3000
+      life: 3000,
     });
   }
-
 
   desactivarEscaner(): void {
     this.barcodeScannerService.deactivateScanner();

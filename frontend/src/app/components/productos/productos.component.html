@@ -2,40 +2,50 @@
 <p-toast></p-toast>
 
 <div class="producto-container">
-  <div class="producto-header">    <div class="busqueda-filtro">
+  <div class="producto-header">
+    <div class="busqueda-filtro">
       <div class="search-container">
         <i class="pi pi-search search-icon"></i>
-        <input 
-          type="text" 
-          placeholder="Buscar por nombre o código de barras" 
+        <input
+          type="text"
+          placeholder="Buscar por nombre o código de barras"
           [(ngModel)]="terminoBusqueda"
           (input)="onBusquedaChange($event)"
           name="busqueda"
-          class="search-input" />
+          class="search-input"
+        />
       </div>
-      
-      <p-dropdown 
+
+      <p-dropdown
         [options]="categoriasConTodas"
         [(ngModel)]="categoriaFiltro"
         (onChange)="onCategoriaChange($event)"
         name="categoriaFiltro"
-        optionLabel="nombre" 
+        optionLabel="nombre"
         optionValue="id"
-        placeholder="Todas las categorías" 
-        class="filter-dropdown" 
-        scrollHeight="182px" 
-        appendTo="body">
+        placeholder="Todas las categorías"
+        class="filter-dropdown"
+        scrollHeight="182px"
+        appendTo="body"
+      >
       </p-dropdown>
-    </div><div class="acciones" *ngIf="esAdmin">
+    </div>
+    <div class="acciones" *ngIf="esAdmin">
       <button class="btn btn-nuevo" (click)="abrirModalAgregarProducto()">
         <i class="pi pi-plus"></i>
         <span>Nuevo Producto</span>
       </button>
-      <button class="btn btn-categoria" (click)="mostrarModalAgregarCategoria = true">
+      <button
+        class="btn btn-categoria"
+        (click)="mostrarModalAgregarCategoria = true"
+      >
         <i class="pi pi-folder-plus"></i>
         <span>Nueva Categoría</span>
       </button>
-      <button class="btn btn-eliminar" (click)="mostrarModalEliminarCategoria = true">
+      <button
+        class="btn btn-eliminar"
+        (click)="mostrarModalEliminarCategoria = true"
+      >
         <i class="pi pi-trash"></i>
         <span>Eliminar Categoría</span>
       </button>
@@ -47,20 +57,20 @@
     header="Agregar Producto"
     [(visible)]="mostrarModalAgregarProducto"
     [modal]="true"
-    [style]="{width: '550px'}"
-    [contentStyle]="{overflow: 'auto'}"
+    [style]="{ width: '550px' }"
+    [contentStyle]="{ overflow: 'auto' }"
     [closable]="true"
     [draggable]="false"
     [resizable]="false"
     styleClass="producto-dialog"
-    appendTo="body">
-
+    appendTo="body"
+  >
     <div class="modal-content">
       <form class="producto-form" (ngSubmit)="crearProducto()">
         <!-- Información Básica -->
         <div class="form-section">
           <div class="section-title">Información Básica</div>
-          
+
           <!-- Nombre del producto -->
           <div class="form-group">
             <label for="nombreProducto">Nombre del producto</label>
@@ -71,7 +81,8 @@
               [(ngModel)]="nuevoProducto.nombre"
               name="nombreProducto"
               class="form-input"
-              required />
+              required
+            />
           </div>
 
           <div class="form-row">
@@ -88,10 +99,11 @@
                   class="form-input"
                   min="0"
                   step="0.01"
-                  required />
+                  required
+                />
               </div>
             </div>
-            
+
             <div class="form-col">
               <!-- Stock mínimo -->
               <div class="form-group">
@@ -104,7 +116,8 @@
                   name="stockMin"
                   class="form-input"
                   min="0"
-                  required />
+                  required
+                />
               </div>
             </div>
           </div>
@@ -120,7 +133,8 @@
                 [(ngModel)]="nuevoProducto.codigoDeBarra"
                 name="codigoBarras"
                 class="form-input"
-                required />
+                required
+              />
             </div>
           </div>
         </div>
@@ -128,41 +142,59 @@
         <!-- Categorización -->
         <div class="form-section">
           <div class="section-title">Categorización</div>
-            <!-- Categoría -->          <div class="form-group">
+          <!-- Categoría -->
+          <div class="form-group">
             <label for="categoria">Categoría</label>
-            <p-dropdown 
+            <p-dropdown
               [options]="categorias"
-              [(ngModel)]="nuevoProducto.categoriaId" 
+              [(ngModel)]="nuevoProducto.categoriaId"
               name="categoriaProducto"
-              optionLabel="nombre" 
+              optionLabel="nombre"
               optionValue="id"
-              placeholder="Selecciona la categoría" 
-              class="w-full form-dropdown" 
-              [showClear]="true" 
-              scrollHeight="182px" 
-              appendTo="body">
+              placeholder="Selecciona la categoría"
+              class="w-full form-dropdown"
+              [showClear]="true"
+              scrollHeight="182px"
+              appendTo="body"
+            >
             </p-dropdown>
-            <small *ngIf="nuevoProducto.categoriaId !== null && nuevoProducto.categoriaId !== undefined" class="categoria-seleccionada">
-              Categoría seleccionada: {{ obtenerNombreCategoria(nuevoProducto.categoriaId) }}          </small>
-          </div>          
-          
+            <small
+              *ngIf="
+                nuevoProducto.categoriaId !== null &&
+                nuevoProducto.categoriaId !== undefined
+              "
+              class="categoria-seleccionada"
+            >
+              Categoría seleccionada:
+              {{ obtenerNombreCategoria(nuevoProducto.categoriaId) }}
+            </small>
+          </div>
+
           <!-- Proveedor -->
           <div class="form-group">
             <label for="proveedor">Proveedor</label>
-            <p-dropdown 
+            <p-dropdown
               [options]="proveedores"
-              [(ngModel)]="nuevoProducto.proveedorId" 
+              [(ngModel)]="nuevoProducto.proveedorId"
               name="proveedorProducto"
-              optionLabel="nombre" 
+              optionLabel="nombre"
               optionValue="id"
-              placeholder="Sin proveedor" 
-              class="w-full form-dropdown" 
-              [showClear]="true" 
-              scrollHeight="182px" 
-              appendTo="body">
+              placeholder="Sin proveedor"
+              class="w-full form-dropdown"
+              [showClear]="true"
+              scrollHeight="182px"
+              appendTo="body"
+            >
             </p-dropdown>
-            <small *ngIf="nuevoProducto.proveedorId !== null && nuevoProducto.proveedorId !== undefined" class="proveedor-seleccionado">
-              Proveedor seleccionado: {{ obtenerNombreProveedor(nuevoProducto.proveedorId) }}
+            <small
+              *ngIf="
+                nuevoProducto.proveedorId !== null &&
+                nuevoProducto.proveedorId !== undefined
+              "
+              class="proveedor-seleccionado"
+            >
+              Proveedor seleccionado:
+              {{ obtenerNombreProveedor(nuevoProducto.proveedorId) }}
             </small>
           </div>
         </div>
@@ -170,7 +202,7 @@
         <!-- Imagen -->
         <div class="form-section">
           <div class="section-title">Imagen del Producto</div>
-          
+
           <!-- Imagen (opcional) -->
           <div class="form-group">
             <label for="imagen">Imagen del producto (opcional)</label>
@@ -180,26 +212,38 @@
               accept="image/*"
               (change)="onImagenSeleccionada($event)"
               name="imagen"
-              class="form-input-file" />
+              class="form-input-file"
+            />
             <small class="help-text">Este campo es opcional</small>
           </div>
 
           <!-- Vista previa de imagen -->
           <div class="image-preview" *ngIf="imagenPreview">
-            <img [src]="imagenPreview" alt="Vista previa" style="max-width: 200px; max-height: 200px; object-fit: contain;" />
+            <img
+              [src]="imagenPreview"
+              alt="Vista previa"
+              style="max-width: 200px; max-height: 200px; object-fit: contain"
+            />
           </div>
         </div>
 
         <!-- Campos obligatorios -->
         <div class="campos-obligatorios">
           <i class="pi pi-info-circle"></i>
-          <span>Los campos marcados con <span class="asterisco">*</span> son obligatorios</span>
+          <span
+            >Los campos marcados con <span class="asterisco">*</span> son
+            obligatorios</span
+          >
         </div>
       </form>
     </div>
-      <ng-template pTemplate="footer">
+    <ng-template pTemplate="footer">
       <div class="dialog-footer">
-        <button type="button" class="btn-secondary" (click)="mostrarModalAgregarProducto = false">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="mostrarModalAgregarProducto = false"
+        >
           <i class="pi pi-times"></i>
           <span>Cancelar</span>
         </button>
@@ -215,19 +259,19 @@
     header="Agregar Categoría"
     [(visible)]="mostrarModalAgregarCategoria"
     [modal]="true"
-    [style]="{width: '450px'}"
-    [contentStyle]="{overflow: 'auto'}"
+    [style]="{ width: '450px' }"
+    [contentStyle]="{ overflow: 'auto' }"
     [closable]="true"
     [draggable]="false"
     [resizable]="false"
     styleClass="producto-dialog"
-    appendTo="body">
-
+    appendTo="body"
+  >
     <div class="modal-content">
       <form class="producto-form">
         <div class="form-section">
           <div class="section-title">Nueva Categoría</div>
-            <div class="form-group">
+          <div class="form-group">
             <label for="nombreCategoria">Nombre de la categoría</label>
             <input
               type="text"
@@ -236,20 +280,23 @@
               [(ngModel)]="nombreCategoria"
               name="nombreCategoria"
               class="form-input"
-              required />
-          </div>          <div class="form-group">
+              required
+            />
+          </div>
+          <div class="form-group">
             <label for="categoriaPadre">Categoría padre (opcional)</label>
-            <p-dropdown 
+            <p-dropdown
               [options]="categorias"
-              [(ngModel)]="categoriaPadre" 
+              [(ngModel)]="categoriaPadre"
               name="categoriaPadre"
-              optionLabel="nombre" 
+              optionLabel="nombre"
               optionValue="id"
-              placeholder="Sin categoría padre" 
-              class="w-full form-dropdown" 
-              [showClear]="true" 
-              scrollHeight="182px" 
-              appendTo="body">
+              placeholder="Sin categoría padre"
+              class="w-full form-dropdown"
+              [showClear]="true"
+              scrollHeight="182px"
+              appendTo="body"
+            >
             </p-dropdown>
           </div>
 
@@ -257,11 +304,14 @@
             <i class="pi pi-info-circle"></i>
             <span>Podrá utilizar la categoría al crear un nuevo producto.</span>
           </div>
-          
+
           <!-- Nota sobre campos obligatorios -->
           <div class="campos-obligatorios">
             <i class="pi pi-info-circle"></i>
-            <span>Los campos marcados con <span class="asterisco">*</span> son obligatorios</span>
+            <span
+              >Los campos marcados con <span class="asterisco">*</span> son
+              obligatorios</span
+            >
           </div>
         </div>
       </form>
@@ -269,7 +319,11 @@
 
     <ng-template pTemplate="footer">
       <div class="dialog-footer">
-        <button type="button" class="btn-secondary" (click)="mostrarModalAgregarCategoria = false">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="mostrarModalAgregarCategoria = false"
+        >
           <i class="pi pi-times"></i>
           <span>Cancelar</span>
         </button>
@@ -285,14 +339,14 @@
     header="Eliminar Categoría"
     [(visible)]="mostrarModalEliminarCategoria"
     [modal]="true"
-    [style]="{width: '450px'}"
-    [contentStyle]="{overflow: 'auto'}"
+    [style]="{ width: '450px' }"
+    [contentStyle]="{ overflow: 'auto' }"
     [closable]="true"
     [draggable]="false"
     [resizable]="false"
     styleClass="producto-dialog danger-dialog"
-    appendTo="body">
-
+    appendTo="body"
+  >
     <div class="modal-content">
       <form class="producto-form">
         <div class="form-section">
@@ -300,25 +354,31 @@
             <i class="pi pi-exclamation-triangle"></i>
             Eliminar Categoría
           </div>
-            <div class="form-group">
-            <label for="categoriaEliminar">Seleccionar categoría a eliminar</label>
-            <p-dropdown 
+          <div class="form-group">
+            <label for="categoriaEliminar"
+              >Seleccionar categoría a eliminar</label
+            >
+            <p-dropdown
               [options]="categorias"
-              [(ngModel)]="categoriaSeleccionada" 
+              [(ngModel)]="categoriaSeleccionada"
               name="categoriaSeleccionada"
-              optionLabel="nombre" 
+              optionLabel="nombre"
               optionValue="id"
-              placeholder="Selecciona la categoría" 
-              class="w-full form-dropdown" 
-              [showClear]="true" 
-              scrollHeight="182px" 
-              appendTo="body">
+              placeholder="Selecciona la categoría"
+              class="w-full form-dropdown"
+              [showClear]="true"
+              scrollHeight="182px"
+              appendTo="body"
+            >
             </p-dropdown>
           </div>
 
           <div class="warning-message">
             <i class="pi pi-exclamation-triangle"></i>
-            <span>La categoría se eliminará permanentemente. Esta acción no se puede deshacer.</span>
+            <span
+              >La categoría se eliminará permanentemente. Esta acción no se
+              puede deshacer.</span
+            >
           </div>
         </div>
       </form>
@@ -326,7 +386,11 @@
 
     <ng-template pTemplate="footer">
       <div class="dialog-footer">
-        <button type="button" class="btn-secondary" (click)="mostrarModalEliminarCategoria = false">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="mostrarModalEliminarCategoria = false"
+        >
           <i class="pi pi-times"></i>
           <span>Cancelar</span>
         </button>
@@ -340,26 +404,36 @@
 
   <!-- Grid de productos -->
   <div class="producto-grid">
-    <div class="producto-card" *ngFor="let producto of productosFiltrados" (click)="producto.id && verProducto(producto.id)" style="cursor:pointer">
+    <div
+      class="producto-card"
+      *ngFor="let producto of productosFiltrados"
+      (click)="producto.id && verProducto(producto.id)"
+      style="cursor: pointer"
+    >
       <div class="imagen-container">
-        <img 
-          [src]="obtenerImagenProducto(producto.id)" 
+        <img
+          [src]="obtenerImagenProducto(producto.id)"
           [alt]="producto.nombre || 'Producto'"
           class="producto-imagen"
           (error)="onImageError($event)"
-          loading="lazy" />
+          loading="lazy"
+        />
       </div>
 
       <div class="info">
         <p class="nombre" [title]="producto.nombre">{{ producto.nombre }}</p>
-        <p class="precio">{{ producto.precioVenta | currency:'USD':'symbol':'1.2-2' }}</p>
+        <p class="precio">
+          {{ producto.precioVenta | currency : "USD" : "symbol" : "1.2-2" }}
+        </p>
       </div>
     </div>
-    
+
     <!-- Mensaje si no hay productos -->
     <div class="no-productos" *ngIf="productosFiltrados.length === 0">
       <i class="pi pi-info-circle"></i>
-      <p>No se encontraron productos que coincidan con los criterios de búsqueda.</p>
+      <p>
+        No se encontraron productos que coincidan con los criterios de búsqueda.
+      </p>
     </div>
   </div>
 </div>

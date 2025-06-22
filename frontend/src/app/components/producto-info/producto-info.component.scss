@@ -1,4 +1,3 @@
-
 .main-content {
   min-height: calc(100vh - 120px);
   background-color: #f8f9fa;
@@ -15,12 +14,11 @@
   margin: 0;
 }
 
-
 .producto-card {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   .imagen-container {
     width: 100%;
     height: 250px;
@@ -30,49 +28,49 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     .producto-imagen {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
   }
-  
+
   .producto-nombre {
     color: #2c3e50;
     font-weight: 600;
     margin-bottom: 1rem;
   }
-  
+
   .detalles-lista .detalle-item {
     margin-bottom: 0.75rem;
-    
+
     strong {
       color: #495057;
       margin-right: 0.5rem;
     }
   }
-  
+
   .precio-section {
     padding: 1rem;
     background-color: #e9ecef;
     border-radius: 6px;
-    
+
     .precio-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      
+
       .precio-label {
         font-weight: 500;
         color: #495057;
       }
-      
+
       .precio-valor {
         font-size: 1.5rem;
         font-weight: 700;
         color: #2c3e50;
-        
+
         &.precio-compra {
           color: #6c757d;
           font-size: 1.2rem;
@@ -82,13 +80,12 @@
   }
 }
 
-
 .lotes-section {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  
+
   h4 {
     color: #2c3e50;
     font-weight: 600;
@@ -96,10 +93,18 @@
   }
 }
 
-
-.stock-alto { background-color: #d4edda; color: #155724; }
-.stock-medio { background-color: #fff3cd; color: #856404; }
-.stock-bajo { background-color: #f8d7da; color: #721c24; }
+.stock-alto {
+  background-color: #d4edda;
+  color: #155724;
+}
+.stock-medio {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.stock-bajo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
 .stock-badge {
   padding: 0.25rem 0.5rem;
@@ -108,60 +113,79 @@
   font-weight: 500;
 }
 
-
-.fecha-vencida { color: #dc3545; font-weight: 600; }
-.fecha-proxima { color: #fd7e14; font-weight: 600; }
-.fecha-advertencia { color: #ffc107; font-weight: 500; }
-.fecha-normal { color: #28a745; }
-.fecha-sin-vencimiento { color: #6c757d; font-style: italic; font-size: 0.9rem; }
-
-
-@media (max-width: 768px) {
-  .container { padding: 0.5rem; }
-  .producto-card .imagen-container { height: 200px; }
+.fecha-vencida {
+  color: #dc3545;
+  font-weight: 600;
+}
+.fecha-proxima {
+  color: #fd7e14;
+  font-weight: 600;
+}
+.fecha-advertencia {
+  color: #ffc107;
+  font-weight: 500;
+}
+.fecha-normal {
+  color: #28a745;
+}
+.fecha-sin-vencimiento {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+  .producto-card .imagen-container {
+    height: 200px;
+  }
+}
 
-.producto-form, .lote-form {
+.producto-form,
+.lote-form {
   .form-group {
     margin-bottom: 1.5rem;
-    
+
     label {
       display: block;
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
       font-size: 0.95rem;
-      
+
       &::after {
         content: " *";
         color: #dc3545;
         font-weight: 400;
       }
-      
+
       &[for="categoria"]::after,
       &[for="proveedor"]::after {
         content: "";
       }
     }
-    
-    input, .p-dropdown {
+
+    input,
+    .p-dropdown {
       border-radius: 6px;
       transition: all 0.2s ease;
       width: 100%;
-      
-      &:focus, &.p-focus {
+
+      &:focus,
+      &.p-focus {
         box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
         border-color: #6c757d;
       }
     }
-    
+
     .p-dropdown {
       &.p-dropdown-clearable .p-dropdown-label {
         padding-right: 2rem;
       }
     }
-    
+
     .help-text {
       font-size: 0.85rem;
       color: #6c757d;
@@ -169,28 +193,27 @@
       display: block;
     }
   }
-  
 
   input[type="number"] {
     padding-right: 2rem;
   }
-  
+
   .form-row {
     display: flex;
     gap: 1rem;
-    
+
     .form-col {
       flex: 1;
     }
   }
-  
+
   .form-section {
     background: #f8f9fa;
     border-radius: 8px;
     padding: 1.25rem;
     margin-bottom: 1rem;
     border-left: 4px solid #6c757d;
-    
+
     .section-title {
       font-size: 0.9rem;
       font-weight: 600;
@@ -200,26 +223,26 @@
       letter-spacing: 0.5px;
     }
   }
-  
+
   .campos-obligatorios {
     display: flex;
     align-items: center;
     color: #6c757d;
     font-size: 0.85rem;
     gap: 0.5rem;
-    
+
     i {
       color: #dc3545;
     }
   }
 }
-.producto-dialog, .producto_dialog {
+.producto-dialog,
+.producto_dialog {
   .p-dialog-content {
     overflow: auto !important;
     max-height: 80vh;
   }
 }
-
 
 ::ng-deep {
   .p-datatable {
@@ -230,41 +253,41 @@
       font-weight: 600;
       padding: 0.75rem;
     }
-    
+
     .p-datatable-tbody > tr > td {
       padding: 0.75rem;
       border-color: #dee2e6;
     }
-    
+
     .p-datatable-tbody > tr:hover {
       background: #f8f9fa;
     }
   }
-    .p-dialog {
+  .p-dialog {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     overflow: visible;
-    
+
     .p-dialog-header {
       background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
       color: white;
       border: none;
       border-radius: 8px 8px 0 0;
-      
+
       .p-dialog-title {
         font-weight: 600;
       }
-      
+
       .p-dialog-header-icon {
         color: white;
       }
     }
-      .p-dialog-content {
+    .p-dialog-content {
       padding: 1.5rem;
       border: none;
       overflow: auto;
     }
-    
+
     .p-dialog-footer {
       border: none;
       padding: 1.25rem 1.5rem;
@@ -272,17 +295,17 @@
       border-radius: 0 0 8px 8px;
       display: flex;
       justify-content: flex-end;
-      
+
       .p-button {
         border-radius: 6px;
         font-weight: 500;
         padding: 0.75rem 1.5rem;
-        
+
         &.p-button-success {
           background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
           border: none;
           box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-          
+
           &:hover {
             transform: translateY(-1px);
           }
@@ -290,77 +313,77 @@
       }
     }
   }
-  
 
   .p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
   }
-  
+
   .p-dialog {
     animation: slideInDown 0.3s ease-out;
   }
-  
 
   .p-inputtext {
     padding: 0.75rem;
     border: 2px solid #e9ecef;
     border-radius: 6px;
     transition: all 0.2s ease;
-    
+
     &:focus {
       box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
       border-color: #6c757d;
     }
-    
+
     &::placeholder {
       color: #adb5bd;
       font-style: italic;
     }
   }
-  
+
   .p-dropdown {
     border: 2px solid #e9ecef;
     border-radius: 6px;
     transition: all 0.2s ease;
-    
+
     &.p-focus {
       box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
       border-color: #6c757d;
     }
-    
+
     .p-dropdown-label {
       padding: 0.75rem;
-      
+
       &.p-placeholder {
         color: #adb5bd;
         font-style: italic;
       }
     }
-    
+
     .p-dropdown-trigger {
       color: #6c757d;
-    }    .p-dropdown-panel {
+    }
+    .p-dropdown-panel {
       border-radius: 6px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       max-width: 100%;
       overflow: hidden;
-      
+
       .p-dropdown-items-wrapper {
         max-height: 200px;
-          .p-dropdown-item {
+        .p-dropdown-item {
           padding: 0.75rem 1rem;
           transition: background-color 0.2s;
           white-space: normal;
           word-break: break-word;
-          height: 45.5px;           overflow: hidden;
+          height: 45.5px;
+          overflow: hidden;
           text-overflow: ellipsis;
           display: flex;
           align-items: center;
-          
+
           &:hover {
             background-color: #f8f9fa;
           }
-          
+
           &.p-highlight {
             background-color: #e9ecef;
             color: #495057;
@@ -372,9 +395,7 @@
   }
 }
 
-
 ::ng-deep {
-
   .p-dropdown {
     width: 100%;
   }
@@ -393,7 +414,7 @@
   .p-dropdown-items-wrapper {
     max-height: 182px !important; // Altura para mostrar 4 elementos (4 * 45.5px)
   }
-  
+
   .p-dropdown-items {
     padding: 0.5rem 0;
   }
@@ -408,14 +429,12 @@
     padding: 0.75rem 1rem !important;
     font-size: 0.9rem;
   }
-  
 
   .producto-dialog {
     .p_dialog-content {
       max-height: 80vh !important;
       overflow: auto !important; // Permite scroll en el contenido del diálogo
     }
-    
 
     .p-dropdown-panel {
       position: fixed !important; // Permite que el dropdown se posicione sin restricciones
@@ -423,10 +442,13 @@
   }
 }
 
-
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInDown {
@@ -445,10 +467,9 @@
   overflow: auto !important;
 }
 
-
 .form-group {
   margin-bottom: 20px;
-  
+
   input[type="date"] {
     width: 100%;
     padding: 12px 15px;
@@ -462,7 +483,7 @@
     border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
-    
+
     &:focus {
       color: #495057;
       background-color: #fff;
@@ -470,11 +491,10 @@
       outline: 0;
       box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
     }
-    
+
     &:hover {
       border-color: #6c757d;
     }
-    
 
     &::-webkit-calendar-picker-indicator {
       color: #7f8c8d;
@@ -486,23 +506,21 @@
       margin-left: 8px;
       cursor: pointer;
       transition: opacity 0.3s ease;
-      
+
       &:hover {
         opacity: 0.7;
       }
     }
-    
 
     &::-webkit-datetime-edit {
       font-family: "Source Sans 3", sans-serif;
       font-size: 14px;
       color: #495057;
     }
-    
+
     &::-webkit-datetime-edit-fields-wrapper {
       padding: 0;
     }
-    
 
     &:focus {
       &::-webkit-calendar-picker-indicator {
@@ -510,7 +528,6 @@
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236c757d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
       }
     }
-    
 
     &::-moz-calendar-picker-indicator {
       background-color: #7f8c8d;
@@ -518,7 +535,7 @@
       cursor: pointer;
     }
   }
-  
+
   label {
     display: inline-block;
     margin-bottom: 8px;
@@ -529,27 +546,26 @@
   }
 }
 
-
 ::ng-deep .stock-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #ff6b6b, #ff4757);
     color: white;
     border-bottom: none;
-    
+
     .p-dialog-title {
       font-weight: 600;
       font-size: 1.1rem;
     }
-    
+
     .p-dialog-header-icon {
       color: white;
-      
+
       &:hover {
         background-color: rgba(255, 255, 255, 0.1);
       }
     }
   }
-  
+
   .p-dialog-content {
     padding: 1.5rem;
   }
@@ -563,16 +579,16 @@
     padding: 1rem;
     display: flex;
     gap: 1rem;
-    
+
     .alert-icon {
       flex-shrink: 0;
-      
+
       i {
         font-size: 1.5rem;
         color: #f39c12;
       }
     }
-    
+
     .alert-content {
       h4 {
         margin: 0 0 0.5rem 0;
@@ -580,18 +596,18 @@
         font-weight: 700;
         font-size: 1.1rem;
       }
-      
+
       p {
         margin: 0 0 0.5rem 0;
         color: #8b4513;
         font-size: 0.95rem;
         line-height: 1.4;
       }
-      
+
       ul {
         margin: 0.5rem 0;
         padding-left: 1.2rem;
-        
+
         li {
           color: #8b4513;
           font-size: 0.9rem;
@@ -599,37 +615,37 @@
           line-height: 1.3;
         }
       }
-      
+
       strong {
         color: #d35400;
       }
     }
   }
-  
+
   .stock-info {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 6px;
     padding: 1rem;
-    
+
     .info-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.5rem;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
-      
+
       .info-label {
         font-weight: 600;
         color: #495057;
       }
-      
+
       .info-value {
         font-weight: 500;
-        
+
         &.stock-actual {
           background: #e3f2fd;
           color: #1976d2;
@@ -640,17 +656,17 @@
       }
     }
   }
-  
+
   .form-group {
     margin-bottom: 1rem;
-    
+
     label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
       color: #2c3e50;
     }
-    
+
     input {
       width: 100%;
       padding: 0.75rem;
@@ -658,19 +674,19 @@
       border-radius: 6px;
       font-size: 1rem;
       transition: all 0.3s ease;
-      
+
       &:focus {
         border-color: #ffc107;
         box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.25);
         outline: none;
       }
-      
+
       &.error {
         border-color: #dc3545;
         box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25);
       }
     }
-    
+
     .help-text {
       display: block;
       margin-top: 0.5rem;

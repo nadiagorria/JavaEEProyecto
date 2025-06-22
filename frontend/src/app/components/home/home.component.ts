@@ -9,7 +9,7 @@ import { SecurityService } from 'src/services/security.service';
   selector: 'app-home',
   imports: [HeaderComponent, FooterComponent, CommonModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   constructor(
@@ -23,13 +23,13 @@ export class HomeComponent {
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles) {
       return false;
     }
-    
+
     const hasAdminRole = roles.includes('ADMIN');
-    
+
     return hasAdminRole;
   }
 }

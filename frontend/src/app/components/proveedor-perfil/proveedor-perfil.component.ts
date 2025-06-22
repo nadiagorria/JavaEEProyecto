@@ -27,14 +27,27 @@ interface ComprasCliente {
 }
 
 @Component({
-  selector: 'app-proveedor-perfil',  
-  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule, ToastModule, InputTextModule, ConfirmDialogModule],
+  selector: 'app-proveedor-perfil',
+  imports: [
+    FormsModule,
+    DialogModule,
+    CommonModule,
+    HeaderComponent,
+    FooterComponent,
+    ButtonModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    TableModule,
+    TooltipModule,
+    ToastModule,
+    InputTextModule,
+    ConfirmDialogModule,
+  ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './proveedor-perfil.component.html',
-  styleUrl: './proveedor-perfil.component.scss'
+  styleUrl: './proveedor-perfil.component.scss',
 })
 export class ProveedorPerfilComponent {
-
   proveedor: ProveedorDto = {
     id: 0,
     nombre: '',
@@ -46,7 +59,8 @@ export class ProveedorPerfilComponent {
 
   totalRecords: number = 0;
 
-  visibleEditar: boolean = false;  constructor(
+  visibleEditar: boolean = false;
+  constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
     private router: Router,
@@ -58,12 +72,11 @@ export class ProveedorPerfilComponent {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.entidadService.getProveedor(id).subscribe(data => {
+    this.entidadService.getProveedor(id).subscribe((data) => {
       this.proveedor = data;
     });
   }
   showDialogEditar() {
-
     this.nombreEdicion = this.proveedor.nombre;
     this.telefonoEdicion = this.proveedor.telefono;
     this.correoEdicion = this.proveedor.correo;
@@ -87,13 +100,13 @@ export class ProveedorPerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campos incompletos',
-        detail: 'Por favor, complete todos los campos obligatorios.'
+        detail: 'Por favor, complete todos los campos obligatorios.',
       });
       return;
     }
-    
+
     this.proveedor.nombre = this.nombreEdicion;
-    
+
     this.proveedor.telefono = this.telefonoEdicion;
 
     this.proveedor.correo = this.correoEdicion;
@@ -103,10 +116,10 @@ export class ProveedorPerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
-        detail: 'Por favor, ingrese un correo electrónico válido.'
+        detail: 'Por favor, ingrese un correo electrónico válido.',
       });
       return;
-    }    
+    }
 
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
@@ -114,7 +127,7 @@ export class ProveedorPerfilComponent {
         this.messageService.add({
           severity: 'success',
           summary: 'Proveedor actualizado',
-          detail: 'Los datos del proveedor se han actualizado correctamente.'
+          detail: 'Los datos del proveedor se han actualizado correctamente.',
         });
         this.visibleEditar = false;
       },
@@ -123,11 +136,10 @@ export class ProveedorPerfilComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
-          detail: 'Ocurrió un error al actualizar los datos del proveedor.'
+          detail: 'Ocurrió un error al actualizar los datos del proveedor.',
         });
-      }
+      },
     });
-
   }
 
   verProducto(productoId: number) {
@@ -135,7 +147,6 @@ export class ProveedorPerfilComponent {
       this.router.navigate(['/producto', productoId]);
     }
   }
-
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
@@ -150,13 +161,14 @@ export class ProveedorPerfilComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
-        detail: 'No tienes permisos para eliminar productos.'
+        detail: 'No tienes permisos para eliminar productos.',
       });
       return;
     }
 
     this.confirmationService.confirm({
-      message: '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
+      message:
+        '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -169,12 +181,14 @@ export class ProveedorPerfilComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Producto eliminado',
-              detail: 'El producto ha sido eliminado correctamente.'
-            });            // Refrescar los datos del proveedor para actualizar la tabla
+              detail: 'El producto ha sido eliminado correctamente.',
+            });
             if (this.proveedor.id) {
-              this.entidadService.getProveedor(this.proveedor.id).subscribe(data => {
-                this.proveedor = data;
-              });
+              this.entidadService
+                .getProveedor(this.proveedor.id)
+                .subscribe((data) => {
+                  this.proveedor = data;
+                });
             }
           },
           error: (error) => {
@@ -182,12 +196,12 @@ export class ProveedorPerfilComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
-              detail: 'Ocurrió un error al eliminar el producto. Intente nuevamente.'
+              detail:
+                'Ocurrió un error al eliminar el producto. Intente nuevamente.',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
-
 }

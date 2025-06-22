@@ -13,7 +13,8 @@ import { UsuarioService } from '../../../services/usuario.service';
 
 @Component({
   selector: 'app-recuperar-password',
-  standalone: true,  imports: [
+  standalone: true,
+  imports: [
     CommonModule,
     FormsModule,
     CardModule,
@@ -21,23 +22,23 @@ import { UsuarioService } from '../../../services/usuario.service';
     InputTextModule,
     PasswordModule,
     ToastModule,
-    IftaLabelModule
+    IftaLabelModule,
   ],
   templateUrl: './recuperar-password.component.html',
   styleUrls: ['./recuperar-password.component.scss'],
   providers: [MessageService],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class RecuperarPasswordComponent implements OnInit {
   step = 1; // 1: solicitar email, 2: ingresar código y nueva contraseña
   loading = false;
   componeteReady = false; // Para controlar la visibilidad inicial
-  
+
   form = {
     email: '',
     codigo: '',
     nuevaPassword: '',
-    confirmarPassword: ''
+    confirmarPassword: '',
   };
 
   constructor(
@@ -46,15 +47,16 @@ export class RecuperarPasswordComponent implements OnInit {
     private router: Router
   ) {}
   ngOnInit() {
-
     setTimeout(() => {
       this.componeteReady = true;
 
       setTimeout(() => {
-
-        const buttons = document.querySelectorAll('app-recuperar-password button[pButton]');
-        buttons.forEach(button => {
-          (button as HTMLElement).style.cssText += ';display: inline-flex !important;';
+        const buttons = document.querySelectorAll(
+          'app-recuperar-password button[pButton]'
+        );
+        buttons.forEach((button) => {
+          (button as HTMLElement).style.cssText +=
+            ';display: inline-flex !important;';
         });
       }, 50);
     }, 200);
@@ -71,44 +73,45 @@ export class RecuperarPasswordComponent implements OnInit {
         severity: 'warn',
         summary: 'Email Inválido',
         detail: 'Por favor ingrese un email válido',
-        life: 4000
+        life: 4000,
       });
       return;
     }
 
     this.loading = true;
-    this.usuarioService.solicitarRecuperacionPassword(this.form.email).subscribe({
-      next: (response: string) => {
-        this.loading = false;
-        this.step = 2;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Código Enviado',
-          detail: response,
-          life: 8000
-        });
-      },
-      error: (error: any) => {
-        this.loading = false;
-        console.error('Error al solicitar recuperación:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.error || 'Error al solicitar código de recuperación',
-          life: 5000
-        });
-      }
-    });
+    this.usuarioService
+      .solicitarRecuperacionPassword(this.form.email)
+      .subscribe({
+        next: (response: string) => {
+          this.loading = false;
+          this.step = 2;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Código Enviado',
+            detail: response,
+            life: 8000,
+          });
+        },
+        error: (error: any) => {
+          this.loading = false;
+          console.error('Error al solicitar recuperación:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.error || 'Error al solicitar código de recuperación',
+            life: 5000,
+          });
+        },
+      });
   }
 
   restablecerPassword() {
-
     if (!this.form.codigo || this.form.codigo.length !== 6) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Código Inválido',
         detail: 'El código debe tener 6 dígitos',
-        life: 4000
+        life: 4000,
       });
       return;
     }
@@ -118,7 +121,7 @@ export class RecuperarPasswordComponent implements OnInit {
         severity: 'warn',
         summary: 'Contraseña Inválida',
         detail: 'La contraseña debe tener al menos 6 caracteres',
-        life: 4000
+        life: 4000,
       });
       return;
     }
@@ -128,42 +131,43 @@ export class RecuperarPasswordComponent implements OnInit {
         severity: 'warn',
         summary: 'Contraseñas no Coinciden',
         detail: 'Las contraseñas ingresadas no coinciden',
-        life: 4000
+        life: 4000,
       });
       return;
     }
 
     this.loading = true;
-    this.usuarioService.restablecerPassword(
-      this.form.email,
-      this.form.codigo,
-      this.form.nuevaPassword
-    ).subscribe({
-      next: (response: string) => {
-        this.loading = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Contraseña Restablecida',
-          detail: response,
-          life: 5000
-        });
-        
+    this.usuarioService
+      .restablecerPassword(
+        this.form.email,
+        this.form.codigo,
+        this.form.nuevaPassword
+      )
+      .subscribe({
+        next: (response: string) => {
+          this.loading = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Contraseña Restablecida',
+            detail: response,
+            life: 5000,
+          });
 
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (error: any) => {
-        this.loading = false;
-        console.error('Error al restablecer contraseña:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.error || 'Error al restablecer la contraseña',
-          life: 5000
-        });
-      }
-    });
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        },
+        error: (error: any) => {
+          this.loading = false;
+          console.error('Error al restablecer contraseña:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.error || 'Error al restablecer la contraseña',
+            life: 5000,
+          });
+        },
+      });
   }
 
   volver() {

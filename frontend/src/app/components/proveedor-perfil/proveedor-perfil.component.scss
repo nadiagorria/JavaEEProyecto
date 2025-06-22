@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
 }
@@ -36,9 +37,9 @@ main {
   margin: 0.25rem 0;
 }
 
-.papaBoton{
+.papaBoton {
   margin-top: 40px;
-  
+
   .p-button-outlined {
     border: 2px solid #17a2b8 !important;
     color: #17a2b8 !important;
@@ -47,20 +48,19 @@ main {
     border-radius: 6px !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
-    
+
     &:hover {
       background: #17a2b8 !important;
       color: white !important;
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3) !important;
     }
-    
+
     &:focus {
       box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5) !important;
     }
   }
 }
-
 
 .avatar-icon {
   width: 25vw;
@@ -87,60 +87,59 @@ main {
   }
 }
 
-
 ::ng-deep .p-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-bottom: 1px solid #dee2e6;
     border-radius: 8px 8px 0 0;
-    
+
     .p-dialog-title {
       font-weight: 700;
       color: #2c3e50;
     }
   }
-  
+
   .p-dialog-content {
     padding: 2rem;
     background: white;
-    
+
     .field label {
       font-weight: 600;
       color: #2c3e50;
     }
-      input {
+    input {
       border-radius: 6px;
       border: 1px solid #ddd;
       transition: all 0.2s ease;
-      
+
       &:focus {
         border-color: #64748b;
         box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
       }
     }
   }
-  
+
   .p-dialog-footer {
     background: #f8f9fa;
     border-top: 1px solid #dee2e6;
     border-radius: 0 0 8px 8px;
-    
+
     .p-button {
       border-radius: 6px;
       font-weight: 600;
-        &.p-button-text {
+      &.p-button-text {
         color: #6c757d;
-        
+
         &:hover {
           background: rgba(108, 117, 125, 0.1);
           color: #495057;
         }
       }
-      
+
       &[severity="secondary"] {
         background-color: #64748b;
         border-color: #64748b;
-        
+
         &:hover {
           background-color: #475569;
           border-color: #475569;
@@ -150,47 +149,46 @@ main {
   }
 }
 
-
 ::ng-deep .lote-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
     color: white;
     border: none;
     border-radius: 8px 8px 0 0;
-    
+
     .p-dialog-title {
       font-weight: 600;
       color: white;
     }
-    
+
     .p-dialog-header-icon {
       color: white;
     }
   }
-  
+
   .p-dialog-content {
     padding: 1.5rem;
     border: none;
     overflow: auto;
-    
+
     .field label {
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
     }
-    
+
     input {
       border-radius: 6px;
       border: 1px solid #ddd;
       transition: all 0.2s ease;
       padding: 0.75rem;
-        &:focus {
+      &:focus {
         border-color: #64748b;
         box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
       }
     }
   }
-  
+
   .p-dialog-footer {
     border: none;
     padding: 1.25rem 1.5rem;
@@ -199,28 +197,28 @@ main {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    
+
     .p-button {
       border-radius: 6px;
       font-weight: 500;
       padding: 0.75rem 1.5rem;
-        &.p-button-success, &[severity="secondary"] {
+      &.p-button-success,
+      &[severity="secondary"] {
         background: linear-gradient(135deg, #64748b 0%, #475569 100%);
         border: none;
         box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-        
+
         &:hover {
           transform: translateY(-1px);
         }
       }
     }
   }
-  
 
   &.p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
   }
-  
+
   &.p-dialog {
     animation: slideInDown 0.3s ease-out;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -229,10 +227,13 @@ main {
   }
 }
 
-
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInDown {
@@ -246,15 +247,12 @@ main {
   }
 }
 
-
-
-
 .proveedor-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 1.5rem;
-  
+
   .proveedor-info-avatar {
     width: 80px;
     height: 80px;
@@ -266,13 +264,13 @@ main {
     margin-bottom: 0.75rem;
     box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
     border: 3px solid white;
-    
+
     i {
       font-size: 2.5rem;
       color: white;
     }
   }
-  
+
   .proveedor-info-id {
     font-size: 0.9rem;
     color: #6c757d;
@@ -284,7 +282,6 @@ main {
   }
 }
 
-
 ::ng-deep .lote-dialog .p-dialog-content .field label {
   font-weight: 600;
   color: #2c3e50;
@@ -292,13 +289,12 @@ main {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   i {
     color: #64748b;
     font-size: 0.9rem;
   }
 }
-
 
 @media (max-width: 768px) {
   main {
@@ -307,18 +303,18 @@ main {
     padding-left: 1vw;
     padding-right: 1vw;
   }
-  
+
   .avatar-icon {
     width: 100%;
     height: 200px;
     margin-right: 0;
     margin-top: 1rem;
-    
+
     i {
       font-size: 4rem;
     }
   }
-  
+
   article.flex {
     flex-direction: column;
   }

@@ -14,20 +14,26 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-notificaciones',
   standalone: true,
-  imports: [CommonModule, ButtonModule, BadgeModule, DialogModule, ToastModule, TooltipModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    BadgeModule,
+    DialogModule,
+    ToastModule,
+    TooltipModule,
+  ],
   providers: [MessageService],
   templateUrl: './notificaciones.component.html',
-  styleUrl: './notificaciones.component.scss'
+  styleUrl: './notificaciones.component.scss',
 })
 export class NotificacionesComponent implements OnInit, OnDestroy {
   notificaciones: NotificacionUsuarioDto[] = [];
   contadorNoLeidas: number = 0;
   mostrarDropdown: boolean = false;
-  
 
   mostrarDialog: boolean = false;
   notificacionSeleccionada: NotificacionUsuarioDto | null = null;
-    private subscriptions: Subscription = new Subscription();
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private notificacionService: NotificacionService,
@@ -36,25 +42,23 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-
     if (!this.securityService.isLoggedIn()) {
       return;
     }
 
-
     this.subscriptions.add(
-      this.notificacionService.notificaciones$.subscribe((notificaciones: NotificacionUsuarioDto[]) => {
-        this.notificaciones = notificaciones;
-      })
+      this.notificacionService.notificaciones$.subscribe(
+        (notificaciones: NotificacionUsuarioDto[]) => {
+          this.notificaciones = notificaciones;
+        }
+      )
     );
-
 
     this.subscriptions.add(
       this.notificacionService.contador$.subscribe((contador: number) => {
         this.contadorNoLeidas = contador;
       })
     );
-
 
     this.notificacionService.inicializar();
   }
@@ -63,7 +67,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-    get estaAutenticado(): boolean {
+  get estaAutenticado(): boolean {
     return this.securityService.isLoggedIn();
   }
 
@@ -76,15 +80,11 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   }
 
   marcarComoLeida(notificacion: NotificacionUsuarioDto): void {
-
     this.notificacionSeleccionada = notificacion;
-    
 
     this.mostrarDialog = true;
-    
 
     this.cerrarDropdown();
-    
 
     if (!notificacion.leido && notificacion.id) {
       this.notificacionService.marcarLeidaYActualizar(notificacion.id);
@@ -101,21 +101,22 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     this.notificacionSeleccionada = null;
   }
 
-  eliminarNotificacion(notificacion: NotificacionUsuarioDto, event?: Event): void {
-
+  eliminarNotificacion(
+    notificacion: NotificacionUsuarioDto,
+    event?: Event
+  ): void {
     if (event) {
       event.stopPropagation();
     }
 
     if (notificacion.id) {
       this.notificacionService.eliminarNotificacionYActualizar(notificacion.id);
-      
+
       this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
-        detail: 'Notificación eliminada correctamente'
+        detail: 'Notificación eliminada correctamente',
       });
-
 
       if (this.notificacionSeleccionada?.id === notificacion.id) {
         this.cerrarDialog();
@@ -125,15 +126,15 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
 
   formatearFecha(fechaHora: any): string {
     if (!fechaHora) return '';
-    
+
     const fecha = new Date(fechaHora);
     const ahora = new Date();
     const diferencia = ahora.getTime() - fecha.getTime();
-    
+
     const minutos = Math.floor(diferencia / (1000 * 60));
     const horas = Math.floor(diferencia / (1000 * 60 * 60));
     const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-    
+
     if (minutos < 1) {
       return 'Ahora';
     } else if (minutos < 60) {
@@ -146,15 +147,14 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
       return fecha.toLocaleDateString('es-ES', {
         day: '2-digit',
         month: '2-digit',
-        year: '2-digit'
+        year: '2-digit',
       });
     }
   }
 
-
   formatearFechaCompleta(fechaHora: any): string {
     if (!fechaHora) return 'Sin fecha';
-    
+
     const fecha = new Date(fechaHora);
     return fecha.toLocaleDateString('es-ES', {
       weekday: 'long',
@@ -163,28 +163,35 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
   }
 
   obtenerTitulo(notificacionUsuario: NotificacionUsuarioDto): string {
-    if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
+    if (
+      notificacionUsuario.notificaciones &&
+      notificacionUsuario.notificaciones.length > 0
+    ) {
       return notificacionUsuario.notificaciones[0].titulo || 'Sin título';
     }
     return 'Sin título';
   }
 
-
   obtenerMensaje(notificacionUsuario: NotificacionUsuarioDto): string {
-    if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
+    if (
+      notificacionUsuario.notificaciones &&
+      notificacionUsuario.notificaciones.length > 0
+    ) {
       return notificacionUsuario.notificaciones[0].mensaje || 'Sin mensaje';
     }
     return 'Sin mensaje';
   }
 
-
   obtenerFecha(notificacionUsuario: NotificacionUsuarioDto): any {
-    if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
+    if (
+      notificacionUsuario.notificaciones &&
+      notificacionUsuario.notificaciones.length > 0
+    ) {
       return notificacionUsuario.notificaciones[0].fechaHora;
     }
     return null;

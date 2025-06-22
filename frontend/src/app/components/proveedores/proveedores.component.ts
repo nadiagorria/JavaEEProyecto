@@ -12,7 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
+import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
 import { EntidadService } from 'src/services/entidad.service';
@@ -21,11 +21,11 @@ import { FormsModule } from '@angular/forms';
 import { ProveedorDto } from 'src/models/proveedor.dto';
 import { SecurityService } from 'src/services/security.service';
 
-
 @Component({
-  selector: 'app-proveedores',  imports: [
+  selector: 'app-proveedores',
+  imports: [
     CommonModule,
-    FormsModule, 
+    FormsModule,
     HeaderComponent,
     FooterComponent,
     InputGroupModule,
@@ -36,14 +36,12 @@ import { SecurityService } from 'src/services/security.service';
     DialogModule,
     TooltipModule,
     ToastModule,
-    ],
+  ],
   providers: [MessageService],
   templateUrl: './proveedores.component.html',
-  styleUrl: './proveedores.component.scss'
+  styleUrl: './proveedores.component.scss',
 })
-
 export class ProveedoresComponent {
-
   proveedores: ProveedorDto[] = [];
   proveedoresFiltrados: ProveedorDto[] = [];
   totalRecords: number = 0;
@@ -58,7 +56,6 @@ export class ProveedoresComponent {
 
   ngOnInit(): void {
     if (!this.securityService.isLoggedIn()) {
-
       this.router.navigate(['/login']);
       return;
     }
@@ -68,11 +65,13 @@ export class ProveedoresComponent {
   cargarProveedores(): void {
     this.entidadService.listadoProveedores().subscribe({
       next: (data: any) => {
-        
         if (data && Array.isArray(data)) {
           this.proveedores = data;
-        } else if (data && data.proveedores && Array.isArray(data.proveedores)) {
-        
+        } else if (
+          data &&
+          data.proveedores &&
+          Array.isArray(data.proveedores)
+        ) {
           this.proveedores = data.proveedores;
         } else {
           console.warn('La respuesta no tiene el formato esperado:', data);
@@ -83,25 +82,26 @@ export class ProveedoresComponent {
       },
       error: (err: any) => {
         console.error('Error al listar proveedores:', err);
-        
-        if (err.status === 403) {
 
-          alert('Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.');
+        if (err.status === 403) {
+          alert(
+            'Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.'
+          );
           this.securityService.logout();
           return;
         }
-        
+
         alert('Error al listar proveedores: ' + (err.message || err.status));
         this.proveedores = [];
         this.proveedoresFiltrados = [];
         this.totalRecords = 0;
-      }
+      },
     });
   }
 
   visible: boolean = false;
 
-  mostarModal(){
+  mostarModal() {
     this.visible = true;
   }
 
@@ -123,23 +123,21 @@ export class ProveedoresComponent {
   }
 
   saveProveedor() {
-
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
-        detail: 'El nombre del proveedor es obligatorio'
+        detail: 'El nombre del proveedor es obligatorio',
       });
       return;
     }
-
 
     if (this.correo && this.correo.trim() !== '') {
       if (!this.validarEmail(this.correo)) {
         this.messageService.add({
           severity: 'warn',
           summary: 'Email inválido',
-          detail: 'Por favor ingrese un email válido (ejemplo@correo.com)'
+          detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
         });
         return;
       }
@@ -153,23 +151,22 @@ export class ProveedoresComponent {
       productosDto: [],
       activo: true,
     };
-        
+
     this.entidadService.crearProveedor(proveedor).subscribe({
       next: (data: any) => {
         this.visible = false;
         this.nombre = '';
         this.telefono = '';
-        this.correo = ''; 
-        
+        this.correo = '';
+
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Proveedor creado exitosamente'
+          detail: 'Proveedor creado exitosamente',
         });
-        
 
         this.cargarProveedores();
-      },      
+      },
       error: (err: any) => {
         console.error('Error al crear proveedor:', err);
         let mensajeError = 'Error al crear proveedor';
@@ -178,13 +175,13 @@ export class ProveedoresComponent {
         } else if (err.message) {
           mensajeError = err.message;
         }
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: mensajeError
+          detail: mensajeError,
         });
-      }
+      },
     });
   }
   busqueda: string = '';
@@ -193,29 +190,29 @@ export class ProveedoresComponent {
     if (this.busqueda.trim() === '') {
       this.proveedoresFiltrados = [...this.proveedores];
     } else {
-      this.proveedoresFiltrados = this.proveedores.filter(proveedor => 
+      this.proveedoresFiltrados = this.proveedores.filter((proveedor) =>
         proveedor.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
       );
     }
     this.totalRecords = this.proveedoresFiltrados.length;
   }
-  
-  mostrarDetalles(id: number){
+
+  mostrarDetalles(id: number) {
     this.router.navigate(['/proveedor', id]);
   }
 
   eliminarProveedor(id: number) {
     if (confirm('¿Está seguro que desea eliminar este proveedor?')) {
-
-      const proveedor = this.proveedores.find(p => p.id === id);
+      const proveedor = this.proveedores.find((p) => p.id === id);
 
       this.entidadService.eliminarPersona(id).subscribe({
         next: (data: any) => {
           console.log('Proveedor eliminado exitosamente', data);
-          
 
-          this.proveedores = this.proveedores.filter(p => p.id !== id);
-          this.proveedoresFiltrados = this.proveedoresFiltrados.filter(p => p.id !== id);
+          this.proveedores = this.proveedores.filter((p) => p.id !== id);
+          this.proveedoresFiltrados = this.proveedoresFiltrados.filter(
+            (p) => p.id !== id
+          );
           this.totalRecords = this.proveedoresFiltrados.length;
         },
         error: (err: any) => {
@@ -227,20 +224,20 @@ export class ProveedoresComponent {
             mensajeError += ': ' + err.message;
           }
           alert(mensajeError);
-        }
+        },
       });
     }
   }
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles) {
       return false;
     }
-    
+
     const hasAdminRole = roles.includes('ADMIN');
-    
+
     return hasAdminRole;
   }
 }

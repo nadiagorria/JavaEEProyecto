@@ -9,12 +9,11 @@
 
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-field">
-
         <p-iftalabel>
-          <input 
-            pInputText 
-            id="username" 
-            formControlName="username" 
+          <input
+            pInputText
+            id="username"
+            formControlName="username"
             placeholder=" "
             autocomplete="username"
             class="styled-input"
@@ -24,8 +23,14 @@
             Nombre de Usuario
           </label>
         </p-iftalabel>
-        
-        <div class="field-error" *ngIf="formGroup.get('username')?.invalid && formGroup.get('username')?.touched">
+
+        <div
+          class="field-error"
+          *ngIf="
+            formGroup.get('username')?.invalid &&
+            formGroup.get('username')?.touched
+          "
+        >
           <small *ngIf="formGroup.get('username')?.errors?.['required']">
             El nombre de usuario es requerido
           </small>
@@ -37,10 +42,10 @@
 
       <div class="form-field">
         <p-iftalabel>
-          <p-password 
-            formControlName="contrasenia" 
-            inputId="contrasenia" 
-            [toggleMask]="true" 
+          <p-password
+            formControlName="contrasenia"
+            inputId="contrasenia"
+            [toggleMask]="true"
             [feedback]="false"
             placeholder=" "
             autocomplete="current-password"
@@ -51,14 +56,22 @@
             Contraseña
           </label>
         </p-iftalabel>
-        <div class="field-error" *ngIf="formGroup.get('contrasenia')?.invalid && formGroup.get('contrasenia')?.touched">
+        <div
+          class="field-error"
+          *ngIf="
+            formGroup.get('contrasenia')?.invalid &&
+            formGroup.get('contrasenia')?.touched
+          "
+        >
           <small *ngIf="formGroup.get('contrasenia')?.errors?.['required']">
             La contraseña es requerida
           </small>
           <small *ngIf="formGroup.get('contrasenia')?.errors?.['minlength']">
             Mínimo 6 caracteres
-          </small>        </div>
-      </div>      <div class="forgot-password-section">
+          </small>
+        </div>
+      </div>
+      <div class="forgot-password-section">
         <a (click)="irARecuperarPassword()" class="forgot-password-link">
           <i class="pi pi-question-circle"></i>
           ¿Olvidaste tu contraseña?
@@ -66,9 +79,9 @@
       </div>
 
       <div class="button-section">
-        <button 
-          pButton 
-          type="submit" 
+        <button
+          pButton
+          type="submit"
           [loading]="isLoading"
           [disabled]="formGroup.invalid || isLoading"
           class="login-button"
@@ -84,11 +97,11 @@
         </button>
       </div>
     </form>
-    
+
     <div class="divider">
       <span>o</span>
     </div>
-    
+
     <div class="registro">
       ¿No tienes una cuenta?
       <a routerLink="/registro" class="register-link">
