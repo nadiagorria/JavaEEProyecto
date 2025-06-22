@@ -63,10 +63,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  /**
-   * Verifica si el usuario está autenticado
-   */
-  get estaAutenticado(): boolean {
+    get estaAutenticado(): boolean {
     return this.securityService.isLoggedIn();
   }
 

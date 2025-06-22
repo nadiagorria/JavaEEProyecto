@@ -1,4 +1,4 @@
-// src/app/services/credito.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CreditoDto } from '../models/credito.dto';

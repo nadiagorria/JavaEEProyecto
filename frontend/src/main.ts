@@ -19,7 +19,7 @@ const themeConfig = {
       translation: {
         accept: 'Sí',
         reject: 'No',
-        //otros
+
         choose: 'Elegir',
         upload: 'Subir',
         cancel: 'Cancelar',

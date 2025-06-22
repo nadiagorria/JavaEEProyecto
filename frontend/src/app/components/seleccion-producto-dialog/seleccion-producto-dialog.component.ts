@@ -155,8 +155,7 @@ import { TooltipModule } from 'primeng/tooltip';
     </p-dialog>
   `,
   styles: [`
-    /* Dialog Principal */
-    :host ::ng-deep .custom-product-dialog .p-dialog-header {
+        :host ::ng-deep .custom-product-dialog .p-dialog-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border-radius: 12px 12px 0 0;
@@ -174,8 +173,7 @@ import { TooltipModule } from 'primeng/tooltip';
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
-    /* Info Header */
-    .info-header {
+        .info-header {
       margin-bottom: 1.5rem;
     }
 
@@ -241,8 +239,7 @@ import { TooltipModule } from 'primeng/tooltip';
       font-family: 'Courier New', monospace;
     }
 
-    /* Tabla */
-    :host ::ng-deep .productos-table {
+        :host ::ng-deep .productos-table {
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -275,16 +272,14 @@ import { TooltipModule } from 'primeng/tooltip';
       vertical-align: top;
     }
 
-    /* Columnas específicas */
-    .action-col { width: 100px; text-align: center; }
+        .action-col { width: 100px; text-align: center; }
     .name-col { width: 35%; }
     .price-col { width: 12%; }
     .stock-col { width: 15%; }
     .category-col { width: 18%; }
     .provider-col { width: 20%; }
 
-    /* Botón de selección */
-    .select-btn {
+        .select-btn {
       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
       border: none;
       border-radius: 8px;
@@ -308,8 +303,7 @@ import { TooltipModule } from 'primeng/tooltip';
       box-shadow: none !important;
     }
 
-    /* Info del producto */
-    .product-info {
+        .product-info {
       padding-right: 1rem;
     }
 
@@ -342,8 +336,7 @@ import { TooltipModule } from 'primeng/tooltip';
       align-items: center;
     }
 
-    /* Precio */
-    .price-display {
+        .price-display {
       display: flex;
       align-items: baseline;
       font-weight: 600;
@@ -360,8 +353,7 @@ import { TooltipModule } from 'primeng/tooltip';
       font-size: 1.125rem;
     }
 
-    /* Stock */
-    .stock-badge {
+        .stock-badge {
       display: inline-flex;
       align-items: center;
       padding: 0.375rem 0.75rem;
@@ -386,8 +378,7 @@ import { TooltipModule } from 'primeng/tooltip';
       color: #2f855a;
     }
 
-    /* Categoría */
-    .category-info {
+        .category-info {
       display: flex;
       align-items: center;
       color: #4a5568;
@@ -401,8 +392,7 @@ import { TooltipModule } from 'primeng/tooltip';
       font-weight: 500;
     }
 
-    /* Proveedor */
-    .provider-info {
+        .provider-info {
       display: flex;
       align-items: center;
       color: #4a5568;
@@ -416,16 +406,14 @@ import { TooltipModule } from 'primeng/tooltip';
       font-weight: 500;
     }
 
-    /* Sin datos */
-    .no-data {
+        .no-data {
       color: #a0aec0;
       font-style: italic;
       display: flex;
       align-items: center;
     }
 
-    /* Texto deshabilitado */
-    .text-disabled {
+        .text-disabled {
       color: #a0aec0 !important;
     }
 
@@ -435,8 +423,7 @@ import { TooltipModule } from 'primeng/tooltip';
       color: #cbd5e0 !important;
     }
 
-    /* Estados de fila */
-    :host ::ng-deep .producto-sin-stock {
+        :host ::ng-deep .producto-sin-stock {
       background: #fef5e7 !important;
       opacity: 0.7;
     }
@@ -445,8 +432,7 @@ import { TooltipModule } from 'primeng/tooltip';
       background: #f0fff4 !important;
     }
 
-    /* Mensaje vacío */
-    .empty-message {
+        .empty-message {
       text-align: center;
       padding: 3rem 1rem !important;
     }
@@ -465,8 +451,7 @@ import { TooltipModule } from 'primeng/tooltip';
       color: #a0aec0;
     }
 
-    /* Footer */
-    .dialog-footer {
+        .dialog-footer {
       display: flex;
       justify-content: flex-end;
       padding: 1rem 0 0 0;
@@ -490,8 +475,7 @@ import { TooltipModule } from 'primeng/tooltip';
       box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
+        @media (max-width: 768px) {
       .info-card {
         flex-direction: column;
         text-align: center;

@@ -159,10 +159,7 @@ export class VerventaComponent implements OnInit {
 
 
 
-  /**
-   * Verifica si una oferta estaba vigente en la fecha de la venta
-   */
-  esOfertaVigenteEnFecha(oferta: ComboDto | PromocionDto | DescuentoDto): boolean {
+    esOfertaVigenteEnFecha(oferta: ComboDto | PromocionDto | DescuentoDto): boolean {
     const fechaVenta = new Date(this.venta.fechaVenta);
     const inicioOferta = new Date(oferta.inicio);
     const finOferta = new Date(oferta.fin);
@@ -190,10 +187,7 @@ export class VerventaComponent implements OnInit {
     return false;
   }
 
-  /**
-   * Obtiene los descuentos que estaban vigentes para un producto en la fecha de la venta
-   */
-  getDescuentosVigentes(producto: any): DescuentoDto[] {
+    getDescuentosVigentes(producto: any): DescuentoDto[] {
     if (!producto.descuentos) return [];
     
     return producto.descuentos.filter((descuento: DescuentoDto) => 
@@ -201,10 +195,7 @@ export class VerventaComponent implements OnInit {
     );
   }
 
-  /**
-   * Obtiene las promociones que estaban vigentes para un producto en la fecha de la venta
-   */
-  getPromocionesVigentes(producto: any): PromocionDto[] {
+    getPromocionesVigentes(producto: any): PromocionDto[] {
     if (!producto.promociones) return [];
     
     return producto.promociones.filter((promocion: PromocionDto) => 
@@ -212,10 +203,7 @@ export class VerventaComponent implements OnInit {
     );
   }
 
-  /**
-   * Obtiene los combos que estaban vigentes para un producto en la fecha de la venta
-   */
-  getCombosVigentes(producto: any): ComboDto[] {
+    getCombosVigentes(producto: any): ComboDto[] {
     if (!producto.combos) return [];
     
     return producto.combos.filter((combo: ComboDto) => 
@@ -223,11 +211,7 @@ export class VerventaComponent implements OnInit {
     );
   }
 
-  /**
-   * Verifica si un producto tenía ofertas aplicadas en la fecha de la venta
-   * Se basa únicamente en si las ofertas estaban vigentes y se cumplían los criterios mínimos
-   */
-  tieneOfertasVigentes(producto: any): boolean {
+    tieneOfertasVigentes(producto: any): boolean {
     const itemEnVenta = this.cantidades.find(cantidad => cantidad.producto.id === producto.id);
     
     if (!itemEnVenta) {
@@ -257,10 +241,7 @@ export class VerventaComponent implements OnInit {
     return false;
   }
 
-  /**
-   * Obtiene el texto descriptivo de las ofertas aplicadas
-   */
-  getTextoOfertas(producto: any): string {
+    getTextoOfertas(producto: any): string {
     if (!this.tieneOfertasVigentes(producto)) {
       return '';
     }
@@ -289,10 +270,7 @@ export class VerventaComponent implements OnInit {
     return ofertas.join(', ');
   }
 
-  /**
-   * Obtiene la severidad del tag basado en el tipo de oferta
-   */
-  getSeveridadOferta(producto: any): string {
+    getSeveridadOferta(producto: any): string {
     if (!this.tieneOfertasVigentes(producto)) {
       return 'secondary';
     }
@@ -314,10 +292,7 @@ export class VerventaComponent implements OnInit {
     return 'secondary';
   }
 
-  /**
-   * Verifica si hay alguna oferta aplicada en toda la venta
-   */
-  tieneAlgunaOferta(): boolean {
+    tieneAlgunaOferta(): boolean {
     if (!this.venta.cantidades) return false;
     
     return this.venta.cantidades.some(cantidad => 

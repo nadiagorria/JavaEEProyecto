@@ -281,7 +281,6 @@ button[pButton] {
   }
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -297,7 +296,6 @@ button[pButton] {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Responsive improvements */
 @media (max-width: 320px) {
   .login-container {
     padding: 30px 20px;
@@ -319,7 +317,6 @@ button[pButton] {
   }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .login-container {
     border: 2px solid #000000;
@@ -332,7 +329,6 @@ button[pButton] {
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .login-container,
   .form-field input,

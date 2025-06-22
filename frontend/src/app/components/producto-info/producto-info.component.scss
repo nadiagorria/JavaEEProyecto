@@ -352,8 +352,7 @@
           transition: background-color 0.2s;
           white-space: normal;
           word-break: break-word;
-          height: 45.5px; /* Altura fija para cada elemento del dropdown */
-          overflow: hidden;
+          height: 45.5px;           overflow: hidden;
           text-overflow: ellipsis;
           display: flex;
           align-items: center;
@@ -441,7 +440,6 @@
   }
 }
 
-/* Asegurar que el diálogo tiene scroll interno */
 ::ng-deep .producto-dialog .p-dialog-content {
   max-height: 80vh !important;
   overflow: auto !important;

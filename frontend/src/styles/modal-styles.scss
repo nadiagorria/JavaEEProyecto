@@ -1,4 +1,4 @@
-// Estilos compartidos para modales
+
 .modal-content, .modal-editar-content {
   .form-section {
     background: #f8f9fa;
@@ -70,7 +70,7 @@
   }
 }
 
-// Estilos para los formularios
+
 .form-content, .producto-form {
   width: 100%;
 
@@ -89,7 +89,7 @@
   }
 }
 
-// Estilos para los diálogos
+
 .form-dialog, .producto-dialog, .producto_dialog {
   .p-dialog-content {
     overflow: auto !important;
@@ -97,7 +97,7 @@
   }
 }
 
-// Estilos globales para PrimeNG
+
 ::ng-deep {
   .p-dialog {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);

@@ -343,7 +343,6 @@ button[pButton] {
   }
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -359,7 +358,6 @@ button[pButton] {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Responsive improvements */
 @media (max-width: 320px) {
   .registro-container {
     padding: 30px 20px;
@@ -385,7 +383,6 @@ button[pButton] {
   }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .registro-container {
     border: 2px solid #000000;
@@ -398,7 +395,6 @@ button[pButton] {
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .registro-container,
   .form-field input,
@@ -419,7 +415,6 @@ button[pButton] {
   }
 }
 
-/* Username validation styles */
 .username-validation {
   margin-top: 8px;
   font-size: 14px;
@@ -553,7 +548,6 @@ button[pButton] {
   }
 }
 
-/* Checkbox field styling */
 .checkbox-field {
   display: flex;
   align-items: center;

@@ -16,7 +16,7 @@ export class ProductoService {
   ) { }  
   
 
-  // Nuevo método que usa el endpoint optimizado con DTO completo
+
   crearProductoConDto(producto: ProductoDto): Observable<any> {
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear-dto`, producto, {
       responseType: 'text'
@@ -24,8 +24,8 @@ export class ProductoService {
   }
 
   crearProductoConImagen(formData: FormData): Observable<any> {
-    // No establecer Content-Type manualmente para FormData
-    // Angular lo hará automáticamente y incluirá el boundary
+
+
     return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, formData, {
       responseType: 'text' // Esto ayuda a manejar respuestas de texto plano
     });
@@ -72,7 +72,7 @@ export class ProductoService {
   buscarTopNProductos(n: number): Observable<{productos: ProductoDto[]}> {
     return this.http.get<{productos: ProductoDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/top?n=${n}`);
   }
-  // Método para modificar stock total (solo admin supremo)
+
   modificarStockTotal(id: number, stockTotal: number): Observable<string> {
     return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/stock`, stockTotal, {
       responseType: 'text'

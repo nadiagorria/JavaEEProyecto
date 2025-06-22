@@ -377,10 +377,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
 
-  /**
-   * Filtra los clientes basándose en el texto de búsqueda
-   */
-  filtrarClientes(event: { query: string }) {
+    filtrarClientes(event: { query: string }) {
     const query = event.query.toLowerCase().trim();
 
     if (query === '') {
@@ -392,49 +389,31 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     }
   }
 
-  /**
-   * Calcula el dinero disponible que puede gastar un cliente
-   */
-  calcularDineroDisponible(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): number {
+    calcularDineroDisponible(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): number {
     const deudaActual = credito.precioTotal;
     return Math.max(0, credito.maximo - deudaActual);
   }
-  /**
-   * Verifica si el cliente puede realizar la compra sin superar su límite de crédito
-   */
-  puedeRealizarCompra(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
+    puedeRealizarCompra(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
     const totalVenta = this.calcularTotal();
     const dineroDisponible = this.calcularDineroDisponible(credito);
     return totalVenta <= dineroDisponible;
   }
 
-  /**
-   * Verifica si el total de la venta supera el crédito mínimo requerido
-   */
-  superaCreditoMinimo(credito: Pick<CreditoDto, 'minimo'>): boolean {
+    superaCreditoMinimo(credito: Pick<CreditoDto, 'minimo'>): boolean {
     const totalVenta = this.calcularTotal();
     return totalVenta >= credito.minimo;
   }
 
-  /**
-   * Verifica si el cliente puede realizar la compra (supera mínimo y no excede máximo)
-   */
-  puedeComprarConCredito(credito: Pick<CreditoDto, 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
+    puedeComprarConCredito(credito: Pick<CreditoDto, 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
     return this.puedeRealizarCompra(credito) && this.superaCreditoMinimo(credito);
   }
-  /**
-   * Obtiene el texto descriptivo del crédito disponible para mostrar en el dropdown
-   */
-  getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): string {
+    getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): string {
     const dineroDisponible = this.calcularDineroDisponible(credito);
     const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
     return `${credito.cliente.nombre} - Disponible: $${dineroDisponible.toFixed(2)} (Deuda: $${deudaActual.toFixed(2)})`;
   }
 
-  /**
-   * Verifica si la forma de pago es FIADO
-   */
-  esPagoFiado(): boolean {
+    esPagoFiado(): boolean {
     return this.formaPagoSeleccionada === 'FIADO';
   }
   filtrarProductos(event: { query: string }) {
@@ -459,17 +438,11 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     );
   }
 
-  /**
-   * Verifica si un producto tiene stock disponible
-   */
-  tieneStock(producto: ProductoDto): boolean {
+    tieneStock(producto: ProductoDto): boolean {
     return producto.stockTotal > 0;
   }
 
-  /**
-   * Evita que se seleccionen productos sin stock
-   */
-  onProductoSelect(event: any): void {
+    onProductoSelect(event: any): void {
     const producto = event.value;
     if (!this.tieneStock(producto)) {
       event.preventDefault();
@@ -838,10 +811,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
 
 
 
-  /**
-   * Valida el stock antes de aplicar ofertas
-   */
-  validarYAplicarOfertas(event: any, item: ItemVenta) {
+    validarYAplicarOfertas(event: any, item: ItemVenta) {
     const nuevaCantidad = event.value;
     const stockDisponible = this.getStockDisponible(item.producto);
 
@@ -875,25 +845,16 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.aplicarOfertas();
   }
 
-  /**
-   * Obtiene el stock disponible para un producto
-   */
-  getStockDisponible(producto: any): number {
+    getStockDisponible(producto: any): number {
 
     const productoCompleto = this.productos.find(p => p.id === producto.id);
     return productoCompleto ? productoCompleto.stockTotal : (producto.stockTotal || 0);
   }
 
-  /**
-   * Guarda la cantidad anterior al hacer focus en el input
-   */
-  guardarCantidadAnterior(item: ItemVenta) {
+    guardarCantidadAnterior(item: ItemVenta) {
     this.cantidadAnterior.set(item.producto.id!, item.cantidad);
   }
-  /**
-   * Verifica si hubo intento de incrementar cuando ya se alcanzó el stock máximo
-   */
-  verificarCambioManual(item: ItemVenta) {
+    verificarCambioManual(item: ItemVenta) {
     const cantidadPrevia = this.cantidadAnterior.get(item.producto.id!) || item.cantidad;
     const stockDisponible = this.getStockDisponible(item.producto);
 
@@ -917,10 +878,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.cantidadAnterior.delete(item.producto.id!);
   }
 
-  /**
-   * Detecta intentos de incremento manual con las teclas de flecha
-   */
-  onInputKeydown(event: KeyboardEvent, item: ItemVenta) {
+    onInputKeydown(event: KeyboardEvent, item: ItemVenta) {
     const stockDisponible = this.getStockDisponible(item.producto);
 
 
@@ -934,10 +892,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       });
     }
   }
-  /**
-   * Detecta clicks en los botones de incremento del p-inputNumber
-   */
-  detectarClickIncremento(event: MouseEvent, item: ItemVenta) {
+    detectarClickIncremento(event: MouseEvent, item: ItemVenta) {
     const target = event.target as HTMLElement;
     const stockDisponible = this.getStockDisponible(item.producto);
 
@@ -961,10 +916,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
 
 
 
-  /**
-   * Muestra el diálogo de selección cuando hay múltiples productos con el mismo código
-   */
-  private mostrarDialogoSeleccion(productos: ProductoDto[], codigoBarras: string) {
+    private mostrarDialogoSeleccion(productos: ProductoDto[], codigoBarras: string) {
     this.productosDuplicados = productos;
     this.codigoBarrasEscaneado = codigoBarras;
     this.displaySeleccionProducto = true;
@@ -977,10 +929,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
 
-  /**
-   * Agrega un producto directamente cuando solo hay uno disponible
-   */
-  private agregarProductoDirectamente(producto: ProductoDto) {
+    private agregarProductoDirectamente(producto: ProductoDto) {
 
     const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
     if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
@@ -1003,18 +952,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
 
-  /**
-   * Maneja la selección de un producto desde el diálogo
-   */
-  onProductoSeleccionado(producto: ProductoDto) {
+    onProductoSeleccionado(producto: ProductoDto) {
     this.displaySeleccionProducto = false;
     this.agregarProductoDirectamente(producto);
   }
 
-  /**
-   * Maneja el cierre del diálogo de selección
-   */
-  onDialogoSeleccionCerrado() {
+    onDialogoSeleccionCerrado() {
     this.displaySeleccionProducto = false;
     this.productosDuplicados = [];
     this.codigoBarrasEscaneado = '';

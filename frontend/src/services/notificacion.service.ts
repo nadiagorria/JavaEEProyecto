@@ -25,7 +25,7 @@ export class NotificacionService {
   ) {
     this.baseUrl = this.urlService.baseUrl;
 
-    // Actualizar notificaciones cada 30 segundos solo si está autenticado
+
     interval(30000).subscribe(() => {
       if (this.securityService.isLoggedIn()) {
         this.actualizarNotificaciones();

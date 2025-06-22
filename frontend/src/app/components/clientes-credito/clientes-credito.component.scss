@@ -21,7 +21,6 @@
   }
 }
 
-/* Estilos para los encabezados de la tabla */
 ::ng-deep .p-datatable-thead > tr > th {
   background-color: #34495e;
   color: white;
@@ -29,7 +28,6 @@
   padding: 1rem;
 }
 
-/* Estilos para las filas */
 ::ng-deep .p-datatable-tbody > tr {
   transition: background-color 0.2s ease;
   
