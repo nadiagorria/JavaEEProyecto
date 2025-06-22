@@ -100,16 +100,4 @@ public class EntidadController {
         }
     }
 
-    @GetMapping("/listarProveedores")
-    @Secured({"ADMIN", "CAJERO"})
-    @Operation(description = "Esta Funcion lista todos los proveedores activos")
-    public ResponseEntity<List<ProveedorDto>> listarProveedores() {
-        try {
-            List<ProveedorDto> proveedores = entidadService.listarProveedores();
-            return ResponseEntity.ok(proveedores);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
 }

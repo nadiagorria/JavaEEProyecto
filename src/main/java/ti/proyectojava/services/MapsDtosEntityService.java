@@ -54,19 +54,6 @@ public class MapsDtosEntityService {
         return mapToDtoCategoria(categoria, new HashSet<>());
     }
 
-    private CategoriaDto mapToDtoCategoriaSimple(Categoria categoria) {
-        if (categoria == null) {
-            return null;
-        }
-
-        CategoriaDto catDto = new CategoriaDto();
-        catDto.setNombre(categoria.getNombre());
-        catDto.setActivo(categoria.getActivo());
-        catDto.setProductos(null);
-        catDto.setCategoriaPadre(null);
-        catDto.setSubcategorias(null);
-        return catDto;
-    }
 
     private CategoriaDto mapToDtoCategoria(Categoria categoria, Set<Object> processed) {
         if (categoria == null || processed.contains(categoria)) {
@@ -930,40 +917,6 @@ public class MapsDtosEntityService {
         return productoDto;
     }
 
-    // Método específico para casos donde SÍ necesitamos incluir la imagen
-    public ProductoDto mapToDtoProductoConImagen(Producto producto) {
-        return mapToDtoProductoConImagen(producto, new HashSet<>());
-    }
-
-    public ProductoDto mapToDtoProductoConImagen(Producto producto, Set<Object> processed) {
-        if (producto == null || processed.contains(producto)) {
-            return null;
-        }
-        processed.add(producto);
-
-        ProductoDto productoDto = new ProductoDto();
-        productoDto.setId(producto.getId());
-        productoDto.setPrecioCompra(producto.getPrecioCompra());
-        productoDto.setPrecioVenta(producto.getPrecioVenta());
-        productoDto.setCodigoDeBarra(producto.getCodigoDeBarra());
-        productoDto.setStockMin(producto.getStockMin());
-        productoDto.setStockTotal(producto.getStockTotal());
-        productoDto.setActivo(producto.getActivo());
-        productoDto.setNombre(producto.getNombre());
-        // SÍ incluir imagen en este método específico
-        productoDto.setImagen(producto.getImagen());
-
-        // Incluir solo los datos básicos, sin relaciones complejas para evitar problemas de rendimiento
-        if (producto.getCategoria() != null) {
-            productoDto.setCategoria(mapToDtoCategoriaSimple(producto.getCategoria()));
-        }
-
-        if (producto.getProveedor() != null) {
-            productoDto.setProveedor(mapToDtoProveedorSimple(producto.getProveedor()));
-        }
-
-        return productoDto;
-    }
 
     public ProveedorDto mapToDtoProveedorSimple(Proveedor proveedor) {
         if (proveedor == null) {
@@ -1140,43 +1093,12 @@ public class MapsDtosEntityService {
     }
 
 
-    public CantidadDto mapToDtoCantidad(Cantidad cantidad) {
-        return mapToDtoCantidad(cantidad, new HashSet<>());
-    }
-
-    public CantidadDto mapToDtoCantidad(Cantidad cantidad, Set<Object> processed) {
-        if (cantidad == null || processed.contains(cantidad)) {
-            return null;
-        }
-        processed.add(cantidad);
-
-        CantidadDto dto = new CantidadDto();
-
-        dto.setId(cantidad.getId());
-        dto.setPrecioActual(cantidad.getPrecioActual());
-        dto.setCantidad(cantidad.getCantidad());
-        if (cantidad.getProducto() != null) {
-            dto.setProducto(mapToDtoProductoSimple(cantidad.getProducto()));
-        }
-
-        if (cantidad.getVenta() != null) {
-            dto.setVenta(mapToDtoVenta(cantidad.getVenta(), processed));
-        }
-        return dto;
-    }
-
-    public Cantidad mapToEntityCantidad(CantidadDto dto) {
-        return mapToEntityCantidad(dto, new HashSet<>());
-    }
-
-
     private Cantidad mapToEntityCantidad(CantidadDto dto, Set<Object> processed) {
         if (dto == null || processed.contains(dto)) {
             return null;
         }
         processed.add(dto);
 
-        //no creo que sea realmente necesario ya que solo se usa para crear las cantidades en la venta
         // Si tiene id
         if (dto.getId() != null) {
             Optional<Cantidad> cantExistente = cantidadRepository.findById(dto.getId());
@@ -1199,36 +1121,6 @@ public class MapsDtosEntityService {
         }
 
         return cantidad;
-    }
-
-    public VentaDto mapToDtoVenta(Venta venta) {
-        return mapToDtoVenta(venta, new HashSet<>());
-    }
-
-    public VentaDto mapToDtoVenta(Venta venta, Set<Object> processed) {
-        if (venta == null || processed.contains(venta)) {
-            return null;
-        }
-        processed.add(venta);
-
-        VentaDto dto = new VentaDto();
-
-        dto.setFormaPago(venta.getFormaPago());
-        dto.setId(venta.getId());
-        dto.setFechaVenta(venta.getFechaVenta());
-        dto.setTotal(venta.getTotal());
-        dto.setActivo(venta.getActivo());
-        dto.setUsuario(venta.getUsuario() != null ? venta.getUsuario().getNombre() : null);
-
-        if (venta.getCredito() != null) {
-            dto.setCredito(mapToDtoCredito(venta.getCredito(), processed));
-        }
-
-        if (venta.getCantidades() != null) {
-            dto.setCantidades(venta.getCantidades().stream().map(e -> mapToDtoCantidadSimple(e)).collect(Collectors.toList()));
-        }
-
-        return dto;
     }
 
     public Venta mapToEntityVenta(VentaDto dto) {

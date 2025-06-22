@@ -158,10 +158,5 @@ public class EntidadService {
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
     }
 
-    public List<ProveedorDto> listarProveedores() {
-        List<Proveedor> proveedores = proveedorRepository.findByActivoTrue();
-        return proveedores.stream().map(mapsDtosEntityService::mapToDtoProveedor).collect(Collectors.toList());
-    }
-
 
 }
