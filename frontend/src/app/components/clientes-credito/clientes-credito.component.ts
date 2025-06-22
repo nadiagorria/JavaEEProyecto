@@ -66,7 +66,6 @@ export class ClientesCreditoComponent {
   
   ngOnInit(): void {
     if (!this.securityService.isLoggedIn()) {
-      // Si no está autenticado, redirigir al login
       this.router.navigate(['/login']);
       return;
     }
@@ -76,14 +75,10 @@ export class ClientesCreditoComponent {
   cargarCreditos(): void {
     this.creditoService.listarCreditos().subscribe({
       next: (data: any) => {
-        console.log('Respuesta del servidor:', data); // Para debugging
         
-        // Manejar diferentes estructuras de respuesta
         if (data && Array.isArray(data)) {
-          // Si la respuesta es directamente un array
           this.creditos = data;
         } else if (data && data.creditos && Array.isArray(data.creditos)) {
-          // Si la respuesta tiene la propiedad creditos
           this.creditos = data.creditos;
         } else {
           console.warn('La respuesta no tiene el formato esperado:', data);
@@ -97,7 +92,7 @@ export class ClientesCreditoComponent {
         console.error('Error al listar créditos:', err);
         
         if (err.status === 403) {
-          // Error de autorización, probablemente la sesión expiró
+
           alert('Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.');
           this.securityService.logout();
           return;
@@ -119,22 +114,22 @@ export class ClientesCreditoComponent {
 
   cerrarDialog() {
     this.visible = false;
-    // Limpiar los campos del formulario
+
     this.nombre = '';
     this.telefono = '';
     this.minimo = 0;
     this.maximo = 0;
   }
-  //Cliente
+
   nombre: string = '';
   telefono: string = '';
 
-  //Credito
+
   minimo: number = 0;
   maximo: number = 0;
   
   saveCliente() {
-    // Validar campos requeridos
+
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -144,7 +139,7 @@ export class ClientesCreditoComponent {
       return;
     }
 
-    // Validar que el crédito máximo sea mayor que el mínimo
+
     if (this.maximo > 0 && this.minimo > 0 && this.maximo <= this.minimo) {
       this.messageService.add({
         severity: 'warn',
@@ -154,7 +149,7 @@ export class ClientesCreditoComponent {
       return;
     }
 
-    // Validar que los montos sean positivos
+
     if (this.minimo < 0 || this.maximo < 0) {
       this.messageService.add({
         severity: 'warn',
@@ -187,7 +182,7 @@ export class ClientesCreditoComponent {
           detail: 'Cliente a crédito creado exitosamente'
         });
         
-        // Actualizar la lista de créditos sin recargar la página
+
         this.cargarCreditos();
       },
       error: (err: any) => {
@@ -211,10 +206,10 @@ export class ClientesCreditoComponent {
 
   buscarCliente() {
     if (this.busqueda.trim() === '') {
-      // Si la búsqueda está vacía, mostrar todos los créditos
+
       this.creditosFiltrados = [...this.creditos];
     } else {
-      // Filtrar los créditos por nombre de cliente sin hacer una nueva petición
+
       this.creditosFiltrados = this.creditos.filter((credito: CreditoDto) =>
         credito.cliente.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
       );
@@ -232,7 +227,7 @@ export class ClientesCreditoComponent {
         next: (data: any) => {
           console.log('Cliente eliminado exitosamente', data);
           
-          // Actualizar las listas filtrando el cliente eliminado
+
           this.creditos = this.creditos.filter(c => c.cliente.id !== id);
           this.creditosFiltrados = this.creditosFiltrados.filter(c => c.cliente.id !== id);
           this.totalRecords = this.creditosFiltrados.length;

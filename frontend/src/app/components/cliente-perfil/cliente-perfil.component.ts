@@ -20,14 +20,14 @@ import { VentaService } from 'src/services/venta.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
-  selector: 'app-cliente-perfil',  imports: [FormsModule, 
-    HeaderComponent, 
-    FooterComponent, 
-    ButtonModule, 
-    InputGroupModule, 
-    InputGroupAddonModule, 
-    TableModule, 
-    DialogModule, 
+  selector: 'app-cliente-perfil', imports: [FormsModule,
+    HeaderComponent,
+    FooterComponent,
+    ButtonModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    TableModule,
+    DialogModule,
     CommonModule,
     InputTextModule,
     ToastModule,
@@ -50,7 +50,7 @@ export class ClientePerfilComponent {
     private securityService: SecurityService,
     private ventaService: VentaService,
     private confirmationService: ConfirmationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -65,8 +65,8 @@ export class ClientePerfilComponent {
   showDialog() {
     this.visible = true;
   }
+
   showDialogEditar() {
-    // Inicializar los campos de edición con los valores actuales del cliente
     this.nombreEdicion = this.cliente.nombre;
     this.telefonoEdicion = this.cliente.telefono;
     this.visibleEditar = true;
@@ -74,14 +74,12 @@ export class ClientePerfilComponent {
 
   cerrarDialogEditar() {
     this.visibleEditar = false;
-    // Resetear los campos a los valores originales
     this.nombreEdicion = '';
     this.telefonoEdicion = '';
   }
 
-  pago : number = 0;
+  pago: number = 0;
   pagoButton() {
-    // Validar que el monto de pago no sea mayor a la deuda actual ni negativo
     if (this.pago <= 0) {
       this.messageService.add({
         severity: 'warn',
@@ -90,7 +88,7 @@ export class ClientePerfilComponent {
       });
       return;
     }
-    
+
     if (this.pago > this.cliente.credito.precioTotal) {
       this.messageService.add({
         severity: 'warn',
@@ -99,13 +97,11 @@ export class ClientePerfilComponent {
       });
       return;
     }
-    
+
     console.log(this.pago, "aaa", this.cliente.credito.id);
     this.creditoService.pagarCredito(this.cliente.credito.id, this.pago).subscribe(
       response => {
-        // Manejar respuesta si es necesario
         console.log('Pago realizado', response);
-        // Refrescar los datos del cliente después del pago
         this.entidadService.getCliente(this.cliente.id).subscribe(data => {
           this.cliente = data;
           this.messageService.add({
@@ -116,7 +112,6 @@ export class ClientePerfilComponent {
         });
       },
       error => {
-        // Manejar error si ocurre
         console.error('Error al pagar', error);
         this.messageService.add({
           severity: 'error',
@@ -126,7 +121,6 @@ export class ClientePerfilComponent {
       }
     );
     this.visible = false;
-    // Resetear el valor del pago
     this.pago = 0;
   }
 
@@ -143,7 +137,7 @@ export class ClientePerfilComponent {
     }
 
     this.cliente.nombre = this.nombreEdicion;
-    
+
     this.cliente.telefono = this.telefonoEdicion;
 
     this.entidadService.editarCliente(this.cliente).subscribe({
@@ -167,7 +161,6 @@ export class ClientePerfilComponent {
     });
   }
 
-  // Función para verificar si el usuario es admin
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
     if (!roles) {
@@ -176,13 +169,12 @@ export class ClientePerfilComponent {
     return roles.includes('ADMIN');
   }
 
-  // Función para ver detalles de una venta
   verVenta(ventaId: number) {
     if (ventaId) {
       this.router.navigate(['/verventa', ventaId]);
     }
   }
-  // Función para eliminar una venta (solo admin)
+
   eliminarVenta(ventaId: number) {
     if (!this.isAdmin()) {
       this.messageService.add({
@@ -209,7 +201,7 @@ export class ClientePerfilComponent {
               summary: 'Venta eliminada',
               detail: 'La venta ha sido eliminada correctamente.'
             });
-            // Refrescar los datos del cliente para actualizar la tabla
+
             this.entidadService.getCliente(this.cliente.id).subscribe(data => {
               this.cliente = data;
             });

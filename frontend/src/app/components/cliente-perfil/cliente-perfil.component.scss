@@ -36,7 +36,6 @@ main {
   margin: 0;
 }
 
-// Estilos para el avatar del cliente - separado más de las cards
 .cliente-avatar {
   display: flex;
   align-items: center;
@@ -44,7 +43,7 @@ main {
   height: 280px;
   width: 25vw;
   margin-right: 5vw;
-  margin-left: 3rem; // Separación adicional de las cards
+  margin-left: 3rem;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -152,7 +151,6 @@ main {
   }
 }
 
-// Mejorar estilos del modal de edición
 ::ng-deep .p-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -217,7 +215,6 @@ main {
   }
 }
 
-// Estilos para el modal de pago
 .form-payment {
   .deuda-info {
     background: linear-gradient(135deg, rgba(100, 116, 139, 0.1) 0%, rgba(71, 85, 105, 0.05) 100%);
@@ -300,7 +297,6 @@ main {
   }
 }
 
-// Estilo para el modal similar al de lote
 ::ng-deep .lote-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
@@ -461,7 +457,7 @@ main {
     }
   }
   
-  // Animación para la apertura del modal
+
   &.p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
     backdrop-filter: blur(3px);
@@ -476,7 +472,6 @@ main {
   }
 }
 
-// Keyframes para animaciones
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -504,7 +499,7 @@ main {
   }
 }
 
-// Paginación
+
 .paginador {
   color: #2c3e50;
   height: 20px;
@@ -522,7 +517,6 @@ main {
   border-right: none !important;
 }
 
-// Responsive design
 @media (max-width: 768px) {
   main {
     margin-left: 5vw;
@@ -552,7 +546,6 @@ main {
   }
 }
 
-// Estilos para el modal de edición de cliente
 .cliente-info {
   display: flex;
   flex-direction: column;
@@ -588,7 +581,6 @@ main {
   }
 }
 
-// Estilos para los labels con iconos
 ::ng-deep .lote-dialog .p-dialog-content .field label {
   font-weight: 600;
   color: #2c3e50;
@@ -605,7 +597,6 @@ main {
 
 
 
-// Estilos para mejorar la alineación del símbolo $ en el input de pago
 ::ng-deep .p-inputgroup {
   .p-inputgroup-addon {
     background-color: #f8f9fa;

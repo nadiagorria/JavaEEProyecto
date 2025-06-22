@@ -22,7 +22,7 @@
   color: var(--text-color) !important;
 }
 
-// Estilos para el saludo centrado
+
 ::ng-deep .p-menubar .p-menubar-root-list {
   display: flex;
   align-items: center;
@@ -55,14 +55,14 @@
   margin-right: 2vw;
 }
 
-// Estilos para la integración del componente de notificaciones en el header
+
 ::ng-deep .p-menubar .p-menubar-end {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-// Asegurar que el componente de notificaciones se vea bien en el header
+
 app-notificaciones {
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@ hr {
   margin: 0.5rem 0;
 }
 
-// Estilos para el menú hamburguesa y navegación
+
 ::ng-deep .p-overlaypanel {
   .p-overlaypanel-content {
     padding: 0;
@@ -132,7 +132,7 @@ hr {
   }
 }
 
-// Mejorar el diseño del header
+
 .texto {
   padding-left: 0; // Remover el padding excesivo
   font-size: 1.125rem;
@@ -145,7 +145,7 @@ hr {
   gap: 0.25rem; // Reducir gap para mejor espacio
 }
 
-// Estilos para botones del header
+
 ::ng-deep .p-button.p-button-text {
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -156,7 +156,7 @@ hr {
   }
 }
 
-// Hacer que el menubar use flexbox para permitir centrado
+
 ::ng-deep .p-menubar .p-menubar-root-list {
   display: flex;
   align-items: center;
@@ -164,7 +164,7 @@ hr {
   justify-content: space-between;
 }
 
-// Centrar el saludo del usuario
+
 ::ng-deep .p-menubar .p-menubar-start {
   flex: 0 0 auto;
 }
@@ -173,12 +173,12 @@ hr {
   flex: 0 0 auto;
 }
 
-// Asegurar que el contenido central tenga espacio para centrarse
+
 .flex-1 {
   flex: 1;
 }
 
-//font-family: "Source Sans 3", sans-serif;
+
 
 
 
