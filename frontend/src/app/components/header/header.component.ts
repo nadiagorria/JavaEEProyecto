@@ -75,7 +75,7 @@ export class HeaderComponent implements OnInit {
       }
     ];
 
-    // Solo agregar estadísticas si el usuario es admin
+
     if (this.isAdmin()) {
       this.menuItems.push({
         label: 'Estadísticas',
@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit {
       });
     }
 
-    // Agregar separador y resto de opciones
+
     this.menuItems.push(
       {
         separator: true

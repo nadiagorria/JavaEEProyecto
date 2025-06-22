@@ -10,7 +10,7 @@
   box-sizing: border-box;
   position: relative;
 
-  // Subtle pattern overlay
+
   &::before {
     content: '';
     position: absolute;
@@ -143,7 +143,7 @@ form {
     background: transparent;
   }
 
-  // Floating label effect
+
   &:has(input:focus) label,
   &:has(input:not(:placeholder-shown)) label {
     top: -10px;
@@ -173,7 +173,7 @@ form {
     }
   }
 
-  // Validation styles
+
   &.ng-invalid.ng-touched input,
   &.ng-invalid.ng-touched ::ng-deep .p-password input {
     border-color: #dc3545;
@@ -246,7 +246,7 @@ button[pButton] {
     box-shadow: none;
   }
 
-  // Loading state
+
   &[aria-label*="Loading"] {
     background: #6c757d;
     cursor: wait;

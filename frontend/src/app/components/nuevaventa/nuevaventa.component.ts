@@ -27,7 +27,7 @@ import { Router, NavigationStart } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 
-// Interfaz para los items de la venta con información de ofertas
+
 interface ItemVenta extends CantidadDto {
   precioOriginal: number;
   precioConDescuento: number;
@@ -65,26 +65,26 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   cantidades: ItemVenta[] = [];
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
-  // Control de navegación y confirmación
+
   mostrarDialogoConfirmacion: boolean = false;
   rutaNavegacionPendiente: string | null = null;
   navigationSubscription: Subscription | null = null;
 
-  // Variables para detectar cambios en cantidad
+
   private cantidadAnterior: Map<number, number> = new Map();
 
-  // Escáner físico USB
+
   escanerActivo: boolean = false;
   codigoBarrasBuffer: string = '';
   ultimoTiempo: number = 0;
   private readonly TIEMPO_LIMITE_CARACTER = 50; // ms entre caracteres del escáner
-  // Ofertas disponibles
+
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
   displayDialog: boolean = false;
 
-  // Variables para diálogo de selección de productos duplicados
+
   displaySeleccionProducto: boolean = false;
   productosDuplicados: ProductoDto[] = [];
   codigoBarrasEscaneado: string = '';
@@ -116,13 +116,13 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   ngOnDestroy() {
-    // Limpieza si es necesaria
+
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
   }
 
-  // Implementación del guard de navegación
+
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     if (this.hayProductosEnVenta()) {
       return new Promise<boolean>((resolve) => {
@@ -146,7 +146,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return true;
   }
 
-  // Detector de cierre de ventana
+
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent) {
     if (this.hayProductosEnVenta()) {
@@ -157,12 +157,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return undefined;
   }
 
-  // Método para verificar si hay productos en la venta actual
+
   hayProductosEnVenta(): boolean {
     return this.cantidades.length > 0;
   }
 
-  // Método para confirmar la navegación
+
   confirmarNavegacion() {
     this.mostrarDialogoConfirmacion = false;
     if (this.rutaNavegacionPendiente) {
@@ -171,16 +171,16 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     }
   }
 
-  // Método para cancelar la navegación
+
   cancelarNavegacion() {
     this.mostrarDialogoConfirmacion = false;
     this.rutaNavegacionPendiente = null;
   }
 
-  // ==================== CARGA DE DATOS ====================
+
 
   cargarOfertas() {
-    // Cargar combos
+
     this.ofertaService.listarCombos().subscribe({
       next: (response) => {
         this.combos = response.combos.filter(combo => this.esOfertaVigente(combo));
@@ -188,7 +188,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       error: (error) => console.error('Error al cargar combos:', error)
     });
 
-    // Cargar promociones
+
     this.ofertaService.listarPromociones().subscribe({
       next: (response) => {
         this.promociones = response.promociones.filter(promo => this.esOfertaVigente(promo));
@@ -196,7 +196,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       error: (error) => console.error('Error al cargar promociones:', error)
     });
 
-    // Cargar descuentos
+
     this.ofertaService.listarDescuentos().subscribe({
       next: (response) => {
         this.descuentos = response.descuentos.filter(desc => this.esOfertaVigente(desc));
@@ -238,7 +238,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
 
-  // ==================== LÓGICA DE OFERTAS ====================
+
 
   esOfertaVigente(oferta: ComboDto | PromocionDto | DescuentoDto): boolean {
     const ahora = new Date();
@@ -247,7 +247,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return oferta.activo && ahora >= inicio && ahora <= fin;
   }
   aplicarOfertas() {
-    // Primero resetear todas las ofertas
+
     this.cantidades.forEach(item => {
       item.precioOriginal = item.producto.precioVenta * item.cantidad;
       item.precioConDescuento = item.producto.precioVenta * item.cantidad;
@@ -257,7 +257,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       item.porcentajeDescuento = undefined;
     });
 
-    // Aplicar ofertas en orden de prioridad
+
     this.aplicarDescuentos();
     this.aplicarPromociones();
     this.aplicarCombos();
@@ -284,13 +284,13 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
 
       itemsPromocion.forEach(item => {
         if (item.cantidad >= promocion.descuento) {
-          // Número de grupos completos de la promoción (ej: para 3x2, cuántos grupos de 3 hay)
+
           const gruposCompletos = Math.floor(item.cantidad / promocion.descuento);
-          // Productos sueltos que no forman un grupo completo
+
           const productosRestantes = item.cantidad % promocion.descuento;
 
-          // En cada grupo completo, cobras (promocion.descuento - 1) productos
-          // Ejemplo: en 3x2, por cada grupo de 3 cobras 2
+
+
           const productosCobrados = (gruposCompletos * (promocion.descuento - 1)) + productosRestantes;
           const precioPromo = productosCobrados * item.producto.precioVenta;
 
@@ -303,17 +303,17 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       });
     });
   } aplicarCombos() {
-    // Obtener productos únicos en la venta
+
     const productosUnicos = [...new Set(this.cantidades.map(item => item.producto.id!))];
 
-    // Para cada producto único, verificar combos
+
     productosUnicos.forEach(productoId => {
       this.ofertaService.getCombosByProducto(productoId).subscribe({
         next: (response: ResponseListadoCombos) => {
           const combosDelProducto = response.combos.filter(combo => this.esOfertaVigente(combo));
 
           combosDelProducto.forEach((combo: ComboDto) => {
-            // Verificar si todos los productos del combo están en la venta
+
             const productosDelCombo = combo.productos.map((p: any) => p.id);
             const productosEnVenta = this.cantidades.map(c => c.producto.id);
 
@@ -322,16 +322,16 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
             );
 
             if (tieneeTodosLosProductos) {
-              // Obtener todos los items del combo
+
               const itemsDelCombo = this.cantidades.filter(c =>
                 productosDelCombo.includes(c.producto.id)
               );
 
-              // Encontrar la cantidad mínima común para aplicar el combo
+
               const cantidadMinima = Math.min(...itemsDelCombo.map(c => c.cantidad));
 
               if (cantidadMinima > 0) {
-                // Aplicar descuento a todos los productos del combo
+
                 itemsDelCombo.forEach(item => {
                   const precioUnitarioOriginal = item.producto.precioVenta;
                   const precioUnitarioConDescuento = precioUnitarioOriginal * (1 - combo.descuento / 100);
@@ -340,7 +340,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
                   const precioConCombo = (precioUnitarioConDescuento * cantidadMinima) +
                     (precioUnitarioOriginal * (item.cantidad - cantidadMinima));
 
-                  // Solo aplicar si es mejor que la oferta actual
+
                   if (!item.tieneOferta || item.precioConDescuento > precioConCombo) {
                     item.precioOriginal = precioOriginalTotal;
                     item.precioConDescuento = precioConCombo;
@@ -359,7 +359,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
 
-  // ==================== FUNCIONES AUXILIARES ====================
+
 
   onFormaPagoChange() {
     if (this.formaPagoSeleccionada === 'FIADO') {
@@ -376,7 +376,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return item.tieneOferta ? item.precioConDescuento : item.producto.precioVenta * item.cantidad;
   }
 
-  // ==================== LÓGICA DE CRÉDITOS ====================
+
   /**
    * Filtra los clientes basándose en el texto de búsqueda
    */
@@ -440,7 +440,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   filtrarProductos(event: { query: string }) {
     const query = event.query.toLowerCase();
 
-    // Matches exactos de códigos de barras
+
     const matchesExactos = this.productos.filter(producto =>
       producto.codigoDeBarra.toLowerCase() === query && producto.activo
     );
@@ -450,7 +450,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Sino, busca por inicio de código o nombre
+
     this.productosFiltrados = this.productos.filter(producto =>
       producto.activo && (
         producto.codigoDeBarra.toLowerCase().startsWith(query) ||
@@ -488,7 +488,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     const itemExistente = this.cantidades.find(c => c.producto.id === producto.id);
 
     if (itemExistente) {
-      // Verificar stock disponible antes de incrementar
+
       const cantidadTotal = itemExistente.cantidad + 1;
       if (cantidadTotal > producto.stockTotal) {
         this.messageService.add({
@@ -500,7 +500,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       }
       itemExistente.cantidad++;
     } else {
-      // Verificar stock disponible antes de agregar
+
       if (producto.stockTotal < 1) {
         this.messageService.add({
           severity: 'warn',
@@ -533,7 +533,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       this.totalRecords++;
     }
 
-    // Aplicar ofertas después de agregar producto
+
     this.aplicarOfertas();
     this.productoSeleccionado = null;
   }
@@ -562,12 +562,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     if (index !== -1) {
       this.cantidades = this.cantidades.filter((_, i) => i !== index);
       this.totalRecords--;
-      // Reaplicar ofertas después de eliminar
+
       this.aplicarOfertas();
     }
   }
 
-  // ==================== VENTA ====================
+
 
   finalizarVenta() {
     if (this.cantidades.length === 0) {
@@ -581,7 +581,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.displayDialog = true;
   }
   confirmarVenta() {
-    // Validación de forma de pago
+
     if (!this.formaPagoSeleccionada) {
       this.messageService.add({
         severity: 'error',
@@ -591,7 +591,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Validación de productos en la venta
+
     if (this.cantidades.length === 0) {
       this.messageService.add({
         severity: 'warn',
@@ -610,7 +610,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         return;
       }
 
-      // Verificar que el total supere el crédito mínimo
+
       if (!this.superaCreditoMinimo(this.creditoSeleccionado)) {
         this.messageService.add({
           severity: 'error',
@@ -620,7 +620,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         return;
       }
 
-      // Verificar que el cliente puede realizar la compra sin superar su límite
+
       if (!this.puedeRealizarCompra(this.creditoSeleccionado)) {
         const dineroDisponible = this.calcularDineroDisponible(this.creditoSeleccionado);
         const totalVenta = this.calcularTotal();
@@ -632,10 +632,10 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         return;
       }
     }
-    // Ya no es necesario crear o enviar la fecha, el backend se encargará de esto
+
 
     const venta: Partial<VentaDto> = {
-      // fechaVenta no se incluye, será establecida por el backend
+
       total: this.calcularTotal(),
       formaPago: this.formaPagoSeleccionada,
       credito: this.formaPagoSeleccionada === 'FIADO' ? {
@@ -683,10 +683,10 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           detail: 'Venta creada correctamente'
         });
 
-        // Refrescar notificaciones inmediatamente después de la venta
+
         this.notificacionService.refrescarPostVenta();
 
-        // Recargar productos para actualizar el stock
+
         this.cargarProductos();
 
         this.displayDialog = false;
@@ -694,7 +694,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       },
       error: (error) => {
         console.error('Error al crear la venta:', error);
-        // Manejar errores HTTP específicos
+
         if (error.status === 400 && error.error && typeof error.error === 'object') {
           if (error.error.error === -1) {
             this.messageService.add({
@@ -739,7 +739,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.formaPagoSeleccionada = '';
     this.productoSeleccionado = null;
   }
-  // ==================== ESCÁNER FÍSICO USB ====================
+
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
@@ -747,14 +747,14 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
 
     const tiempoActual = Date.now();
 
-    // Si el tiempo entre caracteres es muy largo, reiniciar el buffer
+
     if (tiempoActual - this.ultimoTiempo > this.TIEMPO_LIMITE_CARACTER) {
       this.codigoBarrasBuffer = '';
     }
 
     this.ultimoTiempo = tiempoActual;
 
-    // Si es Enter, procesar el código de barras
+
     if (event.key === 'Enter') {
       event.preventDefault();
       if (this.codigoBarrasBuffer.length > 0) {
@@ -764,7 +764,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Agregar caracteres alfanuméricos al buffer
+
     if (event.key.length === 1 && /[a-zA-Z0-9]/.test(event.key)) {
       event.preventDefault();
       this.codigoBarrasBuffer += event.key;
@@ -790,11 +790,11 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       this.codigoBarrasBuffer = '';
     }
   } private procesarCodigoBarras(codigoBarras: string) {
-    // Primero buscar todos los productos con ese código de barras
+
     this.productoService.buscarTodosPorCodigoBarras(codigoBarras).subscribe({
       next: (productos) => {
         if (productos && productos.length > 0) {
-          // Filtrar productos con stock
+
           const productosConStock = productos.filter(p => this.tieneStock(p));
 
           if (productosConStock.length === 0) {
@@ -808,11 +808,11 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           }
 
           if (productosConStock.length === 1) {
-            // Solo un producto con stock, agregar directamente
+
             const producto = productosConStock[0];
             this.agregarProductoDirectamente(producto);
           } else {
-            // Múltiples productos con stock, mostrar diálogo de selección
+
             this.mostrarDialogoSeleccion(productos, codigoBarras);
           }
         } else {
@@ -836,7 +836,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
 
-  // ==================== STOCK VALIDATION ====================
+
 
   /**
    * Valida el stock antes de aplicar ofertas
@@ -852,12 +852,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         detail: `${item.producto.nombre}: máximo ${stockDisponible} unidades disponibles (Stock: ${stockDisponible})`,
         life: 3000
       });
-      // Revertir a la cantidad máxima disponible
+
       item.cantidad = stockDisponible;
       return;
     }
 
-    // Validar cantidad mínima
+
     if (nuevaCantidad < 1) {
       this.messageService.add({
         severity: 'warn',
@@ -869,7 +869,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Actualizar la cantidad anterior después de la validación
+
     this.cantidadAnterior.set(item.producto.id!, nuevaCantidad);
 
     this.aplicarOfertas();
@@ -879,7 +879,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
    * Obtiene el stock disponible para un producto
    */
   getStockDisponible(producto: any): number {
-    // Buscar el producto completo en la lista para obtener el stock total actualizado
+
     const productoCompleto = this.productos.find(p => p.id === producto.id);
     return productoCompleto ? productoCompleto.stockTotal : (producto.stockTotal || 0);
   }
@@ -897,10 +897,10 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     const cantidadPrevia = this.cantidadAnterior.get(item.producto.id!) || item.cantidad;
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Si la cantidad sigue siendo el máximo y antes también era el máximo,
-    // significa que hubo un intento de incrementar pero fue bloqueado por [max]
+
+
     if (item.cantidad === stockDisponible && cantidadPrevia === stockDisponible) {
-      // Agregar un pequeño delay para detectar clicks en los botones
+
       setTimeout(() => {
         if (item.cantidad === stockDisponible) {
           this.messageService.add({
@@ -913,7 +913,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       }, 100);
     }
 
-    // Limpiar el valor guardado
+
     this.cantidadAnterior.delete(item.producto.id!);
   }
 
@@ -923,7 +923,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   onInputKeydown(event: KeyboardEvent, item: ItemVenta) {
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Detectar intento de incrementar con flecha arriba cuando ya está en el máximo
+
     if (event.key === 'ArrowUp' && item.cantidad >= stockDisponible) {
       event.preventDefault();
       this.messageService.add({
@@ -941,11 +941,11 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     const target = event.target as HTMLElement;
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Verificar si el click fue en el botón de incremento
+
     if (target && (target.classList.contains('p-inputnumber-button-up') ||
       target.closest('.p-inputnumber-button-up'))) {
 
-      // Si ya está en el máximo, mostrar alerta
+
       if (item.cantidad >= stockDisponible) {
         setTimeout(() => {
           this.messageService.add({
@@ -959,7 +959,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     }
   }
 
-  // ==================== MÉTODOS PARA MÚLTIPLES PRODUCTOS ====================
+
 
   /**
    * Muestra el diálogo de selección cuando hay múltiples productos con el mismo código
@@ -981,7 +981,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
    * Agrega un producto directamente cuando solo hay uno disponible
    */
   private agregarProductoDirectamente(producto: ProductoDto) {
-    // Verificar si ya existe en la lista y si tiene stock suficiente
+
     const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
     if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
       this.messageService.add({

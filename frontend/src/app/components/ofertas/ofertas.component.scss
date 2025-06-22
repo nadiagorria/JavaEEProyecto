@@ -1,9 +1,9 @@
-// Aplicamos la misma fuente que usa la página de ventas
+
 .texto {
   font-family: "Source Sans 3", sans-serif;
 }
 
-// Header de la página
+
 .ofertas-header {
   text-align: center;
   margin-bottom: 30px;
@@ -22,13 +22,13 @@
   }
 }
 
-// Contenido de cada tab
+
 .tab-content {
   padding: 20px 0;
 }
 
 
-// Botones
+
 .btn {
   padding: 10px 20px;
   border: none;
@@ -82,7 +82,7 @@
   }
 }
 
-// Badges
+
 .badge {
   padding: 4px 12px;
   border-radius: 20px;
@@ -112,7 +112,7 @@
   }
 }
 
-// Celdas de productos en combos
+
 .productos-cell {
   max-width: 250px;
   
@@ -123,17 +123,17 @@
   }
 }
 
-// Texto centrado
+
 .text-center {
   text-align: center;
 }
 
-// Margen derecho para botones
+
 .me-2 {
   margin-right: 8px;
 }
 
-// Estilos para formularios en modales
+
 .modal-form {
   padding: 20px 0;
   
@@ -180,9 +180,9 @@
   }
 }
 
-// Personalización de componentes PrimeNG
+
 :host ::ng-deep {
-  // Tabs
+
   .p-tabview {
     .p-tabview-nav {
       background: white;
@@ -216,7 +216,7 @@
   }
   
 
-  // Diálogos
+
   .p-dialog {
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -255,7 +255,7 @@
     }
   }
   
-  // Dropdowns y multiselect
+
   .p-dropdown, .p-multiselect {
     border: 2px solid #ecf0f1;
     border-radius: 8px;
@@ -271,7 +271,7 @@
     }
   }
   
-  // Input numbers
+
   .p-inputnumber {
     .p-inputtext {
       border: 2px solid #ecf0f1;
@@ -286,7 +286,7 @@
     }
   }
   
-  // Calendarios
+
   .p-calendar {
     .p-inputtext {
       border: 2px solid #ecf0f1;
@@ -301,7 +301,7 @@
     }
   }
   
-  // Checkboxes
+
   .p-checkbox {
     .p-checkbox-box {
       border: 2px solid #ecf0f1;
@@ -315,7 +315,7 @@
     }
   }
   
-  // Toast messages
+
   .p-toast {
     .p-toast-message {
       border-radius: 8px;
@@ -324,7 +324,7 @@
   }
 }
 
-// Form styles for consistency
+
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -375,11 +375,11 @@
   }
 }
 
-// Specific styles for date inputs
+
 input[type="date"].form-control {
   position: relative;
   
-  // Style the calendar icon
+
   &::-webkit-calendar-picker-indicator {
     color: #7f8c8d;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%237f8c8d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
@@ -396,7 +396,7 @@ input[type="date"].form-control {
     }
   }
   
-  // Style the date text
+
   &::-webkit-datetime-edit {
     font-family: "Source Sans 3", sans-serif;
     font-size: 14px;
@@ -407,7 +407,7 @@ input[type="date"].form-control {
     padding: 0;
   }
   
-  // When focused, highlight the border
+
   &:focus {
     &::-webkit-calendar-picker-indicator {
       color: #3498db;
@@ -416,7 +416,7 @@ input[type="date"].form-control {
   }
 }
 
-// Labels styling
+
 label {
   display: inline-block;
   margin-bottom: 8px;
@@ -426,7 +426,7 @@ label {
   font-size: 14px;
 }
 
-// Help text styling
+
 .form-text {
   margin-top: 4px;
   font-size: 12px;
@@ -434,7 +434,7 @@ label {
   font-family: "Source Sans 3", sans-serif;
 }
 
-// Responsividad
+
 @media (max-width: 768px) {
   .ofertas-container {
     padding: 15px;

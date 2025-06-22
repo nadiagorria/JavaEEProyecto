@@ -51,18 +51,18 @@ import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../mode
 })
 export class OfertasComponent implements OnInit, AfterViewInit {
 
-  // Arrays para las tablas
+
   promociones: PromocionDto[] = [];
   combos: ComboDto[] = [];
   descuentos: DescuentoDto[] = [];
   productos: ProductoDto[] = [];
 
-  // Modales
+
   mostrarModalPromocion: boolean = false;
   mostrarModalCombo: boolean = false;
   mostrarModalDescuento: boolean = false;
 
-  // Formularios
+
   nuevaPromocion: Partial<PromocionDto> = {
     descripcion: '',
     descuento: 0,
@@ -90,7 +90,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     producto: { id: 0, nombre: '' }
   };
 
-  // Variables para los formularios
+
   productoSeleccionadoPromocion: number = 0;
   productoSeleccionadoDescuento: number = 0;
   productosSeleccionadosCombo: number[] = [];
@@ -240,7 +240,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ==================== PROMOCIONES ====================
+
   abrirModalPromocion() {
     this.nuevaPromocion = {
       descripcion: '',
@@ -340,7 +340,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== COMBOS ====================
+
   abrirModalCombo() {
     this.nuevoCombo = {
       descripcion: '',
@@ -441,7 +441,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== DESCUENTOS ====================
+
   abrirModalDescuento() {
     this.nuevoDescuento = {
       descripcion: '',
@@ -494,7 +494,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         console.error('Message:', error.message);
         console.error('Error completo:', error);
 
-        // Extraer el mensaje específico del error
+
         let errorMessage = 'Error al crear el descuento';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -542,7 +542,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== UTILIDADES ====================
+
 
   onProductoChange(event: any, tipo: 'promocion' | 'descuento') {
     const producto = this.productos.find((p: ProductoDto) => p.id === event.value);
@@ -576,9 +576,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return productos.map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre).join(', ');
   }
 
-  // ==================== ELIMINAR OFERTAS ====================
+
   eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
-    // Determinar el artículo correcto según el género
+
     const articulo = tipo === 'promocion' ? 'esta' : 'este';
     
     this.confirmationService.confirm({
@@ -588,7 +588,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       accept: () => {
         this.ofertaService.eliminarOferta(id).subscribe({
           next: (response) => {
-            // Determinar el artículo para el mensaje de éxito
+
             const articuloEliminado = tipo === 'promocion' ? 'eliminada' : 'eliminado';
             this.messageService.add({
               severity: 'success',
@@ -610,7 +610,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           },
           error: (error) => {
             console.error(`Error al eliminar ${tipo}:`, error);
-            // Usar el artículo correcto en el mensaje de error
+
             const articuloError = tipo === 'promocion' ? 'la' : 'el';
             this.messageService.add({
               severity: 'error',

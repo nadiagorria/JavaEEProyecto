@@ -22,7 +22,7 @@ main {
   background-repeat: no-repeat;
   position: relative;
   
-  // Mantener el fondo gris como fallback
+
   background-color: #232323;
 }
 
@@ -164,7 +164,7 @@ main {
   z-index: 1;
 }
 
-// Estilos para botones desactivados
+
 .cartelGrande.disabled {
   opacity: 0.5;
   cursor: not-allowed;

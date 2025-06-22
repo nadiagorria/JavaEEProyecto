@@ -124,7 +124,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
       }
       
-      // Contenedor para las imágenes de productos
+
       .imagen-container {
         width: 100%;
         height: 160px;
@@ -296,7 +296,7 @@ $text-color: #777;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
-  // Estilos para el input file y formulario mejorado
+
   input[type="file"] {
     padding: 8px;
     border: 1px solid #ddd;
@@ -309,7 +309,7 @@ $text-color: #777;
     }
   }
 
-  // Estilos para formularios mejorados
+
   .form-group {
     label {
       display: block;
@@ -332,7 +332,7 @@ $text-color: #777;
     }
   }
 
-  // Estilos para la vista previa de imagen
+
   .image-preview {
     margin: 10px 0;
     text-align: center;
@@ -343,7 +343,7 @@ $text-color: #777;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
-  // Estilos para texto de ayuda y validación
+
   .help-text {
     display: block;
     margin-top: 4px;
@@ -352,7 +352,7 @@ $text-color: #777;
     font-style: italic;
   }
 
-  // Estilos para campos requeridos
+
   input:required {
     border-left: 3px solid #ff9800;
   }
@@ -361,7 +361,7 @@ $text-color: #777;
     border-left: 3px solid #4CAF50;
   }
 
-  // Estilos para mostrar errores de validación
+
   .error-message {
     color: #f44336;
     font-size: 14px;
@@ -372,7 +372,7 @@ $text-color: #777;
     border-left: 4px solid #f44336;
   }
 
-  // Estilos para mensajes de éxito
+
   .success-message {
     color: #4CAF50;
     font-size: 14px;
@@ -384,7 +384,7 @@ $text-color: #777;
   }
 }
 
-// Estilos para los diálogos modernos
+
 ::ng-deep {
   .producto-dialog {
     .p-dialog {
@@ -634,7 +634,7 @@ $text-color: #777;
 }
 
 
-// Estilos para los footers de los diálogos cuando no están dentro del modal
+
 .dialog-footer {
   padding: 1.5rem;
   background: #f8f9fa;
@@ -695,7 +695,7 @@ $text-color: #777;
   }
 }
 
-// Estilos para la vista previa de imagen
+
 .image-preview {
   margin: 1rem 0;
   text-align: center;
@@ -737,7 +737,7 @@ $text-color: #777;
   }
 }
 
-// Animaciones
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -754,7 +754,7 @@ $text-color: #777;
   }
 }
 
-// Estilos para los dropdown de PrimeNG
+
 :host ::ng-deep {
   .p-dropdown {
     width: 100%;
@@ -798,7 +798,7 @@ $text-color: #777;
     }
   }
   
-  // Estilos para el toast
+
   .p-toast {
     .p-toast-message {
       border-radius: 6px;
@@ -846,12 +846,12 @@ $text-color: #777;
     }
   }
   
-  // Estilo para formularios
+
   .form-dropdown {
     width: 100%;
   }
   
-  // Estilos para el input file
+
   input[type="file"] {
     padding: 0.5rem;
     border: 1px solid #ced4da;
@@ -872,7 +872,7 @@ $text-color: #777;
   }
 }
 
-// Agregar estilos para el contenedor de input de código de barras con botón de escaneo
+
 .barcode-input-container {
   display: flex;
   gap: 8px;

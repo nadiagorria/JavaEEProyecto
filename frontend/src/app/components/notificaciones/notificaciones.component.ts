@@ -24,7 +24,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   contadorNoLeidas: number = 0;
   mostrarDropdown: boolean = false;
   
-  // Propiedades para el modal
+
   mostrarDialog: boolean = false;
   notificacionSeleccionada: NotificacionUsuarioDto | null = null;
     private subscriptions: Subscription = new Subscription();
@@ -36,26 +36,26 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Solo inicializar si el usuario está autenticado
+
     if (!this.securityService.isLoggedIn()) {
       return;
     }
 
-    // Suscribirse a las notificaciones
+
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((notificaciones: NotificacionUsuarioDto[]) => {
         this.notificaciones = notificaciones;
       })
     );
 
-    // Suscribirse al contador
+
     this.subscriptions.add(
       this.notificacionService.contador$.subscribe((contador: number) => {
         this.contadorNoLeidas = contador;
       })
     );
 
-    // Inicializar el servicio
+
     this.notificacionService.inicializar();
   }
 
@@ -79,16 +79,16 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   }
 
   marcarComoLeida(notificacion: NotificacionUsuarioDto): void {
-    // Seleccionar la notificación para mostrar en el modal
+
     this.notificacionSeleccionada = notificacion;
     
-    // Abrir el dialog
+
     this.mostrarDialog = true;
     
-    // Cerrar el dropdown
+
     this.cerrarDropdown();
     
-    // Marcar como leída si no está leída
+
     if (!notificacion.leido && notificacion.id) {
       this.notificacionService.marcarLeidaYActualizar(notificacion.id);
     }
@@ -105,7 +105,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
   }
 
   eliminarNotificacion(notificacion: NotificacionUsuarioDto, event?: Event): void {
-    // Prevenir que se abra el modal cuando se hace click en eliminar
+
     if (event) {
       event.stopPropagation();
     }
@@ -119,7 +119,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
         detail: 'Notificación eliminada correctamente'
       });
 
-      // Si es la notificación que está en el modal, cerrar el modal
+
       if (this.notificacionSeleccionada?.id === notificacion.id) {
         this.cerrarDialog();
       }
@@ -154,7 +154,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para formatear fecha completa en el modal
+
   formatearFechaCompleta(fechaHora: any): string {
     if (!fechaHora) return 'Sin fecha';
     
@@ -169,7 +169,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
       second: '2-digit'
     });
   }
-  // Método para obtener el título de la primera notificación
+
   obtenerTitulo(notificacionUsuario: NotificacionUsuarioDto): string {
     if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
       return notificacionUsuario.notificaciones[0].titulo || 'Sin título';
@@ -177,7 +177,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     return 'Sin título';
   }
 
-  // Método para obtener el mensaje de la primera notificación
+
   obtenerMensaje(notificacionUsuario: NotificacionUsuarioDto): string {
     if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
       return notificacionUsuario.notificaciones[0].mensaje || 'Sin mensaje';
@@ -185,7 +185,7 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     return 'Sin mensaje';
   }
 
-  // Método para obtener la fecha de la primera notificación
+
   obtenerFecha(notificacionUsuario: NotificacionUsuarioDto): any {
     if (notificacionUsuario.notificaciones && notificacionUsuario.notificaciones.length > 0) {
       return notificacionUsuario.notificaciones[0].fechaHora;

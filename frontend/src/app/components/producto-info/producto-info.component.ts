@@ -112,7 +112,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     return hasAdminRole;
   }
 
-  // Función para verificar si es admin supremo (solo ADMIN, no CAJERO)
+
   isAdminSupremo(): boolean {
     const roles = this.securityService.getUserRoles();
     
@@ -120,14 +120,14 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       return false;
     }
     
-    // Admin supremo es quien tiene SOLO el rol ADMIN (no CAJERO)
+
     const hasAdminRole = roles.includes('ADMIN');
     const hasCajeroRole = roles.includes('CAJERO');
     
     return hasAdminRole && !hasCajeroRole;
   }
 
-  // Existing lote modal properties
+
   mostrarModalAgregarLote: boolean = false;
   nuevoLote: {
     numeLote: string;
@@ -142,7 +142,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   };
   minFechaVencimiento: string = '';
 
-  // Modal de modificar stock properties
+
   mostrarModalModificarStock: boolean = false;
   nuevoStockTotal: number = 0;
   stockOriginal: number = 0;
@@ -166,7 +166,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.loading = false;
     }
 
-    // Suscribirse al escáner de códigos de barras
+
     this.barcodeScannerSubscription = this.barcodeScannerService.lastScannedCode$.subscribe(code => {
       if (code && this.mostrarModalEditar) {
         this.editandoProducto.codigoDeBarra = code;
@@ -346,13 +346,13 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         if (this.imagenSeleccionada) {
           this.productoService.actualizarImagenProducto(this.editandoProducto.id!, this.imagenSeleccionada).subscribe({
             next: () => {
-              // Actualizar inmediatamente la imagen en la interfaz
+
               if (this.imagenPreviewEdicion) {
-                // Limpiar caché de imagen anterior
+
                 this.cacheImagenes.delete(this.editandoProducto.id!);
-                // Usar la imagen preview como nueva imagen
+
                 this.imagenUrl = this.imagenPreviewEdicion;
-                // Agregar la nueva imagen al caché
+
                 this.cacheImagenes.set(this.editandoProducto.id!, this.imagenPreviewEdicion);
               }
               
@@ -395,17 +395,17 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   private finalizarEdicion(): void {
     this.mostrarModalEditar = false;
-    // Desactivar el escáner de códigos de barras
+
     this.barcodeScannerService.deactivateScanner();
     
-    // Solo recargar producto si no se actualizó imagen (porque ya se actualizó inmediatamente)
+
     if (this.producto!.id !== null && !this.imagenSeleccionada) {
       this.cargarProducto(this.producto!.id);
     } else if (this.producto!.id !== null && this.imagenSeleccionada) {
-      // Solo actualizar los datos del producto sin recargar la imagen
+
       this.productoService.obtenerProducto(this.producto!.id).subscribe({
         next: (response) => {
-          // Mantener la imagen actual y solo actualizar otros datos
+
           const imagenActual = this.imagenUrl;
           this.producto = response;
           this.imagenUrl = imagenActual;
@@ -622,7 +622,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.limpiarCacheImagenes();
     
-    // Limpiar suscripción al escáner de códigos de barras
+
     if (this.barcodeScannerSubscription) {
       this.barcodeScannerSubscription.unsubscribe();
     }
@@ -660,7 +660,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     return 'stock-bajo';
   }
 
-  // Funciones para modal de modificar stock
+
   abrirModalModificarStock(): void {
     if (!this.producto) return;
     
@@ -696,7 +696,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           detail: 'Stock total modificado correctamente'
         });
         
-        // Actualizar el producto local
+
         if (this.producto) {
           this.producto.stockTotal = this.nuevoStockTotal;
         }
@@ -734,7 +734,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Función para activar el escáner de código de barras
+
   activarEscanerCodigoBarras(): void {
     this.barcodeScannerService.activateScanner();
     this.messageService.add({
@@ -745,7 +745,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Función para desactivar el escáner de código de barras
+
   desactivarEscaner(): void {
     this.barcodeScannerService.deactivateScanner();
   }

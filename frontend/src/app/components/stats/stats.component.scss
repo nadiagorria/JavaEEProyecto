@@ -27,7 +27,7 @@ main {
   position: relative;
 }
 
-// Estilos para la sección de filtros
+
 .filter-section {
   display: flex;
   justify-content: flex-start;
@@ -344,7 +344,7 @@ main {
   }
 }
 
-// Estilos para estados vacíos simplificados
+
 .empty-state {
   .producto-item, .categoria-item {
     opacity: 0.5;
@@ -352,7 +352,7 @@ main {
   }
 }
 
-// Estilos para el filtro de meses
+
 .filter-section {
   padding: 1rem 2rem;
   margin-bottom: 1.5rem;
@@ -470,7 +470,7 @@ main {
   }
 }
 
-// Estilos específicos para las tarjetas de estadísticas
+
 .filtered-sales-card {
   border-left: 4px solid var(--accent-color);
 }

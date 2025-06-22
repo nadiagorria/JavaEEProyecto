@@ -1,4 +1,4 @@
-// Importar estilos compartidos para modales
+
 @use '../../../styles/modal-styles.scss';
 
 .texto {
@@ -12,7 +12,7 @@
   font-size: 2rem;
 }
 
-// Responsive
+
 @media (max-width: 768px) {
   .search-and-actions {
     flex-direction: column;
@@ -43,7 +43,7 @@
   font-size: 2rem;
 }
 
-// Contenedor principal de búsqueda y acciones
+
 .search-and-actions {
   display: flex;
   justify-content: space-between;
@@ -96,7 +96,7 @@
   }
 }
 
-// Estilos específicos para el botón personalizado
+
 ::ng-deep .custom-add-button {
   background-color: #64748b !important;
   border: 1px solid #64748b !important;
@@ -134,7 +134,7 @@
   }
 }
 
-// Estilos para el formulario del modal
+
 .form-content {
   .form-group {
     margin-bottom: 1.5rem;
@@ -182,7 +182,7 @@
   }
 }
 
-// Estilos para el diálogo
+
 ::ng-deep .form-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -236,7 +236,7 @@
   }
 }
 
-// Responsive
+
 @media (max-width: 768px) {
   .search-and-actions {
     flex-direction: column;

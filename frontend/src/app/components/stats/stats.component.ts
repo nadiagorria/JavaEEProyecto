@@ -35,7 +35,7 @@ export class StatsComponent implements OnInit {
   efectivo: number = 0;
   creditolocal: number = 0;
 
-   // Filtros
+
   mesSeleccionado: string = '';
   anoSeleccionado: string = '';
   
@@ -70,12 +70,12 @@ export class StatsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Inicializar años disponibles (últimos 5 años + año actual)
+
     this.inicializarAnos();
     
     const currentYear = new Date().getFullYear().toString();
     
-    // Cargar datos de totales
+
     this.ventaservice.getVentasTotales().subscribe(data => {
       this.ventasTotales = data;
       console.log('Ventas totales cargadas:', this.ventasTotales);
@@ -86,7 +86,7 @@ export class StatsComponent implements OnInit {
       console.log('Usuarios totales cargados:', this.usuariosTotales);
     });
 
-    // Cargar productos populares y luego ventas
+
     this.productoservice.buscarTopNProductos(this.n).subscribe(
       data => {
         console.log('Respuesta completa de productos:', data);
@@ -98,43 +98,43 @@ export class StatsComponent implements OnInit {
       }
     );    
     
-    // Cargar categorías populares directamente del endpoint
+
     this.categoriaservice.listarTopCategorias(this.n).subscribe(
       data => {
         console.log('Respuesta completa de categorías:', data);
         this.categoriasMasPopulares = data.categorias || [];
         console.log('Categorías más populares:', this.categoriasMasPopulares);
         
-        // Cargar ventas después de categorías
+
         this.cargarVentas();
       },
       error => {
         console.error('Error al cargar categorías populares:', error);
-        // Cargar ventas incluso si falla la carga de categorías
+
         this.cargarVentas();
       }
     );
   }
 
-  // Inicializar años disponibles
+
   inicializarAnos(): void {
     const currentYear = new Date().getFullYear();
     this.anos = [{ valor: '', nombre: 'Todos los años' }];
     
-    // Añadir últimos 5 años hasta el año actual
+
     for (let year = currentYear; year >= currentYear - 4; year--) {
       this.anos.push({ valor: year.toString(), nombre: year.toString() });
     }
   }
 
-  // Método para cargar las ventas y aplicar filtros
+
   cargarVentas(): void {
     console.log('Cargando ventas...');
     this.ventaservice.listarVentas().subscribe(
       data => {
         console.log('Datos de ventas recibidos:', data);
         
-        // Verificar la estructura de la respuesta
+
         if (!data || !data.ventas) {
           console.error('La respuesta de la API no contiene ventas:', data);
           this.ventas = [];
@@ -145,10 +145,10 @@ export class StatsComponent implements OnInit {
           this.ventas = data.ventas;
         console.log('Ventas cargadas:', this.ventas.length);
         
-        // Actualizar años disponibles basado en datos reales
+
         this.obtenerAnosDisponibles();
         
-        // Verificar formato de fechas en los datos
+
         if (this.ventas.length > 0) {
           const primerVenta = this.ventas[0];
           console.log('Formato de la primera venta:', {
@@ -170,7 +170,7 @@ export class StatsComponent implements OnInit {
           }
         }
         
-        // Aplicar filtros iniciales
+
         this.aplicarFiltros();
       },
       error => {
@@ -182,7 +182,7 @@ export class StatsComponent implements OnInit {
     );
   }
 
-  // Método para aplicar filtros por mes y año
+
   aplicarFiltros(): void {
     console.log('Aplicando filtros - Mes:', this.mesSeleccionado, 'Año:', this.anoSeleccionado);
     
@@ -192,7 +192,7 @@ export class StatsComponent implements OnInit {
       try {
         const fechaVenta = new Date(venta.fechaVenta);
         
-        // Filtro por mes
+
         if (this.mesSeleccionado && this.mesSeleccionado !== '') {
           const mesVenta = (fechaVenta.getMonth() + 1).toString();
           if (mesVenta !== this.mesSeleccionado) {
@@ -200,7 +200,7 @@ export class StatsComponent implements OnInit {
           }
         }
         
-        // Filtro por año
+
         if (this.anoSeleccionado && this.anoSeleccionado !== '') {
           const anoVenta = fechaVenta.getFullYear().toString();
           if (anoVenta !== this.anoSeleccionado) {
@@ -219,19 +219,19 @@ export class StatsComponent implements OnInit {
     this.calcularEstadisticas();
   }
 
-  // Método llamado cuando cambia el filtro de mes
+
   onMesChange(): void {
     console.log('Mes seleccionado:', this.mesSeleccionado);
     this.aplicarFiltros();
   }
 
-  // Método llamado cuando cambia el filtro de año
+
   onAnoChange(): void {
     console.log('Año seleccionado:', this.anoSeleccionado);
     this.aplicarFiltros();
   }
 
-  // Limpiar todos los filtros
+
   limpiarFiltros(): void {
     this.mesSeleccionado = '';
     this.anoSeleccionado = '';
@@ -239,7 +239,7 @@ export class StatsComponent implements OnInit {
     console.log('Filtros limpiados');
   }
 
-  // Obtener texto descriptivo del filtro aplicado
+
   obtenerTextoFiltro(): string {
     const partes: string[] = [];
     
@@ -257,12 +257,12 @@ export class StatsComponent implements OnInit {
     return partes.length > 0 ? partes.join(' de ') : 'Todos los periodos';
   }
 
-  // Verificar si hay filtros activos
+
   hayFiltrosActivos(): boolean {
     return !!(this.mesSeleccionado || this.anoSeleccionado);
   }
 
-  // Obtener años únicos de las ventas cargadas (método alternativo)
+
   obtenerAnosDisponibles(): void {
     if (this.ventas.length === 0) return;
     
@@ -276,7 +276,7 @@ export class StatsComponent implements OnInit {
       }
     });
     
-    // Actualizar años disponibles basado en datos reales
+
     const anosOrdenados = Array.from(anosUnicos).sort((a, b) => b - a);
     this.anos = [{ valor: '', nombre: 'Todos los años' }];
     anosOrdenados.forEach(ano => {

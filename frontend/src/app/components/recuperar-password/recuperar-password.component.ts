@@ -46,12 +46,12 @@ export class RecuperarPasswordComponent implements OnInit {
     private router: Router
   ) {}
   ngOnInit() {
-    // Dar un delay mayor para asegurar que todos los estilos se carguen
+
     setTimeout(() => {
       this.componeteReady = true;
-      // Forzar detección de cambios adicional
+
       setTimeout(() => {
-        // Forzar re-aplicación de estilos a botones
+
         const buttons = document.querySelectorAll('app-recuperar-password button[pButton]');
         buttons.forEach(button => {
           (button as HTMLElement).style.cssText += ';display: inline-flex !important;';
@@ -102,7 +102,7 @@ export class RecuperarPasswordComponent implements OnInit {
   }
 
   restablecerPassword() {
-    // Validaciones
+
     if (!this.form.codigo || this.form.codigo.length !== 6) {
       this.messageService.add({
         severity: 'warn',
@@ -148,7 +148,7 @@ export class RecuperarPasswordComponent implements OnInit {
           life: 5000
         });
         
-        // Redirigir al login después de 2 segundos
+
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);

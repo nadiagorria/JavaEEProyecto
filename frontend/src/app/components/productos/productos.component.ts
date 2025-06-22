@@ -62,11 +62,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Limpiar las URLs de objeto para evitar memory leaks
+
     this.limpiarCacheImagenes();
   }
 
-  // Método para limpiar el cache de imágenes y liberar memoria
+
   private limpiarCacheImagenes() {
     this.imagenesProductoCache.forEach(url => {
       if (url.startsWith('blob:')) {
@@ -79,9 +79,9 @@ export class ProductosComponent implements OnInit, OnDestroy {
   cargarCategorias() {
     this.categoriaService.listarCategorias().subscribe({
       next: (response) => {
-        // Asegurarnos que todas las categorías tienen IDs numéricos
+
         this.categorias = response.categorias.map(cat => {
-          // Si el ID no es número, intentar convertirlo
+
           if (cat.id !== null && typeof cat.id !== 'number') {
             const numId = Number(cat.id);
             if (!isNaN(numId)) {
@@ -91,7 +91,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
           return cat;
         }); // Ya vienen ordenadas desde el backend
         
-        // Crear array para dropdown con "Todas las categorías"
+
         this.categoriasConTodas = [
           {id: '', nombre: 'Todas las categorías'},
           ...this.categorias
@@ -100,7 +100,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
         console.log('=== DEBUG CATEGORIAS CARGADAS ===');
         console.log('Categorías completas:', this.categorias);
         
-        // Verificar cada categoría
+
         this.categorias.forEach((cat, index) => {
           console.log(`Categoría ${index}:`, {
             id: cat.id,
@@ -132,12 +132,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
   cargarProductos() {
     this.productoService.listarProductos().subscribe({
       next: (response) => {
-        // Ordenar los productos alfabéticamente por nombre
+
         this.productos = response.productos.sort((a, b) => 
           a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase())
         );
         this.productosFiltrados = [...this.productos]; // Inicializar productos filtrados
-        // Cargar imágenes solo cuando se cargan los productos por primera vez
+
         this.cargarImagenesProductos();
       },
       error: (error) => {
@@ -146,7 +146,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Método para obtener todas las subcategorías de una categoría (incluyendo subcategorías anidadas)
+
   private obtenerSubcategoriasRecursivas(categoriaId: number): number[] {
     const subcategoriaIds: number[] = [];
     const categoria = this.categorias.find(cat => cat.id === categoriaId);
@@ -156,7 +156,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
         const subId = typeof sub.id === 'string' ? parseInt(sub.id) : sub.id;
         if (subId !== null) {
           subcategoriaIds.push(subId);
-          // Recursivamente obtener subcategorías
+
           const subIds = this.obtenerSubcategoriasRecursivas(subId);
           subcategoriaIds.push(...subIds);
         }
@@ -166,12 +166,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
     return subcategoriaIds;
   }
 
-  // Método para aplicar filtros y búsqueda
+
   aplicarFiltros() {
-    // Comenzar con todos los productos
+
     let resultado = [...this.productos];
     
-    // Aplicar filtro de búsqueda si hay un término
+
     if (this.terminoBusqueda.trim()) {
       const busqueda = this.terminoBusqueda.toLowerCase().trim();
       resultado = resultado.filter(producto => 
@@ -180,11 +180,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
       );
     }
     
-    // Aplicar filtro de categoría si hay una seleccionada
+
     if (this.categoriaFiltro !== null) {
       console.log('Filtrando por categoría:', this.categoriaFiltro);
       
-      // Obtener todas las subcategorías de la categoría seleccionada
+
       const categoriasAFiltrar = [this.categoriaFiltro, ...this.obtenerSubcategoriasRecursivas(this.categoriaFiltro)];
       console.log('Categorías a filtrar (incluyendo subcategorías):', categoriasAFiltrar);
       
@@ -199,49 +199,49 @@ export class ProductosComponent implements OnInit, OnDestroy {
       });
     }
     
-    // Actualizar los productos filtrados
+
     this.productosFiltrados = resultado;
     console.log('Productos filtrados:', this.productosFiltrados.length);
   }
 
-  // Método para manejar cambios en la búsqueda
+
   onBusquedaChange(event: any) {
     this.terminoBusqueda = event.target.value;
     this.aplicarFiltros();
   }
 
-  // Método para manejar cambios en el filtro de categoría
+
   onCategoriaChange(event: any) {
     console.log('Evento onChange del dropdown:', event);
-    // Para p-dropdown, el valor está directamente en event.value
+
     const valor = event.value !== undefined ? event.value : event;
     console.log('Valor seleccionado:', valor);
     
-    // Si el valor es una cadena vacía o null, establecer como null
+
     this.categoriaFiltro = valor === '' || valor === null ? null : Number(valor);
     console.log('categoriaFiltro después de conversión:', this.categoriaFiltro);
     this.aplicarFiltros();
   }
-  // ...existing code...
 
-  // Método para cargar las imágenes una sola vez y cachearlas
+
+
   cargarImagenesProductos() {
     this.productos.forEach(producto => {
       if (producto.id !== null && producto.id !== undefined && !this.imagenesProductoCache.has(producto.id)) {
-        // Cargar la imagen como blob y crear una URL objeto
+
         this.productoService.obtenerImagenProducto(producto.id).subscribe({
           next: (blob) => {
             if (blob && blob.size > 0) {
               const urlImagen = URL.createObjectURL(blob);
               this.imagenesProductoCache.set(producto.id!, urlImagen);
             } else {
-              // Si no hay imagen o está vacía, usar placeholder
+
               this.imagenesProductoCache.set(producto.id!, '/placeholder-image.webp');
             }
           },
           error: (error) => {
             console.error(`Error al cargar imagen del producto ${producto.id}:`, error);
-            // En caso de error (404, etc.), usar placeholder
+
             this.imagenesProductoCache.set(producto.id!, '/placeholder-image.webp');
           }
         });
@@ -255,19 +255,19 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Modales
+
   mostrarModalAgregarCategoria: boolean = false;
   mostrarModalEliminarCategoria: boolean = false;
   mostrarModalAgregarProducto: boolean = false;
 
-  // Formulario agregar categoría
+
   nombreCategoria: string = '';
   categoriaPadre: number | null = null;
 
-  // Formulario eliminar categoría
+
   categoriaSeleccionada: number | null = null;
 
-  // Formulario agregar producto
+
   nuevoProducto = {
     nombre: '',
     precio: 0,
@@ -279,15 +279,15 @@ export class ProductosComponent implements OnInit, OnDestroy {
     proveedorId: null as number | null
   };
 
-  // Variables para manejo de imagen
+
   imagenSeleccionada: File | null = null;
   imagenPreview: string | null = null;
   
-  // Variables para mensajes de feedback
+
   mensajeError: string = '';
   mensajeExito: string = '';
   
-  // Cache de URLs de imágenes para evitar recargas automáticas
+
   imagenesProductoCache: Map<number, string> = new Map();
 
   abrirModal(tipo: string) {
@@ -299,10 +299,10 @@ export class ProductosComponent implements OnInit, OnDestroy {
   crearCategoria() {
     if (!this.nombreCategoria) return;
 
-    // Convertir a minúsculas y eliminar espacios extra para comparación
+
     const nombreNormalizado = this.nombreCategoria.trim().toLowerCase();
 
-    // Verificar si ya existe una categoría con el mismo nombre
+
     const categoriaExistente = this.categorias.find(
       cat => cat.nombre.trim().toLowerCase() === nombreNormalizado
     );
@@ -337,19 +337,19 @@ export class ProductosComponent implements OnInit, OnDestroy {
           detail: 'Categoría creada correctamente'
         });
 
-        // Limpiamos el formulario y cerramos el modal
+
         this.nombreCategoria = '';
         this.categoriaPadre = null;
         this.mostrarModalAgregarCategoria = false;
         
-        // Actualizamos la lista de categorías
+
         this.cargarCategorias();
       },
       error: (error) => {
         console.error('Error al crear categoría:', error);
         let mensajeError = 'Error al crear la categoría';
         
-        // Si el status es 201, significa que se creó correctamente
+
         if (error.status === 201) {
           this.messageService.add({
             severity: 'success',
@@ -357,17 +357,17 @@ export class ProductosComponent implements OnInit, OnDestroy {
             detail: 'Categoría creada correctamente'
           });
           
-          // Limpiamos el formulario y cerramos el modal
+
           this.nombreCategoria = '';
           this.categoriaPadre = null;
           this.mostrarModalAgregarCategoria = false;
           
-          // Actualizamos la lista de categorías
+
           this.cargarCategorias();
           return;
         }
 
-        // Manejo de diferentes tipos de errores reales
+
         if (error.error) {
           if (typeof error.error === 'string') {
             mensajeError = error.error;
@@ -388,7 +388,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }  eliminarCategoria() {
     if (this.categoriaSeleccionada == null) return;
     
-    // Encontrar la categoría seleccionada
+
     const categoriaAEliminar = this.categorias.find(cat => cat.id === this.categoriaSeleccionada);
     if (!categoriaAEliminar || !categoriaAEliminar.id) {
       this.messageService.add({
@@ -399,25 +399,25 @@ export class ProductosComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Primero desvincular los productos
+
     this.categoriaService.desvincularProductosDeCategoria(categoriaAEliminar.id).subscribe({
       next: () => {        // Luego proceder con la eliminación de la categoría
         this.categoriaService.eliminarCategoria(categoriaAEliminar.id!).subscribe({
           next: (response) => {
-            // Mostrar toast de éxito con el mensaje del backend
+
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: response // Ahora response es un string directo
             });
             
-            // Recargar la lista de categorías automáticamente
+
             this.cargarCategorias();
             
-            // Recargar productos para ver los cambios en las categorías
+
             this.cargarProductos();
             
-            // Limpiar selección y cerrar modal
+
             this.categoriaSeleccionada = null;
             this.mostrarModalEliminarCategoria = false;
           },
@@ -447,7 +447,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     if (file) {
       this.imagenSeleccionada = file;
       
-      // Crear preview de la imagen
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagenPreview = e.target?.result as string;
@@ -457,14 +457,14 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }
 
   crearProducto() {
-    // Limpiar mensajes anteriores
+
     this.mensajeError = '';
     this.mensajeExito = '';
     
-    // Validar formulario
+
     const validacion = this.validarFormularioProducto();
     if (!validacion.valido) {
-      // Mostrar toast de error de validación
+
       this.messageService.add({
         severity: 'warn',
         summary: 'Formulario Incompleto',
@@ -474,7 +474,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar autenticación y rol usando el servicio de seguridad
+
     const token = localStorage.getItem('token');
     
     if (!token) {
@@ -487,7 +487,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Verificar si el usuario está logueado y obtener sus roles
+
     if (!this.securityService.isLoggedIn()) {
       this.messageService.add({
         severity: 'error',
@@ -511,27 +511,27 @@ export class ProductosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar que categoriaId no sea null
+
     if (this.nuevoProducto.categoriaId === null || this.nuevoProducto.categoriaId === undefined) {
       this.mensajeError = 'Error: Debe seleccionar una categoría';
       return;
     }
 
-    // Verificar que sea un número
+
     if (typeof this.nuevoProducto.categoriaId !== 'number') {
       console.error('Error: ID de categoría no es un número:', this.nuevoProducto.categoriaId);
       this.mensajeError = 'Error: ID de categoría inválido (no es un número)';
       return;
     }
 
-    // Asegurar que la categoría exista
+
     const categoriaExiste = this.categorias.some(c => c.id === this.nuevoProducto.categoriaId);
     if (!categoriaExiste) {
       this.mensajeError = 'Error: La categoría seleccionada no es válida';
       return;
     }
 
-    // Generar código de barras único si está vacío
+
     let codigoBarra = this.nuevoProducto.codigoDeBarra.trim();
     if (!codigoBarra) {
       const timestamp = Date.now();
@@ -539,14 +539,14 @@ export class ProductosComponent implements OnInit, OnDestroy {
       codigoBarra = `${nombreCorto}${timestamp}`;
     }    // Convertir imagen a base64 si existe
     this.convertirImagenABase64().then((imagenBase64) => {
-      // Buscar la categoría completa
+
       const categoriaSeleccionada = this.categorias.find(c => c.id === this.nuevoProducto.categoriaId);
       
-      // Buscar el proveedor completo si se seleccionó uno
+
       const proveedorSeleccionado = this.nuevoProducto.proveedorId 
         ? this.proveedores.find(p => p.id === this.nuevoProducto.proveedorId) 
         : null;
-        // Crear el ProductoDto completo
+
       const productoDto: ProductoDto = {
         id: null,
         nombre: this.nuevoProducto.nombre.trim(),
@@ -568,19 +568,19 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
       console.log('Enviando ProductoDto:', productoDto);
 
-      // Enviar el DTO al backend
+
       this.productoService.crearProductoConDto(productoDto).subscribe({
         next: (response) => {
           console.log('Producto creado exitosamente:', response);
-          // Limpiar formulario
+
           this.resetearFormularioProducto();
           this.mostrarModalAgregarProducto = false;
-          // Actualizar lista de productos
+
           this.cargarProductos();
-          // Limpiar el cache de imágenes para forzar la recarga
+
           this.limpiarCacheImagenes();
           
-          // Mostrar toast de éxito
+
           this.messageService.add({
             severity: 'success',
             summary: 'Producto Creado',
@@ -601,7 +601,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
             mensajeError = error.message;
           }
           
-          // Mostrar toast de error
+
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -613,7 +613,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }).catch((error) => {
       console.error('Error al convertir imagen:', error);
       
-      // Mostrar toast de error
+
       this.messageService.add({
         severity: 'error',
         summary: 'Error de Imagen',
@@ -623,7 +623,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Método para obtener la URL de la imagen de un producto desde el cache
+
   obtenerImagenProducto(id: number | null): string {
     if (id === null || id === undefined) {
       return '/placeholder-image.webp';
@@ -642,7 +642,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para resetear el formulario de producto
+
   resetearFormularioProducto() {
     this.nuevoProducto = {
       nombre: '',
@@ -661,12 +661,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
     
     console.log('Formulario reseteado. CategoriaId:', this.nuevoProducto.categoriaId);
   }
-  // Método para abrir el modal de agregar producto
+
   abrirModalAgregarProducto() {
     this.resetearFormularioProducto();
     this.mostrarModalAgregarProducto = true;
   }
-  // Método para validar el formulario de producto
+
   validarFormularioProducto(): { valido: boolean, mensaje: string } {
     if (!this.nuevoProducto.nombre.trim()) {
       return { valido: false, mensaje: 'Por favor ingrese el nombre del producto' };
@@ -674,32 +674,32 @@ export class ProductosComponent implements OnInit, OnDestroy {
     if (this.nuevoProducto.precio <= 0) {
       return { valido: false, mensaje: 'El precio de venta debe ser mayor a 0' };
     }
-    // Validación del código de barras - debe existir
+
     if (!this.nuevoProducto.codigoDeBarra.trim()) {
       return { valido: false, mensaje: 'Por favor ingrese el código de barras del producto' };
     }
     
-    // Validación de stock mínimo - es obligatorio
+
     if (this.nuevoProducto.stockMin === null || this.nuevoProducto.stockMin === undefined || this.nuevoProducto.stockMin < 0) {
       return { valido: false, mensaje: 'Por favor ingrese un stock mínimo válido (mayor o igual a 0)' };
     }
     
-    // Validación específica de categoría
+
     console.log('Validando categoría en formulario:', this.nuevoProducto.categoriaId, 'tipo:', typeof this.nuevoProducto.categoriaId);
     
-    // La categoría es obligatoria
+
     if (this.nuevoProducto.categoriaId === null || this.nuevoProducto.categoriaId === undefined) {
       console.error('Error: categoriaId es null o undefined:', this.nuevoProducto.categoriaId);
       return { valido: false, mensaje: 'Por favor seleccione una categoría' };
     }
     
-    // Verificar que sea un número
+
     if (typeof this.nuevoProducto.categoriaId !== 'number') {
       console.error('Error: categoriaId no es un número:', this.nuevoProducto.categoriaId);
       return { valido: false, mensaje: 'ID de categoría inválido (no es un número)' };
     }
     
-    // Verificar que la categoría exista en la lista
+
     const categoriaExiste = this.categorias.some(c => c.id === this.nuevoProducto.categoriaId);
     if (!categoriaExiste) {
       return { valido: false, mensaje: 'La categoría seleccionada no es válida' };
@@ -707,7 +707,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     
     return { valido: true, mensaje: '' };
   }
-  // Método para obtener el nombre de la categoría por ID
+
   obtenerNombreCategoria(categoriaId: number | null): string {
     if (categoriaId === null || categoriaId === undefined) {
       return '';
@@ -716,7 +716,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     return categoria ? categoria.nombre : '';
   }
 
-  // Método para obtener el nombre del proveedor por ID
+
   obtenerNombreProveedor(proveedorId: number | null): string {
     if (proveedorId === null || proveedorId === undefined) {
       return '';
@@ -725,14 +725,14 @@ export class ProductosComponent implements OnInit, OnDestroy {
     return proveedor ? proveedor.nombre : '';
   }
 
-  // Método para validar y convertir el ID de categoría
+
   validarCategoriaId(valor: any): void {
     if (valor !== null && valor !== undefined) {
-      // Si ya es un número, mantenlo así
+
       if (typeof valor === 'number') {
         this.nuevoProducto.categoriaId = valor;
       } else {
-        // Intenta convertir a número solo si es string
+
         const numeroConvertido = Number(valor);
         this.nuevoProducto.categoriaId = isNaN(numeroConvertido) ? null : numeroConvertido;
       }
@@ -741,10 +741,10 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Para depuración en consola (accesible desde la plantilla)
+
   console = console;
 
-  // Método helper para convertir imagen a base64
+
   private convertirImagenABase64(): Promise<string | null> {
     return new Promise((resolve, reject) => {
       if (!this.imagenSeleccionada) {
@@ -755,7 +755,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          // Extraer solo la parte base64 (sin el prefijo "data:image/...")
+
           const base64 = reader.result.split(',')[1];
           resolve(base64);
         } else {
@@ -767,7 +767,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Función para verificar si el usuario es admin
+
   get esAdmin(): boolean {
     const userRoles = this.securityService.getUserRoles();
     return userRoles && userRoles.includes('ADMIN');

@@ -53,13 +53,13 @@ export class RegistroComponent {
     }, 
     { validators: this.passwordMatchValidator });
 
-    // Configurar validación en tiempo real para el username
+
     this.setupUsernameValidation();
-    // Configurar validación en tiempo real para el email
+
     this.setupEmailValidation();
   }
 
-  // Validador personalizado para confirmar que las contraseñas coincidan
+
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
@@ -73,13 +73,13 @@ export class RegistroComponent {
     return null;
   }
 
-  // Verificar si el email es válido
+
   isValidEmail(): boolean {
     const emailControl = this.formGroup.get('email');
     return emailControl?.valid || false;
   }
 
-  // Verificar si las contraseñas coinciden
+
   passwordsMatch(): boolean {
     const password = this.formGroup.get('password')?.value;
     const confirmPassword = this.formGroup.get('confirmPassword')?.value;
@@ -158,7 +158,7 @@ export class RegistroComponent {
       this.isLoading = true;
       const { username, email, password } = this.formGroup.value;
       
-      // Always register as CAJERO (admin = false)
+
       this.securityService.register(username, email, password, false).subscribe({
         next: (response) => {
           this.isLoading = false;
@@ -170,7 +170,7 @@ export class RegistroComponent {
             life: 4000
           });
           
-          // Delay navigation to show success message
+
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 2000);
@@ -181,7 +181,7 @@ export class RegistroComponent {
           
           let mensaje = 'Error al intentar registrar usuario';
           let severidad = 'error';
-            // Parse error response
+
           if (error.error) {
             try {
               const errorData = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
@@ -220,7 +220,7 @@ export class RegistroComponent {
             detail: mensaje,
             life: 4000
           });
-            // Reset form on certain errors
+
           if (error.error?.error === 'USUARIO_EXISTENTE') {
             this.formGroup.get('username')?.setValue('');
           }
@@ -229,7 +229,7 @@ export class RegistroComponent {
           }
         }
       });    } else {
-      // Mark all fields as touched to show validation errors
+
       this.formGroup.markAllAsTouched();
         let mensajeError = 'Por favor completa todos los campos correctamente';
       

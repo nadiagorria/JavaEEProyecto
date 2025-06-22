@@ -54,7 +54,7 @@ export class LoginComponent {
         next: (response) => {
           this.isLoading = false;
           
-          // Store token
+
           localStorage.setItem('token', response.token);          // Store user info
           const userStr = JSON.stringify({
             nombreUsuario: response.nombreUsuario,
@@ -64,7 +64,7 @@ export class LoginComponent {
           const encryptedUser = this.securityService.convertText('encrypt', userStr);
           localStorage.setItem('USER', encryptedUser);
           
-          // Update service user
+
           this.securityService.user = {
             nombreUsuario: response.nombreUsuario,
             roles: response.roles,
@@ -79,7 +79,7 @@ export class LoginComponent {
             life: 3000
           });
           
-          // Delay navigation slightly to show success message
+
           setTimeout(() => {
             this.router.navigate(['/home']);
           }, 1000);
@@ -91,7 +91,7 @@ export class LoginComponent {
           let mensaje = 'Error al intentar iniciar sesión';
           let severidad = 'error';
           
-          // Verificar si el error tiene información específica
+
           if (error.error) {
             try {
               const errorData = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
@@ -111,7 +111,7 @@ export class LoginComponent {
                   break;
               }
             } catch (e) {
-              // Si no se puede parsear el error, usar el mensaje por defecto
+
               mensaje = error.error?.message || mensaje;
             }
           }
@@ -123,12 +123,12 @@ export class LoginComponent {
             life: 4000
           });
           
-          // Reset password field on error
+
           this.formGroup.get('contrasenia')?.setValue('');
         }
       });
     } else {
-      // Mark all fields as touched to show validation errors
+
       this.formGroup.markAllAsTouched();
       
       this.messageService.add({
@@ -140,7 +140,7 @@ export class LoginComponent {
   }
 
   irARecuperarPassword() {
-    // Forzar recarga completa de la página al navegar a recuperar-password
+
     window.location.href = '/recuperar-password';
   }
 }

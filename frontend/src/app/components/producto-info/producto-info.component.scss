@@ -1,4 +1,4 @@
-// Estilos optimizados para carga rápida
+
 .main-content {
   min-height: calc(100vh - 120px);
   background-color: #f8f9fa;
@@ -15,7 +15,7 @@
   margin: 0;
 }
 
-// Card del producto simplificado
+
 .producto-card {
   background: white;
   border-radius: 8px;
@@ -82,7 +82,7 @@
   }
 }
 
-// Sección de lotes simplificada
+
 .lotes-section {
   background: white;
   border-radius: 8px;
@@ -96,7 +96,7 @@
   }
 }
 
-// Stock badges optimizados
+
 .stock-alto { background-color: #d4edda; color: #155724; }
 .stock-medio { background-color: #fff3cd; color: #856404; }
 .stock-bajo { background-color: #f8d7da; color: #721c24; }
@@ -108,20 +108,20 @@
   font-weight: 500;
 }
 
-// Clases de fecha
+
 .fecha-vencida { color: #dc3545; font-weight: 600; }
 .fecha-proxima { color: #fd7e14; font-weight: 600; }
 .fecha-advertencia { color: #ffc107; font-weight: 500; }
 .fecha-normal { color: #28a745; }
 .fecha-sin-vencimiento { color: #6c757d; font-style: italic; font-size: 0.9rem; }
 
-// Responsive básico
+
 @media (max-width: 768px) {
   .container { padding: 0.5rem; }
   .producto-card .imagen-container { height: 200px; }
 }
 
-// Estilos unificados para formularios
+
 .producto-form, .lote-form {
   .form-group {
     margin-bottom: 1.5rem;
@@ -170,7 +170,7 @@
     }
   }
   
-  // Styling para inputs específicos
+
   input[type="number"] {
     padding-right: 2rem;
   }
@@ -220,7 +220,7 @@
   }
 }
 
-// Estilos globales para PrimeNG
+
 ::ng-deep {
   .p-datatable {
     .p-datatable-thead > tr > th {
@@ -291,7 +291,7 @@
     }
   }
   
-  // Animación para la apertura del modal
+
   .p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
   }
@@ -300,7 +300,7 @@
     animation: slideInDown 0.3s ease-out;
   }
   
-  // Estilos mejorados para inputs y dropdowns
+
   .p-inputtext {
     padding: 0.75rem;
     border: 2px solid #e9ecef;
@@ -373,13 +373,13 @@
   }
 }
 
-// Estilos para asegurar que los dropdowns se muestren correctamente
+
 ::ng-deep {
-  // Estilos generales para dropdown
+
   .p-dropdown {
     width: 100%;
   }
-    // Estilos para el panel del dropdown cuando está abierto
+
   .p-dropdown-panel {
     position: fixed !important; // Permite que el dropdown se posicione sin restricciones
     max-width: 100% !important;
@@ -390,7 +390,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
     border-radius: 6px !important;
   }
-    // Estilos para el wrapper de elementos dentro del panel
+
   .p-dropdown-items-wrapper {
     max-height: 182px !important; // Altura para mostrar 4 elementos (4 * 45.5px)
   }
@@ -398,7 +398,7 @@
   .p-dropdown-items {
     padding: 0.5rem 0;
   }
-    // Estilos para los elementos individuales del dropdown
+
   .p-dropdown-item {
     height: 45.5px !important; // Altura fija para cada elemento
     display: flex !important;
@@ -410,21 +410,21 @@
     font-size: 0.9rem;
   }
   
-  // Estilos específicos para el diálogo
+
   .producto-dialog {
     .p_dialog-content {
       max-height: 80vh !important;
       overflow: auto !important; // Permite scroll en el contenido del diálogo
     }
     
-    // Configurar posición para los dropdowns dentro del diálogo
+
     .p-dropdown-panel {
       position: fixed !important; // Permite que el dropdown se posicione sin restricciones
     }
   }
 }
 
-// Keyframes para animaciones
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -447,7 +447,7 @@
   overflow: auto !important;
 }
 
-// Date input styling to match ofertas component with gray theme
+
 .form-group {
   margin-bottom: 20px;
   
@@ -477,7 +477,7 @@
       border-color: #6c757d;
     }
     
-    // Style the calendar icon
+
     &::-webkit-calendar-picker-indicator {
       color: #7f8c8d;
       background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%237f8c8d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
@@ -494,7 +494,7 @@
       }
     }
     
-    // Style the date text
+
     &::-webkit-datetime-edit {
       font-family: "Source Sans 3", sans-serif;
       font-size: 14px;
@@ -505,7 +505,7 @@
       padding: 0;
     }
     
-    // When focused, highlight the border and icon
+
     &:focus {
       &::-webkit-calendar-picker-indicator {
         color: #6c757d;
@@ -513,7 +513,7 @@
       }
     }
     
-    // Style for Firefox
+
     &::-moz-calendar-picker-indicator {
       background-color: #7f8c8d;
       border-radius: 2px;
@@ -531,7 +531,7 @@
   }
 }
 
-// Estilos para modal de modificar stock
+
 ::ng-deep .stock-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #ff6b6b, #ff4757);

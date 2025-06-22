@@ -51,7 +51,7 @@ export class VentasComponent implements OnInit {
     this.totalRecords = this.ventas.length;
   }
   ngOnInit() {
-    // Verificar si el usuario es admin
+
     if (this.securityService.isLoggedIn() && this.securityService.user) {
       this.isAdmin = this.securityService.user.roles?.includes('ADMIN') || false;
     }
@@ -61,7 +61,7 @@ export class VentasComponent implements OnInit {
     this.ventaService.listarVentas().subscribe({
       next: (response) => {
         this.ventas = response.ventas;
-        // Ordenar por fecha descendente (más nueva primero)
+
         this.ventas.sort((a, b) => {
           const fechaA = new Date(a.fechaVenta);
           const fechaB = new Date(b.fechaVenta);

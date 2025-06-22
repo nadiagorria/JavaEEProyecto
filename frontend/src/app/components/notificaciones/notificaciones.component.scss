@@ -186,7 +186,7 @@
   background: transparent;
 }
 
-// Estilos para el modal - Más específicos para evitar conflictos
+
 .notification-modal-content {
   padding: 16px 0;
   font-family: inherit;
@@ -246,7 +246,7 @@
   }
 }
 
-// Responsive
+
 @media (max-width: 768px) {
   .notification-dropdown {
     width: 320px;
@@ -275,7 +275,7 @@
   }
 }
 
-// Estilos adicionales para acentos grises - Con mayor especificidad
+
 :host ::ng-deep .notification-modal.p-dialog {
   .p-dialog-header {
     background-color: #f8f9fa !important;
@@ -303,18 +303,18 @@
     padding: 24px !important;
   }
   
-  // Asegurar que el modal se vea igual en todas las páginas
+
   .p-dialog-mask {
     background-color: rgba(0, 0, 0, 0.4) !important;
   }
   
-  // Forzar estilos del modal
+
   &.p-component {
     font-family: "Montserrat", sans-serif !important;
   }
 }
 
-// Estilos específicos para tooltips en notificaciones
+
 :host ::ng-deep .p-tooltip {
   .p-tooltip-text {
     background-color: #343a40 !important;

@@ -63,7 +63,7 @@ export class ProveedorPerfilComponent {
     });
   }
   showDialogEditar() {
-    // Inicializar los campos de edición con los valores actuales del proveedor
+
     this.nombreEdicion = this.proveedor.nombre;
     this.telefonoEdicion = this.proveedor.telefono;
     this.correoEdicion = this.proveedor.correo;
@@ -72,7 +72,7 @@ export class ProveedorPerfilComponent {
 
   cerrarDialogEditar() {
     this.visibleEditar = false;
-    // Resetear los campos a los valores originales
+
     this.nombreEdicion = '';
     this.telefonoEdicion = '';
     this.correoEdicion = '';
@@ -136,7 +136,7 @@ export class ProveedorPerfilComponent {
     }
   }
 
-  // Función para verificar si el usuario es admin
+
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
     if (!roles) {
@@ -144,7 +144,7 @@ export class ProveedorPerfilComponent {
     }
     return roles.includes('ADMIN');
   }
-  // Función para eliminar un producto (solo admin)
+
   eliminarProducto(productoId: number) {
     if (!this.isAdmin()) {
       this.messageService.add({

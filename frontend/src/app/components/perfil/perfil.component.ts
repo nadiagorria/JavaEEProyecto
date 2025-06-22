@@ -66,7 +66,7 @@ export class PerfilComponent implements OnInit {
     avatarColor: '#6366f1' // Color del icono del avatar
   };
   
-  // Colores disponibles para el avatar
+
   private avatarColors = [
     '#6366f1', // Indigo
     '#8b5cf6', // Violet
@@ -107,11 +107,11 @@ export class PerfilComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
-    // Generar color aleatorio para el avatar al cargar el componente
+
     this.generateRandomAvatarColor();
   }
 
-  // Generar color aleatorio para el avatar
+
   generateRandomAvatarColor(): void {
     const randomIndex = Math.floor(Math.random() * this.avatarColors.length);
     this.usuario.avatarColor = this.avatarColors[randomIndex];
@@ -245,25 +245,25 @@ export class PerfilComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Solo mostrar el perfil si el usuario está autenticado
+
     if (!this.securityService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    // Obtener el nombre de usuario del servicio de seguridad
+
     if (this.securityService.user) {
       const nombreUsuario = this.securityService.user.nombreUsuario;
       
-      // Cargar los datos completos del usuario incluyendo sus ventas
+
       this.usuarioService.obtenerUsuarioPorNombre(nombreUsuario).subscribe({
         next: (userData: any) => {
-          // Actualizar datos del usuario
+
           this.usuario.nombreUsuario = userData.nombre;
           this.usuario.roles = userData.roles.map((r: any) => r.nombre);
           this.usuario.email = userData.mail;
           
-          // Procesar las ventas
+
           if (userData.ventas) {
             this.ventas = userData.ventas
               .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
@@ -316,29 +316,29 @@ export class PerfilComponent implements OnInit {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
   }  isValidForm(): boolean {
-    // Validate email
+
     if (!this.editForm.email || !this.isValidEmail(this.editForm.email)) {
       return false;
     }
     
-    // Validate current password
+
     if (!this.editForm.currentPassword) {
       return false;
     }
     
-    // Validate new password if provided
+
     if (this.editForm.newPassword) {
-      // Password must be at least 6 characters
+
       if (this.editForm.newPassword.length < 6) {
         return false;
       }
       
-      // Passwords must match
+
       if (this.editForm.newPassword !== this.editForm.confirmPassword) {
         return false;
       }
       
-      // New password cannot be the same as current password
+
       if (this.editForm.newPassword === this.editForm.currentPassword) {
         return false;
       }
@@ -351,7 +351,7 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    // Validación de contraseñas
+
     if (this.editForm.newPassword && this.editForm.newPassword !== this.editForm.confirmPassword) {
       this.messageService.add({
         severity: 'error',
@@ -362,7 +362,7 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    // Validación de nueva contraseña igual a la actual
+
     if (this.editForm.newPassword && this.editForm.newPassword === this.editForm.currentPassword) {
       this.messageService.add({
         severity: 'warn',
@@ -404,7 +404,7 @@ export class PerfilComponent implements OnInit {
             life: 4000
           });
           
-          // Actualizar datos del usuario en el servicio de seguridad
+
           if (this.securityService.user) {
             this.securityService.user.email = this.editForm.email;
           }
@@ -451,7 +451,7 @@ export class PerfilComponent implements OnInit {
     this.showEditDialog = false;
   }
   cerrarSesion() {
-    // Remove user data and navigate to login
+
     this.securityService.logout();
     this.router.navigate(['/login']);
   }
@@ -471,7 +471,7 @@ export class PerfilComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente'
             });
-            // Recargar ventas del usuario
+
             if (this.securityService.user) {
               const nombreUsuario = this.securityService.user.nombreUsuario;
               this.cargarVentasUsuario(nombreUsuario);
@@ -516,7 +516,7 @@ export class PerfilComponent implements OnInit {
     if (ventaId) {
       this.ventaService.obtenerVenta(ventaId).subscribe({
         next: (ventaDetalle) => {
-          // Aquí podrías mostrar un diálogo con los detalles de la venta
+
           console.log('Detalles de la venta:', ventaDetalle);
           alert(`Venta ID: ${ventaId}\nTotal: $${ventaDetalle.total}\nFecha: ${new Date(ventaDetalle.fechaVenta).toLocaleString()}`);
         },

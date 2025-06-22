@@ -58,7 +58,7 @@ export class ProveedoresComponent {
 
   ngOnInit(): void {
     if (!this.securityService.isLoggedIn()) {
-      // Si no está autenticado, redirigir al login
+
       this.router.navigate(['/login']);
       return;
     }
@@ -85,7 +85,7 @@ export class ProveedoresComponent {
         console.error('Error al listar proveedores:', err);
         
         if (err.status === 403) {
-          // Error de autorización, probablemente la sesión expiró
+
           alert('Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.');
           this.securityService.logout();
           return;
@@ -107,12 +107,12 @@ export class ProveedoresComponent {
 
   cerrarDialog() {
     this.visible = false;
-    // Limpiar los campos del formulario
+
     this.nombre = '';
     this.telefono = '';
     this.correo = '';
   }
-  //Proveedor
+
   nombre: string = '';
   telefono: string = '';
   correo: string = '';
@@ -123,7 +123,7 @@ export class ProveedoresComponent {
   }
 
   saveProveedor() {
-    // Validar campos requeridos
+
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -133,7 +133,7 @@ export class ProveedoresComponent {
       return;
     }
 
-    // Validar email si se proporciona
+
     if (this.correo && this.correo.trim() !== '') {
       if (!this.validarEmail(this.correo)) {
         this.messageService.add({
@@ -167,7 +167,7 @@ export class ProveedoresComponent {
           detail: 'Proveedor creado exitosamente'
         });
         
-        // Actualizar la lista de proveedores sin recargar la página
+
         this.cargarProveedores();
       },      
       error: (err: any) => {
@@ -213,7 +213,7 @@ export class ProveedoresComponent {
         next: (data: any) => {
           console.log('Proveedor eliminado exitosamente', data);
           
-          // Actualizar la lista de proveedores sin recargar la página
+
           this.proveedores = this.proveedores.filter(p => p.id !== id);
           this.proveedoresFiltrados = this.proveedoresFiltrados.filter(p => p.id !== id);
           this.totalRecords = this.proveedoresFiltrados.length;
