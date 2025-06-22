@@ -10,21 +10,23 @@ export interface ResponseListadoNotificacionUsuario {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificacionService {
   private baseUrl: string;
-  private notificacionesSubject = new BehaviorSubject<NotificacionUsuarioDto[]>([]);
+  private notificacionesSubject = new BehaviorSubject<NotificacionUsuarioDto[]>(
+    []
+  );
   private contadorSubject = new BehaviorSubject<number>(0);
 
   public notificaciones$ = this.notificacionesSubject.asObservable();
-  public contador$ = this.contadorSubject.asObservable(); constructor(
+  public contador$ = this.contadorSubject.asObservable();
+  constructor(
     private http: HttpClient,
     private urlService: UrlService,
     private securityService: SecurityService
   ) {
     this.baseUrl = this.urlService.baseUrl;
-
 
     interval(30000).subscribe(() => {
       if (this.securityService.isLoggedIn()) {
@@ -33,29 +35,24 @@ export class NotificacionService {
     });
   }
 
-  
   inicializar(): void {
     if (this.securityService.isLoggedIn()) {
       this.actualizarNotificaciones();
     }
   }
-  
-  
+
   obtenerMisNotificaciones(): Observable<ResponseListadoNotificacionUsuario> {
     return this.http.get<ResponseListadoNotificacionUsuario>(
       `${this.baseUrl}/NotificacionesUsuarios/mis-notificaciones`
     );
   }
 
-  
-  
   contarNoLeidas(): Observable<number> {
     return this.http.get<number>(
       `${this.baseUrl}/NotificacionesUsuarios/contar-no-leidas`
     );
   }
-  
-  
+
   marcarComoLeida(id: number): Observable<string> {
     return this.http.put(
       `${this.baseUrl}/NotificacionesUsuarios/${id}/marcar-leida`,
@@ -63,15 +60,14 @@ export class NotificacionService {
       { responseType: 'text' }
     );
   }
-  
-  
+
   marcarTodasComoLeidas(): Observable<string> {
     return this.http.post(
       `${this.baseUrl}/NotificacionesUsuarios/marcar-todas-leidas`,
       {},
       { responseType: 'text' }
     );
-  }  
+  }
 
   eliminarNotificacion(id: number): Observable<string> {
     return this.http.put(
@@ -91,7 +87,7 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('❌ Error al obtener notificaciones:', error);
-      }
+      },
     });
 
     this.contarNoLeidas().subscribe({
@@ -100,27 +96,24 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('❌ Error al contar notificaciones:', error);
-      }
+      },
     });
-  }  
-  
+  }
+
   refrescar(): void {
     if (this.securityService.isLoggedIn()) {
       this.actualizarNotificaciones();
     }
   }
 
-  
-  
   refrescarPostVenta(): void {
     if (this.securityService.isLoggedIn()) {
       setTimeout(() => {
         this.actualizarNotificaciones();
-      }, 500); 
+      }, 500);
     }
   }
-  
-  
+
   marcarLeidaYActualizar(id: number): void {
     if (!this.securityService.isLoggedIn()) {
       return;
@@ -132,12 +125,10 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('Error al marcar notificación como leída:', error);
-      }
+      },
     });
   }
 
-  
-  
   marcarTodasLeidasYActualizar(): void {
     if (!this.securityService.isLoggedIn()) {
       return;
@@ -149,7 +140,7 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('Error al marcar todas como leídas:', error);
-      }
+      },
     });
   }
 
@@ -164,7 +155,7 @@ export class NotificacionService {
       },
       error: (error) => {
         console.error('Error al eliminar notificación:', error);
-      }
+      },
     });
   }
 }

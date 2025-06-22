@@ -3,10 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UrlService {
-
   readonly baseUrl: string = 'http://localhost:8080/kioscobyf/api/v1';
 
   constructor(private http: HttpClient) {}

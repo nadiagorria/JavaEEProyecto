@@ -1,168 +1,188 @@
 <app-header></app-header>
 
-<main class="w-full stats-container">   
-    <section class="filter-section">
-      <div class="filter-container">
-        <label for="mesFilter" class="filter-label">Filtrar por mes:</label>
-        <select 
-          id="mesFilter" 
-          class="filter-select" 
-          [(ngModel)]="mesSeleccionado" 
-          (ngModelChange)="onMesChange()">
-          <option *ngFor="let mes of meses" [value]="mes.valor">
-            {{ mes.nombre }}
-          </option>
-        </select>
+<main class="w-full stats-container">
+  <section class="filter-section">
+    <div class="filter-container">
+      <label for="mesFilter" class="filter-label">Filtrar por mes:</label>
+      <select
+        id="mesFilter"
+        class="filter-select"
+        [(ngModel)]="mesSeleccionado"
+        (ngModelChange)="onMesChange()"
+      >
+        <option *ngFor="let mes of meses" [value]="mes.valor">
+          {{ mes.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-container">
+      <label for="anoFilter" class="filter-label">Filtrar por año:</label>
+      <select
+        id="anoFilter"
+        class="filter-select"
+        [(ngModel)]="anoSeleccionado"
+        (ngModelChange)="onAnoChange()"
+      >
+        <option *ngFor="let ano of anos" [value]="ano.valor">
+          {{ ano.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-actions">
+      <button
+        class="clear-filters-btn"
+        (click)="limpiarFiltros()"
+        [disabled]="!mesSeleccionado && !anoSeleccionado"
+      >
+        <span class="pi pi-refresh"></span>
+        Limpiar Filtros
+      </button>
+
+      <div class="filter-info" *ngIf="mesSeleccionado || anoSeleccionado">
+        <span class="pi pi-info-circle"></span>
+        Mostrando: {{ obtenerTextoFiltro() }}
       </div>
-      
-      <div class="filter-container">
-        <label for="anoFilter" class="filter-label">Filtrar por año:</label>
-        <select 
-          id="anoFilter" 
-          class="filter-select" 
-          [(ngModel)]="anoSeleccionado" 
-          (ngModelChange)="onAnoChange()">
-          <option *ngFor="let ano of anos" [value]="ano.valor">
-            {{ ano.nombre }}
-          </option>
-        </select>
-      </div>
-      
-      <div class="filter-actions">
-        <button 
-          class="clear-filters-btn" 
-          (click)="limpiarFiltros()"
-          [disabled]="!mesSeleccionado && !anoSeleccionado">
-          <span class="pi pi-refresh"></span>
-          Limpiar Filtros
-        </button>
-        
-        <div class="filter-info" *ngIf="mesSeleccionado || anoSeleccionado">
-          <span class="pi pi-info-circle"></span>
-          Mostrando: {{ obtenerTextoFiltro() }}
-        </div>
-      </div>
-    </section>    <article class="flex w-full article-1">      <div class="miniCartel card-hover sales-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">
-            {{ (mesSeleccionado || anoSeleccionado) ? 'Ventas del Período' : 'Ventas Totales' }}
-          </span>
-          <span class="pi pi-shopping-bag logoMiniCartel icon-accent"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">{{ ventasFiltradas.length || 0 }}</span>
-        </div>
-      </div>
-
-
-
-      <div class="miniCartel card-hover users-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Usuarios Totales</span>
-          <span class="pi pi-users logoMiniCartel icon-accent"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">{{ usuariosTotales || 0 }}</span>
-        </div>
+    </div>
+  </section>
+  <article class="flex w-full article-1">
+    <div class="miniCartel card-hover sales-card">
+      <div class="w-full cabezaMiniCartel">
+        <span class="textoMiniCartel">
+          {{
+            mesSeleccionado || anoSeleccionado
+              ? "Ventas del Período"
+              : "Ventas Totales"
+          }}
+        </span>
+        <span class="pi pi-shopping-bag logoMiniCartel icon-accent"></span>
       </div>
 
-      <div class="miniCartel card-hover productos-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Productos Populares</span>
-          <span class="pi pi-star logoMiniCartel icon-accent"></span>
-        </div>
-        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-productos" [class.empty-state]="!productosMasPopulares.length">
-            <li *ngFor="let producto of productosMasPopulares; let i = index" 
-                [class.margenBullet]="i === 0" class="producto-item">
-              {{ producto?.nombre || 'Sin datos' }}
-            </li>
-            <li *ngIf="!productosMasPopulares.length" class="producto-item">
-              No hay productos disponibles
-            </li>
-          </ul>
-        </div>
+      <div class="flex flex-column w-full papaNumeros">
+        <span class="w-full numero1MiniCartel">{{
+          ventasFiltradas.length || 0
+        }}</span>
+      </div>
+    </div>
+
+    <div class="miniCartel card-hover users-card">
+      <div class="w-full cabezaMiniCartel">
+        <span class="textoMiniCartel">Usuarios Totales</span>
+        <span class="pi pi-users logoMiniCartel icon-accent"></span>
       </div>
 
-      <div class="miniCartel card-hover categorias-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Categorías Populares</span>
-          <span class="pi pi-tags logoMiniCartel icon-accent"></span>
+      <div class="flex flex-column w-full papaNumeros">
+        <span class="w-full numero1MiniCartel">{{ usuariosTotales || 0 }}</span>
+      </div>
+    </div>
+
+    <div class="miniCartel card-hover productos-card">
+      <div class="w-full cabezaMiniCartel">
+        <span class="textoMiniCartel">Productos Populares</span>
+        <span class="pi pi-star logoMiniCartel icon-accent"></span>
+      </div>
+      <div class="flex flex-column w-full papaNumeros">
+        <ul
+          class="lista-productos"
+          [class.empty-state]="!productosMasPopulares.length"
+        >
+          <li
+            *ngFor="let producto of productosMasPopulares; let i = index"
+            [class.margenBullet]="i === 0"
+            class="producto-item"
+          >
+            {{ producto?.nombre || "Sin datos" }}
+          </li>
+          <li *ngIf="!productosMasPopulares.length" class="producto-item">
+            No hay productos disponibles
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="miniCartel card-hover categorias-card">
+      <div class="w-full cabezaMiniCartel">
+        <span class="textoMiniCartel">Categorías Populares</span>
+        <span class="pi pi-tags logoMiniCartel icon-accent"></span>
+      </div>
+      <div class="flex flex-column w-full papaNumeros">
+        <ul
+          class="lista-categorias"
+          [class.empty-state]="!categoriasMasPopulares.length"
+        >
+          <li
+            *ngFor="let categoria of categoriasMasPopulares; let i = index"
+            [class.margenBullet]="i === 0"
+            class="categoria-item"
+          >
+            {{ categoria?.nombre || "Sin datos" }}
+          </li>
+          <li *ngIf="!categoriasMasPopulares.length" class="categoria-item">
+            No hay categorías disponibles
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="w-full article-2">
+    <div class="cartel card-hover">
+      <div class="cabezaCartel">
+        <div class="flex flex-column textoCartel">
+          <strong class="margenTextoCartel titulo-ingresos">Ingresos</strong>
+          <span class="monto-total">${{ ganancias }}</span>
         </div>
-        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-categorias" [class.empty-state]="!categoriasMasPopulares.length">
-            <li *ngFor="let categoria of categoriasMasPopulares; let i = index" 
-                [class.margenBullet]="i === 0" class="categoria-item">
-              {{ categoria?.nombre || 'Sin datos' }}
-            </li>
-            <li *ngIf="!categoriasMasPopulares.length" class="categoria-item">
-              No hay categorías disponibles
-            </li>
-          </ul>
-        </div>
+        <span class="pi pi-dollar logoCartel icon-accent"></span>
       </div>
 
-    </article>
-
-    <article class="w-full article-2">
-      <div class="cartel card-hover">
-        <div class="cabezaCartel">
-          <div class="flex flex-column textoCartel">
-            <strong class="margenTextoCartel titulo-ingresos">Ingresos</strong>
-            <span class="monto-total">${{ ganancias }}</span>
-          </div>
-          <span class="pi pi-dollar logoCartel icon-accent"></span>
-        </div>
-
-        <div class="w-full flex restoCartel">
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
-            <div class="w-full cabezaMiniCartel">
-              <span class="textoMiniCartel">Débito</span>
-              <span class="pi pi-credit-card payment-icon"></span>
-            </div>
-
-            <div class="flex flex-column w-full papaNumeros">
-              <span class="w-full numero1MiniCartel">${{ debito }}</span>
-            </div>
-          </div>
-
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
-            <div class="w-full cabezaMiniCartel">
-              <span class="textoMiniCartel">Crédito</span>
-              <span class="pi pi-credit-card payment-icon"></span>
-            </div>
-
-            <div class="flex flex-column w-full papaNumeros">
-              <span class="w-full numero1MiniCartel">${{ credito }}</span>
-            </div>
-          </div>
-
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
-            <div class="w-full cabezaMiniCartel">
-              <span class="textoMiniCartel">Efectivo</span>
-              <span class="pi pi-money-bill payment-icon"></span>
-            </div>
-
-            <div class="flex flex-column w-full papaNumeros">
-              <span class="w-full numero1MiniCartel">${{ efectivo }}</span>
-            </div>
+      <div class="w-full flex restoCartel">
+        <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="w-full cabezaMiniCartel">
+            <span class="textoMiniCartel">Débito</span>
+            <span class="pi pi-credit-card payment-icon"></span>
           </div>
 
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
-            <div class="w-full cabezaMiniCartel">
-              <span class="textoMiniCartel">Crédito Local</span>
-              <span class="pi pi-building payment-icon"></span>
-            </div>
-
-            <div class="flex flex-column w-full papaNumeros">
-              <span class="w-full numero1MiniCartel">${{ creditolocal }}</span>
-            </div>
+          <div class="flex flex-column w-full papaNumeros">
+            <span class="w-full numero1MiniCartel">${{ debito }}</span>
           </div>
         </div>
 
-      </div>
+        <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="w-full cabezaMiniCartel">
+            <span class="textoMiniCartel">Crédito</span>
+            <span class="pi pi-credit-card payment-icon"></span>
+          </div>
 
-    </article>
-  </main>
+          <div class="flex flex-column w-full papaNumeros">
+            <span class="w-full numero1MiniCartel">${{ credito }}</span>
+          </div>
+        </div>
+
+        <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="w-full cabezaMiniCartel">
+            <span class="textoMiniCartel">Efectivo</span>
+            <span class="pi pi-money-bill payment-icon"></span>
+          </div>
+
+          <div class="flex flex-column w-full papaNumeros">
+            <span class="w-full numero1MiniCartel">${{ efectivo }}</span>
+          </div>
+        </div>
+
+        <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="w-full cabezaMiniCartel">
+            <span class="textoMiniCartel">Crédito Local</span>
+            <span class="pi pi-building payment-icon"></span>
+          </div>
+
+          <div class="flex flex-column w-full papaNumeros">
+            <span class="w-full numero1MiniCartel">${{ creditolocal }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
 
 <app-footer></app-footer>

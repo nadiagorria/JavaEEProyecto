@@ -1,6 +1,6 @@
 export interface EntidadDto {
-    nombre: string;
-    telefono: string;
-    activo: boolean;
-    id: number | null;
+  nombre: string;
+  telefono: string;
+  activo: boolean;
+  id: number | null;
 }

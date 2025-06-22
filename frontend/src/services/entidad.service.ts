@@ -10,54 +10,67 @@ import { ProveedorDto } from 'src/models/proveedor.dto';
   providedIn: 'root',
 })
 export class EntidadService {
-
   private endpoint: string = '/entidad';
-  constructor(
-    private http: HttpClient,
-    private urlService: UrlService,
-  ) {}
+  constructor(private http: HttpClient, private urlService: UrlService) {}
 
   getCliente(id: number): Observable<ClienteDto> {
-      const params = new HttpParams().set('id', id.toString());
-      return this.http.get<ClienteDto>(`${this.urlService.baseUrl}${this.endpoint}/seleccionarCliente`, 
-        { params },);
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<ClienteDto>(
+      `${this.urlService.baseUrl}${this.endpoint}/seleccionarCliente`,
+      { params }
+    );
   }
 
-
-  crearClienteCredito(clienteCreditoDto: clienteCreditoDto): Observable<String> {
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/clienteCredito`, 
+  crearClienteCredito(
+    clienteCreditoDto: clienteCreditoDto
+  ): Observable<String> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/clienteCredito`,
       clienteCreditoDto,
-      { responseType: 'text'},    );
+      { responseType: 'text' }
+    );
   }
-  
+
   getProveedor(id: number): Observable<ProveedorDto> {
     return this.http.get<ProveedorDto>(
       `${this.urlService.baseUrl}${this.endpoint}/${id}/seleccionarProveedor/`
     );
   }
 
-  listadoProveedores(): Observable<{proveedores: ProveedorDto[]}> {
-    return this.http.get<{proveedores: ProveedorDto[]}>(`${this.urlService.baseUrl}${this.endpoint}/proveedor/listar`);
+  listadoProveedores(): Observable<{ proveedores: ProveedorDto[] }> {
+    return this.http.get<{ proveedores: ProveedorDto[] }>(
+      `${this.urlService.baseUrl}${this.endpoint}/proveedor/listar`
+    );
   }
   editarCliente(cliente: ClienteDto): Observable<String> {
-    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarcliente`, cliente, 
-      { responseType: 'text' });
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/editarcliente`,
+      cliente,
+      { responseType: 'text' }
+    );
   }
 
   editarProveedor(proveedor: ProveedorDto): Observable<String> {
-    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/editarproveedor`, proveedor, 
-      { responseType: 'text' });
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/editarproveedor`,
+      proveedor,
+      { responseType: 'text' }
+    );
   }
-
 
   crearProveedor(proveedor: ProveedorDto): Observable<String> {
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/proveedor`, proveedor, 
-      { responseType: 'text' });
-  }
-  
-  eliminarPersona(id: number): Observable<String> {
-    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/eliminar`, id, 
-      { responseType: 'text' });
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/proveedor`,
+      proveedor,
+      { responseType: 'text' }
+    );
   }
 
+  eliminarPersona(id: number): Observable<String> {
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/eliminar`,
+      id,
+      { responseType: 'text' }
+    );
+  }
 }

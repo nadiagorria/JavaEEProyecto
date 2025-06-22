@@ -1,9 +1,7 @@
 @import "primeicons/primeicons.css";
 
-
-
-
-html, body {
+html,
+body {
   margin: 0;
   background: #f7f6f6;
   font-family: "Montserrat", sans-serif;
@@ -12,19 +10,19 @@ html, body {
 .table-container-fix {
   position: relative;
   z-index: auto;
-  
-    overflow: visible;
-  
-    > div {
+
+  overflow: visible;
+
+  > div {
     overflow: visible;
     position: static;
   }
-  
-    .p-paginator {
+
+  .p-paginator {
     .p-dropdown {
       z-index: 9999;
     }
-    
+
     .p-dropdown-panel {
       transform: translateY(0) !important;
       z-index: 9999 !important;
@@ -40,8 +38,9 @@ html, body {
 .p-datatable {
   border: 1px solid #ecf0f1;
   border-radius: 12px;
-  overflow: visible;   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+  overflow: visible;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
   .p-datatable-header {
     background: #f8f9fa;
     border-bottom: 2px solid #ecf0f1;
@@ -49,7 +48,7 @@ html, body {
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
   }
-  
+
   .p-datatable-thead > tr > th {
     background: #34495e !important;
     color: white !important;
@@ -60,65 +59,68 @@ html, body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   .p-datatable-thead > tr > th:first-child {
     border-top-left-radius: 12px;
   }
-  
+
   .p-datatable-thead > tr > th:last-child {
     border-top-right-radius: 12px;
   }
-  
+
   .p-datatable-tbody > tr {
     border-bottom: 1px solid #ecf0f1;
     transition: background-color 0.3s ease;
-    
+
     &:hover {
       background-color: #f8f9fa;
     }
-    
+
     &:nth-child(even) {
       background-color: #fdfdfd;
     }
   }
-    .p-datatable-tbody > tr > td {
+  .p-datatable-tbody > tr > td {
     padding: 12px;
     border: none;
     font-size: 0.9rem;
     vertical-align: middle;
   }
-  
+
   .p-datatable-tbody > tr:last-child > td:first-child {
     border-bottom-left-radius: 12px;
   }
-  
+
   .p-datatable-tbody > tr:last-child > td:last-child {
     border-bottom-right-radius: 12px;
   }
-  
+
   .p-datatable-wrapper {
-    overflow: visible !important;     position: relative;
+    overflow: visible !important;
+    position: relative;
     border-radius: 12px;
   }
-  
+
   .p-paginator {
     position: relative;
-    z-index: 999;     overflow: visible !important;
-    
+    z-index: 999;
+    overflow: visible !important;
+
     .p-dropdown-panel {
       position: absolute;
       top: 100%;
-      z-index: 1000;     }
-    
+      z-index: 1000;
+    }
+
     .p-dropdown {
       position: relative;
       z-index: 999;
-      
+
       .p-dropdown-items-wrapper {
         overflow: visible !important;
       }
     }
-    
+
     .p-paginator-bottom {
       overflow: visible !important;
     }
@@ -144,10 +146,12 @@ html, body {
 }
 
 .p-component-overlay {
-  z-index: 1001 !important; }
+  z-index: 1001 !important;
+}
 
 body .p-dropdown-panel {
-  z-index: 1002 !important; }
+  z-index: 1002 !important;
+}
 
 .p-paginator {
   background: #f8f9fa;
@@ -161,7 +165,7 @@ body .p-dropdown-panel {
   overflow: visible !important;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  
+
   .p-paginator-element {
     margin: 0 0.125rem;
     min-width: 2.5rem;
@@ -169,39 +173,39 @@ body .p-dropdown-panel {
     line-height: 2.5rem;
     border-radius: 50%;
     transition: all 0.2s ease;
-    
+
     &.p-highlight {
       background: #34495e;
       color: white;
     }
-    
+
     &:not(.p-highlight):hover {
       background: rgba(52, 73, 94, 0.1);
     }
   }
-  
+
   .p-paginator-pages {
     display: flex;
-    
+
     .p-paginator-page {
       margin: 0 0.125rem;
     }
   }
-  
+
   .p-paginator-first,
   .p-paginator-prev,
   .p-paginator-next,
   .p-paginator-last {
     color: #34495e;
-    
+
     &:hover {
       background: rgba(52, 73, 94, 0.1);
     }
-    
+
     &.p-disabled {
       opacity: 0.5;
       cursor: default;
-      
+
       &:hover {
         background: transparent;
       }
@@ -224,19 +228,19 @@ body .p-dropdown-panel {
   height: 2.5rem;
   border-radius: 50%;
   transition: all 0.2s ease;
-  
+
   &.p-button-danger {
     color: #e74c3c;
-    
+
     &:hover {
       background: rgba(231, 76, 60, 0.1);
       color: #c0392b;
     }
   }
-  
+
   &:not(.p-button-danger) {
     color: #3498db;
-    
+
     &:hover {
       background: rgba(52, 152, 219, 0.1);
       color: #2980b9;
@@ -244,7 +248,9 @@ body .p-dropdown-panel {
   }
 }
 
-.image-container, .imagen-container, .imagen-producto {
+.image-container,
+.imagen-container,
+.imagen-producto {
   img {
     object-fit: cover;
     width: 100%;
@@ -252,28 +258,27 @@ body .p-dropdown-panel {
   }
 }
 
-img[src*="placeholder-image.webp"], 
+img[src*="placeholder-image.webp"],
 img[src*="placeholder.webp"] {
   object-fit: cover !important;
   width: 100% !important;
   height: 100% !important;
 }
 
-
 .p-toast {
   z-index: 9999;
-  
+
   .p-toast-message {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.08);
-    
+
     &.p-toast-message-error {
       background-color: #f8d7da;
       border-color: #f5c6cb;
       color: #721c24;
     }
-    
+
     &.p-toast-message-success {
       background-color: #d4edda;
       border-color: #c3e6cb;
@@ -321,7 +326,7 @@ app-recuperar-password .p-button {
   outline: none !important;
   min-height: 48px !important;
   white-space: nowrap !important;
-  
+
   .p-button-label {
     flex: 1 1 auto !important;
     display: block !important;
@@ -386,7 +391,7 @@ app-recuperar-password .p-button {
       border-color: #adb5bd !important;
       color: #495057 !important;
       transform: translateY(-1px) !important;
-      
+
       .p-button-label {
         color: #495057 !important;
       }
@@ -412,7 +417,7 @@ app-recuperar-password .p-button {
     transform: none !important;
     box-shadow: none !important;
     border-color: #e9ecef !important;
-    
+
     .p-button-label {
       color: #6c757d !important;
     }
@@ -427,7 +432,7 @@ app-recuperar-password .p-button {
     background: #6c757d !important;
     cursor: wait !important;
     color: #ffffff !important;
-    
+
     .p-button-label {
       color: #ffffff !important;
     }
@@ -462,7 +467,7 @@ app-recuperar-password .p-button {
 
 .p-button.icon-eye {
   color: #3498db !important;
-  
+
   &:hover {
     background: rgba(52, 152, 219, 0.1) !important;
     color: #2980b9 !important;
@@ -471,7 +476,7 @@ app-recuperar-password .p-button {
 
 .p-button.icon-trash {
   color: #e74c3c !important;
-  
+
   &:hover {
     background: rgba(231, 76, 60, 0.1) !important;
     color: #c0392b !important;
@@ -483,24 +488,22 @@ app-recuperar-password .p-button {
   height: 2.5rem;
   border-radius: 50%;
   transition: all 0.2s ease;
-  
+
   &.p-button-danger {
     color: #e74c3c;
-    
+
     &:hover {
       background: rgba(231, 76, 60, 0.1);
       color: #c0392b;
     }
   }
-  
+
   &:not(.p-button-danger) {
     color: #3498db;
-    
+
     &:hover {
       background: rgba(52, 152, 219, 0.1);
       color: #2980b9;
     }
   }
 }
-
-

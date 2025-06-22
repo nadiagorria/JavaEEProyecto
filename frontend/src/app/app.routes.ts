@@ -20,7 +20,6 @@ import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedo
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { OfertasComponent } from './components/ofertas/ofertas.component';
 
-
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
@@ -36,64 +35,68 @@ export const routes: Routes = [
     component: NuevaventaComponent,
     canActivate: [AuthGuard],
     canDeactivate: [CanDeactivateGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] }
+    data: { roles: ['CAJERO', 'ADMIN'] },
   },
 
   {
     path: 'verventa/:id',
     component: VerventaComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] } // cajero ve si es suya, admin ve todas
+    data: { roles: ['CAJERO', 'ADMIN'] }, // cajero ve si es suya, admin ve todas
   },
 
   {
     path: 'ventas',
     component: VentasComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] } //cajero solo ve las suyas, admin ve todas
+    data: { roles: ['CAJERO', 'ADMIN'] }, //cajero solo ve las suyas, admin ve todas
   },
 
   {
     path: 'stats',
     component: StatsComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { roles: ['ADMIN'] },
   },
 
   {
     path: 'proveedor/:id',
     component: ProveedorPerfilComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'CAJERO'] }
+    data: { roles: ['ADMIN', 'CAJERO'] },
   },
 
   {
     path: 'cliente/:id',
     component: ClientePerfilComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] }
+    data: { roles: ['CAJERO', 'ADMIN'] },
   },
-  { path: 'productos', 
+  {
+    path: 'productos',
     component: ProductosComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] }
-   },
-  { path: 'ofertas', 
+    data: { roles: ['CAJERO', 'ADMIN'] },
+  },
+  {
+    path: 'ofertas',
     component: OfertasComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'CAJERO'] }
-   },
-
-  { path: 'producto/:id',
-    component: ProductoInfoComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['CAJERO', 'ADMIN'] }
+    data: { roles: ['ADMIN', 'CAJERO'] },
   },
 
-  { path: 'perfil',
+  {
+    path: 'producto/:id',
+    component: ProductoInfoComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['CAJERO', 'ADMIN'] },
+  },
+
+  {
+    path: 'perfil',
     component: PerfilComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'CAJERO'] } 
+    data: { roles: ['ADMIN', 'CAJERO'] },
   },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },

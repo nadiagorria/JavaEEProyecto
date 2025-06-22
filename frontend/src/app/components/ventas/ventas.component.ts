@@ -15,7 +15,6 @@ import { SecurityService } from '../../../services/security.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 
-
 @Component({
   selector: 'app-ventas',
   standalone: true,
@@ -30,11 +29,11 @@ import { FooterComponent } from '../footer/footer.component';
     ToastModule,
     ConfirmDialogModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ventas.component.html',
-  styleUrl: './ventas.component.scss'
+  styleUrl: './ventas.component.scss',
 })
 export class VentasComponent implements OnInit {
   ventas: VentaDto[] = [];
@@ -51,9 +50,9 @@ export class VentasComponent implements OnInit {
     this.totalRecords = this.ventas.length;
   }
   ngOnInit() {
-
     if (this.securityService.isLoggedIn() && this.securityService.user) {
-      this.isAdmin = this.securityService.user.roles?.includes('ADMIN') || false;
+      this.isAdmin =
+        this.securityService.user.roles?.includes('ADMIN') || false;
     }
     this.cargarVentas();
   }
@@ -74,9 +73,9 @@ export class VentasComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar las ventas'
+          detail: 'Error al cargar las ventas',
         });
-      }
+      },
     });
   }
 
@@ -90,7 +89,8 @@ export class VentasComponent implements OnInit {
     if (!id) return;
 
     this.confirmationService.confirm({
-      message: '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
+      message:
+        '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -99,7 +99,7 @@ export class VentasComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Venta eliminada correctamente'
+              detail: 'Venta eliminada correctamente',
             });
             this.cargarVentas(); // Recargar la lista
           },
@@ -108,11 +108,11 @@ export class VentasComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al eliminar la venta'
+              detail: 'Error al eliminar la venta',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BarcodeScannerService {
   private scannerActiveSubject = new BehaviorSubject<boolean>(false);
@@ -11,7 +11,7 @@ export class BarcodeScannerService {
   private lastScannedCodeSubject = new BehaviorSubject<string | null>(null);
   public lastScannedCode$ = this.lastScannedCodeSubject.asObservable();
 
-  constructor() { }
+  constructor() {}
 
   activateScanner(): void {
     this.scannerActiveSubject.next(true);

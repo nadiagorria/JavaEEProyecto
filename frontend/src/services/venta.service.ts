@@ -5,24 +5,25 @@ import { VentaDto, VentaSimpleDto } from '../models';
 import { UrlService } from './url.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class VentaService {
   private endpoint: string = '/venta';
 
-  constructor(
-    private http: HttpClient,
-    private urlService: UrlService
-  ) { }
+  constructor(private http: HttpClient, private urlService: UrlService) {}
 
-  
-  crearVenta(venta: VentaDto): Observable<{id: number}> {
-    return this.http.post<{id: number}>(`${this.urlService.baseUrl}${this.endpoint}/crear`, venta);
+  crearVenta(venta: VentaDto): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(
+      `${this.urlService.baseUrl}${this.endpoint}/crear`,
+      venta
+    );
   }
 
   eliminarVenta(id: number): Observable<string> {
-    return this.http.put<string>(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {});
+    return this.http.put<string>(
+      `${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`,
+      {}
+    );
   }
 
   listarVentas(): Observable<any> {
@@ -30,10 +31,14 @@ export class VentaService {
   }
 
   obtenerVenta(id: number): Observable<VentaSimpleDto> {
-    return this.http.get<VentaSimpleDto>(`${this.urlService.baseUrl}${this.endpoint}/${id}`);
+    return this.http.get<VentaSimpleDto>(
+      `${this.urlService.baseUrl}${this.endpoint}/${id}`
+    );
   }
 
   getVentasTotales(): Observable<number> {
-    return this.http.get<number>(`${this.urlService.baseUrl}${this.endpoint}/cantidadVentas`);
+    return this.http.get<number>(
+      `${this.urlService.baseUrl}${this.endpoint}/cantidadVentas`
+    );
   }
 }
