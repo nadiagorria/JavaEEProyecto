@@ -6,7 +6,7 @@
     <div class="header-section mb-3">
       <div class="flex justify-content-between align-items-center">
         <h2 class="page-title">Información del Producto</h2>
-        <!-- Edit and Delete buttons - Solo para ADMIN -->
+        <!-- Editar y Borrar - Solo para ADMIN -->
         <div
           class="flex gap-2"
           *ngIf="producto && !loading && !error && isAdmin()"
@@ -297,7 +297,7 @@
         </div>
       </div>
 
-      <!-- Image Upload Section -->
+      <!-- Subir Imagen -->
       <div class="form-section">
         <div class="section-title">Imagen del Producto</div>
 
@@ -316,7 +316,7 @@
           >
         </div>
 
-        <!-- Image Preview -->
+        <!-- Preview de Imagen -->
         <div
           class="image-preview mb-3"
           *ngIf="imagenPreviewEdicion || imagenUrl"
@@ -486,7 +486,7 @@
   appendTo="body"
 >
   <div class="modal-stock-content">
-    <!-- Advertencia prominente -->
+    <!-- Advertencia -->
     <div class="alert-warning mb-4">
       <div class="alert-icon">
         <i class="pi pi-exclamation-triangle"></i>
