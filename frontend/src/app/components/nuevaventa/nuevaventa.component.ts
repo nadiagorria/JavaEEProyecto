@@ -98,6 +98,7 @@ export class NuevaventaComponent
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
   displayDialog: boolean = false;
+  procesandoVenta: boolean = false;
 
   displaySeleccionProducto: boolean = false;
   productosDuplicados: ProductoDto[] = [];
@@ -601,6 +602,11 @@ export class NuevaventaComponent
     this.displayDialog = true;
   }
   confirmarVenta() {
+    // Evitar doble clic
+    if (this.procesandoVenta) {
+      return;
+    }
+
     if (!this.formaPagoSeleccionada) {
       this.messageService.add({
         severity: 'error',
@@ -682,9 +688,11 @@ export class NuevaventaComponent
       })),
       activo: true,
     };
+
+    this.procesandoVenta = true;
+
     this.ventaService.crearVenta(venta as VentaDto).subscribe({
       next: (response) => {
-        // Verificar si la respuesta contiene un error
         if (response && typeof response === 'object' && 'error' in response) {
           const errorCode = response.error;
           if (errorCode === -1) {
@@ -708,6 +716,7 @@ export class NuevaventaComponent
                 'El total de la venta no supera el mínimo requerido para compras fiadas',
             });
           }
+          this.procesandoVenta = false; // Desactivar flag
           return;
         }
         this.messageService.add({
@@ -722,6 +731,7 @@ export class NuevaventaComponent
 
         this.displayDialog = false;
         this.limpiarVenta();
+        this.procesandoVenta = false; // Desactivar flag
       },
       error: (error) => {
         console.error('Error al crear la venta:', error);
@@ -765,16 +775,17 @@ export class NuevaventaComponent
             detail: 'Error al crear la venta',
           });
         }
+        this.procesandoVenta = false;
       },
     });
   }
-
   limpiarVenta() {
     this.cantidades = [];
     this.totalRecords = 0;
     this.creditoSeleccionado = null;
     this.formaPagoSeleccionada = '';
     this.productoSeleccionado = null;
+    this.procesandoVenta = false;
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -396,9 +396,11 @@
         size="large"
         styleClass="confirm-btn"
         [disabled]="
-          esPagoFiado() &&
-          (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado))
+          procesandoVenta ||
+          (esPagoFiado() &&
+          (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado)))
         "
+        [loading]="procesandoVenta"
         (onClick)="confirmarVenta()"
       >
       </p-button>
