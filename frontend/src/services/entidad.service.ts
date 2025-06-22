@@ -42,6 +42,7 @@ export class EntidadService {
       `${this.urlService.baseUrl}${this.endpoint}/proveedor/listar`
     );
   }
+  
   editarCliente(cliente: ClienteDto): Observable<String> {
     return this.http.put(
       `${this.urlService.baseUrl}${this.endpoint}/editarcliente`,

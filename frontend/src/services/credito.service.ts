@@ -10,14 +10,6 @@ export class CreditoService {
 
   constructor(private http: HttpClient, private urlService: UrlService) {}
 
-  getCredito(id: number): Observable<CreditoDto> {
-    return this.http.get<CreditoDto>(`${this.urlService.baseUrl}/${id}`);
-  }
-
-  crearCredito(credito: CreditoDto): Observable<CreditoDto> {
-    return this.http.post<CreditoDto>(this.urlService.baseUrl, credito);
-  }
-
   listarCreditos(): Observable<{ creditos: CreditoDto[] }> {
     return this.http.get<{ creditos: CreditoDto[] }>(
       `${this.urlService.baseUrl}${this.endpoint}/listar`

@@ -76,6 +76,7 @@ export class NotificacionService {
       { responseType: 'text' }
     );
   }
+  
   private actualizarNotificaciones(): void {
     if (!this.securityService.isLoggedIn()) {
       return;

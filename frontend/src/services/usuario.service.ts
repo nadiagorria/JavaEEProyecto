@@ -25,8 +25,8 @@ export class UsuarioService {
     const userData = {
       mail: cambios.email,
       nombre: username,
-      contrasenia: cambios.currentPassword, // Enviamos la contraseña actual para verificación
-      nuevaContrasenia: cambios.newPassword, // Nueva propiedad para la nueva contraseña
+      contrasenia: cambios.currentPassword, 
+      nuevaContrasenia: cambios.newPassword, 
     };
 
     return this.http.put(
@@ -35,6 +35,7 @@ export class UsuarioService {
       { responseType: 'text' }
     );
   }
+  
   obtenerUsuarioPorNombre(username: string): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(
       `${this.urlService.baseUrl}${this.endpoint}/${username}`

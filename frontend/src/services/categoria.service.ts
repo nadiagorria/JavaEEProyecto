@@ -19,13 +19,6 @@ export class CategoriaService {
     );
   }
 
-  editarCategoria(categoria: CategoriaDto): Observable<string> {
-    return this.http.put<string>(
-      `${this.urlService.baseUrl}${this.endpoint}/editar`,
-      categoria
-    );
-  }
-
   eliminarCategoria(id: number): Observable<string> {
     return this.http.put(
       `${this.urlService.baseUrl}${this.endpoint}/borrar/${id}`,

@@ -31,13 +31,6 @@ export class OfertaService {
       { responseType: 'text' }
     );
   }
-  editarCombo(combo: ComboDto): Observable<string> {
-    return this.http.put(
-      `${this.urlService.baseUrl}${this.endpoint}/editarcombo`,
-      combo,
-      { responseType: 'text' }
-    );
-  }
 
   listarCombos(): Observable<ResponseListadoCombos> {
     return this.http.get<ResponseListadoCombos>(
@@ -58,13 +51,6 @@ export class OfertaService {
       { responseType: 'text' }
     );
   }
-  editarDescuento(descuento: DescuentoDto): Observable<string> {
-    return this.http.put(
-      `${this.urlService.baseUrl}${this.endpoint}/editardescuento`,
-      descuento,
-      { responseType: 'text' }
-    );
-  }
 
   listarDescuentos(): Observable<ResponseListadoDescuentos> {
     return this.http.get<ResponseListadoDescuentos>(
@@ -75,13 +61,6 @@ export class OfertaService {
   crearPromocion(promocion: PromocionDto): Observable<string> {
     return this.http.post(
       `${this.urlService.baseUrl}${this.endpoint}/promocion`,
-      promocion,
-      { responseType: 'text' }
-    );
-  }
-  editarPromocion(promocion: PromocionDto): Observable<string> {
-    return this.http.put(
-      `${this.urlService.baseUrl}${this.endpoint}/editarpromocion`,
       promocion,
       { responseType: 'text' }
     );

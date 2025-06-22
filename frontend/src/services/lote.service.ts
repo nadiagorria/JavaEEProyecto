@@ -12,7 +12,6 @@ export class LoteService {
   constructor(private http: HttpClient, private urlService: UrlService) {}
 
   crearLote(lote: LoteDto): Observable<any> {
-    console.log('🚀 SERVICIO - Payload completo:', lote);
 
     return this.http.post(
       `${this.urlService.baseUrl}${this.endpoint}/crear`,

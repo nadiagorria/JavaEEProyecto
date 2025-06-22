@@ -11,7 +11,6 @@ import ti.proyectojava.business.entities.Entidad;
 import ti.proyectojava.dtos.*;
 import ti.proyectojava.services.EntidadService;
 
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/v1/entidad")

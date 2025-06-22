@@ -22,16 +22,6 @@ export class ProductoService {
     );
   }
 
-  crearProductoConImagen(formData: FormData): Observable<any> {
-    return this.http.post(
-      `${this.urlService.baseUrl}${this.endpoint}/crear`,
-      formData,
-      {
-        responseType: 'text', // Esto ayuda a manejar respuestas de texto plano
-      }
-    );
-  }
-
   obtenerImagenProducto(id: number): Observable<Blob> {
     return this.http.get(
       `${this.urlService.baseUrl}${this.endpoint}/${id}/imagen`,
@@ -58,6 +48,7 @@ export class ProductoService {
       `${this.urlService.baseUrl}${this.endpoint}/${id}`
     );
   }
+  
   editarProducto(producto: ProductoDto): Observable<string> {
     return this.http.put(
       `${this.urlService.baseUrl}${this.endpoint}/${producto.id}/editar`,
