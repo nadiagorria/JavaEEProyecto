@@ -25,8 +25,8 @@ export class UsuarioService {
     const userData = {
       mail: cambios.email,
       nombre: username,
-      contrasenia: cambios.currentPassword, 
-      nuevaContrasenia: cambios.newPassword, 
+      contrasenia: cambios.currentPassword,
+      nuevaContrasenia: cambios.newPassword,
     };
 
     return this.http.put(
@@ -35,7 +35,7 @@ export class UsuarioService {
       { responseType: 'text' }
     );
   }
-  
+
   obtenerUsuarioPorNombre(username: string): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(
       `${this.urlService.baseUrl}${this.endpoint}/${username}`
@@ -85,6 +85,18 @@ export class UsuarioService {
         nuevaPassword: nuevaPassword,
       },
       { responseType: 'text' }
+    );
+  }
+  verificarPasswordActual(
+    email: string,
+    password: string
+  ): Observable<boolean> {
+    return this.http.post<boolean>(
+      `${this.urlService.baseUrl}${this.endpoint}/verificar-password-actual`,
+      {
+        email: email,
+        password: password,
+      }
     );
   }
 

@@ -30,9 +30,9 @@ import { UsuarioService } from '../../../services/usuario.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class RecuperarPasswordComponent implements OnInit {
-  step = 1; // 1: solicitar email, 2: ingresar código y nueva contraseña
+  step = 1;
   loading = false;
-  componeteReady = false; // Para controlar la visibilidad inicial
+  componeteReady = false;
 
   form = {
     email: '',
@@ -40,6 +40,8 @@ export class RecuperarPasswordComponent implements OnInit {
     nuevaPassword: '',
     confirmarPassword: '',
   };
+
+  validandoPassword = false;
 
   constructor(
     private usuarioService: UsuarioService,
@@ -160,12 +162,66 @@ export class RecuperarPasswordComponent implements OnInit {
         error: (error: any) => {
           this.loading = false;
           console.error('Error al restablecer contraseña:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.error || 'Error al restablecer la contraseña',
-            life: 5000,
-          });
+
+          let errorMessage =
+            error.error || 'Error al restablecer la contraseña';
+          if (
+            errorMessage.includes(
+              'La nueva contraseña no puede ser igual a la actual'
+            )
+          ) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Contraseña Inválida',
+              detail: 'La nueva contraseña no puede ser igual a la actual.',
+              life: 5000,
+            });
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: errorMessage,
+              life: 5000,
+            });
+          }
+        },
+      });
+  }
+  validarPasswordDiferente() {
+    if (
+      !this.form.nuevaPassword ||
+      !this.form.email ||
+      this.form.nuevaPassword.length < 6
+    ) {
+      return;
+    }
+
+    if (this.validandoPassword) {
+      return;
+    }
+
+    this.validandoPassword = true;
+
+    this.usuarioService
+      .verificarPasswordActual(this.form.email, this.form.nuevaPassword)
+      .subscribe({
+        next: (esIgual: boolean) => {
+          this.validandoPassword = false;
+          if (esIgual) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Contraseña Inválida',
+              detail: 'La nueva contraseña no puede ser igual a la actual.',
+              life: 4000,
+            });
+            setTimeout(() => {
+              this.form.nuevaPassword = '';
+              this.form.confirmarPassword = '';
+            }, 100);
+          }
+        },
+        error: () => {
+          this.validandoPassword = false;
         },
       });
   }

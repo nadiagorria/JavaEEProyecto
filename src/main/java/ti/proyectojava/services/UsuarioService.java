@@ -237,6 +237,10 @@ public class UsuarioService {
 
         Usuario usuario = usuarioOpt.get();
 
+        if (passwordService.matchPassword(nuevaPassword, usuario.getContrasenia())) {
+            throw new RuntimeException("La nueva contraseña no puede ser igual a la actual");
+        }
+
         String passwordEncriptada = passwordService.encryptPassword(nuevaPassword);
         usuario.setContrasenia(passwordEncriptada);
         usuarioRepository.save(usuario);
@@ -246,9 +250,17 @@ public class UsuarioService {
         try {
             emailService.enviarNotificacionCambioPassword(email, usuario.getNombre());
         } catch (Exception ignored) {
+        }        return "Contraseña restablecida exitosamente";
+    }
+
+    public boolean esPasswordIgualAActual(String email, String password) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByMailIgnoreCaseAndActivoTrue(email);
+        if (usuarioOpt.isEmpty()) {
+            return false;
         }
 
-        return "Contraseña restablecida exitosamente";
+        Usuario usuario = usuarioOpt.get();
+        return passwordService.matchPassword(password, usuario.getContrasenia());
     }
 
 
@@ -275,7 +287,6 @@ public class UsuarioService {
         }
     }
 
-    // tarea para limpiar códigos de recuperación expirados (programada)
     public void limpiarCodigosExpirados() {
         passwordRecoveryRepository.deleteByFechaExpiracionBefore(LocalDateTime.now());
     }

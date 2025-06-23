@@ -12,6 +12,8 @@ import ti.proyectojava.dtos.UsuarioDto;
 import ti.proyectojava.dtos.RecuperacionPasswordDto;
 import ti.proyectojava.services.UsuarioService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "api/v1/usuarios")
 public class UsuarioController {
@@ -118,6 +120,24 @@ public class UsuarioController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verificar-password-actual")
+    @Operation(description = "Verifica si una contraseña es igual a la actual del usuario")
+    public ResponseEntity<Boolean> verificarPasswordActual(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String password = request.get("password");
+            
+            if (email == null || password == null) {
+                return ResponseEntity.badRequest().body(false);
+            }
+            
+            boolean esIgual = usuarioService.esPasswordIgualAActual(email, password);
+            return ResponseEntity.ok(esIgual);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
