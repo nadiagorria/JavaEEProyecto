@@ -38,8 +38,7 @@
         </div>
       </div>
       <div class="form-field">
-        <p-iftalabel>
-          <input
+        <p-iftalabel>          <input
             pInputText
             id="email"
             formControlName="email"
@@ -49,12 +48,6 @@
               (formGroup.get('email')?.touched &&
                 formGroup.get('email')?.invalid) ||
               emailExists
-            "
-            [class.valid]="
-              formGroup.get('email')?.touched &&
-              isValidEmail() &&
-              !emailExists &&
-              !isCheckingEmail
             "
           />
           <label for="email">Correo Electrónico</label>
@@ -119,25 +112,20 @@
             <i class="pi pi-check-circle"></i> Contraseña válida
           </span>
         </div>
-      </div>
-
-      <div class="form-field">
-        <p-iftalabel>
-          <p-password
+      </div>      <div class="form-field">
+        <p-iftalabel>          <p-password
+            #confirmPasswordInput
             formControlName="confirmPassword"
             inputId="confirmPassword"
             [toggleMask]="true"
             [feedback]="false"
             placeholder=" "
             autocomplete="new-password"
-            [class.invalid]="
-              formGroup.get('confirmPassword')?.touched &&
-              !passwordsMatch() &&
-              formGroup.get('confirmPassword')?.value
-            "
-            [class.valid]="
-              formGroup.get('confirmPassword')?.value && passwordsMatch()
-            "
+            [ngClass]="{
+              'invalid': isConfirmPasswordInvalid()
+            }"
+            (focus)="onConfirmPasswordFocus()"
+            (blur)="onConfirmPasswordBlur()"
           />
           <label for="confirmPassword">Confirmar Contraseña</label>
         </p-iftalabel>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,18 +34,22 @@ import { of } from 'rxjs';
   providers: [MessageService],
 })
 export class RegistroComponent {
+  @ViewChild('confirmPasswordInput') confirmPasswordInput!: ElementRef;
+  
   formGroup: FormGroup;
   isLoading = false;
   usernameExists = false;
   isCheckingUsername = false;
   emailExists = false;
   isCheckingEmail = false;
+  confirmPasswordFocused = false; // Nueva propiedad para controlar el estado de focus
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private messageService: MessageService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private renderer: Renderer2
   ) {
     this.formGroup = this.fb.group(
       {
@@ -61,7 +65,6 @@ export class RegistroComponent {
 
     this.setupEmailValidation();
   }
-
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
@@ -71,9 +74,14 @@ export class RegistroComponent {
       confirmPassword &&
       password.value !== confirmPassword.value
     ) {
+      // Set error on confirmPassword control
       confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
     } else if (confirmPassword?.hasError('passwordMismatch')) {
-      confirmPassword.setErrors(null);
+      // Clear only the passwordMismatch error, preserve other errors
+      const errors = confirmPassword.errors;
+      delete errors?.['passwordMismatch'];
+      confirmPassword.setErrors(Object.keys(errors || {}).length === 0 ? null : errors);
     }
 
     return null;
@@ -88,6 +96,59 @@ export class RegistroComponent {
     const password = this.formGroup.get('password')?.value;
     const confirmPassword = this.formGroup.get('confirmPassword')?.value;
     return password === confirmPassword;
+  }  // Nuevos métodos para manejar el focus
+  onConfirmPasswordFocus(): void {
+    this.confirmPasswordFocused = true;
+    
+    // Forzar la eliminación de la clase valid cuando el campo está focused
+    setTimeout(() => {
+      const passwordInput = document.querySelector('.p-password');
+      if (passwordInput) {
+        this.renderer.removeClass(passwordInput, 'valid');
+        
+        // Si las contraseñas no coinciden, aplicar la clase invalid
+        if (!this.passwordsMatch() && this.formGroup.get('confirmPassword')?.value) {
+          this.renderer.addClass(passwordInput, 'invalid');
+        }
+      }
+    }, 0);
+  }
+  onConfirmPasswordBlur(): void {
+    this.confirmPasswordFocused = false;
+    
+    setTimeout(() => {
+      const passwordInput = document.querySelector('.p-password');
+      if (passwordInput) {
+        // Al perder el foco, solo aplicar la clase invalid si corresponde
+        if (this.isConfirmPasswordInvalid()) {
+          this.renderer.addClass(passwordInput, 'invalid');
+        } else {
+          this.renderer.removeClass(passwordInput, 'invalid');
+        }
+        // Siempre eliminar la clase valid
+        this.renderer.removeClass(passwordInput, 'valid');
+      }
+    }, 0);
+  }
+
+  isConfirmPasswordInvalid(): boolean {
+    const confirmPasswordControl = this.formGroup.get('confirmPassword');
+    const isTouched = confirmPasswordControl?.touched || false;
+    const hasValue = confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
+    const hasAngularErrors = confirmPasswordControl?.invalid || false;
+    const passwordsDontMatch = !this.passwordsMatch();
+    
+    return isTouched && hasValue && (hasAngularErrors || passwordsDontMatch);
+  }
+
+  isConfirmPasswordValid(): boolean {
+    const confirmPasswordControl = this.formGroup.get('confirmPassword');
+    const isTouched = confirmPasswordControl?.touched || false;
+    const hasValue = confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
+    const hasNoAngularErrors = confirmPasswordControl?.valid || false;
+    const passwordsDoMatch = this.passwordsMatch();
+    
+    return isTouched && hasValue && hasNoAngularErrors && passwordsDoMatch;
   }
 
   private setupUsernameValidation() {
