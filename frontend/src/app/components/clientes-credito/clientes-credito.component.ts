@@ -83,7 +83,6 @@ export class ClientesCreditoComponent {
         } else if (data && data.creditos && Array.isArray(data.creditos)) {
           this.creditos = data.creditos;
         } else {
-          console.warn('La respuesta no tiene el formato esperado:', data);
           this.creditos = [];
         }
 
@@ -91,7 +90,6 @@ export class ClientesCreditoComponent {
         this.totalRecords = this.creditos.length;
         console.log('Créditos cargados:', this.creditos);      },
       error: (err: any) => {
-        console.error('Error al listar créditos:', err);
         if (err.status === 403) {
           this.messageService.add({
             severity: 'warn',
@@ -219,7 +217,6 @@ export class ClientesCreditoComponent {
         this.cargarCreditos();
       },
       error: (err: any) => {
-        console.error('Error al crear cliente y crédito:', err);
         let mensajeError = 'Error al crear cliente y crédito';
         if (err.error && typeof err.error === 'string') {
           mensajeError = err.error;
@@ -262,8 +259,6 @@ export class ClientesCreditoComponent {
       accept: () => {
         this.entidadService.eliminarPersona(id).subscribe({
           next: (data: any) => {
-            console.log('Cliente eliminado exitosamente', data);
-
             this.creditos = this.creditos.filter((c) => c.cliente.id !== id);
             this.creditosFiltrados = this.creditosFiltrados.filter(
               (c) => c.cliente.id !== id
@@ -278,7 +273,6 @@ export class ClientesCreditoComponent {
             });
           },
           error: (err: any) => {
-            console.error('Error al eliminar cliente:', err);
             let mensajeError = 'Error al eliminar cliente';
             if (err.error && typeof err.error === 'string') {
               mensajeError += ': ' + err.error;

@@ -152,7 +152,6 @@ export class ProveedorPerfilComponent {
 
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
-        console.log('Proveedor editado:', data);
         this.messageService.add({
           severity: 'success',
           summary: 'Proveedor actualizado',
@@ -161,7 +160,6 @@ export class ProveedorPerfilComponent {
         this.visibleEditar = false;
       },
       error: (err: any) => {
-        console.error('Error al editar proveedor:', err);
         let mensajeError = 'Ocurrió un error al actualizar los datos del proveedor.';
         if (err.error && typeof err.error === 'string') {
           mensajeError = err.error;
@@ -228,7 +226,6 @@ export class ProveedorPerfilComponent {
             }
           },
           error: (error) => {
-            console.error('Error al eliminar producto:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',

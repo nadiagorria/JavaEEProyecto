@@ -84,15 +84,11 @@ export class VerventaComponent implements OnInit {
   }
 
   cargarVenta(id: number) {
-    console.log('Cargando venta con ID:', id);
     this.loading = true;
 
     this.ventaService.obtenerVenta(id).subscribe({
       next: (venta) => {
-        console.log('Respuesta del backend:', venta);
-
         if (!venta.activo) {
-          console.warn('Intento de acceso a venta eliminada');
           this.error =
             'Esta venta ha sido eliminada y no está disponible para visualización';
           this.loading = false;
@@ -103,7 +99,6 @@ export class VerventaComponent implements OnInit {
         }
 
         if (!this.canViewVenta(venta)) {
-          console.warn('Intento de acceso no autorizado a venta');
           this.error = 'No tienes permisos para ver esta venta';
           this.loading = false;
           this.mostrarErrorYRedirigir(
@@ -117,7 +112,6 @@ export class VerventaComponent implements OnInit {
         if (venta.cantidades && Array.isArray(venta.cantidades)) {
           this.cantidades = venta.cantidades;
         } else {
-          console.warn('No se encontraron cantidades en la respuesta');
           this.cantidades = [];
         }
 
@@ -125,7 +119,6 @@ export class VerventaComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error completo:', error);
         if (error.status === 404) {
           this.error = 'La venta solicitada no existe o ha sido eliminada';
           this.mostrarErrorYRedirigir('La venta solicitada no existe.');

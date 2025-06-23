@@ -174,7 +174,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.productoService.obtenerProducto(id).subscribe({
       next: (response) => {
-        console.log('Lotes del producto:', response.lotes);
         this.producto = response;
 
         if (this.producto.lotes) {
@@ -197,7 +196,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.verificarPreciosLotesActuales();
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
         this.error = 'Error al cargar el producto';
         this.loading = false;
       },
@@ -262,7 +260,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.imagenUrl = url;
       },
       error: (error) => {
-        console.error('Error al cargar imagen:', error);
         this.imagenUrl = '/placeholder-image.webp';
       },
     });
@@ -271,10 +268,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.categoriaService.listarCategorias().subscribe({
       next: (response) => {
         this.categorias = response.categorias;
-        console.log('Categorías cargadas:', this.categorias);
       },
       error: (error) => {
-        console.error('Error al cargar categorías:', error);
       },
     });
   }
@@ -283,10 +278,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     this.entidadService.listadoProveedores().subscribe({
       next: (response) => {
         this.proveedores = response.proveedores;
-        console.log('Proveedores cargados:', this.proveedores);
       },
       error: (error) => {
-        console.error('Error al cargar proveedores:', error);
       },
     });
   }
@@ -309,17 +302,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       categoriaId: this.producto.categoria?.id || null,
       proveedorId: this.producto.proveedor?.id || null,
     };
-
-    console.log('Editando producto:', this.editandoProducto);
-    console.log(
-      'Categoría seleccionada ID:',
-      this.editandoProducto.categoriaId
-    );
-    console.log(
-      'Proveedor seleccionado ID:',
-      this.editandoProducto.proveedorId
-    );
-
     this.mostrarModalEditar = true;
   }
   editarProducto(): void {
@@ -332,25 +314,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       });
       return;
     }
-
-    console.log(
-      'Guardando producto con categoriaId:',
-      this.editandoProducto.categoriaId
-    );
-    console.log(
-      'Guardando producto con proveedorId:',
-      this.editandoProducto.proveedorId
-    );
-
     const categoriaSeleccionada = this.categorias.find(
       (c) => c.id === this.editandoProducto.categoriaId
     );
     const proveedorSeleccionado = this.proveedores.find(
       (p) => p.id === this.editandoProducto.proveedorId
     );
-
-    console.log('Categoría encontrada:', categoriaSeleccionada);
-    console.log('Proveedor encontrado:', proveedorSeleccionado);
     const productoParaEditar: ProductoDto = {
       ...this.producto!,
       id: this.editandoProducto.id,
@@ -361,9 +330,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       categoria: categoriaSeleccionada || null,
       proveedor: proveedorSeleccionado || null,
     };
-
-    console.log('Producto para editar:', productoParaEditar);
-
     this.productoService.editarProducto(productoParaEditar).subscribe({
       next: () => {
         if (this.imagenSeleccionada) {
@@ -393,7 +359,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
                 this.finalizarEdicion();
               },
               error: (error) => {
-                console.error('Error al actualizar la imagen:', error);
                 this.messageService.add({
                   severity: 'warn',
                   summary: 'Advertencia',
@@ -413,7 +378,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error al editar producto:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -438,7 +402,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           this.imagenUrl = imagenActual;
         },
         error: (error) => {
-          console.error('Error al recargar datos del producto:', error);
         },
       });
     }
@@ -486,7 +449,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         }, 1500);
       },
       error: (error) => {
-        console.error('Error al eliminar producto:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -526,7 +488,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.error('Error al eliminar lote:', err);
         let errorMessage = 'Error al eliminar el lote';
 
         if (err.error) {
@@ -585,7 +546,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.resetearFormularioLote();
       },
       error: (err) => {
-        console.error('Error al agregar lote:', err);
         let errorMessage =
           'Error al agregar el lote. Verifique los datos e intente nuevamente.';
 
@@ -749,7 +709,6 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           this.mostrarModalModificarStock = false;
         },
         error: (error) => {
-          console.error('Error al modificar stock:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',

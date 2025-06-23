@@ -233,7 +233,6 @@ export class NuevaventaComponent
         this.creditosFiltrados = [...this.creditos];
       },
       error: (error) => {
-        console.error('Error al cargar créditos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -249,7 +248,6 @@ export class NuevaventaComponent
         this.productos = response.productos;
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -730,8 +728,6 @@ export class NuevaventaComponent
         this.limpiarVenta();
         this.procesandoVenta = false;      },
       error: (error) => {
-        console.error('Error al crear la venta:', error);
-
         if (
           error.status === 400 &&
           error.error &&
@@ -862,7 +858,6 @@ export class NuevaventaComponent
         }
       },
       error: (error) => {
-        console.error('Error al buscar productos:', error);
         this.messageService.add({
           severity: 'error',
           summary: '❌ Error de Conexión',

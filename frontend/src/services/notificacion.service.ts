@@ -87,7 +87,6 @@ export class NotificacionService {
         this.notificacionesSubject.next(response.notificacionUsuarios || []);
       },
       error: (error) => {
-        console.error('❌ Error al obtener notificaciones:', error);
       },
     });
 
@@ -96,7 +95,6 @@ export class NotificacionService {
         this.contadorSubject.next(count);
       },
       error: (error) => {
-        console.error('❌ Error al contar notificaciones:', error);
       },
     });
   }
@@ -125,7 +123,6 @@ export class NotificacionService {
         this.actualizarNotificaciones();
       },
       error: (error) => {
-        console.error('Error al marcar notificación como leída:', error);
       },
     });
   }
@@ -140,7 +137,6 @@ export class NotificacionService {
         this.actualizarNotificaciones();
       },
       error: (error) => {
-        console.error('Error al marcar todas como leídas:', error);
       },
     });
   }
@@ -155,7 +151,6 @@ export class NotificacionService {
         this.actualizarNotificaciones();
       },
       error: (error) => {
-        console.error('Error al eliminar notificación:', error);
       },
     });
   }

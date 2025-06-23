@@ -175,7 +175,6 @@ export class RegistroComponent {
         error: (error) => {
           this.isCheckingUsername = false;
           this.usernameExists = false;
-          console.error('Error verificando username:', error);
         },
       });
   }
@@ -213,7 +212,6 @@ export class RegistroComponent {
         error: (error) => {
           this.isCheckingEmail = false;
           this.emailExists = false;
-          console.error('Error verificando email:', error);
         },
       });
   }
@@ -248,8 +246,6 @@ export class RegistroComponent {
           },
           error: (error) => {
             this.isLoading = false;
-            console.error('Error en registro:', error);
-
             let mensaje = 'Error al intentar registrar usuario';
             let severidad = 'error';
 

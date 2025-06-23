@@ -69,7 +69,6 @@ export class VentasComponent implements OnInit {
         this.totalRecords = this.ventas.length;
       },
       error: (error) => {
-        console.error('Error al cargar ventas:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -103,7 +102,6 @@ export class VentasComponent implements OnInit {
             });
             this.cargarVentas();          },
           error: (error) => {
-            console.error('Error al eliminar venta:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',

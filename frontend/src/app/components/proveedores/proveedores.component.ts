@@ -77,15 +77,12 @@ export class ProveedoresComponent {
         ) {
           this.proveedores = data.proveedores;
         } else {
-          console.warn('La respuesta no tiene el formato esperado:', data);
           this.proveedores = [];
         }
         this.proveedoresFiltrados = [...this.proveedores];
         this.totalRecords = this.proveedores.length;
       },
       error: (err: any) => {
-        console.error('Error al listar proveedores:', err);
-
         if (err.status === 403) {
           alert(
             'Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.'
@@ -200,7 +197,6 @@ export class ProveedoresComponent {
         this.cargarProveedores();
       },
       error: (err: any) => {
-        console.error('Error al crear proveedor:', err);
         let mensajeError = 'Error al crear proveedor';
         if (err.error && typeof err.error === 'string') {
           mensajeError = err.error;
@@ -245,8 +241,6 @@ export class ProveedoresComponent {
       accept: () => {
         this.entidadService.eliminarPersona(id).subscribe({
           next: (data: any) => {
-            console.log('Proveedor eliminado exitosamente', data);
-
             this.proveedores = this.proveedores.filter((p) => p.id !== id);
             this.proveedoresFiltrados = this.proveedoresFiltrados.filter(
               (p) => p.id !== id
@@ -260,7 +254,6 @@ export class ProveedoresComponent {
             });
           },
           error: (err: any) => {
-            console.error('Error al eliminar proveedor:', err);
             let mensajeError = 'Error al eliminar proveedor';
             if (err.error && typeof err.error === 'string') {
               mensajeError = err.error;

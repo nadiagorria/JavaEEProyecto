@@ -88,8 +88,6 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Error en login:', error);
-
           let mensaje = 'Error al intentar iniciar sesión';
           let severidad = 'error';
 

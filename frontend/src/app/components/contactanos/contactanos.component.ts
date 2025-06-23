@@ -69,7 +69,6 @@ export class ContactanosComponent {
         this.formGroup.reset();
       },
       error: (error) => {
-        console.warn('Error enviando por backend, usando fallback:', error);
         this.enviarEmailFallback(data);
       }
     });

@@ -96,7 +96,6 @@ export class RecuperarPasswordComponent implements OnInit {
         },
         error: (error: any) => {
           this.loading = false;
-          console.error('Error al solicitar recuperación:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -161,8 +160,6 @@ export class RecuperarPasswordComponent implements OnInit {
         },
         error: (error: any) => {
           this.loading = false;
-          console.error('Error al restablecer contraseña:', error);
-
           let errorMessage =
             error.error || 'Error al restablecer la contraseña';
           if (

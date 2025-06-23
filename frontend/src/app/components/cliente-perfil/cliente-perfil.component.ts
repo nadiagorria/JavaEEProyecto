@@ -113,7 +113,6 @@ export class ClientePerfilComponent {
           });
         },
         (error) => {
-          console.error('Error al pagar', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error en el pago',
@@ -174,7 +173,6 @@ export class ClientePerfilComponent {
         this.visibleEditar = false;
       },
       error: (err: any) => {
-        console.error('Error al editar cliente:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
@@ -233,7 +231,6 @@ export class ClientePerfilComponent {
               });
           },
           error: (error) => {
-            console.error('Error al eliminar venta:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',

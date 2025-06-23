@@ -182,7 +182,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.promociones = response.promociones;
       },
       error: (error) => {
-        console.error('Error al cargar promociones:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -198,7 +197,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.combos = response.combos;
       },
       error: (error) => {
-        console.error('Error al cargar combos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -214,7 +212,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.descuentos = response.descuentos;
       },
       error: (error) => {
-        console.error('Error al cargar descuentos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -230,7 +227,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.productos = response.productos;
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -279,7 +275,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
     this.ofertaService.crearPromocion(promocion).subscribe({
       next: (response) => {
-        console.log('Promoción creada exitosamente:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -289,11 +284,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.cargarPromociones();
       },
       error: (error) => {
-        console.error('Error al crear promoción:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
         let errorMessage = 'Error al crear la promoción';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -387,7 +377,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
     this.ofertaService.crearCombo(combo).subscribe({
       next: (response) => {
-        console.log('Combo creado exitosamente:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -397,11 +386,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.cargarCombos();
       },
       error: (error) => {
-        console.error('Error al crear combo:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
         let errorMessage = 'Error al crear el combo';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -506,11 +490,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.cargarDescuentos();
       },
       error: (error) => {
-        console.error('Error al crear descuento:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
         let errorMessage = 'Error al crear el descuento';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -645,8 +624,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
             }
           },
           error: (error) => {
-            console.error(`Error al eliminar ${tipo}:`, error);
-
             const articuloError = tipo === 'promocion' ? 'la' : 'el';
             this.messageService.add({
               severity: 'error',

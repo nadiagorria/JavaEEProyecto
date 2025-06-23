@@ -86,22 +86,10 @@ export class ProductosComponent implements OnInit, OnDestroy {
           { id: '', nombre: 'Todas las categorías' },
           ...this.categorias,
         ];
-
-        console.log('=== DEBUG CATEGORIAS CARGADAS ===');
-        console.log('Categorías completas:', this.categorias);
-
         this.categorias.forEach((cat, index) => {
-          console.log(`Categoría ${index}:`, {
-            id: cat.id,
-            nombre: cat.nombre,
-            tipoId: typeof cat.id,
-            tipoNombre: typeof cat.nombre,
-          });
         });
-        console.log('================================');
       },
       error: (error) => {
-        console.error('Error al cargar categorías:', error);
       },
     });
   }
@@ -109,11 +97,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     this.entidadService.listadoProveedores().subscribe({
       next: (response: { proveedores: ProveedorDto[] }) => {
         this.proveedores = response.proveedores;
-        console.log('=== DEBUG PROVEEDORES CARGADOS ===');
-        console.log('Proveedores:', this.proveedores);
       },
       error: (error: any) => {
-        console.error('Error al cargar proveedores:', error);
       },
     });
   }
@@ -128,7 +113,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
         this.cargarImagenesProductos();
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
       },
     });
   }
@@ -165,8 +149,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
 
     if (this.categoriaFiltro !== null) {
-      console.log('Filtrando por categoría:', this.categoriaFiltro);
-
       const categoriasAFiltrar = [
         this.categoriaFiltro,
         ...this.obtenerSubcategoriasRecursivas(this.categoriaFiltro),
@@ -192,7 +174,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
 
     this.productosFiltrados = resultado;
-    console.log('Productos filtrados:', this.productosFiltrados.length);
   }
 
   onBusquedaChange(event: any) {
@@ -201,14 +182,9 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }
 
   onCategoriaChange(event: any) {
-    console.log('Evento onChange del dropdown:', event);
-
     const valor = event.value !== undefined ? event.value : event;
-    console.log('Valor seleccionado:', valor);
-
     this.categoriaFiltro =
       valor === '' || valor === null ? null : Number(valor);
-    console.log('categoriaFiltro después de conversión:', this.categoriaFiltro);
     this.aplicarFiltros();
   }
 
@@ -232,11 +208,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
             }
           },
           error: (error) => {
-            console.error(
-              `Error al cargar imagen del producto ${producto.id}:`,
-              error
-            );
-
             this.imagenesProductoCache.set(
               producto.id!,
               '/placeholder-image.webp'
@@ -318,8 +289,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
     this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
       next: (response) => {
-        console.log('Categoría creada exitosamente:', response);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -333,7 +302,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
         this.cargarCategorias();
       },
       error: (error) => {
-        console.error('Error al crear categoría:', error);
         let mensajeError = 'Error al crear la categoría';
 
         if (error.status === 201) {
@@ -413,7 +381,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
                     'Error al eliminar categoría: ' +
                     (error.error || error.message),
                 });
-                console.error('Error al eliminar categoría:', error);
               },
             });
         },
@@ -423,7 +390,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
             summary: 'Error',
             detail: 'Error al desvincular los productos de la categoría',
           });
-          console.error('Error al desvincular productos:', error);
         },
       });
   }
@@ -509,10 +475,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
 
     if (typeof this.nuevoProducto.categoriaId !== 'number') {
-      console.error(
-        'Error: ID de categoría no es un número:',
-        this.nuevoProducto.categoriaId
-      );
       this.mensajeError = 'Error: ID de categoría inválido (no es un número)';
       return;
     }
@@ -574,13 +536,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
           combos: [],
           descuentos: [],
         };
-
-        console.log('Enviando ProductoDto:', productoDto);
-
         this.productoService.crearProductoConDto(productoDto).subscribe({
           next: (response) => {
-            console.log('Producto creado exitosamente:', response);
-
             this.resetearFormularioProducto();
             this.mostrarModalAgregarProducto = false;
 
@@ -596,8 +553,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
             });
           },
           error: (error) => {
-            console.error('Error al crear producto:', error);
-
             let mensajeError = 'Error al crear el producto';
 
             if (error.error instanceof Object) {
@@ -618,8 +573,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
         });
       })
       .catch((error) => {
-        console.error('Error al convertir imagen:', error);
-
         this.messageService.add({
           severity: 'error',
           summary: 'Error de Imagen',
@@ -662,11 +615,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     this.imagenPreview = null;
     this.mensajeError = '';
     this.mensajeExito = '';
-
-    console.log(
-      'Formulario reseteado. CategoriaId:',
-      this.nuevoProducto.categoriaId
-    );
   }
 
   abrirModalAgregarProducto() {
@@ -705,30 +653,14 @@ export class ProductosComponent implements OnInit, OnDestroy {
         mensaje: 'Por favor ingrese un stock mínimo válido (mayor o igual a 0)',
       };
     }
-
-    console.log(
-      'Validando categoría en formulario:',
-      this.nuevoProducto.categoriaId,
-      'tipo:',
-      typeof this.nuevoProducto.categoriaId
-    );
-
     if (
       this.nuevoProducto.categoriaId === null ||
       this.nuevoProducto.categoriaId === undefined
     ) {
-      console.error(
-        'Error: categoriaId es null o undefined:',
-        this.nuevoProducto.categoriaId
-      );
       return { valido: false, mensaje: 'Por favor seleccione una categoría' };
     }
 
     if (typeof this.nuevoProducto.categoriaId !== 'number') {
-      console.error(
-        'Error: categoriaId no es un número:',
-        this.nuevoProducto.categoriaId
-      );
       return {
         valido: false,
         mensaje: 'ID de categoría inválido (no es un número)',

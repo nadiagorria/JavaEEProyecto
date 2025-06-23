@@ -162,7 +162,6 @@ export class PerfilComponent implements OnInit {
         });
         this.cargarUsuarios();      },
       error: (error: any) => {
-        console.error('Error al otorgar permisos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error al Otorgar Permisos',
@@ -184,7 +183,6 @@ export class PerfilComponent implements OnInit {
         });
         this.cargarUsuarios();      },
       error: (error: any) => {
-        console.error('Error al revocar permisos:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error al Revocar Permisos',
@@ -213,7 +211,6 @@ export class PerfilComponent implements OnInit {
             });
             this.cargarUsuarios();          },
           error: (error: any) => {
-            console.error('Error al eliminar usuario:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error al Eliminar Usuario',
@@ -242,7 +239,6 @@ export class PerfilComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        console.error('Error al cargar usuarios:', error);
       },
     });
   }
@@ -275,7 +271,6 @@ export class PerfilComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error al cargar datos del usuario:', error);
           alert('Error al cargar los datos del perfil');
         },
       });
@@ -459,8 +454,6 @@ export class PerfilComponent implements OnInit {
         },
         error: (error) => {
           this.loading = false;
-          console.error('Error al actualizar perfil:', error);
-
           let errorMessage = 'Error al actualizar el perfil';
           let severity = 'error';
           let summary = 'Error de Actualización';
@@ -523,7 +516,6 @@ export class PerfilComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.error('Error al eliminar venta:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
@@ -556,7 +548,6 @@ export class PerfilComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error al recargar ventas:', error);
       },
     });
   }
