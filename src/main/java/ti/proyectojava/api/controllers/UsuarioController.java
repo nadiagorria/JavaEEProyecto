@@ -129,11 +129,11 @@ public class UsuarioController {
         try {
             String email = request.get("email");
             String password = request.get("password");
-            
+
             if (email == null || password == null) {
                 return ResponseEntity.badRequest().body(false);
             }
-            
+
             boolean esIgual = usuarioService.esPasswordIgualAActual(email, password);
             return ResponseEntity.ok(esIgual);
         } catch (Exception e) {

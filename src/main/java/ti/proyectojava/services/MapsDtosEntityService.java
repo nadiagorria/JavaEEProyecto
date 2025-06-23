@@ -100,7 +100,7 @@ public class MapsDtosEntityService {
         categoria.setActivo(catDto.getActivo());
 
         if (catDto.getProductos() != null) {
-            categoria.setProductos(catDto.getProductos().stream().map(prodDto -> mapToEntityProducto(prodDto, processed))                    .filter(Objects::nonNull).toList());
+            categoria.setProductos(catDto.getProductos().stream().map(prodDto -> mapToEntityProducto(prodDto, processed)).filter(Objects::nonNull).toList());
 
             categoria.getProductos().forEach(producto -> producto.setCategoria(categoria));
         }
@@ -498,7 +498,8 @@ public class MapsDtosEntityService {
         if (usuarioDto == null || processed.contains(usuarioDto)) {
             return null;
         }
-        processed.add(usuarioDto);        if (usuarioDto.getNombre() != null) {
+        processed.add(usuarioDto);
+        if (usuarioDto.getNombre() != null) {
             Optional<Usuario> usuarioExistente = usuarioRepository.findByNombreIgnoreCase(usuarioDto.getNombre());
             if (usuarioExistente.isPresent()) {
                 return usuarioExistente.get();
@@ -590,7 +591,7 @@ public class MapsDtosEntityService {
         notificacionUsuarioDto.setActivo(notificacionUsuario.getActivo());
         notificacionUsuarioDto.setLeido(notificacionUsuario.getLeido());
 
-        
+
         if (notificacionUsuario.getNotificaciones() != null) {
             notificacionUsuarioDto.setNotificaciones(notificacionUsuario.getNotificaciones().stream().map(e -> mapToDtoNotificacion(e)).filter(Objects::nonNull).toList());
         }
@@ -639,7 +640,6 @@ public class MapsDtosEntityService {
         }
 
 
-        
         return notificacionUsuario;
     }
 
@@ -893,6 +893,7 @@ public class MapsDtosEntityService {
         }
         return dto;
     }
+
     public ComboDto mapToDtoComboSinProductos(Combo combo) {
         if (combo == null) {
             return null;
@@ -928,6 +929,7 @@ public class MapsDtosEntityService {
         }
         return dto;
     }
+
     public PromocionDto mapToDtoPromocionSinProducto(Promocion promocion) {
         if (promocion == null) {
             return null;

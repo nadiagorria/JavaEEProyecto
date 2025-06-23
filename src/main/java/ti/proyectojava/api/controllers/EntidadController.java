@@ -44,7 +44,7 @@ public class EntidadController {
         if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
             return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (clienteCreditoDto.getNombre().matches(".*\\d.*")) {
             return new ResponseEntity<>("El nombre del cliente no puede contener números", HttpStatus.BAD_REQUEST);
         }
@@ -52,7 +52,7 @@ public class EntidadController {
         if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (!clienteCreditoDto.getTelefono().matches("[0-9+\\s-]+")) {
             return new ResponseEntity<>("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
         }
@@ -84,7 +84,7 @@ public class EntidadController {
         if (clienteDto.getNombre() == null || clienteDto.getNombre().trim().isEmpty()) {
             return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (clienteDto.getNombre().matches(".*\\d.*")) {
             return new ResponseEntity<>("El nombre del cliente no puede contener números", HttpStatus.BAD_REQUEST);
         }
@@ -92,7 +92,7 @@ public class EntidadController {
         if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (!clienteDto.getTelefono().matches("[0-9+\\s-]+")) {
             return new ResponseEntity<>("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
         }
@@ -125,7 +125,7 @@ public class EntidadController {
         if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
             return new ResponseEntity<>("El nombre del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (proveedorDto.getNombre().matches(".*\\d.*")) {
             return new ResponseEntity<>("El nombre del proveedor no puede contener números", HttpStatus.BAD_REQUEST);
         }
@@ -133,7 +133,7 @@ public class EntidadController {
         if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
             return new ResponseEntity<>("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
         }
@@ -147,7 +147,7 @@ public class EntidadController {
         if (!proveedorDto.getCorreo().matches(emailRegex)) {
             return new ResponseEntity<>("El formato del correo electrónico no es válido", HttpStatus.BAD_REQUEST);
         }
-        
+
         proveedorDto.setId(null);
         String response = entidadService.crearProveedor(proveedorDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -156,11 +156,11 @@ public class EntidadController {
     @PutMapping("/editarproveedor")
     @Secured({"ADMIN"})
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
-        
+
         if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
             return new ResponseEntity<>("El nombre del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (proveedorDto.getNombre().matches(".*\\d.*")) {
             return new ResponseEntity<>("El nombre del proveedor no puede contener números", HttpStatus.BAD_REQUEST);
         }
@@ -168,7 +168,7 @@ public class EntidadController {
         if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
             return new ResponseEntity<>("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
         }
@@ -180,7 +180,7 @@ public class EntidadController {
         if (!proveedorDto.getCorreo().matches(emailRegex)) {
             return new ResponseEntity<>("El formato del correo electrónico no es válido", HttpStatus.BAD_REQUEST);
         }
-        
+
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);
     }

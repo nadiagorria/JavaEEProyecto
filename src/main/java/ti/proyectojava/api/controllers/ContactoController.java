@@ -17,14 +17,13 @@ public class ContactoController {
     @PostMapping("/enviar")
     public ResponseEntity<?> enviarMensajeContacto(@RequestBody ContactoDto contactoDto) {
         try {
-            // Enviar email a la dirección de soporte
             emailService.enviarMensajeContacto(
-                "nadia.gorria@estudiantes.utec.edu.uy",
-                contactoDto.getNombre(),
-                contactoDto.getEmail(),
-                contactoDto.getMensaje()
+                    "nadia.gorria@estudiantes.utec.edu.uy",
+                    contactoDto.getNombre(),
+                    contactoDto.getEmail(),
+                    contactoDto.getMensaje()
             );
-            
+
             return new ResponseEntity<>("Mensaje enviado exitosamente", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error al enviar el mensaje: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

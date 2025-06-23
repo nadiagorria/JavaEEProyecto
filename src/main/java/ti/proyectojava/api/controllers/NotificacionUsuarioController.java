@@ -22,11 +22,10 @@ public class NotificacionUsuarioController {
     }
 
 
-
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta Funcion elimina una NotificacionUsuario")
-    public ResponseEntity<String> borrarNotificacionUsuario(@PathVariable Long id){
+    public ResponseEntity<String> borrarNotificacionUsuario(@PathVariable Long id) {
         String lote = notificacionUsuarioService.borrarNotificacionUsuario(id);
 
         if (lote == null) {
@@ -41,10 +40,10 @@ public class NotificacionUsuarioController {
     @GetMapping("/mis-notificaciones")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Obtiene las notificaciones del usuario autenticado")
-    public ResponseEntity<ResponseListadoNotificacionUsuario> getMisNotificaciones(){
+    public ResponseEntity<ResponseListadoNotificacionUsuario> getMisNotificaciones() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        
+
         ResponseListadoNotificacionUsuario response = notificacionUsuarioService.obtenerNotificacionesPorUsuario(userName);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -52,26 +51,26 @@ public class NotificacionUsuarioController {
     @PutMapping("/{id}/marcar-leida")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Marca una notificación como leída")
-    public ResponseEntity<String> marcarComoLeida(@PathVariable Long id){
+    public ResponseEntity<String> marcarComoLeida(@PathVariable Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        
+
         String response = notificacionUsuarioService.marcarComoLeida(id, userName);
-        
+
         if (response.contains("No se encontró")) {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/contar-no-leidas")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Cuenta las notificaciones no leídas del usuario")
-    public ResponseEntity<Integer> contarNoLeidas(){
+    public ResponseEntity<Integer> contarNoLeidas() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        
+
         int count = notificacionUsuarioService.contarNotificacionesNoLeidas(userName);
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
@@ -79,17 +78,18 @@ public class NotificacionUsuarioController {
     @PostMapping("/marcar-todas-leidas")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Marca todas las notificaciones del usuario como leídas")
-    public ResponseEntity<String> marcarTodasComoLeidas(){
+    public ResponseEntity<String> marcarTodasComoLeidas() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        
+
         String response = notificacionUsuarioService.marcarTodasComoLeidas(userName);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PostMapping("/verificar-vencimientos")
     @Secured({"ADMIN"})
     @Operation(description = "Ejecuta manualmente la verificación de lotes próximos a vencer")
-    public ResponseEntity<String> ejecutarVerificacionVencimientos(){
+    public ResponseEntity<String> ejecutarVerificacionVencimientos() {
         try {
             notificacionUsuarioService.chequearNotificaciones();
             return new ResponseEntity<>("Verificación de vencimientos ejecutada correctamente. Se han generado las notificaciones correspondientes.", HttpStatus.OK);
