@@ -183,7 +183,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar las promociones',
@@ -199,7 +199,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los combos',
@@ -215,7 +215,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los descuentos',
@@ -231,7 +231,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los productos',
@@ -280,7 +280,7 @@ this.messageService.add({
     this.ofertaService.crearPromocion(promocion).subscribe({
       next: (response) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Promoción creada correctamente',
@@ -297,7 +297,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -312,7 +312,7 @@ this.messageService.add({
       this.nuevaPromocion.descripcion.trim() === ''
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -325,7 +325,7 @@ this.messageService.add({
       this.productoSeleccionadoPromocion === 0
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar un producto',
@@ -335,7 +335,7 @@ this.messageService.add({
 
     if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento < 2) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail:
@@ -387,7 +387,7 @@ this.messageService.add({
     this.ofertaService.crearCombo(combo).subscribe({
       next: (response) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Combo creado correctamente',
@@ -404,7 +404,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -418,7 +418,7 @@ this.messageService.add({
       this.nuevoCombo.descripcion.trim() === ''
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -431,7 +431,7 @@ this.messageService.add({
       this.productosSeleccionadosCombo.length < 2
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar al menos 2 productos',
@@ -445,7 +445,7 @@ this.messageService.add({
       this.nuevoCombo.descuento >= 100
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'El descuento debe ser mayor a 0% y menor a 100%',
@@ -496,7 +496,7 @@ this.messageService.add({
     this.ofertaService.crearDescuento(descuento).subscribe({
       next: (response) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Descuento creado correctamente',
@@ -513,7 +513,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -528,7 +528,7 @@ this.messageService.add({
       this.nuevoDescuento.descripcion.trim() === ''
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -541,7 +541,7 @@ this.messageService.add({
       this.productoSeleccionadoDescuento === 0
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar un producto',
@@ -555,7 +555,7 @@ this.messageService.add({
       this.nuevoDescuento.descuento >= 100
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'El descuento debe ser mayor a 0% y menor a 100%',
@@ -623,7 +623,7 @@ this.messageService.add({
             const articuloEliminado =
               tipo === 'promocion' ? 'eliminada' : 'eliminado';
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: `${
@@ -646,7 +646,7 @@ this.messageService.add({
           error: (error) => {
             const articuloError = tipo === 'promocion' ? 'la' : 'el';
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: `Error al eliminar ${articuloError} ${tipo}`,

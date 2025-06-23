@@ -35,7 +35,7 @@ import { of } from 'rxjs';
 })
 export class RegistroComponent {
   @ViewChild('confirmPasswordInput') confirmPasswordInput!: ElementRef;
-  
+
   formGroup: FormGroup;
   isLoading = false;
   usernameExists = false;
@@ -78,7 +78,9 @@ export class RegistroComponent {
     } else if (confirmPassword?.hasError('passwordMismatch')) {
       const errors = confirmPassword.errors;
       delete errors?.['passwordMismatch'];
-      confirmPassword.setErrors(Object.keys(errors || {}).length === 0 ? null : errors);
+      confirmPassword.setErrors(
+        Object.keys(errors || {}).length === 0 ? null : errors
+      );
     }
 
     return null;
@@ -93,14 +95,17 @@ export class RegistroComponent {
     const password = this.formGroup.get('password')?.value;
     const confirmPassword = this.formGroup.get('confirmPassword')?.value;
     return password === confirmPassword;
-  }  // Nuevos métodos para manejar el focus
+  } // Nuevos métodos para manejar el focus
   onConfirmPasswordFocus(): void {
     this.confirmPasswordFocused = true;
     setTimeout(() => {
       const passwordInput = document.querySelector('.p-password');
       if (passwordInput) {
         this.renderer.removeClass(passwordInput, 'valid');
-        if (!this.passwordsMatch() && this.formGroup.get('confirmPassword')?.value) {
+        if (
+          !this.passwordsMatch() &&
+          this.formGroup.get('confirmPassword')?.value
+        ) {
           this.renderer.addClass(passwordInput, 'invalid');
         }
       }
@@ -108,7 +113,7 @@ export class RegistroComponent {
   }
   onConfirmPasswordBlur(): void {
     this.confirmPasswordFocused = false;
-    
+
     setTimeout(() => {
       const passwordInput = document.querySelector('.p-password');
       if (passwordInput) {
@@ -125,20 +130,22 @@ export class RegistroComponent {
   isConfirmPasswordInvalid(): boolean {
     const confirmPasswordControl = this.formGroup.get('confirmPassword');
     const isTouched = confirmPasswordControl?.touched || false;
-    const hasValue = confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
+    const hasValue =
+      confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
     const hasAngularErrors = confirmPasswordControl?.invalid || false;
     const passwordsDontMatch = !this.passwordsMatch();
-    
+
     return isTouched && hasValue && (hasAngularErrors || passwordsDontMatch);
   }
 
   isConfirmPasswordValid(): boolean {
     const confirmPasswordControl = this.formGroup.get('confirmPassword');
     const isTouched = confirmPasswordControl?.touched || false;
-    const hasValue = confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
+    const hasValue =
+      confirmPasswordControl?.value && confirmPasswordControl.value.length > 0;
     const hasNoAngularErrors = confirmPasswordControl?.valid || false;
     const passwordsDoMatch = this.passwordsMatch();
-    
+
     return isTouched && hasValue && hasNoAngularErrors && passwordsDoMatch;
   }
 
@@ -234,7 +241,7 @@ export class RegistroComponent {
             this.isLoading = false;
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Registro Exitoso',
               detail: `¡Bienvenido ${username}! Tu cuenta ha sido creada correctamente`,
@@ -288,7 +295,7 @@ this.messageService.add({
             }
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: severidad,
               summary: 'Error de Registro',
               detail: mensaje,
@@ -318,7 +325,7 @@ this.messageService.add({
       }
 
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
         detail: mensajeError,

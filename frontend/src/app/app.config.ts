@@ -17,20 +17,17 @@ import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-              provideZoneChangeDetection({ eventCoalescing: true }),
-              provideHttpClient(
-                    withFetch(),
-                    withInterceptors([
-                      AuthInterceptor, 
-                      ErrorInterceptor, 
-                      NetworkInterceptor])
-              ),
-              provideRouter(routes),
-              provideAnimationsAsync(),
-              providePrimeNG({
-                theme: {
-                  preset: Aura
-                },
-              })
-            ]
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([AuthInterceptor, ErrorInterceptor, NetworkInterceptor])
+    ),
+    provideRouter(routes),
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      },
+    }),
+  ],
 };

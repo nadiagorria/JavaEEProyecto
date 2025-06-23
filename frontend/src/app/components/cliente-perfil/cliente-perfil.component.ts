@@ -83,7 +83,8 @@ export class ClientePerfilComponent {
   pago: number = 0;
   pagoButton() {
     if (this.pago <= 0) {
-      this.messageService.clear();this.messageService.add({
+      this.messageService.clear();
+      this.messageService.add({
         severity: 'warn',
         summary: 'Monto inválido',
         detail: 'El monto a pagar debe ser mayor a cero.',
@@ -92,7 +93,8 @@ export class ClientePerfilComponent {
     }
 
     if (this.pago > this.cliente.credito.precioTotal) {
-      this.messageService.clear();this.messageService.add({
+      this.messageService.clear();
+      this.messageService.add({
         severity: 'warn',
         summary: 'Monto excesivo',
         detail: 'El monto a pagar no puede ser mayor a la deuda actual.',
@@ -106,7 +108,7 @@ export class ClientePerfilComponent {
           this.entidadService.getCliente(this.cliente.id).subscribe((data) => {
             this.cliente = data;
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Pago exitoso',
               detail: `Pago de $${this.pago} realizado correctamente.`,
@@ -115,7 +117,7 @@ this.messageService.add({
         },
         (error) => {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error en el pago',
             detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.',
@@ -127,10 +129,11 @@ this.messageService.add({
   }
 
   nombreEdicion: string = '';
-  telefonoEdicion: string = '';  editarCliente() {
+  telefonoEdicion: string = '';
+  editarCliente() {
     if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del cliente es obligatorio',
@@ -139,7 +142,7 @@ this.messageService.add({
     }
     if (/\d/.test(this.nombreEdicion)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del cliente no puede contener números',
@@ -149,7 +152,7 @@ this.messageService.add({
 
     if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del cliente es obligatorio',
@@ -158,10 +161,11 @@ this.messageService.add({
     }
     if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
-        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
       });
       return;
     }
@@ -172,7 +176,7 @@ this.messageService.add({
     this.entidadService.editarCliente(this.cliente).subscribe({
       next: (data: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Cliente actualizado',
           detail: 'Los datos del cliente se han actualizado correctamente.',
@@ -181,7 +185,7 @@ this.messageService.add({
       },
       error: (err: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
           detail: 'Ocurrió un error al actualizar los datos del cliente.',
@@ -207,7 +211,7 @@ this.messageService.add({
   eliminarVenta(ventaId: number) {
     if (!this.isAdmin()) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
         detail: 'No tienes permisos para eliminar ventas.',
@@ -228,7 +232,7 @@ this.messageService.add({
         this.ventaService.eliminarVenta(ventaId).subscribe({
           next: (response) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Venta eliminada',
               detail: 'La venta ha sido eliminada correctamente.',
@@ -242,7 +246,7 @@ this.messageService.add({
           },
           error: (error) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
               detail:

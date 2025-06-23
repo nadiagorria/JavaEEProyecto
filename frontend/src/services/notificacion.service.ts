@@ -76,7 +76,7 @@ export class NotificacionService {
       { responseType: 'text' }
     );
   }
-  
+
   private actualizarNotificaciones(): void {
     if (!this.securityService.isLoggedIn()) {
       return;
@@ -86,16 +86,14 @@ export class NotificacionService {
       next: (response) => {
         this.notificacionesSubject.next(response.notificacionUsuarios || []);
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
 
     this.contarNoLeidas().subscribe({
       next: (count) => {
         this.contadorSubject.next(count);
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 
@@ -122,8 +120,7 @@ export class NotificacionService {
       next: () => {
         this.actualizarNotificaciones();
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 
@@ -136,8 +133,7 @@ export class NotificacionService {
       next: () => {
         this.actualizarNotificaciones();
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 
@@ -150,8 +146,7 @@ export class NotificacionService {
       next: () => {
         this.actualizarNotificaciones();
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 }

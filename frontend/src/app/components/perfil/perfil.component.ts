@@ -80,7 +80,8 @@ export class PerfilComponent implements OnInit {
     '#3b82f6', // Blue
   ];
   ventas: VentaPerfil[] = [];
-  totalVentas = 0;  rangoInicio = 1;
+  totalVentas = 0;
+  rangoInicio = 1;
   rangoFin = 10;
 
   usuarios: UsuarioTabla[] = [];
@@ -150,21 +151,23 @@ export class PerfilComponent implements OnInit {
   puedeBorrarUsuario(usuario: UsuarioTabla): boolean {
     return (
       this.isExclusiveAdmin() && usuario.nombre !== 'admin' && usuario.activo
-    );  }
+    );
+  }
   otorgarPermisos(nombreUsuario: string): void {
     this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Permisos Otorgados',
           detail: 'Permisos de administrador otorgados exitosamente',
           life: 4000,
         });
-        this.cargarUsuarios();      },
+        this.cargarUsuarios();
+      },
       error: (error: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error al Otorgar Permisos',
           detail: error.error || 'Error al otorgar permisos de administrador',
@@ -178,16 +181,17 @@ this.messageService.add({
     this.usuarioService.revocarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Permisos Revocados',
           detail: 'Permisos de administrador revocados exitosamente',
           life: 4000,
         });
-        this.cargarUsuarios();      },
+        this.cargarUsuarios();
+      },
       error: (error: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error al Revocar Permisos',
           detail: error.error || 'Error al revocar permisos de administrador',
@@ -208,16 +212,17 @@ this.messageService.add({
         this.usuarioService.eliminarUsuario(nombreUsuario).subscribe({
           next: (response: any) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Usuario Eliminado',
               detail: 'Usuario eliminado (desactivado) exitosamente',
               life: 4000,
             });
-            this.cargarUsuarios();          },
+            this.cargarUsuarios();
+          },
           error: (error: any) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error al Eliminar Usuario',
               detail: error.error || 'Error al eliminar el usuario',
@@ -244,8 +249,7 @@ this.messageService.add({
           this.totalUsuarios = this.usuarios.length;
         }
       },
-      error: (error: any) => {
-      },
+      error: (error: any) => {},
     });
   }
 
@@ -353,7 +357,7 @@ this.messageService.add({
       this.editForm.newPassword !== this.editForm.confirmPassword
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error de Validación',
         detail: 'Las contraseñas no coinciden',
@@ -367,7 +371,7 @@ this.messageService.add({
       this.editForm.newPassword === this.editForm.currentPassword
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Contraseña Duplicada',
         detail: 'La nueva contraseña debe ser diferente a la actual',
@@ -378,7 +382,7 @@ this.messageService.add({
 
     if (!this.editForm.currentPassword) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo Requerido',
         detail: 'Debe ingresar su contraseña actual',
@@ -400,10 +404,11 @@ this.messageService.add({
           }
           if (responseData.existe === true) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Email ya en uso',
-              detail: 'El email ingresado ya está siendo utilizado por otro usuario',
+              detail:
+                'El email ingresado ya está siendo utilizado por otro usuario',
               life: 5000,
             });
           } else {
@@ -413,13 +418,13 @@ this.messageService.add({
         error: (error) => {
           this.loading = false;
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error de verificación',
             detail: 'Error al verificar el email',
             life: 4000,
           });
-        }
+        },
       });
     } else {
       this.procederConActualizacion();
@@ -444,7 +449,7 @@ this.messageService.add({
             this.loading = false;
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Perfil Actualizado',
               detail: 'Los cambios se han guardado correctamente',
@@ -457,7 +462,7 @@ this.messageService.add({
           } else {
             this.loading = false;
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error del Servidor',
               detail: 'Respuesta inesperada del servidor',
@@ -477,7 +482,9 @@ this.messageService.add({
               errorMessage =
                 'La contraseña actual que ingresaste no es correcta';
               severity = 'warn';
-            } else if (error.error.includes('El email ya está siendo utilizado')) {
+            } else if (
+              error.error.includes('El email ya está siendo utilizado')
+            ) {
               summary = 'Email ya en uso';
               errorMessage =
                 'El email ingresado ya está siendo utilizado por otro usuario';
@@ -489,7 +496,7 @@ this.messageService.add({
             errorMessage = error.message;
           }
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: severity,
             summary: summary,
             detail: errorMessage,
@@ -519,7 +526,7 @@ this.messageService.add({
         this.ventaService.eliminarVenta(id).subscribe({
           next: (response) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
@@ -532,7 +539,7 @@ this.messageService.add({
           },
           error: (error) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Error al eliminar la venta',
@@ -563,8 +570,7 @@ this.messageService.add({
           this.totalVentas = this.ventas.length;
         }
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 

@@ -80,8 +80,7 @@ export class StatsComponent implements OnInit {
       (data) => {
         this.productosMasPopulares = data.productos || [];
       },
-      (error) => {
-      }
+      (error) => {}
     );
 
     this.categoriaservice.listarTopCategorias(this.n).subscribe(
@@ -125,8 +124,7 @@ export class StatsComponent implements OnInit {
               año: fechaParsed.getFullYear(),
               mes: fechaParsed.getMonth() + 1,
             });
-          } catch (error) {
-          }
+          } catch (error) {}
         }
 
         this.aplicarFiltros();
@@ -211,8 +209,7 @@ export class StatsComponent implements OnInit {
       try {
         const fecha = new Date(venta.fechaVenta);
         anosUnicos.add(fecha.getFullYear());
-      } catch (error) {
-      }
+      } catch (error) {}
     });
 
     const anosOrdenados = Array.from(anosUnicos).sort((a, b) => b - a);

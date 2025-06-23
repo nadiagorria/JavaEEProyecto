@@ -6,18 +6,14 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
-import { CreditoDto } from 'src/models/credito.dto';
-import { CreditoService } from 'src/services/credito.service';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProveedorDto } from 'src/models/proveedor.dto';
 import { SecurityService } from 'src/services/security.service';
@@ -48,9 +44,7 @@ export class ProveedoresComponent {
   proveedoresFiltrados: ProveedorDto[] = [];
   totalRecords: number = 0;
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
-    private creditoService: CreditoService,
     private entidadService: EntidadService,
     private securityService: SecurityService,
     private messageService: MessageService,
@@ -120,10 +114,11 @@ export class ProveedoresComponent {
   private validarEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
-  }  saveProveedor() {
+  }
+  saveProveedor() {
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del proveedor es obligatorio',
@@ -132,7 +127,7 @@ this.messageService.add({
     }
     if (/\d/.test(this.nombre)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del proveedor no puede contener números',
@@ -142,7 +137,7 @@ this.messageService.add({
 
     if (!this.telefono || this.telefono.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del proveedor es obligatorio',
@@ -151,17 +146,18 @@ this.messageService.add({
     }
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
-        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
       });
       return;
     }
 
     if (!this.correo || this.correo.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El correo del proveedor es obligatorio',
@@ -170,7 +166,7 @@ this.messageService.add({
     }
     if (!this.validarEmail(this.correo)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
         detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
@@ -195,7 +191,7 @@ this.messageService.add({
         this.correo = '';
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Proveedor creado exitosamente',
@@ -212,7 +208,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -256,7 +252,7 @@ this.messageService.add({
             this.totalRecords = this.proveedoresFiltrados.length;
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Proveedor eliminado correctamente',
@@ -271,7 +267,7 @@ this.messageService.add({
             }
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,

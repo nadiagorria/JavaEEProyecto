@@ -88,11 +88,12 @@ export class ClientesCreditoComponent {
 
         this.creditosFiltrados = [...this.creditos];
         this.totalRecords = this.creditos.length;
-        console.log('Créditos cargados:', this.creditos);      },
+        console.log('Créditos cargados:', this.creditos);
+      },
       error: (err: any) => {
         if (err.status === 403) {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'warn',
             summary: 'Sesión expirada',
             detail:
@@ -103,7 +104,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al listar créditos: ' + (err.message || err.status),
@@ -138,7 +139,7 @@ this.messageService.add({
   saveCliente() {
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del cliente es obligatorio',
@@ -147,7 +148,7 @@ this.messageService.add({
     }
     if (/\d/.test(this.nombre)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del cliente no puede contener números',
@@ -156,7 +157,7 @@ this.messageService.add({
     }
     if (!this.telefono || this.telefono.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del cliente es obligatorio',
@@ -165,16 +166,17 @@ this.messageService.add({
     }
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
-        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
       });
       return;
     }
     if (this.minimo === null || this.minimo === undefined || this.minimo < 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El crédito mínimo es obligatorio y debe ser mayor o igual a 0',
@@ -183,7 +185,7 @@ this.messageService.add({
     }
     if (this.maximo === null || this.maximo === undefined || this.maximo <= 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El crédito máximo es obligatorio y debe ser mayor a 0',
@@ -192,7 +194,7 @@ this.messageService.add({
     }
     if (this.maximo <= this.minimo) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Validación de créditos',
         detail: 'El crédito máximo debe ser mayor que el crédito mínimo',
@@ -218,7 +220,7 @@ this.messageService.add({
         this.maximo = 0;
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Cliente a crédito creado exitosamente',
@@ -235,7 +237,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -260,7 +262,8 @@ this.messageService.add({
 
   mostrarDetalles(id: number) {
     this.router.navigate(['/cliente', id]);
-  }  eliminarCliente(id: number) {
+  }
+  eliminarCliente(id: number) {
     this.confirmationService.confirm({
       message: '¿Está seguro que desea eliminar este cliente?',
       header: 'Confirmar eliminación',
@@ -278,7 +281,7 @@ this.messageService.add({
 
             this.cargarCreditos();
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Cliente eliminado exitosamente',
@@ -292,14 +295,14 @@ this.messageService.add({
               mensajeError += ': ' + err.message;
             }
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,
             });
           },
         });
-      }
+      },
     });
   }
 

@@ -9,7 +9,6 @@
 
     <!-- Contact Form -->
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="contact-form">
-      
       <!-- Nombre -->
       <div class="form-field">
         <p-floatlabel>
@@ -24,10 +23,12 @@
             Nombre completo
           </label>
         </p-floatlabel>
-        
+
         <div
           class="field-error"
-          *ngIf="formGroup.get('nombre')?.invalid && formGroup.get('nombre')?.touched"
+          *ngIf="
+            formGroup.get('nombre')?.invalid && formGroup.get('nombre')?.touched
+          "
         >
           <small *ngIf="formGroup.get('nombre')?.errors?.['required']">
             El nombre es requerido
@@ -53,10 +54,12 @@
             Correo electrónico
           </label>
         </p-floatlabel>
-        
+
         <div
           class="field-error"
-          *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched"
+          *ngIf="
+            formGroup.get('email')?.invalid && formGroup.get('email')?.touched
+          "
         >
           <small *ngIf="formGroup.get('email')?.errors?.['required']">
             El email es requerido
@@ -82,10 +85,13 @@
             Tu mensaje
           </label>
         </p-floatlabel>
-        
+
         <div
           class="field-error"
-          *ngIf="formGroup.get('mensaje')?.invalid && formGroup.get('mensaje')?.touched"
+          *ngIf="
+            formGroup.get('mensaje')?.invalid &&
+            formGroup.get('mensaje')?.touched
+          "
         >
           <small *ngIf="formGroup.get('mensaje')?.errors?.['required']">
             El mensaje es requerido
@@ -106,7 +112,7 @@
           [disabled]="formGroup.invalid"
           class="primary-button"
         ></p-button>
-        
+
         <p-button
           type="button"
           label="Volver al Inicio"
@@ -126,6 +132,6 @@
       </div>
     </div>
   </div>
-  
+
   <p-toast></p-toast>
 </div>

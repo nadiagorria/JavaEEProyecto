@@ -57,7 +57,8 @@ export class LoginComponent {
         next: (response) => {
           this.isLoading = false;
 
-          localStorage.setItem('token', response.token);          const userStr = JSON.stringify({
+          localStorage.setItem('token', response.token);
+          const userStr = JSON.stringify({
             nombreUsuario: response.nombreUsuario,
             roles: response.roles,
             email: response.email, // Incluir el email en los datos guardados
@@ -74,7 +75,8 @@ export class LoginComponent {
             email: response.email, // Incluir el email en el objeto user del servicio
           };
 
-          this.messageService.clear();this.messageService.add({
+          this.messageService.clear();
+          this.messageService.add({
             severity: 'success',
             summary: 'Bienvenido',
             detail: `¡Hola ${response.nombreUsuario}! Has iniciado sesión correctamente`,
@@ -119,7 +121,7 @@ export class LoginComponent {
           }
 
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: severidad,
             summary: 'Error de Autenticación',
             detail: mensaje,
@@ -133,7 +135,7 @@ this.messageService.add({
       this.formGroup.markAllAsTouched();
 
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
         detail: 'Por favor completa todos los campos requeridos',

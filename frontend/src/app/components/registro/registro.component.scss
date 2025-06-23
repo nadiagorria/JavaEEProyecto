@@ -1,4 +1,4 @@
-::ng-deep input:not(:focus), 
+::ng-deep input:not(:focus),
 ::ng-deep .p-password input:not(:focus) {
   border-color: #dee2e6 !important;
   box-shadow: none !important;
@@ -185,7 +185,8 @@ form {
       &:hover {
         color: #495057;
       }
-    }  }
+    }
+  }
   &.ng-invalid.ng-touched input,
   &.ng-invalid.ng-touched ::ng-deep .p-password input {
     border-color: #dc3545;
@@ -673,7 +674,8 @@ button[pButton] {
 }
 
 ::ng-deep .p-password.valid:not(.invalid) .p-password-input:focus {
-  border-color: #28a745 !important;  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15) !important;
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15) !important;
 }
 ::ng-deep .p-password.invalid .p-password-input,
 ::ng-deep input.invalid {

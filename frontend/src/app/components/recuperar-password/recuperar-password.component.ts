@@ -72,7 +72,7 @@ export class RecuperarPasswordComponent implements OnInit {
   solicitarCodigo() {
     if (!this.form.email || !this.isValidEmail(this.form.email)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Email Inválido',
         detail: 'Por favor ingrese un email válido',
@@ -89,7 +89,7 @@ this.messageService.add({
           this.loading = false;
           this.step = 2;
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'success',
             summary: 'Código Enviado',
             detail: response,
@@ -99,7 +99,7 @@ this.messageService.add({
         error: (error: any) => {
           this.loading = false;
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: error.error || 'Error al solicitar código de recuperación',
@@ -112,7 +112,7 @@ this.messageService.add({
   restablecerPassword() {
     if (!this.form.codigo || this.form.codigo.length !== 6) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Código Inválido',
         detail: 'El código debe tener 6 dígitos',
@@ -123,7 +123,7 @@ this.messageService.add({
 
     if (!this.form.nuevaPassword || this.form.nuevaPassword.length < 6) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Contraseña Inválida',
         detail: 'La contraseña debe tener al menos 6 caracteres',
@@ -134,7 +134,7 @@ this.messageService.add({
 
     if (this.form.nuevaPassword !== this.form.confirmarPassword) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Contraseñas no Coinciden',
         detail: 'Las contraseñas ingresadas no coinciden',
@@ -154,7 +154,7 @@ this.messageService.add({
         next: (response: string) => {
           this.loading = false;
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'success',
             summary: 'Contraseña Restablecida',
             detail: response,
@@ -175,7 +175,7 @@ this.messageService.add({
             )
           ) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'warn',
               summary: 'Contraseña Inválida',
               detail: 'La nueva contraseña no puede ser igual a la actual.',
@@ -183,7 +183,7 @@ this.messageService.add({
             });
           } else {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: errorMessage,
@@ -215,7 +215,7 @@ this.messageService.add({
           this.validandoPassword = false;
           if (esIgual) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'warn',
               summary: 'Contraseña Inválida',
               detail: 'La nueva contraseña no puede ser igual a la actual.',

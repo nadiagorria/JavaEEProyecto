@@ -48,9 +48,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
   ) {}
 
   productos: ProductoDto[] = [];
-  productosFiltrados: ProductoDto[] = [];  categorias: any[] = [];
-  categoriasConTodas: any[] = [];  proveedores: ProveedorDto[] = [];
-  terminoBusqueda: string = '';  categoriaFiltro: number | null = null;
+  productosFiltrados: ProductoDto[] = [];
+  categorias: any[] = [];
+  categoriasConTodas: any[] = [];
+  proveedores: ProveedorDto[] = [];
+  terminoBusqueda: string = '';
+  categoriaFiltro: number | null = null;
   ngOnInit() {
     this.cargarProductos();
     this.cargarCategorias();
@@ -86,11 +89,9 @@ export class ProductosComponent implements OnInit, OnDestroy {
           { id: '', nombre: 'Todas las categorías' },
           ...this.categorias,
         ];
-        this.categorias.forEach((cat, index) => {
-        });
+        this.categorias.forEach((cat, index) => {});
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
   cargarProveedores() {
@@ -98,8 +99,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
       next: (response: { proveedores: ProveedorDto[] }) => {
         this.proveedores = response.proveedores;
       },
-      error: (error: any) => {
-      },
+      error: (error: any) => {},
     });
   }
 
@@ -112,8 +112,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
         this.productosFiltrados = [...this.productos];
         this.cargarImagenesProductos();
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 
@@ -269,7 +268,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
     if (categoriaExistente) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Ya existe una categoría con este nombre',
@@ -291,7 +290,7 @@ this.messageService.add({
     this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
       next: (response) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Categoría creada correctamente',
@@ -308,7 +307,7 @@ this.messageService.add({
 
         if (error.status === 201) {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Categoría creada correctamente',
@@ -333,7 +332,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -349,7 +348,7 @@ this.messageService.add({
     );
     if (!categoriaAEliminar || !categoriaAEliminar.id) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo encontrar la categoría seleccionada',
@@ -366,7 +365,7 @@ this.messageService.add({
             .subscribe({
               next: (response) => {
                 this.messageService.clear();
-this.messageService.add({
+                this.messageService.add({
                   severity: 'success',
                   summary: 'Éxito',
                   detail: response, // Ahora response es un string directo
@@ -381,7 +380,7 @@ this.messageService.add({
               },
               error: (error) => {
                 this.messageService.clear();
-this.messageService.add({
+                this.messageService.add({
                   severity: 'error',
                   summary: 'Error',
                   detail:
@@ -393,7 +392,7 @@ this.messageService.add({
         },
         error: (error) => {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'Error al desvincular los productos de la categoría',
@@ -428,7 +427,7 @@ this.messageService.add({
     const validacion = this.validarFormularioProducto();
     if (!validacion.valido) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formulario Incompleto',
         detail: validacion.mensaje,
@@ -441,7 +440,7 @@ this.messageService.add({
 
     if (!token) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error de Autenticación',
         detail:
@@ -453,7 +452,7 @@ this.messageService.add({
 
     if (!this.securityService.isLoggedIn()) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error de Autenticación',
         detail:
@@ -468,7 +467,7 @@ this.messageService.add({
 
     if (!isAdmin) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error de Permisos',
         detail:
@@ -558,7 +557,7 @@ this.messageService.add({
             this.limpiarCacheImagenes();
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Producto Creado',
               detail: 'El producto se ha creado exitosamente',
@@ -577,7 +576,7 @@ this.messageService.add({
             }
 
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,
@@ -588,7 +587,7 @@ this.messageService.add({
       })
       .catch((error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error de Imagen',
           detail: 'Error al procesar la imagen',

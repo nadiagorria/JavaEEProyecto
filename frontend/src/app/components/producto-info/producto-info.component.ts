@@ -82,7 +82,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   error: string = '';
   loading: boolean = true;
   imagenUrl: string = '';
-  cacheImagenes = new Map<number, string>();  mostrarModalEditar: boolean = false;
+  cacheImagenes = new Map<number, string>();
+  mostrarModalEditar: boolean = false;
   editandoProducto: EditandoProducto = {
     id: null,
     nombre: '',
@@ -211,7 +212,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     if (lotesConPrecioMayor.length > 0) {
       lotesConPrecioMayor.forEach((lote) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
           detail: `Lote ${lote.numeLote}: El precio de venta actual (${
@@ -235,7 +236,7 @@ this.messageService.add({
     if (lotesConPrecioMayor.length > 0) {
       lotesConPrecioMayor.forEach((lote) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
           detail: `Lote ${lote.numeLote}: El precio de venta actual (${
@@ -271,8 +272,7 @@ this.messageService.add({
       next: (response) => {
         this.categorias = response.categorias;
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
 
@@ -281,8 +281,7 @@ this.messageService.add({
       next: (response) => {
         this.proveedores = response.proveedores;
       },
-      error: (error) => {
-      },
+      error: (error) => {},
     });
   }
   abrirModalEditar(): void {
@@ -309,7 +308,7 @@ this.messageService.add({
   editarProducto(): void {
     if (!this.editandoProducto.id || !this.validarFormularioEdicion()) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail:
@@ -355,7 +354,7 @@ this.messageService.add({
                 }
 
                 this.messageService.clear();
-this.messageService.add({
+                this.messageService.add({
                   severity: 'success',
                   summary: 'Éxito',
                   detail: 'Producto e imagen actualizados correctamente',
@@ -364,7 +363,7 @@ this.messageService.add({
               },
               error: (error) => {
                 this.messageService.clear();
-this.messageService.add({
+                this.messageService.add({
                   severity: 'warn',
                   summary: 'Advertencia',
                   detail:
@@ -375,7 +374,7 @@ this.messageService.add({
             });
         } else {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Producto actualizado correctamente',
@@ -385,7 +384,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo editar el producto',
@@ -408,8 +407,7 @@ this.messageService.add({
           this.producto = response;
           this.imagenUrl = imagenActual;
         },
-        error: (error) => {
-        },
+        error: (error) => {},
       });
     }
     this.imagenSeleccionada = null;
@@ -447,7 +445,7 @@ this.messageService.add({
     this.productoService.eliminarProducto(this.producto.id).subscribe({
       next: () => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Producto eliminado correctamente',
@@ -458,7 +456,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo eliminar el producto',
@@ -510,7 +508,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -543,7 +541,7 @@ this.messageService.add({
         const idLote = idMatch ? idMatch[1] : 'desconocido';
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: `Lote #${idLote} agregado correctamente`,
@@ -571,7 +569,7 @@ this.messageService.add({
         }
 
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -591,7 +589,7 @@ this.messageService.add({
   private validarFormularioLote(): boolean {
     if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El número de lote es obligatorio',
@@ -601,7 +599,7 @@ this.messageService.add({
 
     if (this.nuevoLote.stock === undefined || this.nuevoLote.stock <= 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El stock debe ser mayor que cero',
@@ -614,7 +612,7 @@ this.messageService.add({
       this.nuevoLote.precioCompra < 0
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El precio de compra debe ser un valor válido',
@@ -628,7 +626,7 @@ this.messageService.add({
       this.nuevoLote.precioCompra > this.producto.precioVenta
     ) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia de Precios',
         detail: `El precio de compra del nuevo lote (${this.nuevoLote.precioCompra}) es mayor al precio de venta actual (${this.producto.precioVenta}). Esto resultará en pérdidas.`,
@@ -692,7 +690,7 @@ this.messageService.add({
   modificarStockTotal(): void {
     if (!this.producto || !this.producto.id) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'No se puede modificar el stock del producto',
@@ -702,7 +700,7 @@ this.messageService.add({
 
     if (this.nuevoStockTotal < 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'El stock total no puede ser negativo',
@@ -715,7 +713,7 @@ this.messageService.add({
       .subscribe({
         next: (response) => {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Stock total modificado correctamente',
@@ -729,7 +727,7 @@ this.messageService.add({
         },
         error: (error) => {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: error.error || 'Error al modificar el stock total',
@@ -768,7 +766,7 @@ this.messageService.add({
   activarEscanerCodigoBarras(): void {
     this.barcodeScannerService.activateScanner();
     this.messageService.clear();
-this.messageService.add({
+    this.messageService.add({
       severity: 'info',
       summary: 'Escáner Activado',
       detail: 'Escanee un código de barras para capturarlo',

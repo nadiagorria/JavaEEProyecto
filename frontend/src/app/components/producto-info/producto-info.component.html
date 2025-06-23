@@ -303,7 +303,7 @@
 
         <div class="form-group">
           <label for="imagen">Imagen del producto (opcional)</label>
-          
+
           <div class="file-upload-container">
             <input
               type="file"
@@ -311,7 +311,7 @@
               accept="image/*"
               (change)="onImagenSeleccionada($event)"
               name="imagen"
-              style="display: none;"
+              style="display: none"
             />
             <button
               type="button"
@@ -325,12 +325,13 @@
               {{ imagenSeleccionada.name }}
             </span>
           </div>
-          
+
           <small class="help-text"
             >Este campo es opcional. Solo se actualizará la imagen si selecciona
             una nueva.</small
           >
-        </div>        <!-- Preview de Imagen -->
+        </div>
+        <!-- Preview de Imagen -->
         <div
           class="image-preview mb-3"
           *ngIf="imagenPreviewEdicion || imagenUrl"
@@ -383,9 +384,7 @@
         <div class="section-title">Información del Lote</div>
 
         <div class="form-group">
-          <label for="numeLote"
-            >Número de Lote</label
-          >
+          <label for="numeLote">Número de Lote</label>
           <input
             id="numeLote"
             type="text"
@@ -416,9 +415,7 @@
 
           <div class="form-col">
             <div class="form-group">
-              <label for="precioCompra"
-                >Precio de Compra</label
-              >
+              <label for="precioCompra">Precio de Compra</label>
               <input
                 id="precioCompra"
                 type="number"
@@ -566,7 +563,8 @@
       class="p-button-danger"
       (click)="modificarStockTotal()"
       [disabled]="nuevoStockTotal < 0 || nuevoStockTotal === stockOriginal"
-    ></button>  </ng-template>
+    ></button>
+  </ng-template>
 </p-dialog>
 
 <!-- Modal de Confirmación para Eliminar Lote -->
@@ -596,10 +594,14 @@
       <div class="alert-content">
         <h4>¡Importante!</h4>
         <p>
-          <strong>Al eliminar este lote, su stock no será descontado automáticamente del stock total del producto.</strong>
+          <strong
+            >Al eliminar este lote, su stock no será descontado automáticamente
+            del stock total del producto.</strong
+          >
         </p>
         <p>
-          El administrador superior debe realizar el ajuste manualmente para mantener la coherencia del inventario.
+          El administrador superior debe realizar el ajuste manualmente para
+          mantener la coherencia del inventario.
         </p>
       </div>
     </div>

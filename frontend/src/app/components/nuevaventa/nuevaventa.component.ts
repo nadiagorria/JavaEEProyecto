@@ -234,7 +234,7 @@ export class NuevaventaComponent
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los créditos',
@@ -250,7 +250,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los productos',
@@ -494,7 +494,7 @@ this.messageService.add({
     if (!this.tieneStock(producto)) {
       event.preventDefault();
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Sin stock',
         detail: `El producto ${producto.nombre} no tiene stock disponible`,
@@ -514,7 +514,7 @@ this.messageService.add({
       const cantidadTotal = itemExistente.cantidad + 1;
       if (cantidadTotal > producto.stockTotal) {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'warn',
           summary: 'Stock insuficiente',
           detail: `Solo quedan ${producto.stockTotal} unidades de ${producto.nombre} en stock`,
@@ -525,7 +525,7 @@ this.messageService.add({
     } else {
       if (producto.stockTotal < 1) {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'warn',
           summary: 'Sin stock',
           detail: `No hay stock disponible de ${producto.nombre}`,
@@ -595,7 +595,7 @@ this.messageService.add({
   finalizarVenta() {
     if (this.cantidades.length === 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'No hay productos en la venta',
@@ -611,7 +611,7 @@ this.messageService.add({
 
     if (!this.formaPagoSeleccionada) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Debe seleccionar una forma de pago',
@@ -621,7 +621,7 @@ this.messageService.add({
 
     if (this.cantidades.length === 0) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'No hay productos en la venta',
@@ -631,7 +631,7 @@ this.messageService.add({
     if (this.formaPagoSeleccionada === 'FIADO') {
       if (!this.creditoSeleccionado) {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Debe seleccionar un cliente para el pago fiado',
@@ -641,7 +641,7 @@ this.messageService.add({
 
       if (!this.superaCreditoMinimo(this.creditoSeleccionado)) {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Monto insuficiente',
           detail: `El total de la venta ($${this.calcularTotal().toFixed(
@@ -659,7 +659,7 @@ this.messageService.add({
         );
         const totalVenta = this.calcularTotal();
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Límite de crédito excedido',
           detail: `El cliente ${
@@ -704,14 +704,14 @@ this.messageService.add({
           const errorCode = response.error;
           if (errorCode === -1) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Debe seleccionar un cliente válido para el pago fiado',
             });
           } else if (errorCode === -2) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Límite de crédito excedido',
               detail:
@@ -719,17 +719,18 @@ this.messageService.add({
             });
           } else if (errorCode === -3) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Monto insuficiente',
               detail:
                 'El total de la venta no supera el mínimo requerido para compras fiadas',
             });
           }
-          this.procesandoVenta = false;          return;
+          this.procesandoVenta = false;
+          return;
         }
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Venta creada correctamente',
@@ -741,7 +742,8 @@ this.messageService.add({
 
         this.displayDialog = false;
         this.limpiarVenta();
-        this.procesandoVenta = false;      },
+        this.procesandoVenta = false;
+      },
       error: (error) => {
         if (
           error.status === 400 &&
@@ -750,14 +752,14 @@ this.messageService.add({
         ) {
           if (error.error.error === -1) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Debe seleccionar un cliente válido para el pago fiado',
             });
           } else if (error.error.error === -2) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Límite de crédito excedido',
               detail:
@@ -765,7 +767,7 @@ this.messageService.add({
             });
           } else if (error.error.error === -3) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Monto insuficiente',
               detail:
@@ -773,7 +775,7 @@ this.messageService.add({
             });
           } else {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Error al crear la venta',
@@ -781,7 +783,7 @@ this.messageService.add({
           }
         } else {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'Error al crear la venta',
@@ -831,7 +833,7 @@ this.messageService.add({
 
     if (this.escanerActivo) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'info',
         summary: 'Escáner Activado',
         detail: 'Modo escáner USB activo. Escanee productos con su lector',
@@ -839,7 +841,7 @@ this.messageService.add({
       });
     } else {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'info',
         summary: '📱 Escáner Desactivado',
         detail: 'Modo escáner desactivado. Use la búsqueda manual',
@@ -856,7 +858,7 @@ this.messageService.add({
 
           if (productosConStock.length === 0) {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'warn',
               summary: '⚠️ Sin Stock',
               detail: `No hay productos disponibles con stock para el código: ${codigoBarras}`,
@@ -873,7 +875,7 @@ this.messageService.add({
           }
         } else {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'warn',
             summary: '❌ Producto No Encontrado',
             detail: `No se encontró producto con código: ${codigoBarras}`,
@@ -883,7 +885,7 @@ this.messageService.add({
       },
       error: (error) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: '❌ Error de Conexión',
           detail: 'Error al buscar productos con el código escaneado',
@@ -899,7 +901,7 @@ this.messageService.add({
 
     if (nuevaCantidad > stockDisponible) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Cantidad Excedida',
         detail: `${item.producto.nombre}: máximo ${stockDisponible} unidades disponibles (Stock: ${stockDisponible})`,
@@ -912,7 +914,7 @@ this.messageService.add({
 
     if (nuevaCantidad < 1) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Cantidad Inválida',
         detail: 'La cantidad mínima es 1 unidad',
@@ -949,7 +951,7 @@ this.messageService.add({
       setTimeout(() => {
         if (item.cantidad === stockDisponible) {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'warn',
             summary: '⚠️ Stock Máximo Alcanzado',
             detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
@@ -968,7 +970,7 @@ this.messageService.add({
     if (event.key === 'ArrowUp' && item.cantidad >= stockDisponible) {
       event.preventDefault();
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Stock Máximo Alcanzado',
         detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
@@ -988,7 +990,7 @@ this.messageService.add({
       if (item.cantidad >= stockDisponible) {
         setTimeout(() => {
           this.messageService.clear();
-this.messageService.add({
+          this.messageService.add({
             severity: 'warn',
             summary: '⚠️ Stock Máximo Alcanzado',
             detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
@@ -1008,7 +1010,7 @@ this.messageService.add({
     this.displaySeleccionProducto = true;
 
     this.messageService.clear();
-this.messageService.add({
+    this.messageService.add({
       severity: 'info',
       summary: '🔍 Múltiples Productos',
       detail: `Se encontraron ${productos.length} productos con el código ${codigoBarras}. Seleccione el correcto.`,
@@ -1022,7 +1024,7 @@ this.messageService.add({
     );
     if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Stock Insuficiente',
         detail: `${producto.nombre} alcanzó el stock máximo disponible (${producto.stockTotal})`,
@@ -1034,7 +1036,7 @@ this.messageService.add({
     this.agregarALista({ value: producto });
 
     this.messageService.clear();
-this.messageService.add({
+    this.messageService.add({
       severity: 'success',
       summary: '✅ Producto Agregado',
       detail: `${producto.nombre} agregado a la venta`,

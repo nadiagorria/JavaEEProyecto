@@ -138,7 +138,7 @@ export class VerventaComponent implements OnInit {
 
   private mostrarErrorYRedirigir(mensaje: string) {
     this.messageService.clear();
-this.messageService.add({
+    this.messageService.add({
       severity: 'error',
       summary: 'Acceso Denegado',
       detail: mensaje,
@@ -289,7 +289,9 @@ this.messageService.add({
       (promo) => itemEnVenta.cantidad >= promo.descuento
     );
 
-    if (combos.length > 0) return 'success';    if (promocionesAplicables.length > 0) return 'info';    if (descuentos.length > 0) return 'warning';
+    if (combos.length > 0) return 'success';
+    if (promocionesAplicables.length > 0) return 'info';
+    if (descuentos.length > 0) return 'warning';
     return 'secondary';
   }
 

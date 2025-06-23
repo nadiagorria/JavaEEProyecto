@@ -48,7 +48,7 @@ export class ProductoService {
       `${this.urlService.baseUrl}${this.endpoint}/${id}`
     );
   }
-  
+
   editarProducto(producto: ProductoDto): Observable<string> {
     return this.http.put(
       `${this.urlService.baseUrl}${this.endpoint}/${producto.id}/editar`,

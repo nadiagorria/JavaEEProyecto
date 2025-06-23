@@ -13,7 +13,8 @@
 }
 
 .texto {
-  padding-left: 0;  font-size: 1.125rem;
+  padding-left: 0;
+  font-size: 1.125rem;
   font-weight: 500;
 }
 
@@ -41,7 +42,8 @@
   font-weight: 500;
   white-space: nowrap;
   z-index: 10;
-  pointer-events: none;}
+  pointer-events: none;
+}
 
 .divModal {
   height: 100%;
@@ -66,7 +68,8 @@ app-notificaciones {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.25rem;}
+  gap: 0.25rem;
+}
 
 .divLista {
   height: 100%;
@@ -124,14 +127,16 @@ hr {
 }
 
 .texto {
-  padding-left: 0;  font-size: 1.125rem;
+  padding-left: 0;
+  font-size: 1.125rem;
   font-weight: 500;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.25rem;}
+  gap: 0.25rem;
+}
 
 ::ng-deep .p-button.p-button-text {
   &:hover {

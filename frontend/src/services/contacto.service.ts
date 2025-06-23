@@ -15,10 +15,7 @@ export interface ContactoDto {
 export class ContactoService {
   private endpoint: string = '/contacto';
 
-  constructor(
-    private http: HttpClient,
-    private urlService: UrlService
-  ) {}
+  constructor(private http: HttpClient, private urlService: UrlService) {}
 
   enviarMensajeContacto(contacto: ContactoDto): Observable<any> {
     const headers = new HttpHeaders({

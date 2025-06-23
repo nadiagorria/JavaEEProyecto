@@ -95,9 +95,10 @@ export class ProveedorPerfilComponent {
   telefonoEdicion: string = '';
   correoEdicion: string = '';
 
-  editarProveedor() {    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
+  editarProveedor() {
+    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del proveedor es obligatorio',
@@ -106,7 +107,7 @@ this.messageService.add({
     }
     if (/\d/.test(this.nombreEdicion)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del proveedor no puede contener números',
@@ -116,7 +117,7 @@ this.messageService.add({
 
     if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del proveedor es obligatorio',
@@ -125,17 +126,18 @@ this.messageService.add({
     }
     if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
-        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
       });
       return;
     }
 
     if (!this.correoEdicion || this.correoEdicion.trim() === '') {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El correo del proveedor es obligatorio',
@@ -145,7 +147,7 @@ this.messageService.add({
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(this.correoEdicion.trim())) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
         detail: 'Por favor, ingrese un correo electrónico válido.',
@@ -159,7 +161,7 @@ this.messageService.add({
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Proveedor actualizado',
           detail: 'Los datos del proveedor se han actualizado correctamente.',
@@ -167,15 +169,16 @@ this.messageService.add({
         this.visibleEditar = false;
       },
       error: (err: any) => {
-        let mensajeError = 'Ocurrió un error al actualizar los datos del proveedor.';
+        let mensajeError =
+          'Ocurrió un error al actualizar los datos del proveedor.';
         if (err.error && typeof err.error === 'string') {
           mensajeError = err.error;
         } else if (err.message) {
           mensajeError = err.message;
         }
-        
+
         this.messageService.clear();
-this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
           detail: mensajeError,
@@ -201,7 +204,7 @@ this.messageService.add({
   eliminarProducto(productoId: number) {
     if (!this.isAdmin()) {
       this.messageService.clear();
-this.messageService.add({
+      this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
         detail: 'No tienes permisos para eliminar productos.',
@@ -222,7 +225,7 @@ this.messageService.add({
         this.productoService.eliminarProducto(productoId).subscribe({
           next: (response) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'success',
               summary: 'Producto eliminado',
               detail: 'El producto ha sido eliminado correctamente.',
@@ -237,7 +240,7 @@ this.messageService.add({
           },
           error: (error) => {
             this.messageService.clear();
-this.messageService.add({
+            this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
               detail:
