@@ -48,17 +48,12 @@ public class NotificacionUsuarioService {
 
     @Scheduled(cron = "0 30 9 * * ?", zone = "America/Montevideo")
     public void chequearNotificaciones() {
-        System.out.println("Iniciando verificación de notificaciones automáticas a las 9:30 AM hora Uruguay");
-
         try {
             List<Producto> productos = productoRepository.findByActivoTrue();
             for (Producto producto : productos) {
                 verificarLotesVencenEn21Dias(producto);
             }
-
-            System.out.println("Verificación de notificaciones completada exitosamente");
         } catch (Exception e) {
-            System.err.println("Error al verificar notificaciones: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -86,11 +81,9 @@ public class NotificacionUsuarioService {
                             producto.getNombre(), producto.getStockTotal(), producto.getStockMin());
 
                     crearYEnviarNotificacion(titulo, mensaje);
-                    System.out.println("Notificación de stock mínimo creada para producto: " + producto.getNombre());
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error al verificar stock mínimo: " + e.getMessage());
         }
     }
 
@@ -130,42 +123,32 @@ public class NotificacionUsuarioService {
                                     prioridad, lote.getNumero(), producto.getNombre(), diasFaltantes, lote.getStock());
 
                             crearYEnviarNotificacion(titulo, mensaje);
-                            System.out.println(prioridad + " - Notificación creada para lote: " + lote.getNumero());
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error al verificar lotes próximos a vencer: " + e.getMessage());
         }
     }
 
     private void crearYEnviarNotificacion(String titulo, String mensaje) {
         try {
-            System.out.println("=== CREANDO NOTIFICACIÓN ===");
-            System.out.println("Título: " + titulo);
-            System.out.println("Mensaje: " + mensaje);
-
             Notificacion notificacion = new Notificacion();
             notificacion.setTitulo(titulo);
             notificacion.setMensaje(mensaje);
             notificacion.setFechaHora(LocalDateTime.now());
 
             notificacion = notificacionRepository.save(notificacion);
-            System.out.println("Notificación guardada con ID: " + notificacion.getId());
 
             List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
-            System.out.println("Usuarios activos encontrados: " + usuarios.size());
 
             if (usuarios.isEmpty()) {
-                System.out.println("No hay usuarios activos para enviar notificaciones");
                 return;
             }
 
             int notificacionesCreadas = 0;
             for (Usuario usuario : usuarios) {
                 try {
-                    System.out.println("Creando NotificacionUsuario para usuario: " + usuario.getNombre());
 
                     NotificacionUsuario notificacionUsuario = new NotificacionUsuario();
                     notificacionUsuario.setActivo(true);
@@ -197,24 +180,13 @@ public class NotificacionUsuarioService {
 
                     notificacionesCreadas++;
 
-                    System.out.println("NotificacionUsuario creada con ID: " + guardada.getId() +
-                            " para usuario: " + usuario.getNombre() + " (email: " + usuario.getMail() + ")");
-                    System.out.println("Usuarios asociados a la notificación: " + guardada.getUsuarios().size());
-                    System.out.println("Notificaciones del usuario: " + usuario.getNotificaciones().size());
 
                 } catch (Exception e) {
-                    System.err.println("Error al crear NotificacionUsuario para usuario " + usuario.getNombre() +
-                            ": " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
-            System.out.println("=== RESUMEN ===");
-            System.out.println("Notificación '" + titulo + "' enviada exitosamente");
-            System.out.println("NotificacionUsuario creadas: " + notificacionesCreadas + " de " + usuarios.size() + " usuarios");
-
         } catch (Exception e) {
-            System.err.println("Error al crear y enviar notificación: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -241,7 +213,6 @@ public class NotificacionUsuarioService {
             return response;
 
         } catch (Exception e) {
-            System.err.println("Error al obtener notificaciones del usuario " + userName + ": " + e.getMessage());
             return new ResponseListadoNotificacionUsuario();
         }
     }
@@ -268,7 +239,6 @@ public class NotificacionUsuarioService {
             }
 
         } catch (Exception e) {
-            System.err.println("Error al marcar notificación como leída: " + e.getMessage());
             return "Error al marcar la notificación como leída";
         }
     }
@@ -279,7 +249,6 @@ public class NotificacionUsuarioService {
                     .findByActivoTrueAndLeidoFalseAndUsuarios_Nombre(userName)
                     .size();
         } catch (Exception e) {
-            System.err.println("Error al contar notificaciones no leídas para " + userName + ": " + e.getMessage());
             return 0;
         }
     }
@@ -297,7 +266,6 @@ public class NotificacionUsuarioService {
             return String.format("Se marcaron %d notificaciones como leídas", notificacionesNoLeidas.size());
 
         } catch (Exception e) {
-            System.err.println("Error al marcar todas las notificaciones como leídas para " + userName + ": " + e.getMessage());
             return "Error al marcar las notificaciones como leídas";
         }
     }

@@ -47,10 +47,7 @@ public class EmailService {
             message.setText(cuerpoMensaje);
 
             emailSender.send(message);
-            System.out.println("✅ Email de recuperación enviado exitosamente a: " + toEmail);
-
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar email a " + toEmail + ": " + e.getMessage());
             throw new RuntimeException("Error al enviar el email de recuperación. Verifica tu configuración de email.");
         }
     }
@@ -116,12 +113,9 @@ public class EmailService {
             message.setText(cuerpoMensaje);
 
             emailSender.send(message);
-
-            System.out.println("✅ Mensaje de contacto enviado exitosamente de: " + emailCliente + " a: " + toEmail);
-
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar mensaje de contacto: " + e.getMessage());
             throw new RuntimeException("Error al enviar el mensaje de contacto. Verifica la configuración de email.");
         }
+
     }
 }

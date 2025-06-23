@@ -147,7 +147,7 @@ public class ProductoService {
     }
 
     public void modificarStockTotal(Long productoId, Integer nuevoStockTotal) {
-        log.warn("MODIFICACIÓN MANUAL DE STOCK - Producto ID: {}, Nuevo Stock: {}", productoId, nuevoStockTotal);
+
 
         Optional<Producto> productoOptional = productoRepository.findById(productoId);
         if (productoOptional.isEmpty()) {

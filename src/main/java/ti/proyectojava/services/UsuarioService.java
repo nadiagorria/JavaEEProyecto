@@ -294,8 +294,7 @@ public class UsuarioService {
     @Async
     public void limpiarCodigosExpiradosProgramado() {
         try {
-            System.out.println("🧹 Iniciando limpieza automática de códigos de recuperación expirados - " +
-                    LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+            LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
             long codigosAntesLimpieza = passwordRecoveryRepository.count();
 
@@ -303,14 +302,7 @@ public class UsuarioService {
 
             long codigosDespuesLimpieza = passwordRecoveryRepository.count();
             long codigosEliminados = codigosAntesLimpieza - codigosDespuesLimpieza;
-
-            System.out.println("✅ Limpieza automática completada exitosamente:");
-            System.out.println("   - Códigos eliminados: " + codigosEliminados);
-            System.out.println("   - Códigos restantes: " + codigosDespuesLimpieza);
-            System.out.println("   - Próxima ejecución: Próximo lunes a las 16:00");
-
         } catch (Exception e) {
-            System.err.println("❌ Error durante la limpieza automática de códigos de recuperación: " + e.getMessage());
             e.printStackTrace();
         }
     }

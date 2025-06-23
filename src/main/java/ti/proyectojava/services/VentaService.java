@@ -49,11 +49,8 @@ public class VentaService {
     }
 
     public Long crearVenta(VentaDto ventaDto) {
-        System.out.println("VentaService - estableciendo fecha y hora actual para la venta");
-
         LocalDateTime ahora = LocalDateTime.now();
         ventaDto.setFechaVenta(ahora);
-        System.out.println("VentaService - fechaVenta asignada: " + ventaDto.getFechaVenta());
 
         Venta ventaGuardada = ventaRepository.save(mapsDtosEntityService.mapToEntityVenta(ventaDto));
 

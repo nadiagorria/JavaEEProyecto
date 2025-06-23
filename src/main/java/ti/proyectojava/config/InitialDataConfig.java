@@ -54,7 +54,6 @@ public class InitialDataConfig {
                 adminUser.setRoles(adminRoles);
 
                 usuarioRepository.save(adminUser);
-                System.out.println("Usuario administrador por defecto creado: admin / admin123");
             }
         };
     }

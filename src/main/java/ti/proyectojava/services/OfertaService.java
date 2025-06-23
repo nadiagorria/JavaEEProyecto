@@ -105,7 +105,6 @@ public class OfertaService {
     public String crearPromocion(PromocionDto promocionDto) {
         validacionOfertasService.validarConflictosPromocion(promocionDto);
 
-        System.out.println("Creando promoción: " + promocionDto.getDescripcion());
         return "Promoción creada. ID:" + promocionRepository.save(mapsDtosEntityService.mapToEntityPromocion(promocionDto)).getId();
     }
 

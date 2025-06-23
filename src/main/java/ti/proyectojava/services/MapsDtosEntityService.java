@@ -660,14 +660,10 @@ public class MapsDtosEntityService {
             }
         }
         Combo combo = new Combo();
-        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio DTO: " + comboDto.getInicio());
-        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin DTO: " + comboDto.getFin());
 
         combo.setInicio(comboDto.getInicio());
         combo.setFin(comboDto.getFin());
 
-        System.out.println("MapsDtosEntityService - mapToEntityCombo - inicio Entity después de asignar: " + combo.getInicio());
-        System.out.println("MapsDtosEntityService - mapToEntityCombo - fin Entity después de asignar: " + combo.getFin());
 
         combo.setDescuento(comboDto.getDescuento());
         combo.setActivo(comboDto.getActivo());
@@ -743,7 +739,6 @@ public class MapsDtosEntityService {
         promocion.setFin(promocionDto.getFin());
         promocion.setDescuento(promocionDto.getDescuento());
         promocion.setActivo(promocionDto.getActivo());
-        System.out.println("me llego la descripcion a maptoentity: " + promocionDto.getDescripcion());
         promocion.setDescripcion(promocionDto.getDescripcion());
 
         if (promocionDto.getProducto() != null) {
