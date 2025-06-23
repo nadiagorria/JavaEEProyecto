@@ -19,11 +19,13 @@ import { ProveedorPerfilComponent } from './components/proveedor-perfil/proveedo
 
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { OfertasComponent } from './components/ofertas/ofertas.component';
+import { ContactanosComponent } from './components/contactanos/contactanos.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'recuperar-password', component: RecuperarPasswordComponent },
+  { path: 'contactanos', component: ContactanosComponent },
 
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 

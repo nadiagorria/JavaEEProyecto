@@ -1,0 +1,131 @@
+<div class="center-wrapper">
+  <div class="contact-container">
+    <!-- Header -->
+    <div class="header-section">
+      <i class="pi pi-envelope header-icon"></i>
+      <h1 class="titulo">Contactanos</h1>
+      <p class="subtitle">¿Tienes alguna pregunta? Nos encantaría escucharte</p>
+    </div>
+
+    <!-- Contact Form -->
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="contact-form">
+      
+      <!-- Nombre -->
+      <div class="form-field">
+        <p-floatlabel>
+          <input
+            pInputText
+            id="nombre"
+            formControlName="nombre"
+            class="styled-input"
+          />
+          <label for="nombre">
+            <i class="pi pi-user field-icon"></i>
+            Nombre completo
+          </label>
+        </p-floatlabel>
+        
+        <div
+          class="field-error"
+          *ngIf="formGroup.get('nombre')?.invalid && formGroup.get('nombre')?.touched"
+        >
+          <small *ngIf="formGroup.get('nombre')?.errors?.['required']">
+            El nombre es requerido
+          </small>
+          <small *ngIf="formGroup.get('nombre')?.errors?.['minlength']">
+            Mínimo 2 caracteres
+          </small>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-field">
+        <p-floatlabel>
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            type="email"
+            class="styled-input"
+          />
+          <label for="email">
+            <i class="pi pi-envelope field-icon"></i>
+            Correo electrónico
+          </label>
+        </p-floatlabel>
+        
+        <div
+          class="field-error"
+          *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched"
+        >
+          <small *ngIf="formGroup.get('email')?.errors?.['required']">
+            El email es requerido
+          </small>
+          <small *ngIf="formGroup.get('email')?.errors?.['email']">
+            Ingresa un email válido
+          </small>
+        </div>
+      </div>
+
+      <!-- Mensaje -->
+      <div class="form-field">
+        <p-floatlabel>
+          <textarea
+            pInputTextarea
+            id="mensaje"
+            formControlName="mensaje"
+            rows="5"
+            class="styled-textarea"
+          ></textarea>
+          <label for="mensaje">
+            <i class="pi pi-comment field-icon"></i>
+            Tu mensaje
+          </label>
+        </p-floatlabel>
+        
+        <div
+          class="field-error"
+          *ngIf="formGroup.get('mensaje')?.invalid && formGroup.get('mensaje')?.touched"
+        >
+          <small *ngIf="formGroup.get('mensaje')?.errors?.['required']">
+            El mensaje es requerido
+          </small>
+          <small *ngIf="formGroup.get('mensaje')?.errors?.['minlength']">
+            Mínimo 10 caracteres
+          </small>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-group">
+        <p-button
+          type="submit"
+          label="Enviar Mensaje"
+          icon="pi pi-send"
+          [loading]="isSubmitting"
+          [disabled]="formGroup.invalid"
+          class="primary-button"
+        ></p-button>
+        
+        <p-button
+          type="button"
+          label="Volver al Inicio"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          (onClick)="volverInicio()"
+          class="secondary-button"
+        ></p-button>
+      </div>
+    </form>
+
+    <!-- Contact Info -->
+    <div class="contact-info">
+      <div class="info-item">
+        <i class="pi pi-envelope"></i>
+        <span>nadia.gorria&#64;estudiantes.utec.edu.uy</span>
+      </div>
+    </div>
+  </div>
+  
+  <p-toast></p-toast>
+</div>

@@ -22,14 +22,29 @@ footer {
   font-weight: bold;
   font-size: 15px;
   margin-bottom: 20px;
-}
-
-.botones {
+  font-family: "Montserrat", sans-serif;
 }
 
 .textos {
-  font-family: "Source Sans 3",  sans-serif;
+  font-family: "Montserrat", sans-serif;
   margin-bottom: 15px;
+  color: #27272a;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #3f3f46;
+  }
+}
+
+a.textos {
+  color: #27272a;
+  text-decoration: none;
+
+  &:hover {
+    color: #3f3f46;
+  }
 }
 
 a i {

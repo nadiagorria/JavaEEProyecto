@@ -89,4 +89,41 @@ public class EmailService {
         } catch (Exception e) {
         }
     }
+
+    public void enviarMensajeContacto(String toEmail, String nombreCliente, String emailCliente, String mensaje) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("📧 Nuevo mensaje de contacto - " + appName);
+
+            String cuerpoMensaje = String.format(
+                    "Has recibido un nuevo mensaje de contacto desde la página web de %s.\n\n" +
+                            "👤 Datos del cliente:\n" +
+                            "Nombre: %s\n" +
+                            "Email: %s\n\n" +
+                            "💬 Mensaje:\n" +
+                            "%s\n\n" +
+                            "📅 Fecha y hora: %s\n\n" +
+                            "---\n" +
+                            "Sistema de contacto automático - %s",
+                    appName,
+                    nombreCliente,
+                    emailCliente,
+                    mensaje,
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                    appName
+            );
+
+            message.setText(cuerpoMensaje);
+
+            emailSender.send(message);
+
+            System.out.println("✅ Mensaje de contacto enviado exitosamente de: " + emailCliente + " a: " + toEmail);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error al enviar mensaje de contacto: " + e.getMessage());
+            throw new RuntimeException("Error al enviar el mensaje de contacto. Verifica la configuración de email.");
+        }
+    }
 }

@@ -1,15 +1,10 @@
 <footer class="flex w-full">
-  <div class="margen flex">
-    <div class="papa">
+  <div class="margen flex">    <div class="papa">
       <span class="titulos">¿Necesitas ayuda?</span>
-      <p-button class="botones w-full" severity="secondary"
-        >Contactanos</p-button
-      >
-    </div>
-    <div class="papa">
-      <span class="titulos">Soporte</span>
-      <span class="textos">Términos de Servicio</span>
-      <span class="textos">Política de Privacidad</span>
+      <a routerLink="/contactanos">
+        <p-button class="botones w-full" severity="secondary"
+          >Contactanos</p-button>
+      </a>
     </div>
     <div class="papa">
       <span class="titulos">Redes Sociales</span>
@@ -24,11 +19,11 @@
     </div>
     <div class="papa">
       <span class="titulos">Navegacion</span>
-      <span class="textos">Inicio</span>
-      <span class="textos">Ventas</span>
-      <span class="textos">Proveedores</span>
-      <span class="textos">Estadísticas</span>
-      <span class="textos">Productos</span>
+      <a routerLink="/home" class="textos">Inicio</a>
+      <a routerLink="/ventas" class="textos">Ventas</a>
+      <a routerLink="/proveedores" class="textos">Proveedores</a>
+      <a *ngIf="isAdmin()" routerLink="/stats" class="textos">Estadísticas</a>
+      <a routerLink="/productos" class="textos">Productos</a>
     </div>
   </div>
 </footer>
