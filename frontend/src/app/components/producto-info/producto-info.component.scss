@@ -402,31 +402,25 @@
   }
 
   .p-dropdown-panel {
-    position: fixed !important; // Permite que el dropdown se posicione sin restricciones
-    max-width: 100% !important;
+    position: fixed !important;    max-width: 100% !important;
     min-width: 100% !important;
     width: auto !important;
-    z-index: 10000 !important; // Asegura que siempre esté por encima de otros elementos
-    overflow: hidden;
+    z-index: 10000 !important;    overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
     border-radius: 6px !important;
   }
 
   .p-dropdown-items-wrapper {
-    max-height: 182px !important; // Altura para mostrar 4 elementos (4 * 45.5px)
-  }
+    max-height: 182px !important;  }
 
   .p-dropdown-items {
     padding: 0.5rem 0;
   }
 
   .p-dropdown-item {
-    height: 45.5px !important; // Altura fija para cada elemento
-    display: flex !important;
+    height: 45.5px !important;    display: flex !important;
     align-items: center !important;
-    white-space: normal !important; // Permite que el texto se ajuste en múltiples líneas
-    word-wrap: break-word !important; // Asegura que las palabras largas se rompan correctamente
-    overflow-wrap: break-word !important;
+    white-space: normal !important;    word-wrap: break-word !important;    overflow-wrap: break-word !important;
     padding: 0.75rem 1rem !important;
     font-size: 0.9rem;
   }
@@ -434,12 +428,10 @@
   .producto-dialog {
     .p_dialog-content {
       max-height: 80vh !important;
-      overflow: auto !important; // Permite scroll en el contenido del diálogo
-    }
+      overflow: auto !important;    }
 
     .p-dropdown-panel {
-      position: fixed !important; // Permite que el dropdown se posicione sin restricciones
-    }
+      position: fixed !important;    }
   }
 }
 

@@ -47,8 +47,6 @@ public class EmailService {
             message.setText(cuerpoMensaje);
 
             emailSender.send(message);
-
-            // Log para confirmar envío (sin mostrar el código por seguridad)
             System.out.println("✅ Email de recuperación enviado exitosamente a: " + toEmail);
 
         } catch (Exception e) {

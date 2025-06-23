@@ -61,20 +61,17 @@
     font-weight: 500;
 
     &.p-tag-danger {
-      background: rgba(255, 77, 79, 0.15); // Color más sutil para ADMIN
-      color: #d32f2f;
+      background: rgba(255, 77, 79, 0.15);      color: #d32f2f;
       border: 1px solid rgba(255, 77, 79, 0.3);
     }
 
     &.p-tag-info {
-      background: rgba(24, 144, 255, 0.15); // Color más sutil para CAJERO
-      color: #1976d2;
+      background: rgba(24, 144, 255, 0.15);      color: #1976d2;
       border: 1px solid rgba(24, 144, 255, 0.3);
     }
 
     &.p-tag-warning {
-      background: rgba(250, 173, 20, 0.15); // Color más sutil para otros roles
-      color: #f57c00;
+      background: rgba(250, 173, 20, 0.15);      color: #f57c00;
       border: 1px solid rgba(250, 173, 20, 0.3);
     }
   }

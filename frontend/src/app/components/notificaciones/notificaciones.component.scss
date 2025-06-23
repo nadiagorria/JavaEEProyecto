@@ -111,8 +111,7 @@
 
 .notification-content {
   flex: 1;
-  min-width: 0; // Para permitir que el texto se trunque
-
+  min-width: 0;
   .notification-title {
     font-weight: 500;
     color: #495057;

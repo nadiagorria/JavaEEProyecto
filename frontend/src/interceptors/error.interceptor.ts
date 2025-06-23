@@ -3,8 +3,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { SecurityService } from '../services/security.service'; // Adjust the import path as necessary
-
+import { SecurityService } from '../services/security.service';
 export const ErrorInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(SecurityService);
   const router = inject(Router);

@@ -82,8 +82,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   error: string = '';
   loading: boolean = true;
   imagenUrl: string = '';
-  cacheImagenes = new Map<number, string>(); // Edit modal properties
-  mostrarModalEditar: boolean = false;
+  cacheImagenes = new Map<number, string>();  mostrarModalEditar: boolean = false;
   editandoProducto: EditandoProducto = {
     id: null,
     nombre: '',

@@ -1,18 +1,13 @@
-// Estilo básico para todos los inputs (estado normal)
 ::ng-deep input:not(:focus), 
 ::ng-deep .p-password input:not(:focus) {
   border-color: #dee2e6 !important;
   box-shadow: none !important;
 }
-
-// Estilo para inputs durante focus
 ::ng-deep input:focus,
 ::ng-deep .p-password input:focus {
   border-color: #495057 !important;
   box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1) !important;
 }
-
-// Solo aplicar borde rojo cuando es inválido
 ::ng-deep .p-password.invalid input {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
@@ -191,29 +186,21 @@ form {
         color: #495057;
       }
     }  }
-  // Solo mantener estilo de error (rojo)
   &.ng-invalid.ng-touched input,
   &.ng-invalid.ng-touched ::ng-deep .p-password input {
     border-color: #dc3545;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
   }
-
-  // Eliminar estilos de éxito (verde) para los inputs
-  // y reemplazar con el estilo normal
   &.ng-valid.ng-touched input,
   &.ng-valid.ng-touched ::ng-deep .p-password input {
     border-color: #dee2e6;
     box-shadow: none;
   }
-
-  // Mantener solo la clase invalid personalizada
   input.invalid,
   ::ng-deep .p-password.invalid input {
     border-color: #dc3545 !important;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
   }
-  
-  // Asegurar que invalid sobrescriba incluso cuando Angular considera válido
   &.ng-valid.ng-touched ::ng-deep .p-password.invalid input,
   &.ng-valid.ng-touched input.invalid {
     border-color: #dc3545 !important;
@@ -653,8 +640,6 @@ button[pButton] {
     transform: translateY(0);
   }
 }
-
-// Estilos específicos para p-password con clases personalizadas
 ::ng-deep .p-password.invalid .p-password-input {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
@@ -664,15 +649,11 @@ button[pButton] {
   border-color: #28a745 !important;
   box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
 }
-
-// Sobrescribir específicamente cuando Angular marca como válido pero nosotros como inválido
 ::ng-deep .p-password.invalid.ng-valid .p-password-input,
 ::ng-deep .p-password.invalid.ng-valid.ng-touched .p-password-input {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
 }
-
-// Estilos específicos para cuando el campo está enfocado (focus) pero es inválido
 ::ng-deep .p-password.invalid .p-password-input:focus,
 ::ng-deep .p-password.invalid.ng-valid .p-password-input:focus,
 ::ng-deep .p-password.invalid.ng-valid.ng-touched .p-password-input:focus {
@@ -680,16 +661,12 @@ button[pButton] {
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
   outline: none !important;
 }
-
-// Sobrescribir completamente las clases de Angular cuando tenemos la clase invalid
 ::ng-deep .p-password.invalid .p-password-input.ng-valid,
 ::ng-deep .p-password.invalid .p-password-input.ng-valid.ng-touched,
 ::ng-deep .p-password.invalid .p-password-input.ng-valid:focus {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
 }
-
-// Asegurar que los estilos válidos solo se apliquen cuando realmente es válido
 ::ng-deep .p-password.valid:not(.invalid) .p-password-input {
   border-color: #28a745 !important;
   box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
@@ -698,16 +675,11 @@ button[pButton] {
 ::ng-deep .p-password.valid:not(.invalid) .p-password-input:focus {
   border-color: #28a745 !important;  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15) !important;
 }
-
-// Solo mantener estas reglas simplificadas
-// Regla para campo inválido
 ::ng-deep .p-password.invalid .p-password-input,
 ::ng-deep input.invalid {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
 }
-
-// Regla para focus
 ::ng-deep input:focus,
 ::ng-deep .p-password .p-password-input:focus,
 ::ng-deep .p-inputtext:enabled:focus {
@@ -715,8 +687,6 @@ button[pButton] {
   box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1) !important;
   outline: none !important;
 }
-
-// Regla específica para campos inválidos con focus
 ::ng-deep .p-password.invalid .p-password-input:focus,
 ::ng-deep input.invalid:focus {
   border-color: #dc3545 !important;

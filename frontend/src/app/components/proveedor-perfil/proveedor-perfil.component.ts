@@ -103,8 +103,6 @@ export class ProveedorPerfilComponent {
       });
       return;
     }
-
-    // Validar que el nombre no contenga números
     if (/\d/.test(this.nombreEdicion)) {
       this.messageService.add({
         severity: 'warn',
@@ -122,8 +120,6 @@ export class ProveedorPerfilComponent {
       });
       return;
     }
-
-    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
     if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
       this.messageService.add({
         severity: 'warn',
@@ -141,8 +137,6 @@ export class ProveedorPerfilComponent {
       });
       return;
     }
-
-    // Validar formato de correo
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(this.correoEdicion.trim())) {
       this.messageService.add({
@@ -152,8 +146,6 @@ export class ProveedorPerfilComponent {
       });
       return;
     }
-
-    // Actualizar los datos del proveedor
     this.proveedor.nombre = this.nombreEdicion.trim();
     this.proveedor.telefono = this.telefonoEdicion.trim();
     this.proveedor.correo = this.correoEdicion.trim();

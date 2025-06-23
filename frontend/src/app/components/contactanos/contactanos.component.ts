@@ -47,8 +47,6 @@ export class ContactanosComponent {
       this.isSubmitting = true;
       
       const formData = this.formGroup.value;
-      
-      // Simular envío de email (aquí podrías integrar con un servicio de email)
       this.enviarEmail(formData);
     } else {
       this.markFormGroupTouched();
@@ -60,8 +58,6 @@ export class ContactanosComponent {
       email: data.email,
       mensaje: data.mensaje
     };
-
-    // Intentar enviar a través del backend
     this.contactoService.enviarMensajeContacto(contactoDto).subscribe({
       next: (response) => {
         this.isSubmitting = false;
@@ -70,20 +66,16 @@ export class ContactanosComponent {
           summary: 'Mensaje enviado',
           detail: 'Tu mensaje ha sido enviado exitosamente. Te responderemos pronto.'
         });
-        
-        // Limpiar el formulario
         this.formGroup.reset();
       },
       error: (error) => {
         console.warn('Error enviando por backend, usando fallback:', error);
-        // Fallback: usar mailto
         this.enviarEmailFallback(data);
       }
     });
   }
 
   private enviarEmailFallback(data: any) {
-    // Crear el enlace mailto como fallback
     const subject = encodeURIComponent(`Contacto desde la web - ${data.nombre}`);
     const body = encodeURIComponent(
       `Nombre: ${data.nombre}\n` +
@@ -92,8 +84,6 @@ export class ContactanosComponent {
     );
     
     const mailtoLink = `mailto:nadia.gorria@estudiantes.utec.edu.uy?subject=${subject}&body=${body}`;
-    
-    // Abrir el cliente de email del usuario
     window.location.href = mailtoLink;
       setTimeout(() => {
       this.isSubmitting = false;
@@ -102,8 +92,6 @@ export class ContactanosComponent {
         summary: 'Mensaje enviado',
         detail: 'Tu mensaje ha sido enviado exitosamente. Te responderemos pronto.'
       });
-      
-      // Limpiar el formulario
       this.formGroup.reset();
     }, 1000);
   }

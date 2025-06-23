@@ -57,8 +57,7 @@ export class LoginComponent {
         next: (response) => {
           this.isLoading = false;
 
-          localStorage.setItem('token', response.token); // Store user info
-          const userStr = JSON.stringify({
+          localStorage.setItem('token', response.token);          const userStr = JSON.stringify({
             nombreUsuario: response.nombreUsuario,
             roles: response.roles,
             email: response.email, // Incluir el email en los datos guardados

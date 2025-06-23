@@ -80,8 +80,7 @@ export class PerfilComponent implements OnInit {
     '#3b82f6', // Blue
   ];
   ventas: VentaPerfil[] = [];
-  totalVentas = 0; // total simulado por ahora
-  rangoInicio = 1;
+  totalVentas = 0;  rangoInicio = 1;
   rangoFin = 10;
 
   usuarios: UsuarioTabla[] = [];
@@ -151,8 +150,7 @@ export class PerfilComponent implements OnInit {
   puedeBorrarUsuario(usuario: UsuarioTabla): boolean {
     return (
       this.isExclusiveAdmin() && usuario.nombre !== 'admin' && usuario.activo
-    ); // Solo mostrar la opción para usuarios activos
-  }
+    );  }
   otorgarPermisos(nombreUsuario: string): void {
     this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
@@ -162,8 +160,7 @@ export class PerfilComponent implements OnInit {
           detail: 'Permisos de administrador otorgados exitosamente',
           life: 4000,
         });
-        this.cargarUsuarios(); // Recargar lista
-      },
+        this.cargarUsuarios();      },
       error: (error: any) => {
         console.error('Error al otorgar permisos:', error);
         this.messageService.add({
@@ -185,8 +182,7 @@ export class PerfilComponent implements OnInit {
           detail: 'Permisos de administrador revocados exitosamente',
           life: 4000,
         });
-        this.cargarUsuarios(); // Recargar lista
-      },
+        this.cargarUsuarios();      },
       error: (error: any) => {
         console.error('Error al revocar permisos:', error);
         this.messageService.add({
@@ -215,8 +211,7 @@ export class PerfilComponent implements OnInit {
               detail: 'Usuario eliminado (desactivado) exitosamente',
               life: 4000,
             });
-            this.cargarUsuarios(); // Recargar lista
-          },
+            this.cargarUsuarios();          },
           error: (error: any) => {
             console.error('Error al eliminar usuario:', error);
             this.messageService.add({
@@ -393,15 +388,12 @@ export class PerfilComponent implements OnInit {
       this.securityService.checkEmail(this.editForm.email).subscribe({
         next: (response: any) => {
           this.loading = false;
-          // Parsear la respuesta JSON
           let responseData;
           if (typeof response === 'string') {
             responseData = JSON.parse(response);
           } else {
             responseData = response;
           }
-          
-          // Si el email existe, mostrar error
           if (responseData.existe === true) {
             this.messageService.add({
               severity: 'error',
@@ -410,7 +402,6 @@ export class PerfilComponent implements OnInit {
               life: 5000,
             });
           } else {
-            // Si el email no existe, proceder con la actualización
             this.procederConActualizacion();
           }
         },

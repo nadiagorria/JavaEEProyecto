@@ -295,10 +295,7 @@ export class VerventaComponent implements OnInit {
       (promo) => itemEnVenta.cantidad >= promo.descuento
     );
 
-    if (combos.length > 0) return 'success'; // Verde para combos
-    if (promocionesAplicables.length > 0) return 'info'; // Azul para promociones
-    if (descuentos.length > 0) return 'warning'; // Amarillo para descuentos
-
+    if (combos.length > 0) return 'success';    if (promocionesAplicables.length > 0) return 'info';    if (descuentos.length > 0) return 'warning';
     return 'secondary';
   }
 

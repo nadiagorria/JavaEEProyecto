@@ -92,8 +92,7 @@ export class NuevaventaComponent
   escanerActivo: boolean = false;
   codigoBarrasBuffer: string = '';
   ultimoTiempo: number = 0;
-  private readonly TIEMPO_LIMITE_CARACTER = 50; // ms entre caracteres del escáner
-
+  private readonly TIEMPO_LIMITE_CARACTER = 50;
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
@@ -602,7 +601,6 @@ export class NuevaventaComponent
     this.displayDialog = true;
   }
   confirmarVenta() {
-    // Evitar doble clic
     if (this.procesandoVenta) {
       return;
     }
@@ -716,8 +714,7 @@ export class NuevaventaComponent
                 'El total de la venta no supera el mínimo requerido para compras fiadas',
             });
           }
-          this.procesandoVenta = false; // Desactivar flag
-          return;
+          this.procesandoVenta = false;          return;
         }
         this.messageService.add({
           severity: 'success',
@@ -731,8 +728,7 @@ export class NuevaventaComponent
 
         this.displayDialog = false;
         this.limpiarVenta();
-        this.procesandoVenta = false; // Desactivar flag
-      },
+        this.procesandoVenta = false;      },
       error: (error) => {
         console.error('Error al crear la venta:', error);
 

@@ -176,8 +176,6 @@ public class EntidadController {
         if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
             return new ResponseEntity<>("El correo del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
         }
-
-        // Validar formato de correo
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         if (!proveedorDto.getCorreo().matches(emailRegex)) {
             return new ResponseEntity<>("El formato del correo electrónico no es válido", HttpStatus.BAD_REQUEST);

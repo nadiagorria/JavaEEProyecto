@@ -89,8 +89,7 @@ export class ClientesCreditoComponent {
 
         this.creditosFiltrados = [...this.creditos];
         this.totalRecords = this.creditos.length;
-        console.log('Créditos cargados:', this.creditos); // Para debugging
-      },
+        console.log('Créditos cargados:', this.creditos);      },
       error: (err: any) => {
         console.error('Error al listar créditos:', err);
         if (err.status === 403) {
@@ -137,7 +136,6 @@ export class ClientesCreditoComponent {
   minimo: number = 0;
   maximo: number = 0;
   saveCliente() {
-    // Validación del nombre (obligatorio y sin números)
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -146,8 +144,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validar que el nombre no contenga números
     if (/\d/.test(this.nombre)) {
       this.messageService.add({
         severity: 'warn',
@@ -156,8 +152,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validación del teléfono (obligatorio y solo números, espacios, guiones y +)
     if (!this.telefono || this.telefono.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -166,8 +160,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
       this.messageService.add({
         severity: 'warn',
@@ -176,8 +168,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validación de crédito mínimo (obligatorio y mayor a 0)
     if (this.minimo === null || this.minimo === undefined || this.minimo < 0) {
       this.messageService.add({
         severity: 'warn',
@@ -186,8 +176,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validación de crédito máximo (obligatorio y mayor a 0)
     if (this.maximo === null || this.maximo === undefined || this.maximo <= 0) {
       this.messageService.add({
         severity: 'warn',
@@ -196,8 +184,6 @@ export class ClientesCreditoComponent {
       });
       return;
     }
-
-    // Validación de relación entre créditos
     if (this.maximo <= this.minimo) {
       this.messageService.add({
         severity: 'warn',
@@ -285,8 +271,6 @@ export class ClientesCreditoComponent {
             this.totalRecords = this.creditosFiltrados.length;
 
             this.cargarCreditos();
-
-            // Reemplazar alert() por toast
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
@@ -301,8 +285,6 @@ export class ClientesCreditoComponent {
             } else if (err.message) {
               mensajeError += ': ' + err.message;
             }
-
-            // Reemplazar alert() por toast
             this.messageService.add({
               severity: 'error',
               summary: 'Error',

@@ -127,7 +127,6 @@ export class ClientePerfilComponent {
 
   nombreEdicion: string = '';
   telefonoEdicion: string = '';  editarCliente() {
-    // Validar campos obligatorios
     if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -136,8 +135,6 @@ export class ClientePerfilComponent {
       });
       return;
     }
-
-    // Validar que el nombre no contenga números
     if (/\d/.test(this.nombreEdicion)) {
       this.messageService.add({
         severity: 'warn',
@@ -155,8 +152,6 @@ export class ClientePerfilComponent {
       });
       return;
     }
-
-    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
     if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
       this.messageService.add({
         severity: 'warn',

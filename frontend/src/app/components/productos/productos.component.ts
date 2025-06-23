@@ -48,13 +48,9 @@ export class ProductosComponent implements OnInit, OnDestroy {
   ) {}
 
   productos: ProductoDto[] = [];
-  productosFiltrados: ProductoDto[] = []; // Array para productos filtrados
-  categorias: any[] = [];
-  categoriasConTodas: any[] = []; // Array para el dropdown con opción "Todas las categorías"
-  proveedores: ProveedorDto[] = [];
-  terminoBusqueda: string = ''; // Término de búsqueda
-  categoriaFiltro: number | null = null; // Categoría seleccionada para filtrar
-
+  productosFiltrados: ProductoDto[] = [];  categorias: any[] = [];
+  categoriasConTodas: any[] = [];  proveedores: ProveedorDto[] = [];
+  terminoBusqueda: string = '';  categoriaFiltro: number | null = null;
   ngOnInit() {
     this.cargarProductos();
     this.cargarCategorias();
@@ -85,8 +81,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
             }
           }
           return cat;
-        }); // Ya vienen ordenadas desde el backend
-
+        });
         this.categoriasConTodas = [
           { id: '', nombre: 'Todas las categorías' },
           ...this.categorias,
@@ -129,8 +124,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
         this.productos = response.productos.sort((a, b) =>
           a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase())
         );
-        this.productosFiltrados = [...this.productos]; // Inicializar productos filtrados
-
+        this.productosFiltrados = [...this.productos];
         this.cargarImagenesProductos();
       },
       error: (error) => {

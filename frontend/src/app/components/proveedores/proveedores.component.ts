@@ -124,7 +124,6 @@ export class ProveedoresComponent {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   }  saveProveedor() {
-    // Validar campos obligatorios
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -133,8 +132,6 @@ export class ProveedoresComponent {
       });
       return;
     }
-
-    // Validar que el nombre no contenga números
     if (/\d/.test(this.nombre)) {
       this.messageService.add({
         severity: 'warn',
@@ -152,8 +149,6 @@ export class ProveedoresComponent {
       });
       return;
     }
-
-    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
       this.messageService.add({
         severity: 'warn',
@@ -171,8 +166,6 @@ export class ProveedoresComponent {
       });
       return;
     }
-
-    // Validar formato de correo
     if (!this.validarEmail(this.correo)) {
       this.messageService.add({
         severity: 'warn',

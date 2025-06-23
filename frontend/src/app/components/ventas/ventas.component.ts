@@ -101,8 +101,7 @@ export class VentasComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
             });
-            this.cargarVentas(); // Recargar la lista
-          },
+            this.cargarVentas();          },
           error: (error) => {
             console.error('Error al eliminar venta:', error);
             this.messageService.add({

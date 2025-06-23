@@ -54,8 +54,7 @@ export class StatsComponent implements OnInit {
 
   anos: { valor: string; nombre: string }[] = [];
 
-  n = 3; // de cuanto es el top N de productos que se quiere obtener
-
+  n = 3;
   constructor(
     private route: ActivatedRoute,
     private productoservice: ProductoService,

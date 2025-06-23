@@ -86,8 +86,6 @@ public class NotificacionUsuarioController {
         String response = notificacionUsuarioService.marcarTodasComoLeidas(userName);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    // Función a borrar al finalizar el proyecto, solo para pruebas
     @PostMapping("/verificar-vencimientos")
     @Secured({"ADMIN"})
     @Operation(description = "Ejecuta manualmente la verificación de lotes próximos a vencer")

@@ -42,8 +42,7 @@ export class RegistroComponent {
   isCheckingUsername = false;
   emailExists = false;
   isCheckingEmail = false;
-  confirmPasswordFocused = false; // Nueva propiedad para controlar el estado de focus
-
+  confirmPasswordFocused = false;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -74,11 +73,9 @@ export class RegistroComponent {
       confirmPassword &&
       password.value !== confirmPassword.value
     ) {
-      // Set error on confirmPassword control
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     } else if (confirmPassword?.hasError('passwordMismatch')) {
-      // Clear only the passwordMismatch error, preserve other errors
       const errors = confirmPassword.errors;
       delete errors?.['passwordMismatch'];
       confirmPassword.setErrors(Object.keys(errors || {}).length === 0 ? null : errors);
@@ -99,14 +96,10 @@ export class RegistroComponent {
   }  // Nuevos métodos para manejar el focus
   onConfirmPasswordFocus(): void {
     this.confirmPasswordFocused = true;
-    
-    // Forzar la eliminación de la clase valid cuando el campo está focused
     setTimeout(() => {
       const passwordInput = document.querySelector('.p-password');
       if (passwordInput) {
         this.renderer.removeClass(passwordInput, 'valid');
-        
-        // Si las contraseñas no coinciden, aplicar la clase invalid
         if (!this.passwordsMatch() && this.formGroup.get('confirmPassword')?.value) {
           this.renderer.addClass(passwordInput, 'invalid');
         }
@@ -119,13 +112,11 @@ export class RegistroComponent {
     setTimeout(() => {
       const passwordInput = document.querySelector('.p-password');
       if (passwordInput) {
-        // Al perder el foco, solo aplicar la clase invalid si corresponde
         if (this.isConfirmPasswordInvalid()) {
           this.renderer.addClass(passwordInput, 'invalid');
         } else {
           this.renderer.removeClass(passwordInput, 'invalid');
         }
-        // Siempre eliminar la clase valid
         this.renderer.removeClass(passwordInput, 'valid');
       }
     }, 0);
