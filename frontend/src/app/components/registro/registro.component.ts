@@ -7,6 +7,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
@@ -53,7 +55,7 @@ export class RegistroComponent {
     this.formGroup = this.fb.group(
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, this.emailValidator]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
       },
@@ -81,21 +83,35 @@ export class RegistroComponent {
       confirmPassword.setErrors(
         Object.keys(errors || {}).length === 0 ? null : errors
       );
-    }
-
-    return null;
+    }    return null;
   }
 
+  emailValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const valid = emailRegex.test(control.value);
+    
+    return valid ? null : { invalidEmail: true };
+  }
   isValidEmail(): boolean {
     const emailControl = this.formGroup.get('email');
-    return emailControl?.valid || false;
+    if (!emailControl?.value) {
+      return false;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(emailControl.value);
   }
 
   passwordsMatch(): boolean {
     const password = this.formGroup.get('password')?.value;
     const confirmPassword = this.formGroup.get('confirmPassword')?.value;
     return password === confirmPassword;
-  } // Nuevos métodos para manejar el focus
+  } 
+  
   onConfirmPasswordFocus(): void {
     this.confirmPasswordFocused = true;
     setTimeout(() => {
@@ -153,8 +169,8 @@ export class RegistroComponent {
     this.formGroup
       .get('username')
       ?.valueChanges.pipe(
-        debounceTime(500), // Esperar 500ms después de que el usuario deje de escribir
-        distinctUntilChanged(), // Solo verificar si el valor cambió
+        debounceTime(500),
+        distinctUntilChanged(),
         switchMap((username) => {
           if (username && username.length >= 3) {
             this.isCheckingUsername = true;
@@ -190,8 +206,8 @@ export class RegistroComponent {
     this.formGroup
       .get('email')
       ?.valueChanges.pipe(
-        debounceTime(500), // Esperar 500ms después de que el usuario deje de escribir
-        distinctUntilChanged(), // Solo verificar si el valor cambió
+        debounceTime(500),
+        distinctUntilChanged(),
         switchMap((email) => {
           if (email && this.isValidEmail()) {
             this.isCheckingEmail = true;
