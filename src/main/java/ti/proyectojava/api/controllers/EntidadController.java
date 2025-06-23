@@ -45,22 +45,30 @@ public class EntidadController {
             return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
         
+        if (clienteCreditoDto.getNombre().matches(".*\\d.*")) {
+            return new ResponseEntity<>("El nombre del cliente no puede contener números", HttpStatus.BAD_REQUEST);
+        }
+
         if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
         
+        if (!clienteCreditoDto.getTelefono().matches("[0-9+\\s-]+")) {
+            return new ResponseEntity<>("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
+        }
+
         if (clienteCreditoDto.getMinimo() < 0) {
             return new ResponseEntity<>("El crédito mínimo no puede ser negativo", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (clienteCreditoDto.getMaximo() <= 0) {
             return new ResponseEntity<>("El crédito máximo debe ser mayor a 0", HttpStatus.BAD_REQUEST);
         }
-        
+
         if (clienteCreditoDto.getMaximo() <= clienteCreditoDto.getMinimo()) {
             return new ResponseEntity<>("El crédito máximo debe ser mayor que el crédito mínimo", HttpStatus.BAD_REQUEST);
         }
-        
+
         String response = entidadService.crearClienteCredito(clienteCreditoDto);
         if (response == null) {
             return new ResponseEntity<>("Error al crear cliente o credito", HttpStatus.BAD_REQUEST);
@@ -77,10 +85,18 @@ public class EntidadController {
             return new ResponseEntity<>("El nombre del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
         
+        if (clienteDto.getNombre().matches(".*\\d.*")) {
+            return new ResponseEntity<>("El nombre del cliente no puede contener números", HttpStatus.BAD_REQUEST);
+        }
+
         if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
             return new ResponseEntity<>("El teléfono del cliente es obligatorio", HttpStatus.BAD_REQUEST);
         }
         
+        if (!clienteDto.getTelefono().matches("[0-9+\\s-]+")) {
+            return new ResponseEntity<>("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
+        }
+
         String result = entidadService.editarCliente(clienteDto);
         return ResponseEntity.ok(result);
     }
@@ -105,6 +121,33 @@ public class EntidadController {
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea un nuevo Proveedor")
     public ResponseEntity<String> crearProveedor(@RequestBody ProveedorDto proveedorDto) {
+
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            return new ResponseEntity<>("El nombre del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            return new ResponseEntity<>("El nombre del proveedor no puede contener números", HttpStatus.BAD_REQUEST);
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            return new ResponseEntity<>("El teléfono del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            return new ResponseEntity<>("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            return new ResponseEntity<>("El correo del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            return new ResponseEntity<>("El formato del correo electrónico no es válido", HttpStatus.BAD_REQUEST);
+        }
+        
         proveedorDto.setId(null);
         String response = entidadService.crearProveedor(proveedorDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -113,6 +156,33 @@ public class EntidadController {
     @PutMapping("/editarproveedor")
     @Secured({"ADMIN"})
     public ResponseEntity<String> editarProveedor(@RequestBody ProveedorDto proveedorDto) {
+        
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            return new ResponseEntity<>("El nombre del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            return new ResponseEntity<>("El nombre del proveedor no puede contener números", HttpStatus.BAD_REQUEST);
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            return new ResponseEntity<>("El teléfono del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+        
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            return new ResponseEntity<>("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +", HttpStatus.BAD_REQUEST);
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            return new ResponseEntity<>("El correo del proveedor es obligatorio", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validar formato de correo
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            return new ResponseEntity<>("El formato del correo electrónico no es válido", HttpStatus.BAD_REQUEST);
+        }
+        
         String result = entidadService.editarProveedor(proveedorDto);
         return ResponseEntity.ok(result);
     }

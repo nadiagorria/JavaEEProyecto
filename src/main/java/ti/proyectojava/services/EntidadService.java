@@ -7,6 +7,7 @@ import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Credito;
 import ti.proyectojava.business.entities.Entidad;
+import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.*;
@@ -60,34 +61,66 @@ public class EntidadService {
                 credito.setActivo(false);
                 creditoRepository.save(credito);
             }
+        } else if (entidad instanceof Proveedor) {
+
+            Proveedor proveedor = (Proveedor) entidad;
+            desvincularProductosDeProveedor(proveedor.getId());
         }
+        
         entidadRepository.save(entidad);
         return entidad;
     }
 
+    public String desvincularProductosDeProveedor(Long proveedorId) {
+        Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+        String response = null;
+
+        if (proveedorOpt.isPresent()) {
+            Proveedor proveedor = proveedorOpt.get();
+
+            List<Producto> productos = proveedor.getProductos();
+            for (Producto producto : productos) {
+                producto.setProveedor(null);
+            }
+
+            proveedor.setProductos(new ArrayList<>());
+
+            proveedorRepository.save(proveedor);
+            response = "Productos desvinculados correctamente del proveedor ID:" + proveedor.getId() + ", NOMBRE:" + proveedor.getNombre();
+        }
+
+        return response;
+    }
 
 //  CLIENTE
 
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
         
-        // Validaciones adicionales de negocio
         if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+        
+        if (clienteCreditoDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del cliente no puede contener números");
         }
         
         if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
         }
         
+        if (!clienteCreditoDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
+        }
+        
         if (clienteCreditoDto.getMinimo() < 0) {
             throw new IllegalArgumentException("El crédito mínimo no puede ser negativo");
         }
-        
+
         if (clienteCreditoDto.getMaximo() <= 0) {
             throw new IllegalArgumentException("El crédito máximo debe ser mayor a 0");
         }
-        
+
         if (clienteCreditoDto.getMaximo() <= clienteCreditoDto.getMinimo()) {
             throw new IllegalArgumentException("El crédito máximo debe ser mayor que el crédito mínimo");
         }
@@ -125,10 +158,18 @@ public class EntidadService {
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
         
+        if (clienteDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del cliente no puede contener números");
+        }
+
         if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
         }
         
+        if (!clienteDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
         Optional<Cliente> optionalCliente = clienteRepository.findById(clienteDto.getId());
         if (optionalCliente.isPresent()) {
             Cliente cliente = optionalCliente.get();
@@ -162,21 +203,78 @@ public class EntidadService {
     }
 
     public String crearProveedor(ProveedorDto proveedorDto) {
+
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
+        }
+        
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
+        }
+        
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo del proveedor es obligatorio");
+        }
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            throw new IllegalArgumentException("El formato del correo electrónico no es válido");
+        }
+
+        proveedorDto.setNombre(proveedorDto.getNombre().trim());
+        proveedorDto.setTelefono(proveedorDto.getTelefono().trim());
+        proveedorDto.setCorreo(proveedorDto.getCorreo().trim());
+
         return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
     }
 
     public String editarProveedor(ProveedorDto proveedorDto) {
+
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
+        }
+        
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
+        }
+        
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo del proveedor es obligatorio");
+        }
+
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            throw new IllegalArgumentException("El formato del correo electrónico no es válido");
+        }
+
         Optional<Proveedor> optionalProveedor = proveedorRepository.findById(proveedorDto.getId());
         if (optionalProveedor.isPresent()) {
             Proveedor proveedor = optionalProveedor.get();
-            proveedor.setNombre(proveedorDto.getNombre());
-            proveedor.setTelefono(proveedorDto.getTelefono());
-            proveedor.setCorreo(proveedorDto.getCorreo());
+            proveedor.setNombre(proveedorDto.getNombre().trim());
+            proveedor.setTelefono(proveedorDto.getTelefono().trim());
+            proveedor.setCorreo(proveedorDto.getCorreo().trim());
 
             proveedorRepository.save(proveedor);
-            return "Cliente actualizado. ID:" + proveedor.getId();
+            return "Proveedor actualizado. ID:" + proveedor.getId();
         } else {
-            return "Cliente no encontrado. ID:" + proveedorDto.getId();
+            return "Proveedor no encontrado. ID:" + proveedorDto.getId();
         }
     }
 

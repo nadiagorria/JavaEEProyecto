@@ -11,7 +11,8 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { clienteCreditoDto } from 'src/models/clienteCredito.dto';
 import { CreditoDto } from 'src/models/credito.dto';
 import { CreditoService } from 'src/services/credito.service';
@@ -36,8 +37,9 @@ import { SecurityService } from 'src/services/security.service';
     DialogModule,
     TooltipModule,
     ToastModule,
+    ConfirmDialogModule,
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './proveedores.component.html',
   styleUrl: './proveedores.component.scss',
 })
@@ -51,7 +53,8 @@ export class ProveedoresComponent {
     private creditoService: CreditoService,
     private entidadService: EntidadService,
     private securityService: SecurityService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -120,9 +123,8 @@ export class ProveedoresComponent {
   private validarEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
-  }
-
-  saveProveedor() {
+  }  saveProveedor() {
+    // Validar campos obligatorios
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -132,15 +134,52 @@ export class ProveedoresComponent {
       return;
     }
 
-    if (this.correo && this.correo.trim() !== '') {
-      if (!this.validarEmail(this.correo)) {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Email inválido',
-          detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
-        });
-        return;
-      }
+    // Validar que el nombre no contenga números
+    if (/\d/.test(this.nombre)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del proveedor no puede contener números',
+      });
+      return;
+    }
+
+    if (!this.telefono || this.telefono.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del proveedor es obligatorio',
+      });
+      return;
+    }
+
+    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
+    if (!/^[0-9+\s-]+$/.test(this.telefono)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+      });
+      return;
+    }
+
+    if (!this.correo || this.correo.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El correo del proveedor es obligatorio',
+      });
+      return;
+    }
+
+    // Validar formato de correo
+    if (!this.validarEmail(this.correo)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
+      });
+      return;
     }
 
     const proveedor: ProveedorDto = {
@@ -200,33 +239,51 @@ export class ProveedoresComponent {
   mostrarDetalles(id: number) {
     this.router.navigate(['/proveedor', id]);
   }
-
   eliminarProveedor(id: number) {
-    if (confirm('¿Está seguro que desea eliminar este proveedor?')) {
-      const proveedor = this.proveedores.find((p) => p.id === id);
+    const proveedor = this.proveedores.find((p) => p.id === id);
 
-      this.entidadService.eliminarPersona(id).subscribe({
-        next: (data: any) => {
-          console.log('Proveedor eliminado exitosamente', data);
+    this.confirmationService.confirm({
+      message: `¿Está seguro que desea eliminar el proveedor "${proveedor?.nombre}"? Esta acción no se puede deshacer.`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonStyleClass: 'p-button-text',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.entidadService.eliminarPersona(id).subscribe({
+          next: (data: any) => {
+            console.log('Proveedor eliminado exitosamente', data);
 
-          this.proveedores = this.proveedores.filter((p) => p.id !== id);
-          this.proveedoresFiltrados = this.proveedoresFiltrados.filter(
-            (p) => p.id !== id
-          );
-          this.totalRecords = this.proveedoresFiltrados.length;
-        },
-        error: (err: any) => {
-          console.error('Error al eliminar proveedor:', err);
-          let mensajeError = 'Error al eliminar proveedor';
-          if (err.error && typeof err.error === 'string') {
-            mensajeError += ': ' + err.error;
-          } else if (err.message) {
-            mensajeError += ': ' + err.message;
-          }
-          alert(mensajeError);
-        },
-      });
-    }
+            this.proveedores = this.proveedores.filter((p) => p.id !== id);
+            this.proveedoresFiltrados = this.proveedoresFiltrados.filter(
+              (p) => p.id !== id
+            );
+            this.totalRecords = this.proveedoresFiltrados.length;
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Proveedor eliminado correctamente',
+            });
+          },
+          error: (err: any) => {
+            console.error('Error al eliminar proveedor:', err);
+            let mensajeError = 'Error al eliminar proveedor';
+            if (err.error && typeof err.error === 'string') {
+              mensajeError = err.error;
+            } else if (err.message) {
+              mensajeError = err.message;
+            }
+
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: mensajeError,
+            });
+          },
+        });
+      },
+    });
   }
 
   isAdmin(): boolean {

@@ -95,24 +95,56 @@ export class ProveedorPerfilComponent {
   telefonoEdicion: string = '';
   correoEdicion: string = '';
 
-  editarProveedor() {
-    if (!this.nombreEdicion || !this.telefonoEdicion || !this.correoEdicion) {
+  editarProveedor() {    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Campos incompletos',
-        detail: 'Por favor, complete todos los campos obligatorios.',
+        summary: 'Campo requerido',
+        detail: 'El nombre del proveedor es obligatorio',
       });
       return;
     }
 
-    this.proveedor.nombre = this.nombreEdicion;
+    // Validar que el nombre no contenga números
+    if (/\d/.test(this.nombreEdicion)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del proveedor no puede contener números',
+      });
+      return;
+    }
 
-    this.proveedor.telefono = this.telefonoEdicion;
+    if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del proveedor es obligatorio',
+      });
+      return;
+    }
 
-    this.proveedor.correo = this.correoEdicion;
+    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
+    if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+      });
+      return;
+    }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.proveedor.correo)) {
+    if (!this.correoEdicion || this.correoEdicion.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El correo del proveedor es obligatorio',
+      });
+      return;
+    }
+
+    // Validar formato de correo
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.correoEdicion.trim())) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
@@ -120,6 +152,11 @@ export class ProveedorPerfilComponent {
       });
       return;
     }
+
+    // Actualizar los datos del proveedor
+    this.proveedor.nombre = this.nombreEdicion.trim();
+    this.proveedor.telefono = this.telefonoEdicion.trim();
+    this.proveedor.correo = this.correoEdicion.trim();
 
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
@@ -133,10 +170,17 @@ export class ProveedorPerfilComponent {
       },
       error: (err: any) => {
         console.error('Error al editar proveedor:', err);
+        let mensajeError = 'Ocurrió un error al actualizar los datos del proveedor.';
+        if (err.error && typeof err.error === 'string') {
+          mensajeError = err.error;
+        } else if (err.message) {
+          mensajeError = err.message;
+        }
+        
         this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
-          detail: 'Ocurrió un error al actualizar los datos del proveedor.',
+          detail: mensajeError,
         });
       },
     });

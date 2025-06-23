@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Table(name = "PROVEEDOR")
 public class Proveedor extends Entidad {
 
-    @Column(name = "PROVEEDOR_CORREO", unique = true)
+    @Column(name = "PROVEEDOR_CORREO")
     private String correo;
 
     @OneToMany(mappedBy = "proveedor")

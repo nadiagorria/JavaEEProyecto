@@ -47,6 +47,7 @@
                 class="w-full"
                 [(ngModel)]="nombreEdicion"
                 placeholder="Ingrese el nombre del proveedor"
+                required
               />
             </div>
 
@@ -60,6 +61,7 @@
                 class="w-full"
                 [(ngModel)]="telefonoEdicion"
                 placeholder="Ingrese el teléfono"
+                required
               />
             </div>
 
@@ -74,8 +76,18 @@
                 [(ngModel)]="correoEdicion"
                 type="email"
                 placeholder="Ingrese el correo electrónico"
+                required
               />
             </div>
+            
+            <!-- Campos obligatorios -->
+          <div class="campos-obligatorios">
+            <i class="pi pi-info-circle"></i>
+            <span
+              >Los campos marcados con <span style="color: red">*</span> son
+              obligatorios</span
+            >
+          </div>
           </div>
 
           <ng-template pTemplate="footer">

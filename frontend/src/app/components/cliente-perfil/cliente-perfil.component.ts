@@ -126,20 +126,48 @@ export class ClientePerfilComponent {
   }
 
   nombreEdicion: string = '';
-  telefonoEdicion: string = '';
-  editarCliente() {
-    if (!this.nombreEdicion || !this.telefonoEdicion) {
+  telefonoEdicion: string = '';  editarCliente() {
+    // Validar campos obligatorios
+    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Campos incompletos',
-        detail: 'Por favor, complete todos los campos obligatorios.',
+        summary: 'Campo requerido',
+        detail: 'El nombre del cliente es obligatorio',
       });
       return;
     }
 
-    this.cliente.nombre = this.nombreEdicion;
+    // Validar que el nombre no contenga números
+    if (/\d/.test(this.nombreEdicion)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del cliente no puede contener números',
+      });
+      return;
+    }
 
-    this.cliente.telefono = this.telefonoEdicion;
+    if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del cliente es obligatorio',
+      });
+      return;
+    }
+
+    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
+    if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+      });
+      return;
+    }
+
+    this.cliente.nombre = this.nombreEdicion.trim();
+    this.cliente.telefono = this.telefonoEdicion.trim();
 
     this.entidadService.editarCliente(this.cliente).subscribe({
       next: (data: any) => {

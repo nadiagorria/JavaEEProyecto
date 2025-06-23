@@ -136,9 +136,8 @@ export class ClientesCreditoComponent {
 
   minimo: number = 0;
   maximo: number = 0;
-
   saveCliente() {
-    // Validación del nombre (obligatorio)
+    // Validación del nombre (obligatorio y sin números)
     if (!this.nombre || this.nombre.trim() === '') {
       this.messageService.add({
         severity: 'warn',
@@ -148,12 +147,32 @@ export class ClientesCreditoComponent {
       return;
     }
 
-    // Validación del teléfono (obligatorio)
+    // Validar que el nombre no contenga números
+    if (/\d/.test(this.nombre)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del cliente no puede contener números',
+      });
+      return;
+    }
+
+    // Validación del teléfono (obligatorio y solo números, espacios, guiones y +)
     if (!this.telefono || this.telefono.trim() === '') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del cliente es obligatorio',
+      });
+      return;
+    }
+
+    // Validar que el teléfono solo contenga números, espacios, guiones y el símbolo +
+    if (!/^[0-9+\s-]+$/.test(this.telefono)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
       });
       return;
     }
