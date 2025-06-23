@@ -141,4 +141,17 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping("/limpiar-codigos-expirados")
+    @Secured({"ADMIN"})
+    @Operation(description = "Ejecuta manualmente la limpieza de códigos de recuperación expirados")
+    public ResponseEntity<String> limpiarCodigosExpirados() {
+        try {
+            usuarioService.limpiarCodigosExpirados();
+            return ResponseEntity.ok("Códigos de recuperación expirados eliminados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al limpiar códigos expirados: " + e.getMessage());
+        }
+    }
+
 }
