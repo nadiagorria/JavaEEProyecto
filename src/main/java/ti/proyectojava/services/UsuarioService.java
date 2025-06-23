@@ -294,7 +294,7 @@ public class UsuarioService {
     @Async
     public void limpiarCodigosExpiradosProgramado() {
         try {
-            LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+            LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
             long codigosAntesLimpieza = passwordRecoveryRepository.count();
 
