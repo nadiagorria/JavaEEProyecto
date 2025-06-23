@@ -26,7 +26,7 @@ public class CategoriaService {
     public ResponseListadoCategorias listadoCategorias() {
         ResponseListadoCategorias response = new ResponseListadoCategorias();
 
-        List<CategoriaDto> categoriasActivas = categoriaRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoCategoria).sorted((c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre()))                .toList();
+        List<CategoriaDto> categoriasActivas = categoriaRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoCategoria).sorted((c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre())).toList();
 
         response.setCategorias(categoriasActivas);
 

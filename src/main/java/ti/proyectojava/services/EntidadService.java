@@ -66,7 +66,7 @@ public class EntidadService {
             Proveedor proveedor = (Proveedor) entidad;
             desvincularProductosDeProveedor(proveedor.getId());
         }
-        
+
         entidadRepository.save(entidad);
         return entidad;
     }
@@ -96,23 +96,23 @@ public class EntidadService {
 
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
-        
+
         if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
-        
+
         if (clienteCreditoDto.getNombre().matches(".*\\d.*")) {
             throw new IllegalArgumentException("El nombre del cliente no puede contener números");
         }
-        
+
         if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
         }
-        
+
         if (!clienteCreditoDto.getTelefono().matches("[0-9+\\s-]+")) {
             throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
         }
-        
+
         if (clienteCreditoDto.getMinimo() < 0) {
             throw new IllegalArgumentException("El crédito mínimo no puede ser negativo");
         }
@@ -157,7 +157,7 @@ public class EntidadService {
         if (clienteDto.getNombre() == null || clienteDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
-        
+
         if (clienteDto.getNombre().matches(".*\\d.*")) {
             throw new IllegalArgumentException("El nombre del cliente no puede contener números");
         }
@@ -165,7 +165,7 @@ public class EntidadService {
         if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
         }
-        
+
         if (!clienteDto.getTelefono().matches("[0-9+\\s-]+")) {
             throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
         }
@@ -207,7 +207,7 @@ public class EntidadService {
         if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
         }
-        
+
         if (proveedorDto.getNombre().matches(".*\\d.*")) {
             throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
         }
@@ -215,7 +215,7 @@ public class EntidadService {
         if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
         }
-        
+
         if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
             throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
         }
@@ -241,7 +241,7 @@ public class EntidadService {
         if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
         }
-        
+
         if (proveedorDto.getNombre().matches(".*\\d.*")) {
             throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
         }
@@ -249,7 +249,7 @@ public class EntidadService {
         if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
         }
-        
+
         if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
             throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
         }

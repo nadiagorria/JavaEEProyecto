@@ -38,8 +38,7 @@ public class UsuarioService {
         this.passwordRecoveryRepository = passwordRecoveryRepository;
     }
 
-    public ResponseListadoUsuarios listadoUsuarios()
-    {
+    public ResponseListadoUsuarios listadoUsuarios() {
         ResponseListadoUsuarios responseListadoUsuarios = new ResponseListadoUsuarios();
 
         List<UsuarioDto> usuariosActivos = usuarioRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoUsuarioPlano).toList();
@@ -114,7 +113,7 @@ public class UsuarioService {
         return response;
     }
 
-    
+
     public String modificarUsuario(String nombre, UsuarioDto usuario) {
         String response = null;
         Usuario aux = usuarioRepository.findById(nombre).orElseThrow(() -> new RuntimeException("Usuario no existe"));
@@ -252,7 +251,8 @@ public class UsuarioService {
         try {
             emailService.enviarNotificacionCambioPassword(email, usuario.getNombre());
         } catch (Exception ignored) {
-        }        return "Contraseña restablecida exitosamente";
+        }
+        return "Contraseña restablecida exitosamente";
     }
 
     public boolean esPasswordIgualAActual(String email, String password) {
@@ -286,28 +286,29 @@ public class UsuarioService {
             return usuario.charAt(0) + "*@" + dominio;
         } else {
             return usuario.substring(0, 2) + "***@" + dominio;
-        }    }
+        }
+    }
 
 
     @Scheduled(cron = "0 0 16 * * MON", zone = "America/Montevideo")
     @Async
     public void limpiarCodigosExpiradosProgramado() {
         try {
-            System.out.println("🧹 Iniciando limpieza automática de códigos de recuperación expirados - " + 
-                             LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-            
+            System.out.println("🧹 Iniciando limpieza automática de códigos de recuperación expirados - " +
+                    LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+
             long codigosAntesLimpieza = passwordRecoveryRepository.count();
-            
+
             limpiarCodigosExpirados();
-            
+
             long codigosDespuesLimpieza = passwordRecoveryRepository.count();
             long codigosEliminados = codigosAntesLimpieza - codigosDespuesLimpieza;
-            
+
             System.out.println("✅ Limpieza automática completada exitosamente:");
             System.out.println("   - Códigos eliminados: " + codigosEliminados);
             System.out.println("   - Códigos restantes: " + codigosDespuesLimpieza);
             System.out.println("   - Próxima ejecución: Próximo lunes a las 16:00");
-            
+
         } catch (Exception e) {
             System.err.println("❌ Error durante la limpieza automática de códigos de recuperación: " + e.getMessage());
             e.printStackTrace();
