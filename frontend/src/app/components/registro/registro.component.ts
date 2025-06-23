@@ -233,7 +233,8 @@ export class RegistroComponent {
           next: (response) => {
             this.isLoading = false;
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Registro Exitoso',
               detail: `¡Bienvenido ${username}! Tu cuenta ha sido creada correctamente`,
@@ -286,7 +287,8 @@ export class RegistroComponent {
               }
             }
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: severidad,
               summary: 'Error de Registro',
               detail: mensaje,
@@ -315,7 +317,8 @@ export class RegistroComponent {
         mensajeError = 'Esperando verificación del email';
       }
 
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
         detail: mensajeError,

@@ -96,7 +96,8 @@ export class ProveedorPerfilComponent {
   correoEdicion: string = '';
 
   editarProveedor() {    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del proveedor es obligatorio',
@@ -104,7 +105,8 @@ export class ProveedorPerfilComponent {
       return;
     }
     if (/\d/.test(this.nombreEdicion)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del proveedor no puede contener números',
@@ -113,7 +115,8 @@ export class ProveedorPerfilComponent {
     }
 
     if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del proveedor es obligatorio',
@@ -121,7 +124,8 @@ export class ProveedorPerfilComponent {
       return;
     }
     if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
@@ -130,7 +134,8 @@ export class ProveedorPerfilComponent {
     }
 
     if (!this.correoEdicion || this.correoEdicion.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El correo del proveedor es obligatorio',
@@ -139,7 +144,8 @@ export class ProveedorPerfilComponent {
     }
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(this.correoEdicion.trim())) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
         detail: 'Por favor, ingrese un correo electrónico válido.',
@@ -152,7 +158,8 @@ export class ProveedorPerfilComponent {
 
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Proveedor actualizado',
           detail: 'Los datos del proveedor se han actualizado correctamente.',
@@ -167,7 +174,8 @@ export class ProveedorPerfilComponent {
           mensajeError = err.message;
         }
         
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
           detail: mensajeError,
@@ -192,7 +200,8 @@ export class ProveedorPerfilComponent {
 
   eliminarProducto(productoId: number) {
     if (!this.isAdmin()) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
         detail: 'No tienes permisos para eliminar productos.',
@@ -212,7 +221,8 @@ export class ProveedorPerfilComponent {
       accept: () => {
         this.productoService.eliminarProducto(productoId).subscribe({
           next: (response) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Producto eliminado',
               detail: 'El producto ha sido eliminado correctamente.',
@@ -226,7 +236,8 @@ export class ProveedorPerfilComponent {
             }
           },
           error: (error) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
               detail:

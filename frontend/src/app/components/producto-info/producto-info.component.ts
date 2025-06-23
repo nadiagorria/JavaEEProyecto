@@ -210,7 +210,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
     if (lotesConPrecioMayor.length > 0) {
       lotesConPrecioMayor.forEach((lote) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
           detail: `Lote ${lote.numeLote}: El precio de venta actual (${
@@ -233,7 +234,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
     if (lotesConPrecioMayor.length > 0) {
       lotesConPrecioMayor.forEach((lote) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'warn',
           summary: 'Advertencia de Precios',
           detail: `Lote ${lote.numeLote}: El precio de venta actual (${
@@ -306,7 +308,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   }
   editarProducto(): void {
     if (!this.editandoProducto.id || !this.validarFormularioEdicion()) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail:
@@ -351,7 +354,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
                   );
                 }
 
-                this.messageService.add({
+                this.messageService.clear();
+this.messageService.add({
                   severity: 'success',
                   summary: 'Éxito',
                   detail: 'Producto e imagen actualizados correctamente',
@@ -359,7 +363,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
                 this.finalizarEdicion();
               },
               error: (error) => {
-                this.messageService.add({
+                this.messageService.clear();
+this.messageService.add({
                   severity: 'warn',
                   summary: 'Advertencia',
                   detail:
@@ -369,7 +374,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
               },
             });
         } else {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Producto actualizado correctamente',
@@ -378,7 +384,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo editar el producto',
@@ -439,7 +446,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
     this.productoService.eliminarProducto(this.producto.id).subscribe({
       next: () => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Producto eliminado correctamente',
@@ -449,7 +457,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         }, 1500);
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo eliminar el producto',
@@ -500,7 +509,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           errorMessage = err.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -532,7 +542,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         const idMatch = response.match(/ID: (\d+)/);
         const idLote = idMatch ? idMatch[1] : 'desconocido';
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: `Lote #${idLote} agregado correctamente`,
@@ -559,7 +570,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           errorMessage = err.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -578,7 +590,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   }
   private validarFormularioLote(): boolean {
     if (!this.nuevoLote.numeLote || this.nuevoLote.numeLote.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El número de lote es obligatorio',
@@ -587,7 +600,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     }
 
     if (this.nuevoLote.stock === undefined || this.nuevoLote.stock <= 0) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El stock debe ser mayor que cero',
@@ -599,7 +613,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.nuevoLote.precioCompra === undefined ||
       this.nuevoLote.precioCompra < 0
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
         detail: 'El precio de compra debe ser un valor válido',
@@ -612,7 +627,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       this.nuevoLote.precioCompra &&
       this.nuevoLote.precioCompra > this.producto.precioVenta
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia de Precios',
         detail: `El precio de compra del nuevo lote (${this.nuevoLote.precioCompra}) es mayor al precio de venta actual (${this.producto.precioVenta}). Esto resultará en pérdidas.`,
@@ -675,7 +691,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   modificarStockTotal(): void {
     if (!this.producto || !this.producto.id) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'No se puede modificar el stock del producto',
@@ -684,7 +701,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     }
 
     if (this.nuevoStockTotal < 0) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'El stock total no puede ser negativo',
@@ -696,7 +714,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
       .modificarStockTotal(this.producto.id, this.nuevoStockTotal)
       .subscribe({
         next: (response) => {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Stock total modificado correctamente',
@@ -709,7 +728,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
           this.mostrarModalModificarStock = false;
         },
         error: (error) => {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: error.error || 'Error al modificar el stock total',
@@ -747,7 +767,8 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
 
   activarEscanerCodigoBarras(): void {
     this.barcodeScannerService.activateScanner();
-    this.messageService.add({
+    this.messageService.clear();
+this.messageService.add({
       severity: 'info',
       summary: 'Escáner Activado',
       detail: 'Escanee un código de barras para capturarlo',

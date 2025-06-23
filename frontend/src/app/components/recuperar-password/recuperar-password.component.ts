@@ -71,7 +71,8 @@ export class RecuperarPasswordComponent implements OnInit {
 
   solicitarCodigo() {
     if (!this.form.email || !this.isValidEmail(this.form.email)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Email Inválido',
         detail: 'Por favor ingrese un email válido',
@@ -87,7 +88,8 @@ export class RecuperarPasswordComponent implements OnInit {
         next: (response: string) => {
           this.loading = false;
           this.step = 2;
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'success',
             summary: 'Código Enviado',
             detail: response,
@@ -96,7 +98,8 @@ export class RecuperarPasswordComponent implements OnInit {
         },
         error: (error: any) => {
           this.loading = false;
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: error.error || 'Error al solicitar código de recuperación',
@@ -108,7 +111,8 @@ export class RecuperarPasswordComponent implements OnInit {
 
   restablecerPassword() {
     if (!this.form.codigo || this.form.codigo.length !== 6) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Código Inválido',
         detail: 'El código debe tener 6 dígitos',
@@ -118,7 +122,8 @@ export class RecuperarPasswordComponent implements OnInit {
     }
 
     if (!this.form.nuevaPassword || this.form.nuevaPassword.length < 6) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Contraseña Inválida',
         detail: 'La contraseña debe tener al menos 6 caracteres',
@@ -128,7 +133,8 @@ export class RecuperarPasswordComponent implements OnInit {
     }
 
     if (this.form.nuevaPassword !== this.form.confirmarPassword) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Contraseñas no Coinciden',
         detail: 'Las contraseñas ingresadas no coinciden',
@@ -147,7 +153,8 @@ export class RecuperarPasswordComponent implements OnInit {
       .subscribe({
         next: (response: string) => {
           this.loading = false;
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'success',
             summary: 'Contraseña Restablecida',
             detail: response,
@@ -167,14 +174,16 @@ export class RecuperarPasswordComponent implements OnInit {
               'La nueva contraseña no puede ser igual a la actual'
             )
           ) {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'warn',
               summary: 'Contraseña Inválida',
               detail: 'La nueva contraseña no puede ser igual a la actual.',
               life: 5000,
             });
           } else {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: errorMessage,
@@ -205,7 +214,8 @@ export class RecuperarPasswordComponent implements OnInit {
         next: (esIgual: boolean) => {
           this.validandoPassword = false;
           if (esIgual) {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'warn',
               summary: 'Contraseña Inválida',
               detail: 'La nueva contraseña no puede ser igual a la actual.',

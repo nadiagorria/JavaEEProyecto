@@ -74,8 +74,7 @@ export class LoginComponent {
             email: response.email, // Incluir el email en el objeto user del servicio
           };
 
-          this.messageService.clear();
-          this.messageService.add({
+          this.messageService.clear();this.messageService.add({
             severity: 'success',
             summary: 'Bienvenido',
             detail: `¡Hola ${response.nombreUsuario}! Has iniciado sesión correctamente`,
@@ -119,7 +118,8 @@ export class LoginComponent {
             }
           }
 
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: severidad,
             summary: 'Error de Autenticación',
             detail: mensaje,
@@ -132,7 +132,8 @@ export class LoginComponent {
     } else {
       this.formGroup.markAllAsTouched();
 
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
         detail: 'Por favor completa todos los campos requeridos',

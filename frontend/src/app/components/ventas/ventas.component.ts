@@ -69,7 +69,8 @@ export class VentasComponent implements OnInit {
         this.totalRecords = this.ventas.length;
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar las ventas',
@@ -95,14 +96,16 @@ export class VentasComponent implements OnInit {
       accept: () => {
         this.ventaService.eliminarVenta(id).subscribe({
           next: (response) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
             });
             this.cargarVentas();          },
           error: (error) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Error al eliminar la venta',

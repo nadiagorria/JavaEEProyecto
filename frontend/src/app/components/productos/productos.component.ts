@@ -268,7 +268,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     );
 
     if (categoriaExistente) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Ya existe una categoría con este nombre',
@@ -289,7 +290,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
     this.categoriaService.crearCategoria(nuevaCategoria).subscribe({
       next: (response) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Categoría creada correctamente',
@@ -305,7 +307,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
         let mensajeError = 'Error al crear la categoría';
 
         if (error.status === 201) {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Categoría creada correctamente',
@@ -329,7 +332,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
           mensajeError = error.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -344,7 +348,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
       (cat) => cat.id === this.categoriaSeleccionada
     );
     if (!categoriaAEliminar || !categoriaAEliminar.id) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo encontrar la categoría seleccionada',
@@ -360,7 +365,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
             .eliminarCategoria(categoriaAEliminar.id!)
             .subscribe({
               next: (response) => {
-                this.messageService.add({
+                this.messageService.clear();
+this.messageService.add({
                   severity: 'success',
                   summary: 'Éxito',
                   detail: response, // Ahora response es un string directo
@@ -374,7 +380,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
                 this.mostrarModalEliminarCategoria = false;
               },
               error: (error) => {
-                this.messageService.add({
+                this.messageService.clear();
+this.messageService.add({
                   severity: 'error',
                   summary: 'Error',
                   detail:
@@ -385,7 +392,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
             });
         },
         error: (error) => {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'Error al desvincular los productos de la categoría',
@@ -419,7 +427,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
     const validacion = this.validarFormularioProducto();
     if (!validacion.valido) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formulario Incompleto',
         detail: validacion.mensaje,
@@ -431,7 +440,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error de Autenticación',
         detail:
@@ -442,7 +452,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     }
 
     if (!this.securityService.isLoggedIn()) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error de Autenticación',
         detail:
@@ -456,7 +467,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     const isAdmin = userRoles && userRoles.includes('ADMIN');
 
     if (!isAdmin) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error de Permisos',
         detail:
@@ -545,7 +557,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
             this.limpiarCacheImagenes();
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Producto Creado',
               detail: 'El producto se ha creado exitosamente',
@@ -563,7 +576,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
               mensajeError = error.message;
             }
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,
@@ -573,7 +587,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
         });
       })
       .catch((error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error de Imagen',
           detail: 'Error al procesar la imagen',

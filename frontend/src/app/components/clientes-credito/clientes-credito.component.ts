@@ -91,7 +91,8 @@ export class ClientesCreditoComponent {
         console.log('Créditos cargados:', this.creditos);      },
       error: (err: any) => {
         if (err.status === 403) {
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'warn',
             summary: 'Sesión expirada',
             detail:
@@ -101,7 +102,8 @@ export class ClientesCreditoComponent {
           return;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al listar créditos: ' + (err.message || err.status),
@@ -135,7 +137,8 @@ export class ClientesCreditoComponent {
   maximo: number = 0;
   saveCliente() {
     if (!this.nombre || this.nombre.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del cliente es obligatorio',
@@ -143,7 +146,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (/\d/.test(this.nombre)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del cliente no puede contener números',
@@ -151,7 +155,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (!this.telefono || this.telefono.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del cliente es obligatorio',
@@ -159,7 +164,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
@@ -167,7 +173,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (this.minimo === null || this.minimo === undefined || this.minimo < 0) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El crédito mínimo es obligatorio y debe ser mayor o igual a 0',
@@ -175,7 +182,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (this.maximo === null || this.maximo === undefined || this.maximo <= 0) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El crédito máximo es obligatorio y debe ser mayor a 0',
@@ -183,7 +191,8 @@ export class ClientesCreditoComponent {
       return;
     }
     if (this.maximo <= this.minimo) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Validación de créditos',
         detail: 'El crédito máximo debe ser mayor que el crédito mínimo',
@@ -208,7 +217,8 @@ export class ClientesCreditoComponent {
         this.minimo = 0;
         this.maximo = 0;
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Cliente a crédito creado exitosamente',
@@ -224,7 +234,8 @@ export class ClientesCreditoComponent {
           mensajeError = err.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -266,7 +277,8 @@ export class ClientesCreditoComponent {
             this.totalRecords = this.creditosFiltrados.length;
 
             this.cargarCreditos();
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Cliente eliminado exitosamente',
@@ -279,7 +291,8 @@ export class ClientesCreditoComponent {
             } else if (err.message) {
               mensajeError += ': ' + err.message;
             }
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,

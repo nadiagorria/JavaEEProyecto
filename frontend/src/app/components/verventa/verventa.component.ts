@@ -137,7 +137,8 @@ export class VerventaComponent implements OnInit {
   }
 
   private mostrarErrorYRedirigir(mensaje: string) {
-    this.messageService.add({
+    this.messageService.clear();
+this.messageService.add({
       severity: 'error',
       summary: 'Acceso Denegado',
       detail: mensaje,

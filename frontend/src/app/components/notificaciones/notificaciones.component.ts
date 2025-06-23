@@ -112,7 +112,8 @@ export class NotificacionesComponent implements OnInit, OnDestroy {
     if (notificacion.id) {
       this.notificacionService.eliminarNotificacionYActualizar(notificacion.id);
 
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
         detail: 'Notificación eliminada correctamente',

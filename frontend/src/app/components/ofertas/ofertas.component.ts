@@ -182,7 +182,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.promociones = response.promociones;
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar las promociones',
@@ -197,7 +198,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.combos = response.combos;
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los combos',
@@ -212,7 +214,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.descuentos = response.descuentos;
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los descuentos',
@@ -227,7 +230,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.productos = response.productos;
       },
       error: (error) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cargar los productos',
@@ -275,7 +279,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
     this.ofertaService.crearPromocion(promocion).subscribe({
       next: (response) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Promoción creada correctamente',
@@ -291,7 +296,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -305,7 +311,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.nuevaPromocion.descripcion ||
       this.nuevaPromocion.descripcion.trim() === ''
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -317,7 +324,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.productoSeleccionadoPromocion ||
       this.productoSeleccionadoPromocion === 0
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar un producto',
@@ -326,7 +334,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     }
 
     if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento < 2) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail:
@@ -377,7 +386,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
     this.ofertaService.crearCombo(combo).subscribe({
       next: (response) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Combo creado correctamente',
@@ -393,7 +403,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -406,7 +417,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.nuevoCombo.descripcion ||
       this.nuevoCombo.descripcion.trim() === ''
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -418,7 +430,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.productosSeleccionadosCombo ||
       this.productosSeleccionadosCombo.length < 2
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar al menos 2 productos',
@@ -431,7 +444,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       this.nuevoCombo.descuento <= 0 ||
       this.nuevoCombo.descuento >= 100
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'El descuento debe ser mayor a 0% y menor a 100%',
@@ -481,7 +495,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
     this.ofertaService.crearDescuento(descuento).subscribe({
       next: (response) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Descuento creado correctamente',
@@ -497,7 +512,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: errorMessage,
@@ -511,7 +527,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.nuevoDescuento.descripcion ||
       this.nuevoDescuento.descripcion.trim() === ''
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'La descripción es requerida',
@@ -523,7 +540,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       !this.productoSeleccionadoDescuento ||
       this.productoSeleccionadoDescuento === 0
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'Debe seleccionar un producto',
@@ -536,7 +554,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       this.nuevoDescuento.descuento <= 0 ||
       this.nuevoDescuento.descuento >= 100
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
         detail: 'El descuento debe ser mayor a 0% y menor a 100%',
@@ -603,7 +622,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           next: (response) => {
             const articuloEliminado =
               tipo === 'promocion' ? 'eliminada' : 'eliminado';
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: `${
@@ -625,7 +645,8 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           },
           error: (error) => {
             const articuloError = tipo === 'promocion' ? 'la' : 'el';
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: `Error al eliminar ${articuloError} ${tipo}`,

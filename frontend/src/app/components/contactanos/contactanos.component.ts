@@ -61,7 +61,8 @@ export class ContactanosComponent {
     this.contactoService.enviarMensajeContacto(contactoDto).subscribe({
       next: (response) => {
         this.isSubmitting = false;
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Mensaje enviado',
           detail: 'Tu mensaje ha sido enviado exitosamente. Te responderemos pronto.'
@@ -86,7 +87,8 @@ export class ContactanosComponent {
     window.location.href = mailtoLink;
       setTimeout(() => {
       this.isSubmitting = false;
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'success',
         summary: 'Mensaje enviado',
         detail: 'Tu mensaje ha sido enviado exitosamente. Te responderemos pronto.'

@@ -154,7 +154,8 @@ export class PerfilComponent implements OnInit {
   otorgarPermisos(nombreUsuario: string): void {
     this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Permisos Otorgados',
           detail: 'Permisos de administrador otorgados exitosamente',
@@ -162,7 +163,8 @@ export class PerfilComponent implements OnInit {
         });
         this.cargarUsuarios();      },
       error: (error: any) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error al Otorgar Permisos',
           detail: error.error || 'Error al otorgar permisos de administrador',
@@ -175,7 +177,8 @@ export class PerfilComponent implements OnInit {
   revocarPermisos(nombreUsuario: string): void {
     this.usuarioService.revocarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Permisos Revocados',
           detail: 'Permisos de administrador revocados exitosamente',
@@ -183,7 +186,8 @@ export class PerfilComponent implements OnInit {
         });
         this.cargarUsuarios();      },
       error: (error: any) => {
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error al Revocar Permisos',
           detail: error.error || 'Error al revocar permisos de administrador',
@@ -203,7 +207,8 @@ export class PerfilComponent implements OnInit {
       accept: () => {
         this.usuarioService.eliminarUsuario(nombreUsuario).subscribe({
           next: (response: any) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Usuario Eliminado',
               detail: 'Usuario eliminado (desactivado) exitosamente',
@@ -211,7 +216,8 @@ export class PerfilComponent implements OnInit {
             });
             this.cargarUsuarios();          },
           error: (error: any) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error al Eliminar Usuario',
               detail: error.error || 'Error al eliminar el usuario',
@@ -346,7 +352,8 @@ export class PerfilComponent implements OnInit {
       this.editForm.newPassword &&
       this.editForm.newPassword !== this.editForm.confirmPassword
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'error',
         summary: 'Error de Validación',
         detail: 'Las contraseñas no coinciden',
@@ -359,7 +366,8 @@ export class PerfilComponent implements OnInit {
       this.editForm.newPassword &&
       this.editForm.newPassword === this.editForm.currentPassword
     ) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Contraseña Duplicada',
         detail: 'La nueva contraseña debe ser diferente a la actual',
@@ -369,7 +377,8 @@ export class PerfilComponent implements OnInit {
     }
 
     if (!this.editForm.currentPassword) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo Requerido',
         detail: 'Debe ingresar su contraseña actual',
@@ -390,7 +399,8 @@ export class PerfilComponent implements OnInit {
             responseData = response;
           }
           if (responseData.existe === true) {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Email ya en uso',
               detail: 'El email ingresado ya está siendo utilizado por otro usuario',
@@ -402,7 +412,8 @@ export class PerfilComponent implements OnInit {
         },
         error: (error) => {
           this.loading = false;
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: 'error',
             summary: 'Error de verificación',
             detail: 'Error al verificar el email',
@@ -432,7 +443,8 @@ export class PerfilComponent implements OnInit {
             this.showEditDialog = false;
             this.loading = false;
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Perfil Actualizado',
               detail: 'Los cambios se han guardado correctamente',
@@ -444,7 +456,8 @@ export class PerfilComponent implements OnInit {
             }
           } else {
             this.loading = false;
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error del Servidor',
               detail: 'Respuesta inesperada del servidor',
@@ -475,7 +488,8 @@ export class PerfilComponent implements OnInit {
           } else if (error.message) {
             errorMessage = error.message;
           }
-          this.messageService.add({
+          this.messageService.clear();
+this.messageService.add({
             severity: severity,
             summary: summary,
             detail: errorMessage,
@@ -504,7 +518,8 @@ export class PerfilComponent implements OnInit {
       accept: () => {
         this.ventaService.eliminarVenta(id).subscribe({
           next: (response) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
@@ -516,7 +531,8 @@ export class PerfilComponent implements OnInit {
             }
           },
           error: (error) => {
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Error al eliminar la venta',

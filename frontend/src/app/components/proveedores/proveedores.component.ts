@@ -122,7 +122,8 @@ export class ProveedoresComponent {
     return emailRegex.test(email);
   }  saveProveedor() {
     if (!this.nombre || this.nombre.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El nombre del proveedor es obligatorio',
@@ -130,7 +131,8 @@ export class ProveedoresComponent {
       return;
     }
     if (/\d/.test(this.nombre)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El nombre del proveedor no puede contener números',
@@ -139,7 +141,8 @@ export class ProveedoresComponent {
     }
 
     if (!this.telefono || this.telefono.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El teléfono del proveedor es obligatorio',
@@ -147,7 +150,8 @@ export class ProveedoresComponent {
       return;
     }
     if (!/^[0-9+\s-]+$/.test(this.telefono)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Formato inválido',
         detail: 'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
@@ -156,7 +160,8 @@ export class ProveedoresComponent {
     }
 
     if (!this.correo || this.correo.trim() === '') {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
         detail: 'El correo del proveedor es obligatorio',
@@ -164,7 +169,8 @@ export class ProveedoresComponent {
       return;
     }
     if (!this.validarEmail(this.correo)) {
-      this.messageService.add({
+      this.messageService.clear();
+this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
         detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
@@ -188,7 +194,8 @@ export class ProveedoresComponent {
         this.telefono = '';
         this.correo = '';
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Proveedor creado exitosamente',
@@ -204,7 +211,8 @@ export class ProveedoresComponent {
           mensajeError = err.message;
         }
 
-        this.messageService.add({
+        this.messageService.clear();
+this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: mensajeError,
@@ -247,7 +255,8 @@ export class ProveedoresComponent {
             );
             this.totalRecords = this.proveedoresFiltrados.length;
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Proveedor eliminado correctamente',
@@ -261,7 +270,8 @@ export class ProveedoresComponent {
               mensajeError = err.message;
             }
 
-            this.messageService.add({
+            this.messageService.clear();
+this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: mensajeError,
