@@ -160,7 +160,8 @@
         color: #dc3545;
         font-weight: 400;
       }
-
+      &[for="fechaVencimiento"]::after,
+      &[for="imagen"]::after,
       &[for="categoria"]::after,
       &[for="proveedor"]::after {
         content: "";
@@ -692,7 +693,138 @@
       margin-top: 0.5rem;
       font-size: 0.875rem;
       color: #6c757d;
-      font-weight: 500;
+      font-weight: 500;    }
+  }
+}
+
+::ng-deep .delete-lote-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #ff6b6b, #ff4757);
+    color: white;
+    border: none;
+    border-radius: 8px 8px 0 0;
+
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: 1.1rem;
     }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .p-dialog-footer {
+    border: none;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    .p-button {
+      border-radius: 6px;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+
+      &.p-button-danger {
+        background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        border: none;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+        }
+      }
+    }
+  }
+}
+
+.modal-delete-lote-content {
+  .question-section {
+    margin-bottom: 1.5rem;
+
+    h4 {
+      margin: 0 0 0.5rem 0;
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .action-warning {
+      margin: 0;
+      color: #6c757d;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+  }
+
+  .alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+
+    .alert-icon {
+      flex-shrink: 0;
+
+      i {
+        font-size: 1.5rem;
+        color: #f39c12;
+        animation: pulse 2s infinite;
+      }
+    }
+
+    .alert-content {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 0.75rem 0;
+        color: #d35400;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      p {
+        margin: 0 0 0.5rem 0;
+        color: #8b4513;
+        font-size: 0.9rem;
+        line-height: 1.5;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          color: #d35400;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }

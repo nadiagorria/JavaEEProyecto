@@ -314,9 +314,7 @@
             >Este campo es opcional. Solo se actualizará la imagen si selecciona
             una nueva.</small
           >
-        </div>
-
-        <!-- Preview de Imagen -->
+        </div>        <!-- Preview de Imagen -->
         <div
           class="image-preview mb-3"
           *ngIf="imagenPreviewEdicion || imagenUrl"
@@ -370,7 +368,7 @@
 
         <div class="form-group">
           <label for="numeLote"
-            >Número de Lote <span style="color: red">*</span></label
+            >Número de Lote</label
           >
           <input
             id="numeLote"
@@ -386,7 +384,7 @@
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
-              <label for="stock">Stock <span style="color: red">*</span></label>
+              <label for="stock">Stock</label>
               <input
                 id="stock"
                 type="number"
@@ -403,7 +401,7 @@
           <div class="form-col">
             <div class="form-group">
               <label for="precioCompra"
-                >Precio de Compra <span style="color: red">*</span></label
+                >Precio de Compra</label
               >
               <input
                 id="precioCompra"
@@ -518,7 +516,7 @@
 
     <!-- Formulario de modificación -->
     <div class="form-group">
-      <label for="nuevoStock">Nuevo Stock Total *</label>
+      <label for="nuevoStock">Nuevo Stock Total</label>
       <input
         id="nuevoStock"
         type="number"
@@ -552,6 +550,59 @@
       class="p-button-danger"
       (click)="modificarStockTotal()"
       [disabled]="nuevoStockTotal < 0 || nuevoStockTotal === stockOriginal"
+    ></button>  </ng-template>
+</p-dialog>
+
+<!-- Modal de Confirmación para Eliminar Lote -->
+<p-dialog
+  header="Confirmar Eliminación de Lote"
+  [(visible)]="mostrarModalConfirmarEliminarLote"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="delete-lote-dialog"
+  appendTo="body"
+>
+  <div class="modal-delete-lote-content">
+    <!-- Pregunta principal -->
+    <div class="question-section">
+      <h4>¿Está seguro de que desea eliminar este lote?</h4>
+      <p class="action-warning">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <!-- Card de advertencia -->
+    <div class="alert-warning">
+      <div class="alert-icon">
+        <i class="pi pi-exclamation-triangle"></i>
+      </div>
+      <div class="alert-content">
+        <h4>¡Importante!</h4>
+        <p>
+          <strong>Al eliminar este lote, su stock no será descontado automáticamente del stock total del producto.</strong>
+        </p>
+        <p>
+          El administrador superior debe realizar el ajuste manualmente para mantener la coherencia del inventario.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
+      class="p-button-text"
+      (click)="cancelarEliminarLote()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Sí, eliminar"
+      class="p-button-danger"
+      (click)="procederEliminarLote()"
     ></button>
   </ng-template>
 </p-dialog>

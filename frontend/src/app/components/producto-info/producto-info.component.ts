@@ -138,10 +138,12 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
     precioCompra: 0,
   };
   minFechaVencimiento: string = '';
-
   mostrarModalModificarStock: boolean = false;
   nuevoStockTotal: number = 0;
   stockOriginal: number = 0;
+
+  mostrarModalConfirmarEliminarLote: boolean = false;
+  loteAEliminar: number | null = null;
 
   imagenSeleccionada: File | null = null;
   imagenPreviewEdicion: string | null = null;
@@ -496,17 +498,21 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
   }
 
   confirmarEliminarLote(loteId: number) {
-    this.confirmationService.confirm({
-      message:
-        '¿Está seguro de que desea eliminar este lote? Esta acción no se puede deshacer.',
-      header: 'Confirmar eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.eliminarLote(loteId);
-      },
-    });
+    this.loteAEliminar = loteId;
+    this.mostrarModalConfirmarEliminarLote = true;
+  }
+
+  procederEliminarLote() {
+    if (this.loteAEliminar !== null) {
+      this.eliminarLote(this.loteAEliminar);
+      this.mostrarModalConfirmarEliminarLote = false;
+      this.loteAEliminar = null;
+    }
+  }
+
+  cancelarEliminarLote() {
+    this.mostrarModalConfirmarEliminarLote = false;
+    this.loteAEliminar = null;
   }
 
   eliminarLote(loteId: number) {
@@ -764,8 +770,7 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.imagenPreviewEdicion = e.target?.result as string;
       };
       reader.readAsDataURL(file);
-    }
-  }
+    }  }
 
   onImageError(event: any) {
     const imgElement = event.target as HTMLImageElement;
