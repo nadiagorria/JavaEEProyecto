@@ -303,13 +303,29 @@
 
         <div class="form-group">
           <label for="imagen">Imagen del producto (opcional)</label>
-          <input
-            type="file"
-            id="imagen"
-            accept="image/*"
-            (change)="onImagenSeleccionada($event)"
-            name="imagen"
-          />
+          
+          <div class="file-upload-container">
+            <input
+              type="file"
+              id="imagen"
+              accept="image/*"
+              (change)="onImagenSeleccionada($event)"
+              name="imagen"
+              style="display: none;"
+            />
+            <button
+              type="button"
+              class="file-upload-btn"
+              (click)="triggerFileInput()"
+            >
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar imagen</span>
+            </button>
+            <span class="file-name" *ngIf="imagenSeleccionada">
+              {{ imagenSeleccionada.name }}
+            </span>
+          </div>
+          
           <small class="help-text"
             >Este campo es opcional. Solo se actualizará la imagen si selecciona
             una nueva.</small

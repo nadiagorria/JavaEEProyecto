@@ -433,7 +433,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
         },
       });
   }
-
   onImagenSeleccionada(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -444,6 +443,13 @@ export class ProductosComponent implements OnInit, OnDestroy {
         this.imagenPreview = e.target?.result as string;
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  triggerFileInput() {
+    const fileInput = document.getElementById('imagen') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
     }
   }
 

@@ -770,7 +770,15 @@ export class ProductoInfoComponent implements OnInit, OnDestroy {
         this.imagenPreviewEdicion = e.target?.result as string;
       };
       reader.readAsDataURL(file);
-    }  }
+    }
+  }
+
+  triggerFileInput() {
+    const fileInput = document.getElementById('imagen') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
 
   onImageError(event: any) {
     const imgElement = event.target as HTMLImageElement;
