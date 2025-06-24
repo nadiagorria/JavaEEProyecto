@@ -243,4 +243,66 @@ export class RecuperarPasswordComponent implements OnInit {
     this.form.nuevaPassword = '';
     this.form.confirmarPassword = '';
   }
+
+
+  esEmailValido(email: string): boolean {
+    if (!email) return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  validarEmailEnTiempoReal(): void {
+     }
+
+  validarPasswordsEnTiempoReal(): void {
+    }
+
+  esFormularioValido(): boolean {
+    const codigoValido = this.form.codigo && this.form.codigo.length === 6;
+    const passwordValida = this.form.nuevaPassword && this.form.nuevaPassword.length >= 6;
+    const passwordsCoinciden = this.form.nuevaPassword === this.form.confirmarPassword;
+    const confirmarPasswordCompleto = this.form.confirmarPassword && this.form.confirmarPassword.length > 0;
+    
+    return !!codigoValido && !!passwordValida && !!passwordsCoinciden && !!confirmarPasswordCompleto;
+  }
+
+  forzarBordeNegro(event: any): void {
+    setTimeout(() => {
+      const passwordInput = event.target.closest('.p-password');
+      if (passwordInput) {
+        const input = passwordInput.querySelector('input');
+        if (input) {
+          input.style.setProperty('border-color', '#000000', 'important');
+          input.style.setProperty('box-shadow', '0 0 0 3px rgba(0, 0, 0, 0.1)', 'important');
+          
+          passwordInput.style.setProperty('border-color', '#000000', 'important');
+          
+          const blurHandler = () => {
+            input.style.setProperty('border-color', '#dee2e6', 'important');
+            input.style.setProperty('box-shadow', 'none', 'important');
+            passwordInput.style.setProperty('border-color', '#dee2e6', 'important');
+            input.removeEventListener('blur', blurHandler);
+          };
+          
+          input.addEventListener('blur', blurHandler);
+        }
+      }
+    }, 50);
+  }
+
+  forzarBordeNegroInput(event: any): void {
+    const input = event.target;
+    if (input) {
+      input.style.setProperty('border-color', '#000000', 'important');
+      input.style.setProperty('box-shadow', '0 0 0 3px rgba(0, 0, 0, 0.1)', 'important');
+      
+      const blurHandler = () => {
+        input.style.setProperty('border-color', '#dee2e6', 'important');
+        input.style.setProperty('box-shadow', 'none', 'important');
+        input.removeEventListener('blur', blurHandler);
+      };
+      
+      input.addEventListener('blur', blurHandler);
+    }
+  }
 }
