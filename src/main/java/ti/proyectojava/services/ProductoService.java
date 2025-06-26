@@ -2,6 +2,9 @@ package ti.proyectojava.services;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.business.entities.*;
@@ -174,6 +177,19 @@ public class ProductoService {
         productoRepository.save(producto);
 
         log.info("Stock modificado para producto '{}' (ID: {}). Stock anterior: {}, Stock nuevo: {}", producto.getNombre(), productoId, stockAnterior, nuevoStockTotal);
+    }
+
+    public Page<ProductoDto> listadoProductosPage(Integer pagina, Integer cantidad) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.ASC, "nombre");
+        return productoRepository.findByActivoTrue(pageRequest.withSort(sort)).map(mapsDtosEntityService::mapToDtoProducto);
+    }
+
+    public Page<ProductoDto> listadoProductosPageConFiltros(Integer pagina, Integer cantidad, String busqueda, Long categoriaId) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.ASC, "nombre");
+        return productoRepository.findByActivoTrueWithFilters(busqueda, categoriaId, pageRequest.withSort(sort))
+                .map(mapsDtosEntityService::mapToDtoProducto);
     }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';  
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -54,6 +55,13 @@ export class ProductosComponent implements OnInit, OnDestroy {
   proveedores: ProveedorDto[] = [];
   terminoBusqueda: string = '';
   categoriaFiltro: number | null = null;
+  
+  // Propiedades para paginación
+  paginaActual: number = 0;
+  productosPorPagina: number = 24;
+  totalElementos: number = 0;
+  totalPaginas: number = 0;
+  mostrarPaginacion: boolean = false;
   ngOnInit() {
     this.cargarProductos();
     this.cargarCategorias();
@@ -71,6 +79,25 @@ export class ProductosComponent implements OnInit, OnDestroy {
       }
     });
     this.imagenesProductoCache.clear();
+  }
+
+  cargarProductos() {
+    const busqueda = this.terminoBusqueda.trim() || undefined;
+    const categoria = this.categoriaFiltro || undefined;
+    
+    this.productoService.listarProductosPaginadoConFiltros(this.paginaActual, this.productosPorPagina, busqueda, categoria).subscribe({
+      next: (response) => {
+        this.productos = response.content || [];
+        this.productosFiltrados = [...this.productos];
+        this.totalElementos = response.totalElements || 0;
+        this.totalPaginas = response.totalPages || 0;
+        this.mostrarPaginacion = this.totalPaginas > 1;
+        this.cargarImagenesProductos();
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+      }
+    });
   }
 
   cargarCategorias() {
@@ -103,19 +130,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarProductos() {
-    this.productoService.listarProductos().subscribe({
-      next: (response) => {
-        this.productos = response.productos.sort((a, b) =>
-          a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase())
-        );
-        this.productosFiltrados = [...this.productos];
-        this.cargarImagenesProductos();
-      },
-      error: (error) => {},
-    });
-  }
-
   private obtenerSubcategoriasRecursivas(categoriaId: number): number[] {
     const subcategoriaIds: number[] = [];
     const categoria = this.categorias.find((cat) => cat.id === categoriaId);
@@ -136,48 +150,25 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }
 
   aplicarFiltros() {
-    let resultado = [...this.productos];
-
-    if (this.terminoBusqueda.trim()) {
-      const busqueda = this.terminoBusqueda.toLowerCase().trim();
-      resultado = resultado.filter(
-        (producto) =>
-          producto.nombre.toLowerCase().includes(busqueda) ||
-          producto.codigoDeBarra.toLowerCase().includes(busqueda)
-      );
-    }
-
-    if (this.categoriaFiltro !== null) {
-      const categoriasAFiltrar = [
-        this.categoriaFiltro,
-        ...this.obtenerSubcategoriasRecursivas(this.categoriaFiltro),
-      ];
-      console.log(
-        'Categorías a filtrar (incluyendo subcategorías):',
-        categoriasAFiltrar
-      );
-
-      resultado = resultado.filter((producto) => {
-        if (!producto.categoria) return false;
-
-        const categoriaIdProducto =
-          typeof producto.categoria.id === 'string'
-            ? parseInt(producto.categoria.id)
-            : producto.categoria.id;
-
-        return (
-          categoriaIdProducto !== null &&
-          categoriasAFiltrar.includes(categoriaIdProducto)
-        );
-      });
-    }
-
-    this.productosFiltrados = resultado;
+    // Resetear a la primera página cuando se aplican filtros
+    this.paginaActual = 0;
+    this.cargarProductos();
   }
 
   onBusquedaChange(event: any) {
+    // No aplicar filtros en tiempo real, solo actualizar el valor
     this.terminoBusqueda = event.target.value;
+  }
+
+  buscarProductos() {
+    // Aplicar filtros al presionar Enter o botón de búsqueda
     this.aplicarFiltros();
+  }
+
+  onBusquedaKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.buscarProductos();
+    }
   }
 
   onCategoriaChange(event: any) {
@@ -751,5 +742,54 @@ export class ProductosComponent implements OnInit, OnDestroy {
   get esAdmin(): boolean {
     const userRoles = this.securityService.getUserRoles();
     return userRoles && userRoles.includes('ADMIN');
+  }
+
+  // Métodos de paginación
+  irAPagina(pagina: number) {
+    if (pagina >= 0 && pagina < this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.cargarProductos();
+    }
+  }
+
+  paginaAnterior() {
+    if (this.paginaActual > 0) {
+      this.paginaActual--;
+      this.cargarProductos();
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.paginaActual < this.totalPaginas - 1) {
+      this.paginaActual++;
+      this.cargarProductos();
+    }
+  }
+
+  get numeroPaginasArray(): number[] {
+    const paginas: number[] = [];
+    const maxPaginasVisibles = 5;
+    const mitad = Math.floor(maxPaginasVisibles / 2);
+    
+    let inicio = Math.max(0, this.paginaActual - mitad);
+    let fin = Math.min(this.totalPaginas - 1, inicio + maxPaginasVisibles - 1);
+    
+    if (fin - inicio < maxPaginasVisibles - 1) {
+      inicio = Math.max(0, fin - maxPaginasVisibles + 1);
+    }
+    
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+    
+    return paginas;
+  }
+
+  get mostrandoDesde(): number {
+    return this.paginaActual * this.productosPorPagina + 1;
+  }
+
+  get mostrandoHasta(): number {
+    return Math.min((this.paginaActual + 1) * this.productosPorPagina, this.totalElementos);
   }
 }

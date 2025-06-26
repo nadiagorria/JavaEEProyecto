@@ -96,4 +96,24 @@ export class ProductoService {
       }
     );
   }
+
+  listarProductosPaginado(pagina: number, cantidad: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.urlService.baseUrl}${this.endpoint}/paginado?pagina=${pagina}&cantidad=${cantidad}`
+    );
+  }
+
+  listarProductosPaginadoConFiltros(pagina: number, cantidad: number, busqueda?: string, categoriaId?: number): Observable<any> {
+    let url = `${this.urlService.baseUrl}${this.endpoint}/paginado?pagina=${pagina}&cantidad=${cantidad}`;
+    
+    if (busqueda && busqueda.trim()) {
+      url += `&busqueda=${encodeURIComponent(busqueda.trim())}`;
+    }
+    
+    if (categoriaId !== undefined && categoriaId !== null) {
+      url += `&categoria=${categoriaId}`;
+    }
+    
+    return this.http.get<any>(url);
+  }
 }

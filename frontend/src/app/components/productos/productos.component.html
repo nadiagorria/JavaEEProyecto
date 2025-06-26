@@ -11,9 +11,17 @@
           placeholder="Buscar por nombre o código de barras"
           [(ngModel)]="terminoBusqueda"
           (input)="onBusquedaChange($event)"
+          (keypress)="onBusquedaKeyPress($event)"
           name="busqueda"
           class="search-input"
         />
+        <button 
+          type="button" 
+          class="btn-buscar"
+          (click)="buscarProductos()"
+          title="Buscar">
+          <i class="pi pi-search"></i>
+        </button>
       </div>
 
       <p-dropdown
@@ -448,6 +456,39 @@
       <p>
         No se encontraron productos que coincidan con los criterios de búsqueda.
       </p>
+    </div>
+  </div>
+
+  <!-- Paginación -->
+  <div class="paginacion-container" *ngIf="mostrarPaginacion">
+    <div class="paginacion-info">
+      <span>Mostrando {{ mostrandoDesde }} - {{ mostrandoHasta }} de {{ totalElementos }} productos</span>
+    </div>
+    
+    <div class="paginacion">
+      <button 
+        class="btn-pagina" 
+        (click)="paginaAnterior()" 
+        [disabled]="paginaActual === 0"
+        title="Página anterior">
+        <i class="pi pi-chevron-left"></i>
+      </button>
+      
+      <button 
+        *ngFor="let pagina of numeroPaginasArray" 
+        class="btn-pagina"
+        [class.activa]="pagina === paginaActual"
+        (click)="irAPagina(pagina)">
+        {{ pagina + 1 }}
+      </button>
+      
+      <button 
+        class="btn-pagina" 
+        (click)="paginaSiguiente()" 
+        [disabled]="paginaActual === totalPaginas - 1"
+        title="Página siguiente">
+        <i class="pi pi-chevron-right"></i>
+      </button>
     </div>
   </div>
 </div>

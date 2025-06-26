@@ -1,6 +1,7 @@
 package ti.proyectojava.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -159,7 +160,6 @@ public class ProductoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @GetMapping("/buscar/codigo/todos/{codigoBarras}")
     @Secured({"ADMIN", "CAJERO"})
     @Operation(description = "Esta funcion busca todos los productos con el mismo código de barras")
@@ -178,6 +178,17 @@ public class ProductoController {
     public ResponseEntity<ResponseListadoProductos> getTopProductos(@RequestParam int n) {
         ResponseListadoProductos response = productoService.listadoProductosTop(n);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/paginado")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Esta función lista los productos de forma paginada y ordenada alfabéticamente con filtros")
+    public ResponseEntity<Page<ProductoDto>> productosPaginado(
+            @RequestParam("pagina") Integer pagina,
+            @RequestParam("cantidad") Integer cantidad,
+            @RequestParam(value = "busqueda", required = false) String busqueda,
+            @RequestParam(value = "categoria", required = false) Long categoriaId) {
+        return new ResponseEntity<>(productoService.listadoProductosPageConFiltros(pagina, cantidad, busqueda, categoriaId), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/stock")
