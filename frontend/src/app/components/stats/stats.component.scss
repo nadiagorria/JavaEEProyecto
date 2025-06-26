@@ -101,7 +101,7 @@ main {
   min-height: 180px;
   padding: 0 4vw;
   margin: 3rem 0;
-  gap: 2vw;
+  gap: 6vw;
   
   @media (max-width: 1200px) {
     flex-wrap: wrap;
@@ -117,8 +117,8 @@ main {
 .miniCartel {
   height: 100%;
   min-height: 180px;
-  width: 21vw;
-  max-width: 320px;
+  width: 28vw;
+  max-width: 420px;
   padding: 2rem;
   background: var(--card-bg);
   border: 1px solid var(--border-primary);

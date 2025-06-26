@@ -1,6 +1,56 @@
 <app-header></app-header>
 
 <main class="w-full stats-container">   
+    
+    <article class="flex w-full gap-12 px-6 article-1">      
+
+      <div class="miniCartel card-hover users-card flex-1">
+        <div class="w-full cabezaMiniCartel">
+          <span class="textoMiniCartel">Usuarios Totales</span>
+          <span class="pi pi-users logoMiniCartel icon-accent"></span>
+        </div>
+
+        <div class="flex flex-column w-full papaNumeros">
+          <span class="w-full numero1MiniCartel">{{ usuariosTotales || 0 }}</span>
+        </div>
+      </div>
+
+      <div class="miniCartel card-hover productos-card flex-1">
+        <div class="w-full cabezaMiniCartel">
+          <span class="textoMiniCartel">Productos Populares</span>
+          <span class="pi pi-star logoMiniCartel icon-accent"></span>
+        </div>
+        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-productos" [class.empty-state]="!productosMasPopulares.length">
+            <li *ngFor="let producto of productosMasPopulares; let i = index" 
+                [class.margenBullet]="i === 0" class="producto-item">
+              {{ producto?.nombre || 'Sin datos' }}
+            </li>
+            <li *ngIf="!productosMasPopulares.length" class="producto-item">
+              No hay productos disponibles
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="miniCartel card-hover categorias-card flex-1">
+        <div class="w-full cabezaMiniCartel">
+          <span class="textoMiniCartel">Categorías Populares</span>
+          <span class="pi pi-tags logoMiniCartel icon-accent"></span>
+        </div>
+        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-categorias" [class.empty-state]="!categoriasMasPopulares.length">
+            <li *ngFor="let categoria of categoriasMasPopulares; let i = index" 
+                [class.margenBullet]="i === 0" class="categoria-item">
+              {{ categoria?.nombre || 'Sin datos' }}
+            </li>
+            <li *ngIf="!categoriasMasPopulares.length" class="categoria-item">
+              No hay categorías disponibles
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </article>
+
     <section class="filter-section">
       <div class="filter-container">
         <label for="mesFilter" class="filter-label">Filtrar por mes:</label>
@@ -42,67 +92,7 @@
           Mostrando: {{ obtenerTextoFiltro() }}
         </div>
       </div>
-    </section>    <article class="flex w-full article-1">      <div class="miniCartel card-hover sales-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">
-            {{ (mesSeleccionado || anoSeleccionado) ? 'Ventas del Período' : 'Ventas Totales' }}
-          </span>
-          <span class="pi pi-shopping-bag logoMiniCartel icon-accent"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">{{ ventasFiltradas.length || 0 }}</span>
-        </div>
-      </div>
-
-
-
-      <div class="miniCartel card-hover users-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Usuarios Totales</span>
-          <span class="pi pi-users logoMiniCartel icon-accent"></span>
-        </div>
-
-        <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">{{ usuariosTotales || 0 }}</span>
-        </div>
-      </div>
-
-      <div class="miniCartel card-hover productos-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Productos Populares</span>
-          <span class="pi pi-star logoMiniCartel icon-accent"></span>
-        </div>
-        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-productos" [class.empty-state]="!productosMasPopulares.length">
-            <li *ngFor="let producto of productosMasPopulares; let i = index" 
-                [class.margenBullet]="i === 0" class="producto-item">
-              {{ producto?.nombre || 'Sin datos' }}
-            </li>
-            <li *ngIf="!productosMasPopulares.length" class="producto-item">
-              No hay productos disponibles
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="miniCartel card-hover categorias-card">
-        <div class="w-full cabezaMiniCartel">
-          <span class="textoMiniCartel">Categorías Populares</span>
-          <span class="pi pi-tags logoMiniCartel icon-accent"></span>
-        </div>
-        <div class="flex flex-column w-full papaNumeros">          <ul class="lista-categorias" [class.empty-state]="!categoriasMasPopulares.length">
-            <li *ngFor="let categoria of categoriasMasPopulares; let i = index" 
-                [class.margenBullet]="i === 0" class="categoria-item">
-              {{ categoria?.nombre || 'Sin datos' }}
-            </li>
-            <li *ngIf="!categoriasMasPopulares.length" class="categoria-item">
-              No hay categorías disponibles
-            </li>
-          </ul>
-        </div>
-      </div>
-
-    </article>
+    </section>    
 
     <article class="w-full article-2">
       <div class="cartel card-hover">
@@ -114,8 +104,20 @@
           <span class="pi pi-dollar logoCartel icon-accent"></span>
         </div>
 
-        <div class="w-full flex restoCartel">
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
+        <div class="w-full flex gap-4 restoCartel">
+
+          <div class="miniCartel blancoMiniCartel payment-card card-hover flex-1">
+            <div class="w-full cabezaMiniCartel">
+              <span class="textoMiniCartel">{{ (mesSeleccionado || anoSeleccionado) ? 'Ventas del Período' : 'Ventas Totales' }}</span>
+              <span class="pi pi-credit-card payment-icon"></span>
+            </div>
+
+            <div class="flex flex-column w-full papaNumeros">
+              <span class="w-full numero1MiniCartel">{{ ventasFiltradas.length || 0 }}</span>
+            </div>
+          </div>
+
+          <div class="miniCartel blancoMiniCartel payment-card card-hover flex-1">
             <div class="w-full cabezaMiniCartel">
               <span class="textoMiniCartel">Débito</span>
               <span class="pi pi-credit-card payment-icon"></span>
@@ -126,7 +128,7 @@
             </div>
           </div>
 
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="miniCartel blancoMiniCartel payment-card card-hover flex-1">
             <div class="w-full cabezaMiniCartel">
               <span class="textoMiniCartel">Crédito</span>
               <span class="pi pi-credit-card payment-icon"></span>
@@ -137,7 +139,7 @@
             </div>
           </div>
 
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="miniCartel blancoMiniCartel payment-card card-hover flex-1">
             <div class="w-full cabezaMiniCartel">
               <span class="textoMiniCartel">Efectivo</span>
               <span class="pi pi-money-bill payment-icon"></span>
@@ -148,7 +150,7 @@
             </div>
           </div>
 
-          <div class="miniCartel blancoMiniCartel payment-card card-hover">
+          <div class="miniCartel blancoMiniCartel payment-card card-hover flex-1">
             <div class="w-full cabezaMiniCartel">
               <span class="textoMiniCartel">Crédito Local</span>
               <span class="pi pi-building payment-icon"></span>
