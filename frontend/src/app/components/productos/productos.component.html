@@ -5,22 +5,25 @@
   <div class="producto-header">
     <div class="busqueda-filtro">
       <div class="search-container">
-        <i class="pi pi-search search-icon"></i>
-        <input
-          type="text"
-          placeholder="Buscar por nombre o código de barras"
-          [(ngModel)]="terminoBusqueda"
-          (input)="onBusquedaChange($event)"
-          (keypress)="onBusquedaKeyPress($event)"
-          name="busqueda"
-          class="search-input"
-        />
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <input
+            type="text"
+            placeholder="Buscar por nombre o código de barras"
+            [(ngModel)]="terminoBusqueda"
+            (input)="onBusquedaChange($event)"
+            (keypress)="onBusquedaKeyPress($event)"
+            name="busqueda"
+            class="search-input"
+          />
+        </div>
         <button 
           type="button" 
           class="btn-buscar"
           (click)="buscarProductos()"
           title="Buscar">
           <i class="pi pi-search"></i>
+          Buscar
         </button>
       </div>
 
