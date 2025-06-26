@@ -41,7 +41,6 @@ import { FooterComponent } from '../footer/footer.component';
 })
 export class VentasComponent implements OnInit {
   ventas: VentaDto[] = [];
-  totalRecords: number = 0;
   selectedVenta: VentaDto | null = null;
   isAdmin: boolean = false;
 
@@ -49,12 +48,13 @@ export class VentasComponent implements OnInit {
   paginaActual: number = 0;
   ventasPorPagina: number = 10;
   totalElementos: number = 0;
-  totalPaginas: number = 0;
-  mostrarPaginacion: boolean = false;
 
   // Propiedades para filtros de fecha
   fechaDesde: Date | null = null;
   fechaHasta: Date | null = null;
+  
+  // Variable para mostrar loading
+  cargando: boolean = false;
 
   constructor(
     private ventaService: VentaService,
@@ -62,28 +62,56 @@ export class VentasComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
-    this.totalRecords = this.ventas.length;
+    // Inicializar totalRecords en 0 para lazy loading
   }
   ngOnInit() {
     if (this.securityService.isLoggedIn() && this.securityService.user) {
       this.isAdmin =
         this.securityService.user.roles?.includes('ADMIN') || false;
     }
-    this.cargarVentas();
+    // La carga inicial se manejará automáticamente por el lazy loading de PrimeNG
   }
-  cargarVentas() {
+  private formatearFecha(fecha: Date): string {
+    return fecha.toISOString().split('T')[0];
+  }
+
+  aplicarFiltros() {
+    this.paginaActual = 0;
+    // Simular evento de lazy loading para reiniciar la tabla
+    const event = {
+      first: 0,
+      rows: this.ventasPorPagina
+    };
+    this.cargarVentasLazy(event);
+  }
+
+  limpiarFiltros() {
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.aplicarFiltros();
+  }
+
+  // Método para lazy loading de PrimeNG
+  cargarVentasLazy(event: any) {
+    this.cargando = true;
+    
+    // Calcular página basada en el first del evento
+    const pagina = Math.floor(event.first / event.rows);
+    const tamanoPagina = event.rows;
+    
     const fechaDesdeStr = this.fechaDesde ? this.formatearFecha(this.fechaDesde) : undefined;
     const fechaHastaStr = this.fechaHasta ? this.formatearFecha(this.fechaHasta) : undefined;
 
-    this.ventaService.listarVentasPaginadas(this.paginaActual, this.ventasPorPagina, fechaDesdeStr, fechaHastaStr).subscribe({
+    this.ventaService.listarVentasPaginadas(pagina, tamanoPagina, fechaDesdeStr, fechaHastaStr).subscribe({
       next: (response) => {
         this.ventas = response.content || [];
         this.totalElementos = response.totalElements || 0;
-        this.totalPaginas = response.totalPages || 0;
-        this.mostrarPaginacion = this.totalPaginas > 1;
-        this.totalRecords = this.totalElementos;
+        this.paginaActual = pagina;
+        this.ventasPorPagina = tamanoPagina;
+        this.cargando = false;
       },
       error: (error) => {
+        this.cargando = false;
         this.messageService.clear();
         this.messageService.add({
           severity: 'error',
@@ -92,21 +120,6 @@ export class VentasComponent implements OnInit {
         });
       },
     });
-  }
-
-  private formatearFecha(fecha: Date): string {
-    return fecha.toISOString().split('T')[0];
-  }
-
-  aplicarFiltros() {
-    this.paginaActual = 0;
-    this.cargarVentas();
-  }
-
-  limpiarFiltros() {
-    this.fechaDesde = null;
-    this.fechaHasta = null;
-    this.aplicarFiltros();
   }
 
   verVenta(id: number | null) {
@@ -132,7 +145,12 @@ export class VentasComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
             });
-            this.cargarVentas();
+            // Recargar usando lazy loading
+            const event = {
+              first: this.paginaActual * this.ventasPorPagina,
+              rows: this.ventasPorPagina
+            };
+            this.cargarVentasLazy(event);
           },
           error: (error) => {
             this.messageService.clear();
@@ -156,54 +174,5 @@ export class VentasComponent implements OnInit {
     if (venta && venta.id) {
       window.open(`/verventa/${venta.id}`, '_blank');
     }
-  }
-
-  // Métodos de paginación
-  irAPagina(pagina: number) {
-    if (pagina >= 0 && pagina < this.totalPaginas) {
-      this.paginaActual = pagina;
-      this.cargarVentas();
-    }
-  }
-
-  paginaAnterior() {
-    if (this.paginaActual > 0) {
-      this.paginaActual--;
-      this.cargarVentas();
-    }
-  }
-
-  paginaSiguiente() {
-    if (this.paginaActual < this.totalPaginas - 1) {
-      this.paginaActual++;
-      this.cargarVentas();
-    }
-  }
-
-  get numeroPaginasArray(): number[] {
-    const paginas: number[] = [];
-    const maxPaginasVisibles = 5;
-    const mitad = Math.floor(maxPaginasVisibles / 2);
-    
-    let inicio = Math.max(0, this.paginaActual - mitad);
-    let fin = Math.min(this.totalPaginas - 1, inicio + maxPaginasVisibles - 1);
-    
-    if (fin - inicio < maxPaginasVisibles - 1) {
-      inicio = Math.max(0, fin - maxPaginasVisibles + 1);
-    }
-    
-    for (let i = inicio; i <= fin; i++) {
-      paginas.push(i);
-    }
-    
-    return paginas;
-  }
-
-  get mostrandoDesde(): number {
-    return this.paginaActual * this.ventasPorPagina + 1;
-  }
-
-  get mostrandoHasta(): number {
-    return Math.min((this.paginaActual + 1) * this.ventasPorPagina, this.totalElementos);
   }
 }
