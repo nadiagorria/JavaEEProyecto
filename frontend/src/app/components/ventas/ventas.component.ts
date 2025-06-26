@@ -44,16 +44,13 @@ export class VentasComponent implements OnInit {
   selectedVenta: VentaDto | null = null;
   isAdmin: boolean = false;
 
-  // Propiedades para paginación
   paginaActual: number = 0;
   ventasPorPagina: number = 10;
   totalElementos: number = 0;
 
-  // Propiedades para filtros de fecha
   fechaDesde: Date | null = null;
   fechaHasta: Date | null = null;
-  
-  // Variable para mostrar loading
+
   cargando: boolean = false;
 
   constructor(
@@ -61,15 +58,12 @@ export class VentasComponent implements OnInit {
     private securityService: SecurityService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {
-    // Inicializar totalRecords en 0 para lazy loading
-  }
+  ) {}
   ngOnInit() {
     if (this.securityService.isLoggedIn() && this.securityService.user) {
       this.isAdmin =
         this.securityService.user.roles?.includes('ADMIN') || false;
     }
-    // La carga inicial se manejará automáticamente por el lazy loading de PrimeNG
   }
   private formatearFecha(fecha: Date): string {
     return fecha.toISOString().split('T')[0];
@@ -77,10 +71,10 @@ export class VentasComponent implements OnInit {
 
   aplicarFiltros() {
     this.paginaActual = 0;
-    // Simular evento de lazy loading para reiniciar la tabla
+
     const event = {
       first: 0,
-      rows: this.ventasPorPagina
+      rows: this.ventasPorPagina,
     };
     this.cargarVentasLazy(event);
   }
@@ -91,35 +85,39 @@ export class VentasComponent implements OnInit {
     this.aplicarFiltros();
   }
 
-  // Método para lazy loading de PrimeNG
   cargarVentasLazy(event: any) {
     this.cargando = true;
-    
-    // Calcular página basada en el first del evento
+
     const pagina = Math.floor(event.first / event.rows);
     const tamanoPagina = event.rows;
-    
-    const fechaDesdeStr = this.fechaDesde ? this.formatearFecha(this.fechaDesde) : undefined;
-    const fechaHastaStr = this.fechaHasta ? this.formatearFecha(this.fechaHasta) : undefined;
 
-    this.ventaService.listarVentasPaginadas(pagina, tamanoPagina, fechaDesdeStr, fechaHastaStr).subscribe({
-      next: (response) => {
-        this.ventas = response.content || [];
-        this.totalElementos = response.totalElements || 0;
-        this.paginaActual = pagina;
-        this.ventasPorPagina = tamanoPagina;
-        this.cargando = false;
-      },
-      error: (error) => {
-        this.cargando = false;
-        this.messageService.clear();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al cargar las ventas',
-        });
-      },
-    });
+    const fechaDesdeStr = this.fechaDesde
+      ? this.formatearFecha(this.fechaDesde)
+      : undefined;
+    const fechaHastaStr = this.fechaHasta
+      ? this.formatearFecha(this.fechaHasta)
+      : undefined;
+
+    this.ventaService
+      .listarVentasPaginadas(pagina, tamanoPagina, fechaDesdeStr, fechaHastaStr)
+      .subscribe({
+        next: (response) => {
+          this.ventas = response.content || [];
+          this.totalElementos = response.totalElements || 0;
+          this.paginaActual = pagina;
+          this.ventasPorPagina = tamanoPagina;
+          this.cargando = false;
+        },
+        error: (error) => {
+          this.cargando = false;
+          this.messageService.clear();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar las ventas',
+          });
+        },
+      });
   }
 
   verVenta(id: number | null) {
@@ -145,10 +143,10 @@ export class VentasComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Venta eliminada correctamente',
             });
-            // Recargar usando lazy loading
+
             const event = {
               first: this.paginaActual * this.ventasPorPagina,
-              rows: this.ventasPorPagina
+              rows: this.ventasPorPagina,
             };
             this.cargarVentasLazy(event);
           },

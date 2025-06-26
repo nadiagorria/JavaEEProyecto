@@ -2,7 +2,6 @@
   font-family: "Source Sans 3", sans-serif;
 }
 
-// Estilos para filtros de fecha
 .filtros-fecha {
   display: flex;
   align-items: end;
@@ -44,7 +43,8 @@
     display: flex;
     gap: 10px;
 
-    .btn-filtrar, .btn-limpiar {
+    .btn-filtrar,
+    .btn-limpiar {
       padding: 10px 16px;
       border: none;
       border-radius: 6px;
@@ -81,7 +81,6 @@
   }
 }
 
-// Estilos de paginación
 .paginacion-container {
   margin-top: 20px;
   display: flex;
@@ -138,7 +137,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 768px) {
   .filtros-fecha {
     flex-direction: column;
@@ -153,7 +151,8 @@
     .filtro-botones {
       justify-content: center;
 
-      .btn-filtrar, .btn-limpiar {
+      .btn-filtrar,
+      .btn-limpiar {
         flex: 1;
         justify-content: center;
       }

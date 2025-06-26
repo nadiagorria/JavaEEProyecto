@@ -69,7 +69,6 @@ public class VentaController {
         UsuarioDto usuario = usuarioService.buscarUsuario(username);
         boolean esAdmin = usuario.getRoles().stream().anyMatch(rol -> rol.getNombre().equals("ADMIN"));
         
-        // Convertir fechas si están presentes
         LocalDate fechaDesde = null;
         LocalDate fechaHasta = null;
         

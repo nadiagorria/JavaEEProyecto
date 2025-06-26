@@ -16,11 +16,11 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        width: 500px; // Más ancho que antes
+        width: 500px;
 
         .search-input-wrapper {
           position: relative;
-          flex: 1; // Toma todo el espacio disponible
+          flex: 1;
 
           .search-icon {
             position: absolute;
@@ -1253,7 +1253,6 @@ $text-color: #777;
   }
 }
 
-// Estilos de paginación
 .paginacion-container {
   margin-top: 30px;
   display: flex;
@@ -1307,7 +1306,6 @@ $text-color: #777;
   }
 }
 
-// Responsive para paginación
 @media (max-width: 768px) {
   .paginacion-container {
     flex-direction: column;
@@ -1324,7 +1322,6 @@ $text-color: #777;
     }
   }
 
-  // Responsive para búsqueda
   .producto-header {
     .busqueda-filtro {
       flex-direction: column;

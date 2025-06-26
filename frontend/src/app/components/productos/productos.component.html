@@ -17,11 +17,12 @@
             class="search-input"
           />
         </div>
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn-buscar"
           (click)="buscarProductos()"
-          title="Buscar">
+          title="Buscar"
+        >
           <i class="pi pi-search"></i>
           Buscar
         </button>
@@ -465,31 +466,37 @@
   <!-- Paginación -->
   <div class="paginacion-container" *ngIf="mostrarPaginacion">
     <div class="paginacion-info">
-      <span>Mostrando {{ mostrandoDesde }} - {{ mostrandoHasta }} de {{ totalElementos }} productos</span>
+      <span
+        >Mostrando {{ mostrandoDesde }} - {{ mostrandoHasta }} de
+        {{ totalElementos }} productos</span
+      >
     </div>
-    
+
     <div class="paginacion">
-      <button 
-        class="btn-pagina" 
-        (click)="paginaAnterior()" 
+      <button
+        class="btn-pagina"
+        (click)="paginaAnterior()"
         [disabled]="paginaActual === 0"
-        title="Página anterior">
+        title="Página anterior"
+      >
         <i class="pi pi-chevron-left"></i>
       </button>
-      
-      <button 
-        *ngFor="let pagina of numeroPaginasArray" 
+
+      <button
+        *ngFor="let pagina of numeroPaginasArray"
         class="btn-pagina"
         [class.activa]="pagina === paginaActual"
-        (click)="irAPagina(pagina)">
+        (click)="irAPagina(pagina)"
+      >
         {{ pagina + 1 }}
       </button>
-      
-      <button 
-        class="btn-pagina" 
-        (click)="paginaSiguiente()" 
+
+      <button
+        class="btn-pagina"
+        (click)="paginaSiguiente()"
         [disabled]="paginaActual === totalPaginas - 1"
-        title="Página siguiente">
+        title="Página siguiente"
+      >
         <i class="pi pi-chevron-right"></i>
       </button>
     </div>

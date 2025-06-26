@@ -56,7 +56,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
   terminoBusqueda: string = '';
   categoriaFiltro: number | null = null;
   
-  // Propiedades para paginación
   paginaActual: number = 0;
   productosPorPagina: number = 24;
   totalElementos: number = 0;
@@ -150,18 +149,15 @@ export class ProductosComponent implements OnInit, OnDestroy {
   }
 
   aplicarFiltros() {
-    // Resetear a la primera página cuando se aplican filtros
     this.paginaActual = 0;
     this.cargarProductos();
   }
 
   onBusquedaChange(event: any) {
-    // No aplicar filtros en tiempo real, solo actualizar el valor
     this.terminoBusqueda = event.target.value;
   }
 
   buscarProductos() {
-    // Aplicar filtros al presionar Enter o botón de búsqueda
     this.aplicarFiltros();
   }
 
@@ -359,7 +355,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Éxito',
-                  detail: response, // Ahora response es un string directo
+                  detail: response,
                 });
 
                 this.cargarCategorias();
@@ -497,7 +493,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
         .substring(0, 5)
         .toUpperCase();
       codigoBarra = `${nombreCorto}${timestamp}`;
-    } // Convertir imagen a base64 si existe
+    } 
     this.convertirImagenABase64()
       .then((imagenBase64) => {
         const categoriaSeleccionada = this.categorias.find(
@@ -513,11 +509,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
         const productoDto: ProductoDto = {
           id: null,
           nombre: this.nuevoProducto.nombre.trim(),
-          precioCompra: 0, // Automáticamente establecido en 0
+          precioCompra: 0,
           precioVenta: this.nuevoProducto.precio,
           codigoDeBarra: codigoBarra,
           stockMin: this.nuevoProducto.stockMin,
-          stockTotal: 0, // Automáticamente establecido en 0
+          stockTotal: 0,
           imagen: imagenBase64,
           activo: true,
           categoria: categoriaSeleccionada
@@ -609,11 +605,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
     this.nuevoProducto = {
       nombre: '',
       precio: 0,
-      precioCompra: 0, // Siempre 0 al crear productos
+      precioCompra: 0,
       codigoDeBarra: '',
       stockMin: 0,
-      stockTotal: 0, // Siempre 0 al crear productos
-      categoriaId: null, // Usar null para consistencia
+      stockTotal: 0,
+      categoriaId: null,
       proveedorId: null,
     };
     this.imagenSeleccionada = null;
@@ -744,7 +740,6 @@ export class ProductosComponent implements OnInit, OnDestroy {
     return userRoles && userRoles.includes('ADMIN');
   }
 
-  // Métodos de paginación
   irAPagina(pagina: number) {
     if (pagina >= 0 && pagina < this.totalPaginas) {
       this.paginaActual = pagina;

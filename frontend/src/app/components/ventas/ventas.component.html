@@ -17,36 +17,34 @@
       <div class="filtros-fecha">
         <div class="filtro-item">
           <label for="fechaDesde">Desde:</label>
-          <p-calendar 
+          <p-calendar
             id="fechaDesde"
-            [(ngModel)]="fechaDesde" 
+            [(ngModel)]="fechaDesde"
             dateFormat="yy-mm-dd"
             placeholder="Fecha desde"
-            [showIcon]="true">
+            [showIcon]="true"
+          >
           </p-calendar>
         </div>
-        
+
         <div class="filtro-item">
           <label for="fechaHasta">Hasta:</label>
-          <p-calendar 
+          <p-calendar
             id="fechaHasta"
-            [(ngModel)]="fechaHasta" 
+            [(ngModel)]="fechaHasta"
             dateFormat="yy-mm-dd"
             placeholder="Fecha hasta"
-            [showIcon]="true">
+            [showIcon]="true"
+          >
           </p-calendar>
         </div>
-        
+
         <div class="filtro-botones">
-          <button 
-            class="btn-filtrar" 
-            (click)="aplicarFiltros()">
+          <button class="btn-filtrar" (click)="aplicarFiltros()">
             <i class="pi pi-search"></i>
             Filtrar
           </button>
-          <button 
-            class="btn-limpiar" 
-            (click)="limpiarFiltros()">
+          <button class="btn-limpiar" (click)="limpiarFiltros()">
             <i class="pi pi-times"></i>
             Limpiar
           </button>
