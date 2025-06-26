@@ -4,6 +4,9 @@ package ti.proyectojava.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoVentas;
 import ti.proyectojava.business.entities.*;
@@ -156,5 +159,73 @@ public class VentaService {
 
     public Integer listadoVentasTotales() {
         return ventaRepository.cantidadVentas();
+    }
+
+    public Page<VentaDto> listadoVentasPage(Integer pagina, Integer cantidad) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.DESC, "fechaVenta");
+        return ventaRepository.findByActivoTrue(pageRequest.withSort(sort))
+                .map(mapsDtosEntityService::mapToDtoVentaPlano);
+    }
+
+    public Page<VentaDto> listadoVentasPagePorUsuario(String nombreUsuario, Integer pagina, Integer cantidad) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.DESC, "fechaVenta");
+        return ventaRepository.findByActivoTrueAndUsuarioNombre(nombreUsuario, pageRequest.withSort(sort))
+                .map(mapsDtosEntityService::mapToDtoVentaPlano);
+    }
+
+    public Page<VentaDto> listadoVentasPageConFiltros(Integer pagina, Integer cantidad,
+                                                      java.time.LocalDate fechaDesde,
+                                                      java.time.LocalDate fechaHasta) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.DESC, "fechaVenta");
+        
+        LocalDateTime fechaDesdeDateTime = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
+        LocalDateTime fechaHastaDateTime = (fechaHasta != null) ? fechaHasta.atTime(23, 59, 59) : null;
+        
+        Page<Venta> ventasPage;
+        
+        if (fechaDesdeDateTime != null && fechaHastaDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndFechaVentaBetween(
+                fechaDesdeDateTime, fechaHastaDateTime, pageRequest.withSort(sort));
+        } else if (fechaDesdeDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndFechaVentaGreaterThanEqual(
+                fechaDesdeDateTime, pageRequest.withSort(sort));
+        } else if (fechaHastaDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndFechaVentaLessThanEqual(
+                fechaHastaDateTime, pageRequest.withSort(sort));
+        } else {
+            ventasPage = ventaRepository.findByActivoTrue(pageRequest.withSort(sort));
+        }
+        
+        return ventasPage.map(mapsDtosEntityService::mapToDtoVentaPlano);
+    }
+
+    public Page<VentaDto> listadoVentasPagePorUsuarioConFiltros(String nombreUsuario, Integer pagina, Integer cantidad,
+                                                                java.time.LocalDate fechaDesde,
+                                                                java.time.LocalDate fechaHasta) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.DESC, "fechaVenta");
+        
+        LocalDateTime fechaDesdeDateTime = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
+        LocalDateTime fechaHastaDateTime = (fechaHasta != null) ? fechaHasta.atTime(23, 59, 59) : null;
+        
+        Page<Venta> ventasPage;
+        
+        if (fechaDesdeDateTime != null && fechaHastaDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndUsuarioNombreAndFechaVentaBetween(
+                nombreUsuario, fechaDesdeDateTime, fechaHastaDateTime, pageRequest.withSort(sort));
+        } else if (fechaDesdeDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndUsuarioNombreAndFechaVentaGreaterThanEqual(
+                nombreUsuario, fechaDesdeDateTime, pageRequest.withSort(sort));
+        } else if (fechaHastaDateTime != null) {
+            ventasPage = ventaRepository.findByActivoTrueAndUsuarioNombreAndFechaVentaLessThanEqual(
+                nombreUsuario, fechaHastaDateTime, pageRequest.withSort(sort));
+        } else {
+            ventasPage = ventaRepository.findByActivoTrueAndUsuarioNombre(nombreUsuario, pageRequest.withSort(sort));
+        }
+        
+        return ventasPage.map(mapsDtosEntityService::mapToDtoVentaPlano);
     }
 }

@@ -41,4 +41,18 @@ export class VentaService {
       `${this.urlService.baseUrl}${this.endpoint}/cantidadVentas`
     );
   }
+
+  listarVentasPaginadas(pagina: number, cantidad: number, fechaDesde?: string, fechaHasta?: string): Observable<any> {
+    let url = `${this.urlService.baseUrl}${this.endpoint}/paginado?pagina=${pagina}&cantidad=${cantidad}`;
+    
+    if (fechaDesde && fechaDesde.trim()) {
+      url += `&fechaDesde=${fechaDesde}`;
+    }
+    
+    if (fechaHasta && fechaHasta.trim()) {
+      url += `&fechaHasta=${fechaHasta}`;
+    }
+    
+    return this.http.get<any>(url);
+  }
 }

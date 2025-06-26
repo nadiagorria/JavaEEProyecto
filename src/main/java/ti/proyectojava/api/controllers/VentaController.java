@@ -3,6 +3,7 @@ package ti.proyectojava.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,6 +18,7 @@ import ti.proyectojava.services.UsuarioService;
 import ti.proyectojava.services.VentaService;
 import ti.proyectojava.services.CreditoService;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +52,46 @@ public class VentaController {
             response = ventaService.listadoVentasPorUsuario(username);
         }
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/paginado")
+    @Secured({"ADMIN", "CAJERO"})
+    @Operation(description = "Lista ventas paginadas con filtros opcionales por fecha")
+    public ResponseEntity<Page<VentaDto>> ventasPaginadas(
+            Authentication authentication,
+            @RequestParam("pagina") Integer pagina,
+            @RequestParam("cantidad") Integer cantidad,
+            @RequestParam(value = "fechaDesde", required = false) String fechaDesdeStr,
+            @RequestParam(value = "fechaHasta", required = false) String fechaHastaStr) {
+        
+        String username = authentication.getName();
+        UsuarioDto usuario = usuarioService.buscarUsuario(username);
+        boolean esAdmin = usuario.getRoles().stream().anyMatch(rol -> rol.getNombre().equals("ADMIN"));
+        
+        // Convertir fechas si están presentes
+        LocalDate fechaDesde = null;
+        LocalDate fechaHasta = null;
+        
+        try {
+            if (fechaDesdeStr != null && !fechaDesdeStr.trim().isEmpty()) {
+                fechaDesde = LocalDate.parse(fechaDesdeStr);
+            }
+            if (fechaHastaStr != null && !fechaHastaStr.trim().isEmpty()) {
+                fechaHasta = LocalDate.parse(fechaHastaStr);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        Page<VentaDto> response;
+        
+        if (esAdmin) {
+            response = ventaService.listadoVentasPageConFiltros(pagina, cantidad, fechaDesde, fechaHasta);
+        } else {
+            response = ventaService.listadoVentasPagePorUsuarioConFiltros(username, pagina, cantidad, fechaDesde, fechaHasta);
+        }
+        
         return ResponseEntity.ok(response);
     }
 

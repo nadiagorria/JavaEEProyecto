@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { VentaDto } from 'src/models';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { CalendarModule } from 'primeng/calendar';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -20,12 +22,14 @@ import { FooterComponent } from '../footer/footer.component';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     TableModule,
     CurrencyPipe,
     RouterModule,
     ButtonModule,
     TagModule,
     TooltipModule,
+    CalendarModule,
     ToastModule,
     ConfirmDialogModule,
     HeaderComponent,
@@ -40,6 +44,17 @@ export class VentasComponent implements OnInit {
   totalRecords: number = 0;
   selectedVenta: VentaDto | null = null;
   isAdmin: boolean = false;
+
+  // Propiedades para paginación
+  paginaActual: number = 0;
+  ventasPorPagina: number = 10;
+  totalElementos: number = 0;
+  totalPaginas: number = 0;
+  mostrarPaginacion: boolean = false;
+
+  // Propiedades para filtros de fecha
+  fechaDesde: Date | null = null;
+  fechaHasta: Date | null = null;
 
   constructor(
     private ventaService: VentaService,
@@ -57,16 +72,16 @@ export class VentasComponent implements OnInit {
     this.cargarVentas();
   }
   cargarVentas() {
-    this.ventaService.listarVentas().subscribe({
-      next: (response) => {
-        this.ventas = response.ventas;
+    const fechaDesdeStr = this.fechaDesde ? this.formatearFecha(this.fechaDesde) : undefined;
+    const fechaHastaStr = this.fechaHasta ? this.formatearFecha(this.fechaHasta) : undefined;
 
-        this.ventas.sort((a, b) => {
-          const fechaA = new Date(a.fechaVenta);
-          const fechaB = new Date(b.fechaVenta);
-          return fechaB.getTime() - fechaA.getTime();
-        });
-        this.totalRecords = this.ventas.length;
+    this.ventaService.listarVentasPaginadas(this.paginaActual, this.ventasPorPagina, fechaDesdeStr, fechaHastaStr).subscribe({
+      next: (response) => {
+        this.ventas = response.content || [];
+        this.totalElementos = response.totalElements || 0;
+        this.totalPaginas = response.totalPages || 0;
+        this.mostrarPaginacion = this.totalPaginas > 1;
+        this.totalRecords = this.totalElementos;
       },
       error: (error) => {
         this.messageService.clear();
@@ -77,6 +92,21 @@ export class VentasComponent implements OnInit {
         });
       },
     });
+  }
+
+  private formatearFecha(fecha: Date): string {
+    return fecha.toISOString().split('T')[0];
+  }
+
+  aplicarFiltros() {
+    this.paginaActual = 0;
+    this.cargarVentas();
+  }
+
+  limpiarFiltros() {
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.aplicarFiltros();
   }
 
   verVenta(id: number | null) {
@@ -126,5 +156,54 @@ export class VentasComponent implements OnInit {
     if (venta && venta.id) {
       window.open(`/verventa/${venta.id}`, '_blank');
     }
+  }
+
+  // Métodos de paginación
+  irAPagina(pagina: number) {
+    if (pagina >= 0 && pagina < this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.cargarVentas();
+    }
+  }
+
+  paginaAnterior() {
+    if (this.paginaActual > 0) {
+      this.paginaActual--;
+      this.cargarVentas();
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.paginaActual < this.totalPaginas - 1) {
+      this.paginaActual++;
+      this.cargarVentas();
+    }
+  }
+
+  get numeroPaginasArray(): number[] {
+    const paginas: number[] = [];
+    const maxPaginasVisibles = 5;
+    const mitad = Math.floor(maxPaginasVisibles / 2);
+    
+    let inicio = Math.max(0, this.paginaActual - mitad);
+    let fin = Math.min(this.totalPaginas - 1, inicio + maxPaginasVisibles - 1);
+    
+    if (fin - inicio < maxPaginasVisibles - 1) {
+      inicio = Math.max(0, fin - maxPaginasVisibles + 1);
+    }
+    
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+    
+    return paginas;
+  }
+
+  get mostrandoDesde(): number {
+    return this.paginaActual * this.ventasPorPagina + 1;
+  }
+
+  get mostrandoHasta(): number {
+    return Math.min((this.paginaActual + 1) * this.ventasPorPagina, this.totalElementos);
   }
 }
