@@ -2,29 +2,41 @@
 
 <div class="main-content">
   <div class="container p-4">
-      <!-- Header simple -->
+    <!-- Header simple -->
     <div class="header-section mb-3">
       <div class="flex justify-content-between align-items-center">
-        <h2 class="page-title">Información del Producto</h2>        
-        
-        <!-- Edit and Delete buttons - Solo para ADMIN -->
-        <div class="flex gap-2" *ngIf="producto && !loading && !error && isAdmin()">
-          <button 
-            pButton 
-            type="button" 
-            label="Editar" 
+        <h2 class="page-title">Información del Producto</h2>
+        <!-- Editar y Borrar - Solo para ADMIN -->
+        <div
+          class="flex gap-2"
+          *ngIf="producto && !loading && !error && isAdmin()"
+        >
+          <button
+            pButton
+            type="button"
+            label="Editar"
             icon="pi pi-pencil"
             class="p-button-outlined p-button-info"
-            (click)="abrirModalEditar()">
-          </button>
-          <button 
-            pButton 
-            type="button" 
-            label="Eliminar" 
+            (click)="abrirModalEditar()"
+          ></button>
+          <!-- Botón Modificar Stock - Solo para Admin Supremo -->
+          <button
+            pButton
+            type="button"
+            label="Modificar Stock"
+            icon="pi pi-sort-numeric-down"
+            class="p-button-outlined p-button-warning"
+            (click)="abrirModalModificarStock()"
+            *ngIf="isAdminSupremo()"
+          ></button>
+          <button
+            pButton
+            type="button"
+            label="Eliminar"
             icon="pi pi-trash"
             class="p-button-outlined p-button-danger"
-            (click)="confirmarEliminarProducto()">
-          </button>
+            (click)="confirmarEliminarProducto()"
+          ></button>
         </div>
       </div>
     </div>
@@ -43,53 +55,74 @@
 
     <!-- Contenido principal -->
     <div *ngIf="producto && !loading && !error" class="producto-container">
-        <!-- Card principal del producto -->
+      <!-- Card principal del producto -->
       <div class="producto-card mb-3">
         <div class="grid">
           <!-- Imagen del producto -->
           <div class="col-12 md:col-4">
             <div class="imagen-container">
-              <img [src]="imagenUrl || '/placeholder-image.webp'" 
-                   alt="Imagen de {{ producto.nombre }}" 
-                   class="producto-imagen" />
+              <img
+                [src]="imagenUrl || '/placeholder-image.webp'"
+                alt="Imagen de {{ producto.nombre }}"
+                class="producto-imagen"
+              />
             </div>
           </div>
 
           <!-- Información del producto -->
           <div class="col-12 md:col-8 p-3">
             <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-            
+
             <div class="detalles-lista">
               <div class="detalle-item">
                 <strong>Código de Barras:</strong> {{ producto.codigoDeBarra }}
-              </div>              <div class="detalle-item">
-                <strong>Proveedor:</strong> {{ producto.proveedor?.nombre || 'Sin proveedor' }}
               </div>
               <div class="detalle-item">
-                <strong>Stock Total:</strong> 
-                <span class="stock-badge" [class]="getStockClass(producto.stockTotal)">
+                <strong>Proveedor:</strong>
+                {{ producto.proveedor?.nombre || "Sin proveedor" }}
+              </div>
+              <div class="detalle-item">
+                <strong>Stock Total:</strong>
+                <span
+                  class="stock-badge"
+                  [class]="getStockClass(producto.stockTotal)"
+                >
                   {{ producto.stockTotal }}
                 </span>
-              </div>              <div class="detalle-item">
-                <strong>Categoría:</strong> {{ producto.categoria?.nombre || 'Sin categoría' }}
               </div>
-            </div>            <div class="precio-section mt-3">
+              <div class="detalle-item">
+                <strong>Categoría:</strong>
+                {{ producto.categoria?.nombre || "Sin categoría" }}
+              </div>
+            </div>
+            <div class="precio-section mt-3">
               <div class="precio-item">
                 <span class="precio-label">Precio de Venta:</span>
-                <span class="precio-valor">{{ producto.precioVenta | currency:'USD':'symbol':'1.2-2' }}</span>
+                <span class="precio-valor">{{
+                  producto.precioVenta | currency : "USD" : "symbol" : "1.2-2"
+                }}</span>
               </div>
               <div class="precio-item mt-2">
                 <span class="precio-label">Precio de Compra Actual:</span>
-                <span class="precio-valor precio-compra">{{ producto.precioCompra | currency:'USD':'symbol':'1.2-2' }}</span>
+                <span class="precio-valor precio-compra">{{
+                  producto.precioCompra | currency : "USD" : "symbol" : "1.2-2"
+                }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>      
-      
+      </div>
+
       <!-- Tabla de lotes con paginación -->
       <div class="col-12 mt-5">
-        <button pButton type="button" label="+ Añadir lote" class="mb-3" (click)="mostrarModalAgregarLote = true" *ngIf="isAdmin()"></button>        
+        <button
+          pButton
+          type="button"
+          label="+ Añadir lote"
+          class="mb-3"
+          (click)="mostrarModalAgregarLote = true"
+          *ngIf="isAdmin()"
+        ></button>
         <p-table
           [value]="producto.lotes || []"
           [paginator]="true"
@@ -98,8 +131,8 @@
           showGridlines
           responsiveLayout="scroll"
           currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} lotes"
-          [totalRecords]="producto.lotes.length || 0">
-
+          [totalRecords]="producto.lotes.length || 0"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>N° Lote</th>
@@ -114,28 +147,32 @@
             <tr>
               <td>{{ lote.numeLote }}</td>
               <td>
-                <span *ngIf="lote.fechaVencimiento; else sinFecha" 
-                      [class]="getFechaVencimientoClass(lote.fechaVencimiento)">
-                  {{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}
+                <span
+                  *ngIf="lote.fechaVencimiento; else sinFecha"
+                  [class]="getFechaVencimientoClass(lote.fechaVencimiento)"
+                >
+                  {{ lote.fechaVencimiento | date : "dd/MM/yyyy" }}
                 </span>
                 <ng-template #sinFecha>
-                  <span class="fecha-sin-vencimiento">Sin fecha de vencimiento</span>
+                  <span class="fecha-sin-vencimiento"
+                    >Sin fecha de vencimiento</span
+                  >
                 </ng-template>
               </td>
               <td>{{ lote.precioCompra | currency }}</td>
-              <td>{{ lote.stock }}</td>              <td>
-                <p-button icon="pi pi-trash" 
-                          styleClass="p-button-rounded p-button-text p-button-danger" 
-                          (click)="confirmarEliminarLote(lote.id!)" 
-                          [disabled]="!lote.id"
-                          pTooltip="Eliminar lote"
-                          *ngIf="isAdmin()">
+              <td>{{ lote.stock }}</td>
+              <td *ngIf="isAdmin()">
+                <p-button
+                  icon="pi pi-trash"
+                  styleClass="p-button-rounded p-button-text p-button-danger"
+                  (click)="confirmarEliminarLote(lote.id!)"
+                  [disabled]="!lote.id"
+                  pTooltip="Eliminar lote"
+                >
                 </p-button>
-                <span *ngIf="!isAdmin()" class="text-muted">-</span>
               </td>
             </tr>
           </ng-template>
-
         </p-table>
       </div>
     </div>
@@ -147,20 +184,21 @@
   header="Editar Producto"
   [(visible)]="mostrarModalEditar"
   [modal]="true"
-  [style]="{width: '550px'}"
-  [contentStyle]="{overflow: 'auto'}"
+  [style]="{ width: '550px' }"
+  [contentStyle]="{ overflow: 'auto' }"
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
   styleClass="producto-dialog"
-  appendTo="body">
-
+  appendTo="body"
+  (onHide)="desactivarEscaner()"
+>
   <div class="modal-editar-content">
     <form class="producto-form">
       <!-- Información Básica -->
       <div class="form-section">
         <div class="section-title">Información Básica</div>
-        
+
         <div class="form-group">
           <label for="nombre">Nombre del Producto</label>
           <input
@@ -170,7 +208,20 @@
             placeholder="Ingrese el nombre del producto"
             [(ngModel)]="editandoProducto.nombre"
             name="nombre"
-            class="w-full" />
+            class="w-full"
+          />
+        </div>
+        <div class="form-group">
+          <label for="codigoDeBarra">Código de Barras</label>
+          <input
+            id="codigoDeBarra"
+            type="text"
+            pInputText
+            placeholder="Ingrese el código de barras"
+            [(ngModel)]="editandoProducto.codigoDeBarra"
+            name="codigoDeBarra"
+            class="w-full"
+          />
         </div>
 
         <div class="form-row">
@@ -186,10 +237,11 @@
                 name="precioVenta"
                 min="0"
                 step="0.01"
-                class="w-full" />
+                class="w-full"
+              />
             </div>
           </div>
-          
+
           <div class="form-col">
             <div class="form-group">
               <label for="stockMin">Stock Mínimo</label>
@@ -201,14 +253,19 @@
                 [(ngModel)]="editandoProducto.stockMin"
                 name="stockMin"
                 min="0"
-                class="w-full" />
+                class="w-full"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Relaciones -->      <div class="form-section">
-        <div class="section-title">Categoría y Proveedor</div>          <div class="form-group">          <label for="categoria">Categoría</label>          <p-dropdown
+      <!-- Relaciones -->
+      <div class="form-section">
+        <div class="section-title">Categoría y Proveedor</div>
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <p-dropdown
             [options]="categorias"
             [(ngModel)]="editandoProducto.categoriaId"
             name="categoria"
@@ -218,9 +275,13 @@
             class="w-full"
             [showClear]="true"
             scrollHeight="182px"
-            appendTo="body">
+            appendTo="body"
+          >
           </p-dropdown>
-        </div>        <div class="form-group">          <label for="proveedor">Proveedor</label>          <p-dropdown
+        </div>
+        <div class="form-group">
+          <label for="proveedor">Proveedor</label>
+          <p-dropdown
             [options]="proveedores"
             [(ngModel)]="editandoProducto.proveedorId"
             name="proveedor"
@@ -230,51 +291,76 @@
             class="w-full"
             [showClear]="true"
             scrollHeight="182px"
-            appendTo="body">
+            appendTo="body"
+          >
           </p-dropdown>
         </div>
       </div>
 
-      <!-- Image Upload Section -->
+      <!-- Subir Imagen -->
       <div class="form-section">
         <div class="section-title">Imagen del Producto</div>
-        
+
         <div class="form-group">
           <label for="imagen">Imagen del producto (opcional)</label>
-          <input
-            type="file"
-            id="imagen"
-            accept="image/*"
-            (change)="onImagenSeleccionada($event)"
-            name="imagen" />
-          <small class="help-text">Este campo es opcional. Solo se actualizará la imagen si selecciona una nueva.</small>
-        </div>
 
-        <!-- Image Preview -->
-        <div class="image-preview mb-3" *ngIf="imagenPreviewEdicion || imagenUrl">
-          <img [src]="imagenPreviewEdicion || imagenUrl" 
-               alt="Vista previa" 
-               style="max-width: 200px; max-height: 200px; object-fit: contain;" 
-               (error)="onImageError($event)" />
+          <div class="file-upload-container">
+            <input
+              type="file"
+              id="imagen"
+              accept="image/*"
+              (change)="onImagenSeleccionada($event)"
+              name="imagen"
+              style="display: none"
+            />
+            <button
+              type="button"
+              class="file-upload-btn"
+              (click)="triggerFileInput()"
+            >
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar imagen</span>
+            </button>
+            <span class="file-name" *ngIf="imagenSeleccionada">
+              {{ imagenSeleccionada.name }}
+            </span>
+          </div>
+
+          <small class="help-text"
+            >Este campo es opcional. Solo se actualizará la imagen si selecciona
+            una nueva.</small
+          >
+        </div>
+        <!-- Preview de Imagen -->
+        <div
+          class="image-preview mb-3"
+          *ngIf="imagenPreviewEdicion || imagenUrl"
+        >
+          <img
+            [src]="imagenPreviewEdicion || imagenUrl"
+            alt="Vista previa"
+            style="max-width: 200px; max-height: 200px; object-fit: contain"
+            (error)="onImageError($event)"
+          />
         </div>
       </div>
     </form>
   </div>
-
   <ng-template pTemplate="footer">
-    <button 
-      pButton 
-      type="button" 
-      label="Cancelar" 
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
       class="p-button-text"
-      (click)="mostrarModalEditar = false">
-    </button>    <button 
-      pButton 
-      type="button" 
-      label="Guardar Cambios" 
+      (click)="mostrarModalEditar = false; desactivarEscaner()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Guardar Cambios"
       class="p-button-success"
-      (click)="editarProducto()">
-    </button>
+      (click)="editarProducto()"
+    ></button>
   </ng-template>
 </p-dialog>
 
@@ -283,85 +369,266 @@
   header="Agregar Lote"
   [(visible)]="mostrarModalAgregarLote"
   [modal]="true"
-  [style]="{width: '400px'}"
-  [contentStyle]="{overflow: 'auto'}"
+  [style]="{ width: '500px' }"
+  [contentStyle]="{ overflow: 'auto' }"
   [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
   styleClass="producto_dialog"
-  appendTo="body">
+  appendTo="body"
+>
+  <div class="modal-editar-content">
+    <form class="lote-form">
+      <!-- Información del Lote -->
+      <div class="form-section">
+        <div class="section-title">Información del Lote</div>
 
-  <form class="lote-form">
-    <div class="form-group">
-      <label for="numeLote">Número de Lote *</label>
-      <input
-        id="numeLote"
-        type="text"
-        pInputText
-        placeholder="Ej: L001-2024"
-        [(ngModel)]="nuevoLote.numeLote"
-        name="numeLote"
-        class="w-full" />
-    </div>
+        <div class="form-group">
+          <label for="numeLote">Número de Lote</label>
+          <input
+            id="numeLote"
+            type="text"
+            pInputText
+            placeholder="Ej: L001-2024"
+            [(ngModel)]="nuevoLote.numeLote"
+            name="numeLote"
+            class="w-full"
+          />
+        </div>
 
-    <div class="form-group">
-      <label for="stock">Stock *</label>
-      <input
-        id="stock"
-        type="number"
-        pInputText
-        placeholder="0"
-        [(ngModel)]="nuevoLote.stock"
-        name="stock"
-        min="0"
-        class="w-full" />
-    </div>    <div class="form-group">
-      <label for="fechaVencimiento">Fecha de Vencimiento (Opcional)</label>
-      <input
-        id="fechaVencimiento"
-        type="date"
-        pInputText
-        [(ngModel)]="nuevoLote.fechaVencimiento"
-        name="fechaVencimiento"
-        class="w-full"
-        [min]="minFechaVencimiento" />
-      <small class="help-text">Deje vacío si el producto no tiene fecha de vencimiento</small>
-    </div>
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="stock">Stock</label>
+              <input
+                id="stock"
+                type="number"
+                pInputText
+                placeholder="0"
+                [(ngModel)]="nuevoLote.stock"
+                name="stock"
+                min="0"
+                class="w-full"
+              />
+            </div>
+          </div>
 
-    <div class="form-group">
-      <label for="precioCompra">Precio de Compra *</label>
-      <input
-        id="precioCompra"
-        type="number"
-        pInputText
-        placeholder="0.00"
-        [(ngModel)]="nuevoLote.precioCompra"
-        name="precioCompra"
-        min="0"
-        step="0.01"
-        class="w-full" />
-    </div>
-  </form>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="precioCompra">Precio de Compra</label>
+              <input
+                id="precioCompra"
+                type="number"
+                pInputText
+                placeholder="0.00"
+                [(ngModel)]="nuevoLote.precioCompra"
+                name="precioCompra"
+                min="0"
+                step="0.01"
+                class="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vencimiento -->
+      <div class="form-section">
+        <div class="section-title">Fecha de Vencimiento</div>
+        <div class="form-group">
+          <label for="fechaVencimiento">Fecha de Vencimiento (Opcional)</label>
+          <input
+            id="fechaVencimiento"
+            type="date"
+            pInputText
+            [(ngModel)]="nuevoLote.fechaVencimiento"
+            name="fechaVencimiento"
+            class="w-full"
+            [min]="minFechaVencimiento"
+          />
+          <small class="help-text"
+            >Deje vacío si el producto no tiene fecha de vencimiento</small
+          >
+        </div>
+      </div>
+
+      <!-- Campos obligatorios -->
+      <div class="form-group mt-3">
+        <div class="campos-obligatorios">
+          <i class="pi pi-info-circle"></i>
+          <span
+            >Los campos marcados con <span style="color: red">*</span> son
+            obligatorios</span
+          >
+        </div>
+      </div>
+    </form>
+  </div>
 
   <ng-template pTemplate="footer">
-    <button 
-      pButton 
-      type="button" 
-      label="Cancelar" 
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
       class="p-button-text"
-      (click)="mostrarModalAgregarLote = false">
-    </button>
-    <button 
-      pButton 
-      type="button" 
-      label="Agregar" 
+      (click)="mostrarModalAgregarLote = false"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Agregar"
       class="p-button-success"
-      (click)="agregarLote()">
-    </button>  </ng-template>
+      (click)="agregarLote()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Modal de Modificar Stock Total - Solo Admin Supremo -->
+<p-dialog
+  header="⚠️ Modificar Stock Total - ADVERTENCIA"
+  [(visible)]="mostrarModalModificarStock"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [contentStyle]="{ overflow: 'auto' }"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="stock-dialog"
+  appendTo="body"
+>
+  <div class="modal-stock-content">
+    <!-- Advertencia -->
+    <div class="alert-warning mb-4">
+      <div class="alert-icon">
+        <i class="pi pi-exclamation-triangle"></i>
+      </div>
+      <div class="alert-content">
+        <h4>¡PRECAUCIÓN!</h4>
+        <p>La modificación incorrecta del stock total puede llevar a:</p>
+        <ul>
+          <li>Errores de cálculo en las estadísticas de ventas</li>
+          <li>Discrepancias en el inventario</li>
+          <li>Pérdidas económicas por datos incorrectos</li>
+          <li>Problemas en reportes contables</li>
+        </ul>
+        <p><strong>Solo modifique si está completamente seguro.</strong></p>
+      </div>
+    </div>
+
+    <!-- Información actual -->
+    <div class="stock-info mb-3">
+      <div class="info-row">
+        <span class="info-label">Producto:</span>
+        <span class="info-value">{{ producto?.nombre }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Stock Total Actual:</span>
+        <span class="info-value stock-actual">{{ stockOriginal }}</span>
+      </div>
+    </div>
+
+    <!-- Formulario de modificación -->
+    <div class="form-group">
+      <label for="nuevoStock">Nuevo Stock Total</label>
+      <input
+        id="nuevoStock"
+        type="number"
+        pInputText
+        placeholder="Ingrese el nuevo stock total"
+        [(ngModel)]="nuevoStockTotal"
+        name="nuevoStock"
+        min="0"
+        class="w-full"
+        [class.error]="nuevoStockTotal < 0"
+      />
+      <small class="help-text">
+        Diferencia: {{ nuevoStockTotal - stockOriginal >= 0 ? "+" : ""
+        }}{{ nuevoStockTotal - stockOriginal }}
+      </small>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
+      class="p-button-text"
+      (click)="mostrarModalModificarStock = false"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Confirmar Modificación"
+      class="p-button-danger"
+      (click)="modificarStockTotal()"
+      [disabled]="nuevoStockTotal < 0 || nuevoStockTotal === stockOriginal"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Modal de Confirmación para Eliminar Lote -->
+<p-dialog
+  header="Confirmar Eliminación de Lote"
+  [(visible)]="mostrarModalConfirmarEliminarLote"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="delete-lote-dialog"
+  appendTo="body"
+>
+  <div class="modal-delete-lote-content">
+    <!-- Pregunta principal -->
+    <div class="question-section">
+      <h4>¿Está seguro de que desea eliminar este lote?</h4>
+      <p class="action-warning">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <!-- Card de advertencia -->
+    <div class="alert-warning">
+      <div class="alert-icon">
+        <i class="pi pi-exclamation-triangle"></i>
+      </div>
+      <div class="alert-content">
+        <h4>¡Importante!</h4>
+        <p>
+          <strong
+            >Al eliminar este lote, su stock no será descontado automáticamente
+            del stock total del producto.</strong
+          >
+        </p>
+        <p>
+          El administrador superior debe realizar el ajuste manualmente para
+          mantener la coherencia del inventario.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Cancelar"
+      class="p-button-text"
+      (click)="cancelarEliminarLote()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Sí, eliminar"
+      class="p-button-danger"
+      (click)="procederEliminarLote()"
+    ></button>
+  </ng-template>
 </p-dialog>
 
 <!-- Confirmation Dialog -->
 <p-confirmDialog></p-confirmDialog>
 
-<!-- Toast for notifications -->
+<!-- Toast para notificaciones -->
 <p-toast></p-toast>
 
 <app-footer></app-footer>

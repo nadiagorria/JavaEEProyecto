@@ -2,7 +2,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <main *ngIf="cliente">
-  <article class="flex" >
+  <article class="flex">
     <div class="w-full Tarjetas">
       <div class="tarjeta-1">
         <h1 class="titulo">{{ cliente.nombre }}</h1>
@@ -16,141 +16,166 @@
         </div>
 
         <div class="flex flex-column w-full papaNumeros">
-          <span class="w-full numero1MiniCartel">$ {{ cliente.credito.precioTotal }}</span>
-          <p class="texito">Pago hasta ahora: {{ cliente.credito.pagoHastaAhora }}</p>
+          <span class="w-full numero1MiniCartel"
+            >$ {{ cliente.credito.precioTotal }}</span
+          >
+          <p class="texito">
+            Pago hasta ahora: {{ cliente.credito.pagoHastaAhora }}
+          </p>
 
-          <div class="papaBoton w-full">            <p-button class="boton" label="Pagar" severity="secondary" (click)="showDialog()"></p-button>            <p-dialog 
-              header="Realizar Pago" 
-              [(visible)]="visible" 
-              [modal]="true" 
-              [style]="{width: '450px'}"
-              [contentStyle]="{overflow: 'auto'}"
-              [draggable]="false" 
+          <div class="papaBoton w-full">
+            <p-button
+              class="boton"
+              label="Pagar"
+              severity="secondary"
+              (click)="showDialog()"
+            ></p-button>
+            <p-dialog
+              header="Realizar Pago"
+              [(visible)]="visible"
+              [modal]="true"
+              [style]="{ width: '450px' }"
+              [contentStyle]="{ overflow: 'auto' }"
+              [draggable]="false"
               [resizable]="false"
               [closable]="true"
               styleClass="lote-dialog"
-              appendTo="body">
+              appendTo="body"
+            >
               <div class="form-payment">
                 <div class="deuda-info">
                   <div class="deuda-info-item">
                     <span class="deuda-label">Deuda actual:</span>
-                    <span class="deuda-value">${{ cliente.credito.precioTotal }}</span>
+                    <span class="deuda-value"
+                      >${{ cliente.credito.precioTotal }}</span
+                    >
                   </div>
                   <div class="deuda-info-item">
                     <span class="deuda-label">Pagado hasta ahora:</span>
-                    <span class="deuda-value">${{ cliente.credito.pagoHastaAhora }}</span>
+                    <span class="deuda-value"
+                      >${{ cliente.credito.pagoHastaAhora }}</span
+                    >
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="pago">Monto a Pagar *</label>
                   <p-inputgroup class="w-full">
                     <span class="p-inputgroup-addon">$</span>
-                    <input 
+                    <input
                       id="pago"
-                      pInputText 
-                      placeholder="0.00" 
-                      [(ngModel)]="pago" 
+                      pInputText
+                      placeholder="0.00"
+                      [(ngModel)]="pago"
                       type="number"
                       min="0"
                       step="0.01"
-                      class="w-full" />
+                      class="w-full"
+                    />
                   </p-inputgroup>
-                  <small class="help-text">Ingrese el monto que desea abonar a la deuda</small>
+                  <small class="help-text"
+                    >Ingrese el monto que desea abonar a la deuda</small
+                  >
                 </div>
               </div>
-              
+
               <ng-template pTemplate="footer">
-                <button 
-                  pButton 
-                  type="button" 
-                  label="Cancelar" 
+                <button
+                  pButton
+                  type="button"
+                  label="Cancelar"
                   class="p-button-text"
                   icon="pi pi-times"
-                  (click)="visible = false">
-                </button>
-                <button 
-                  pButton 
-                  type="button" 
-                  label="Confirmar Pago" 
+                  (click)="visible = false"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  label="Confirmar Pago"
                   class="p-button-success"
                   icon="pi pi-check"
-                  (click)="pagoButton()">
-                </button>
+                  (click)="pagoButton()"
+                ></button>
               </ng-template>
             </p-dialog>
           </div>
-
-        </div>      </div>
+        </div>
+      </div>
     </div>
 
     <div class="cliente-avatar">
       <i class="pi pi-user cliente-icon"></i>
     </div>
-  </article>  <article class="w-full cartelEditar" *ngIf="isAdmin()">
-    <button 
-      pButton 
-      type="button" 
-      label="Editar" 
+  </article>
+  <article class="w-full cartelEditar" *ngIf="isAdmin()">
+    <button
+      pButton
+      type="button"
+      label="Editar"
       icon="pi pi-pencil"
       class="p-button-outlined p-button-info"
-      (click)="showDialogEditar()">
-    </button><p-dialog 
-      header="Editar Cliente" 
-      [(visible)]="visibleEditar" 
-      [modal]="true" 
-      [style]="{width: '450px'}"
-      [contentStyle]="{overflow: 'auto'}"
+      (click)="showDialogEditar()"
+    ></button
+    ><p-dialog
+      header="Editar Cliente"
+      [(visible)]="visibleEditar"
+      [modal]="true"
+      [style]="{ width: '450px' }"
+      [contentStyle]="{ overflow: 'auto' }"
       [draggable]="false"
       [resizable]="false"
       [closable]="true"
       styleClass="lote-dialog"
-      appendTo="body">
-      
+      appendTo="body"
+    >
       <div class="cliente-info">
         <div class="cliente-info-avatar">
           <i class="pi pi-user"></i>
         </div>
       </div>
-        <div class="flex flex-column gap-3">
+      <div class="flex flex-column gap-3">
         <div class="field">
           <label for="nombre" class="block mb-2">
             <i class="pi pi-user"></i> Nombre
           </label>
-          <input 
-            id="nombre" 
-            pInputText 
-            class="w-full" 
+          <input
+            id="nombre"
+            pInputText
+            class="w-full"
             [(ngModel)]="nombreEdicion"
-            placeholder="Ingrese el nombre del cliente"/>
+            placeholder="Ingrese el nombre del cliente"
+          />
         </div>
-        
+
         <div class="field">
           <label for="telefono" class="block mb-2">
             <i class="pi pi-phone"></i> Teléfono
           </label>
-          <input 
-            id="telefono" 
-            pInputText 
-            class="w-full" 
+          <input
+            id="telefono"
+            pInputText
+            class="w-full"
             [(ngModel)]="telefonoEdicion"
-            placeholder="Ingrese el teléfono"/>
+            placeholder="Ingrese el teléfono"
+          />
         </div>
       </div>
-      
+
       <ng-template pTemplate="footer">
         <div class="flex justify-content-end gap-2">
-          <p-button 
-            label="Cancelar" 
-            icon="pi pi-times" 
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
             (click)="cerrarDialogEditar()"
-            styleClass="p-button-text">
+            styleClass="p-button-text"
+          >
           </p-button>
-          <p-button 
-            label="Guardar" 
-            icon="pi pi-check" 
+          <p-button
+            label="Guardar"
+            icon="pi pi-check"
             (click)="editarCliente()"
-            severity="secondary">
+            severity="secondary"
+          >
           </p-button>
         </div>
       </ng-template>
@@ -169,8 +194,8 @@
       paginatorPosition="bottom"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} compras"
       showGridlines
-      [responsive]="true">
-
+      [responsive]="true"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th>Fecha</th>
@@ -181,30 +206,32 @@
 
       <ng-template pTemplate="body" let-venta>
         <tr>
-          <td>{{ venta.fechaVenta | date:'dd/MM/yyyy' }}</td>
+          <td>{{ venta.fechaVenta | date : "dd/MM/yyyy" }}</td>
           <td>${{ venta.total }}</td>
           <td>
             <div class="flex gap-1">
-              <p-button 
-                icon="pi pi-eye" 
-                severity="info" 
-                size="small" 
+              <p-button
+                icon="pi pi-eye"
+                severity="info"
+                size="small"
                 [text]="true"
                 (click)="verVenta(venta.id)"
                 pTooltip="Ver detalles de la venta"
                 tooltipPosition="top"
-                styleClass="p-button-rounded p-button-text">
+                styleClass="p-button-rounded p-button-text"
+              >
               </p-button>
-              <p-button 
-                icon="pi pi-trash" 
-                severity="danger" 
-                size="small" 
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
                 [text]="true"
                 (click)="eliminarVenta(venta.id)"
                 pTooltip="Eliminar venta"
                 tooltipPosition="top"
                 styleClass="p-button-rounded p-button-text p-button-danger"
-                *ngIf="isAdmin()">
+                *ngIf="isAdmin()"
+              >
               </p-button>
             </div>
           </td>
@@ -212,6 +239,5 @@
       </ng-template>
     </p-table>
   </article>
-
 </main>
 <app-footer></app-footer>

@@ -2,11 +2,12 @@
   <!-- Botón de notificaciones -->
   <div class="notification-bell" (click)="toggleDropdown()">
     <i class="pi pi-bell"></i>
-    <p-badge 
-      *ngIf="contadorNoLeidas > 0" 
-      [value]="contadorNoLeidas.toString()" 
+    <p-badge
+      *ngIf="contadorNoLeidas > 0"
+      [value]="contadorNoLeidas.toString()"
       severity="danger"
-      class="notification-badge">
+      class="notification-badge"
+    >
     </p-badge>
   </div>
 
@@ -14,23 +15,22 @@
   <div *ngIf="mostrarDropdown" class="notification-dropdown">
     <div class="dropdown-header">
       <h4>Notificaciones</h4>
-      <button 
+      <button
         *ngIf="contadorNoLeidas > 0"
-        pButton 
-        type="button" 
-        label="Marcar todas como leídas" 
+        pButton
+        type="button"
+        label="Marcar todas como leídas"
         class="p-button-text p-button-sm"
-        (click)="marcarTodasComoLeidas()">
-      </button>
+        (click)="marcarTodasComoLeidas()"
+      ></button>
     </div>
-    
     <div class="notifications-list">
-      <div 
-        *ngFor="let notificacion of notificaciones" 
+      <div
+        *ngFor="let notificacion of notificaciones"
         class="notification-item"
-        [ngClass]="{'unread': !notificacion.leido, 'read': notificacion.leido}"
-        (click)="marcarComoLeida(notificacion)">
-        
+        [ngClass]="{ unread: !notificacion.leido, read: notificacion.leido }"
+        (click)="marcarComoLeida(notificacion)"
+      >
         <div class="notification-content">
           <div class="notification-title">
             {{ obtenerTitulo(notificacion) }}
@@ -39,10 +39,21 @@
             {{ formatearFecha(obtenerFecha(notificacion)) }}
           </div>
         </div>
-        
-        <div *ngIf="!notificacion.leido" class="unread-indicator"></div>
+
+        <div class="notification-actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-sm delete-btn"
+            (click)="eliminarNotificacion(notificacion, $event)"
+            pTooltip="Eliminar notificación"
+            tooltipPosition="left"
+          ></button>
+          <div *ngIf="!notificacion.leido" class="unread-indicator"></div>
+        </div>
       </div>
-      
+
       <div *ngIf="notificaciones.length === 0" class="no-notifications">
         <i class="pi pi-inbox"></i>
         <p>No hay notificaciones</p>
@@ -51,34 +62,55 @@
   </div>
 
   <!-- Overlay para cerrar dropdown -->
-  <div 
-    *ngIf="mostrarDropdown" 
+  <div
+    *ngIf="mostrarDropdown"
     class="dropdown-overlay"
-    (click)="cerrarDropdown()">
-  </div>
+    (click)="cerrarDropdown()"
+  ></div>
 </div>
 
 <!-- Modal de detalle de notificación -->
-<p-dialog 
-  [header]="'Notificación'"
-  [(visible)]="mostrarDialog" 
-  [modal]="true" 
-  [breakpoints]="{ '1199px': '65vw', '575px': '90vw' }" 
-  [style]="{ width: '65vw', height: '75vh'}" 
-  [draggable]="false" 
+<p-dialog
+  [(visible)]="mostrarDialog"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '65vw', '575px': '90vw' }"
+  [style]="{ width: '65vw', height: '75vh' }"
+  [draggable]="false"
   [resizable]="true"
   [closable]="true"
-  (onHide)="cerrarDialog()">
-    <div *ngIf="notificacionSeleccionada" class="notification-modal-content">
-    <div class="modal-header-info">
-      <h3 class="modal-title">{{ obtenerTitulo(notificacionSeleccionada) }}</h3>
-      <p class="modal-date">{{ formatearFechaCompleta(obtenerFecha(notificacionSeleccionada)) }}</p>
+  [styleClass]="'notification-modal'"
+  (onHide)="cerrarDialog()"
+>
+  <ng-template pTemplate="header">
+    <div class="modal-header-custom">
+      <h3 class="modal-title-custom">
+        {{ obtenerTitulo(notificacionSeleccionada!) }}
+      </h3>
+      <button
+        *ngIf="notificacionSeleccionada"
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        class="p-button-rounded p-button-outlined p-button-danger p-button-sm"
+        (click)="eliminarNotificacion(notificacionSeleccionada!)"
+        pTooltip="Eliminar notificación"
+      ></button>
     </div>
-    
-    <div class="modal-body">
-      <div class="modal-message">
-        {{ obtenerMensaje(notificacionSeleccionada) }}
-      </div>
+  </ng-template>
+
+  <div *ngIf="notificacionSeleccionada" class="notification-modal-content">
+    <div class="modal-date-info">
+      <i class="pi pi-calendar"></i>
+      <span>{{
+        formatearFechaCompleta(obtenerFecha(notificacionSeleccionada))
+      }}</span>
+    </div>
+
+    <div class="modal-message-content">
+      <p>{{ obtenerMensaje(notificacionSeleccionada) }}</p>
     </div>
   </div>
 </p-dialog>
+
+<!-- Toast para mensajes -->
+<p-toast></p-toast>

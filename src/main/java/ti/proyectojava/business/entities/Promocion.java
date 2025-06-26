@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "PROMOCION")
-public class Promocion extends Oferta{
+public class Promocion extends Oferta {
 
 
     @ManyToOne(cascade = CascadeType.ALL)

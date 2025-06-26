@@ -1,35 +1,54 @@
 @import "primeicons/primeicons.css";
 
-
-
-
-html, body {
+html,
+body {
   margin: 0;
   background: #f7f6f6;
   font-family: "Montserrat", sans-serif;
 }
 
+.table-container-fix {
+  position: relative;
+  z-index: auto;
 
+  overflow: visible;
 
-/* Clases específicas para diferentes estilos de tabla */
+  > div {
+    overflow: visible;
+    position: static;
+  }
+
+  .p-paginator {
+    .p-dropdown {
+      z-index: 9999;
+    }
+
+    .p-dropdown-panel {
+      transform: translateY(0) !important;
+      z-index: 9999 !important;
+    }
+  }
+}
+
 .tabla-azul .p-datatable-thead > tr > th {
   background: #34495e !important;
   color: white !important;
 }
 
-/* Estilos universales para tablas PrimeNG */
 .p-datatable {
   border: 1px solid #ecf0f1;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   .p-datatable-header {
     background: #f8f9fa;
     border-bottom: 2px solid #ecf0f1;
     padding: 15px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
   }
-  
+
   .p-datatable-thead > tr > th {
     background: #34495e !important;
     color: white !important;
@@ -40,47 +59,188 @@ html, body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
+  .p-datatable-thead > tr > th:first-child {
+    border-top-left-radius: 12px;
+  }
+
+  .p-datatable-thead > tr > th:last-child {
+    border-top-right-radius: 12px;
+  }
+
   .p-datatable-tbody > tr {
     border-bottom: 1px solid #ecf0f1;
     transition: background-color 0.3s ease;
-    
+
     &:hover {
       background-color: #f8f9fa;
     }
-    
+
     &:nth-child(even) {
       background-color: #fdfdfd;
     }
   }
-  
   .p-datatable-tbody > tr > td {
     padding: 12px;
     border: none;
     font-size: 0.9rem;
     vertical-align: middle;
   }
+
+  .p-datatable-tbody > tr:last-child > td:first-child {
+    border-bottom-left-radius: 12px;
+  }
+
+  .p-datatable-tbody > tr:last-child > td:last-child {
+    border-bottom-right-radius: 12px;
+  }
+
+  .p-datatable-wrapper {
+    overflow: visible !important;
+    position: relative;
+    border-radius: 12px;
+  }
+
+  .p-paginator {
+    position: relative;
+    z-index: 999;
+    overflow: visible !important;
+
+    .p-dropdown-panel {
+      position: absolute;
+      top: 100%;
+      z-index: 1000;
+    }
+
+    .p-dropdown {
+      position: relative;
+      z-index: 999;
+
+      .p-dropdown-items-wrapper {
+        overflow: visible !important;
+      }
+    }
+
+    .p-paginator-bottom {
+      overflow: visible !important;
+    }
+  }
 }
 
-/* Estilos universales para iconos de acción */
+.p-dropdown-panel {
+  position: absolute;
+  z-index: 1000 !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+.p-dropdown {
+  .p-dropdown-panel {
+    margin: 0;
+    z-index: 1000 !important;
+    transform: none !important;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+.p-component-overlay {
+  z-index: 1001 !important;
+}
+
+body .p-dropdown-panel {
+  z-index: 1002 !important;
+}
+
+.p-paginator {
+  background: #f8f9fa;
+  border-top: 1px solid #ecf0f1;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 999;
+  overflow: visible !important;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+
+  .p-paginator-element {
+    margin: 0 0.125rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &.p-highlight {
+      background: #34495e;
+      color: white;
+    }
+
+    &:not(.p-highlight):hover {
+      background: rgba(52, 73, 94, 0.1);
+    }
+  }
+
+  .p-paginator-pages {
+    display: flex;
+
+    .p-paginator-page {
+      margin: 0 0.125rem;
+    }
+  }
+
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    color: #34495e;
+
+    &:hover {
+      background: rgba(52, 73, 94, 0.1);
+    }
+
+    &.p-disabled {
+      opacity: 0.5;
+      cursor: default;
+
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+}
+
+.p-datatable-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.p-datatable-footer {
+  position: relative;
+  z-index: 2;
+}
+
 .p-button-rounded.p-button-text {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
   transition: all 0.2s ease;
-  
+
   &.p-button-danger {
     color: #e74c3c;
-    
+
     &:hover {
       background: rgba(231, 76, 60, 0.1);
       color: #c0392b;
     }
   }
-  
+
   &:not(.p-button-danger) {
     color: #3498db;
-    
+
     &:hover {
       background: rgba(52, 152, 219, 0.1);
       color: #2980b9;
@@ -88,8 +248,9 @@ html, body {
   }
 }
 
-/* Estilos globales para imágenes placeholder y contenedores de imagen */
-.image-container, .imagen-container, .imagen-producto {
+.image-container,
+.imagen-container,
+.imagen-producto {
   img {
     object-fit: cover;
     width: 100%;
@@ -97,29 +258,27 @@ html, body {
   }
 }
 
-/* Asegurar que las imágenes placeholder se adapten completamente */
-img[src*="placeholder-image.webp"], 
+img[src*="placeholder-image.webp"],
 img[src*="placeholder.webp"] {
   object-fit: cover !important;
   width: 100% !important;
   height: 100% !important;
 }
 
-/* Toast customization global */
 .p-toast {
   z-index: 9999;
-  
+
   .p-toast-message {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.08);
-    
+
     &.p-toast-message-error {
       background-color: #f8d7da;
       border-color: #f5c6cb;
       color: #721c24;
     }
-    
+
     &.p-toast-message-success {
       background-color: #d4edda;
       border-color: #c3e6cb;
@@ -147,7 +306,6 @@ img[src*="placeholder.webp"] {
   }
 }
 
-/* Estilos globales específicos para botones de recuperar-password */
 app-recuperar-password button[pButton],
 app-recuperar-password .p-button {
   padding: 16px 20px !important;
@@ -168,7 +326,7 @@ app-recuperar-password .p-button {
   outline: none !important;
   min-height: 48px !important;
   white-space: nowrap !important;
-  
+
   .p-button-label {
     flex: 1 1 auto !important;
     display: block !important;
@@ -233,7 +391,7 @@ app-recuperar-password .p-button {
       border-color: #adb5bd !important;
       color: #495057 !important;
       transform: translateY(-1px) !important;
-      
+
       .p-button-label {
         color: #495057 !important;
       }
@@ -259,7 +417,7 @@ app-recuperar-password .p-button {
     transform: none !important;
     box-shadow: none !important;
     border-color: #e9ecef !important;
-    
+
     .p-button-label {
       color: #6c757d !important;
     }
@@ -274,7 +432,7 @@ app-recuperar-password .p-button {
     background: #6c757d !important;
     cursor: wait !important;
     color: #ffffff !important;
-    
+
     .p-button-label {
       color: #ffffff !important;
     }
@@ -285,7 +443,6 @@ app-recuperar-password .p-button {
   }
 }
 
-/* Asegurar que los estilos se apliquen en cualquier contexto */
 .recovery-container button[pButton],
 .recovery-container .p-button {
   padding: 16px 20px !important;
@@ -308,10 +465,9 @@ app-recuperar-password .p-button {
   white-space: nowrap !important;
 }
 
-/* Estilos universales para iconos de acción */
 .p-button.icon-eye {
   color: #3498db !important;
-  
+
   &:hover {
     background: rgba(52, 152, 219, 0.1) !important;
     color: #2980b9 !important;
@@ -320,37 +476,34 @@ app-recuperar-password .p-button {
 
 .p-button.icon-trash {
   color: #e74c3c !important;
-  
+
   &:hover {
     background: rgba(231, 76, 60, 0.1) !important;
     color: #c0392b !important;
   }
 }
 
-/* Estilos para botones de acción redondeados y de texto */
 .p-button-rounded.p-button-text {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
   transition: all 0.2s ease;
-  
+
   &.p-button-danger {
     color: #e74c3c;
-    
+
     &:hover {
       background: rgba(231, 76, 60, 0.1);
       color: #c0392b;
     }
   }
-  
+
   &:not(.p-button-danger) {
     color: #3498db;
-    
+
     &:hover {
       background: rgba(52, 152, 219, 0.1);
       color: #2980b9;
     }
   }
 }
-
-

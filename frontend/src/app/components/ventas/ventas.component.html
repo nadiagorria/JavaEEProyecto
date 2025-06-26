@@ -2,26 +2,78 @@
 
 <div class="grid">
   <div class="col-12">
-      <div class="col-12 mb-3 pl-5">
+    <div class="col-12 mb-3 pl-5">
       <h2 class="texto">
-        {{ isAdmin ? 'Gestión de Ventas - Todas las Ventas' : 'Gestión de Ventas - Mis Ventas' }}
+        {{
+          isAdmin
+            ? "Gestión de Ventas - Todas las Ventas"
+            : "Gestión de Ventas - Mis Ventas"
+        }}
       </h2>
+    </div>
+
+    <!-- Filtros de fecha -->
+    <div class="col-12 mb-3 pl-5">
+      <div class="filtros-fecha">
+        <div class="filtro-item">
+          <label for="fechaDesde">Desde:</label>
+          <p-calendar 
+            id="fechaDesde"
+            [(ngModel)]="fechaDesde" 
+            dateFormat="yy-mm-dd"
+            placeholder="Fecha desde"
+            [showIcon]="true">
+          </p-calendar>
+        </div>
+        
+        <div class="filtro-item">
+          <label for="fechaHasta">Hasta:</label>
+          <p-calendar 
+            id="fechaHasta"
+            [(ngModel)]="fechaHasta" 
+            dateFormat="yy-mm-dd"
+            placeholder="Fecha hasta"
+            [showIcon]="true">
+          </p-calendar>
+        </div>
+        
+        <div class="filtro-botones">
+          <button 
+            class="btn-filtrar" 
+            (click)="aplicarFiltros()">
+            <i class="pi pi-search"></i>
+            Filtrar
+          </button>
+          <button 
+            class="btn-limpiar" 
+            (click)="limpiarFiltros()">
+            <i class="pi pi-times"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="col-12 flex justify-content-center">
       <div class="md:col-8 lg:col-11">
-        
-        <p-table [value]="ventas" 
-                 [paginator]="true" 
-                 [rows]="5" 
-                 [rowsPerPageOptions]="[5, 10, 20]"
-                 paginatorPosition="bottom"
-                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} ventas"
-                 showGridlines
-                 [responsive]="true"
-                 class="texto">          <ng-template pTemplate="header">
+        <p-table
+          [value]="ventas"
+          [paginator]="true"
+          [rows]="ventasPorPagina"
+          [totalRecords]="totalElementos"
+          [lazy]="true"
+          (onLazyLoad)="cargarVentasLazy($event)"
+          [rowsPerPageOptions]="[5, 10, 20, 50]"
+          paginatorPosition="bottom"
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} ventas"
+          showGridlines
+          [responsive]="true"
+          class="texto"
+          [loading]="cargando"
+        >
+          <ng-template pTemplate="header">
             <tr>
-              <th >Fecha</th>
+              <th>Fecha</th>
               <th>Total</th>
               <th>Forma de Pago</th>
               <th>Usuario</th>
@@ -31,29 +83,35 @@
           <ng-template pTemplate="body" let-venta>
             <tr>
               <td>
-                {{venta.fechaVenta ? (venta.fechaVenta | date:'medium') : 'Sin fecha'}}
+                {{
+                  venta.fechaVenta
+                    ? (venta.fechaVenta | date : "medium")
+                    : "Sin fecha"
+                }}
               </td>
-              <td>{{venta.total | currency}}</td>
-              <td>{{venta.formaPago}}</td>
-              <td>{{venta.usuario}}</td>              
+              <td>{{ venta.total | currency }}</td>
+              <td>{{ venta.formaPago }}</td>
+              <td>{{ venta.usuario }}</td>
               <td>
-                <p-button icon="pi pi-eye" 
-                          styleClass="p-button-text p-button-rounded" 
-                          (click)="verVenta(venta.id)"
-                          pTooltip="Ver detalle"></p-button>
-                <p-button *ngIf="isAdmin" 
-                          icon="pi pi-trash" 
-                          styleClass="p-button-text p-button-rounded p-button-danger" 
-                          (click)="eliminarVenta(venta.id)"
-                          pTooltip="Eliminar venta"></p-button>
+                <p-button
+                  icon="pi pi-eye"
+                  styleClass="p-button-text p-button-rounded"
+                  (click)="verVenta(venta.id)"
+                  pTooltip="Ver detalle"
+                ></p-button>
+                <p-button
+                  *ngIf="isAdmin"
+                  icon="pi pi-trash"
+                  styleClass="p-button-text p-button-rounded p-button-danger"
+                  (click)="eliminarVenta(venta.id)"
+                  pTooltip="Eliminar venta"
+                ></p-button>
               </td>
             </tr>
           </ng-template>
         </p-table>
-        
       </div>
     </div>
-
   </div>
 </div>
 

@@ -2,9 +2,10 @@ package ti.proyectojava.services;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ti.proyectojava.api.responses.ResponseListadoCategorias;
 import ti.proyectojava.api.responses.ResponseListadoProductos;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
@@ -41,53 +42,33 @@ public class ProductoService {
             throw new RuntimeException("Producto no encontrado. ID:" + id);
         }
     }
+
     public ResponseListadoProductos listadoProductos() {
         ResponseListadoProductos response = new ResponseListadoProductos();
 
-        List<ProductoDto> productosActivos = productoRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoProducto)
-                .toList();
+        List<ProductoDto> productosActivos = productoRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoProducto).toList();
 
         response.setProductos(productosActivos);
 
         return response;
-    }      
-    
+    }
+
     public ResponseListadoProductos listadoProductosTop(int n) {
         ResponseListadoProductos response = new ResponseListadoProductos();
 
         List<Object[]> topResults = cantidadRepository.findTopBestSellingProducts();
-        List<ProductoDto> topMasVendidos = topResults.stream()
-                .limit(n)
-                .map(result -> {
-                    Producto producto = (Producto) result[0];
-                    return mapsDtosEntityService.mapToDtoProductoSimple(producto);
-                })
-                .collect(Collectors.toList());
+        List<ProductoDto> topMasVendidos = topResults.stream().limit(n).map(result -> {
+            Producto producto = (Producto) result[0];
+            return mapsDtosEntityService.mapToDtoProductoSimple(producto);
+        }).collect(Collectors.toList());
 
         response.setProductos(topMasVendidos);
 
         return response;
-    }public String crearProducto(ProductoDto productoDto) {
-        return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 
-    public String crearProductoConImagen(ProductoDto productoDto, Long categoriaId, Long proveedorId) {
-        Producto producto = mapsDtosEntityService.mapToEntityProducto(productoDto);
-        
-        // Asignar categoría y proveedor si se proporcionan
-        if (categoriaId != null) {
-            // Aquí deberías inyectar el repositorio de categorías para buscar por ID
-            // Por simplicidad, se asume que la categoría ya está en el DTO
-        }
-        
-        if (proveedorId != null) {
-            // Aquí deberías inyectar el repositorio de proveedores para buscar por ID
-            // Por simplicidad, se asume que el proveedor ya está en el DTO
-        }
-        
-        return "Producto creado con imagen. ID:" + productoRepository.save(producto).getId();
+    public String crearProducto(ProductoDto productoDto) {
+        return "Producto creado. ID:" + productoRepository.save(mapsDtosEntityService.mapToEntityProducto(productoDto)).getId();
     }
 
     public byte[] obtenerImagenProducto(Long id) {
@@ -96,65 +77,54 @@ public class ProductoService {
             return producto.get().getImagen();
         }
         return null;
-    }    public String actualizarImagenProducto(Long id, byte[] imagen) {
+    }
+
+    public String actualizarImagenProducto(Long id, byte[] imagen) {
         Optional<Producto> optionalProducto = productoRepository.findById(id);
         if (optionalProducto.isPresent()) {
             Producto producto = optionalProducto.get();
             producto.setImagen(imagen);
             productoRepository.save(producto);
-            return "Imagen del producto actualizada. ID:" + id;        }
+            return "Imagen del producto actualizada. ID:" + id;
+        }
         throw new RuntimeException("Producto no encontrado. ID:" + id);
     }
 
     public ProductoDto buscaProducto(Long id) {
         Optional<Producto> aux = productoRepository.findById(id);
-        if(aux.isPresent()){
-            // Usar el método que NO incluye la imagen para evitar error 431 "Request Header Fields Too Large"
-            // La imagen se obtiene por separado usando el endpoint /producto/{id}/imagen
+        if (aux.isPresent()) {
             return mapsDtosEntityService.mapToDtoProducto(aux.get());
         }
         return null;
-    }    public Producto editarProducto(Producto productoActual, ProductoDto productoDto) {
-
-        productoActual.setPrecioCompra(productoDto.getPrecioCompra());
-        productoActual.setPrecioVenta(productoDto.getPrecioVenta());
-        productoActual.setCodigoDeBarra(productoDto.getCodigoDeBarra());
-        productoActual.setStockMin(productoDto.getStockMin());
-        productoActual.setNombre(productoDto.getNombre());
-        productoActual.setProveedor(mapsDtosEntityService.mapToEntityProveedor(productoDto.getProveedor()));
-        productoActual.setImagen(productoDto.getImagen());
-        productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
-        productoRepository.save(productoActual);
-        return productoActual;
     }
 
     public Producto editarProductoPorId(Long id, ProductoDto productoDto) {
         Optional<Producto> productoOpt = productoRepository.findById(id);
-        
+
         if (productoOpt.isPresent()) {
             Producto productoActual = productoOpt.get();
-            
-            // Only update fields that are provided in the DTO
+
             if (productoDto.getNombre() != null) {
                 productoActual.setNombre(productoDto.getNombre());
             }
             if (productoDto.getPrecioVenta() != 0) {
                 productoActual.setPrecioVenta(productoDto.getPrecioVenta());
             }
-            if (productoDto.getStockMin() != 0) {
-                productoActual.setStockMin(productoDto.getStockMin());
+
+            productoActual.setStockMin(productoDto.getStockMin());
+
+            if (productoDto.getCodigoDeBarra() != null) {
+                productoActual.setCodigoDeBarra(productoDto.getCodigoDeBarra());
             }
-            
-            // Update categoria if provided
+
             if (productoDto.getCategoria() != null) {
                 productoActual.setCategoria(mapsDtosEntityService.mapToEntityCategoria(productoDto.getCategoria()));
             }
-            
-            // Update proveedor if provided
+
             if (productoDto.getProveedor() != null) {
                 productoActual.setProveedor(mapsDtosEntityService.mapToEntityProveedor(productoDto.getProveedor()));
             }
-            
+
             productoRepository.save(productoActual);
             return productoActual;
         }
@@ -174,19 +144,52 @@ public class ProductoService {
         return response;
     }
 
-    public ProductoDto buscarPorCodigoBarras(String codigoBarras) {
-        Optional<Producto> producto = productoRepository.findByCodigoDeBarraAndActivoTrue(codigoBarras);
-        if (producto.isPresent()) {
-            return mapsDtosEntityService.mapToDtoProductoSimple(producto.get());
-        }
-        return null;
-    }
-
     public List<ProductoDto> buscarTodosPorCodigoBarras(String codigoBarras) {
         List<Producto> productos = productoRepository.findAllByCodigoDeBarraAndActivoTrue(codigoBarras);
-        return productos.stream()
-                .map(mapsDtosEntityService::mapToDtoProductoSimple)
-                .collect(Collectors.toList());
+        return productos.stream().map(mapsDtosEntityService::mapToDtoProducto).collect(Collectors.toList());
+    }
+
+    public void modificarStockTotal(Long productoId, Integer nuevoStockTotal) {
+
+
+        Optional<Producto> productoOptional = productoRepository.findById(productoId);
+        if (productoOptional.isEmpty()) {
+            throw new RuntimeException("Producto no encontrado. ID: " + productoId);
+        }
+
+        if (nuevoStockTotal < 0) {
+            throw new RuntimeException("El stock total no puede ser negativo");
+        }
+
+        Producto producto = productoOptional.get();
+        if (!producto.getActivo()) {
+            throw new RuntimeException("No se puede modificar el stock de un producto inactivo");
+        }
+
+        int stockAnterior = producto.getStockTotal();
+        producto.setStockTotal(nuevoStockTotal);
+
+
+        if (producto.getStockTotal() > nuevoStockTotal) {
+            producto.setStockTotal(nuevoStockTotal);
+        }
+
+        productoRepository.save(producto);
+
+        log.info("Stock modificado para producto '{}' (ID: {}). Stock anterior: {}, Stock nuevo: {}", producto.getNombre(), productoId, stockAnterior, nuevoStockTotal);
+    }
+
+    public Page<ProductoDto> listadoProductosPage(Integer pagina, Integer cantidad) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.ASC, "nombre");
+        return productoRepository.findByActivoTrue(pageRequest.withSort(sort)).map(mapsDtosEntityService::mapToDtoProducto);
+    }
+
+    public Page<ProductoDto> listadoProductosPageConFiltros(Integer pagina, Integer cantidad, String busqueda, Long categoriaId) {
+        PageRequest pageRequest = PageRequest.of(pagina, cantidad);
+        Sort sort = Sort.by(Sort.Direction.ASC, "nombre");
+        return productoRepository.findByActivoTrueWithFilters(busqueda, categoriaId, pageRequest.withSort(sort))
+                .map(mapsDtosEntityService::mapToDtoProducto);
     }
 
 }

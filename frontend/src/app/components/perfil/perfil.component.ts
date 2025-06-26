@@ -36,9 +36,10 @@ interface UsuarioTabla {
 
 @Component({
   selector: 'app-perfil',
-  standalone: true,  imports: [
-    CommonModule, 
-    HeaderComponent, 
+  standalone: true,
+  imports: [
+    CommonModule,
+    HeaderComponent,
     FooterComponent,
     CardModule,
     ButtonModule,
@@ -51,11 +52,11 @@ interface UsuarioTabla {
     PasswordModule,
     TooltipModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss'],
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
 })
 export class PerfilComponent implements OnInit {
   usuario = {
@@ -63,10 +64,9 @@ export class PerfilComponent implements OnInit {
     roles: [] as string[],
     email: '',
     avatar: '/placeholder-image.webp',
-    avatarColor: '#6366f1' // Color del icono del avatar
+    avatarColor: '#6366f1', // Color del icono del avatar
   };
-  
-  // Colores disponibles para el avatar
+
   private avatarColors = [
     '#6366f1', // Indigo
     '#8b5cf6', // Violet
@@ -77,20 +77,21 @@ export class PerfilComponent implements OnInit {
     '#ec4899', // Pink
     '#84cc16', // Lime
     '#f97316', // Orange
-    '#3b82f6'  // Blue
+    '#3b82f6', // Blue
   ];
   ventas: VentaPerfil[] = [];
-  totalVentas = 0;  // total simulado por ahora
+  totalVentas = 0;
   rangoInicio = 1;
   rangoFin = 10;
 
   usuarios: UsuarioTabla[] = [];
   totalUsuarios = 0;
-  showEditDialog = false;  editForm = {
+  showEditDialog = false;
+  editForm = {
     email: '',
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 
   loading = false;
@@ -98,8 +99,9 @@ export class PerfilComponent implements OnInit {
     email: '',
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
-  };  constructor(
+    confirmPassword: '',
+  };
+  constructor(
     private securityService: SecurityService,
     private router: Router,
     private usuarioService: UsuarioService,
@@ -107,20 +109,21 @@ export class PerfilComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
-    // Generar color aleatorio para el avatar al cargar el componente
     this.generateRandomAvatarColor();
   }
 
-  // Generar color aleatorio para el avatar
   generateRandomAvatarColor(): void {
     const randomIndex = Math.floor(Math.random() * this.avatarColors.length);
     this.usuario.avatarColor = this.avatarColors[randomIndex];
-  }isAdmin(): boolean {
+  }
+  isAdmin(): boolean {
     return this.usuario.roles.includes('ADMIN');
   }
 
   isExclusiveAdmin(): boolean {
-    return this.usuario.roles.length === 1 && this.usuario.roles.includes('ADMIN');
+    return (
+      this.usuario.roles.length === 1 && this.usuario.roles.includes('ADMIN')
+    );
   }
 
   isDefaultAdmin(): boolean {
@@ -128,66 +131,73 @@ export class PerfilComponent implements OnInit {
   }
 
   puedeOtorgarPermisos(usuario: UsuarioTabla): boolean {
-    return this.isDefaultAdmin() && 
-           usuario.roles.length === 1 && 
-           usuario.roles.includes('CAJERO') &&
-           usuario.nombre !== 'admin';
+    return (
+      this.isDefaultAdmin() &&
+      usuario.roles.length === 1 &&
+      usuario.roles.includes('CAJERO') &&
+      usuario.nombre !== 'admin'
+    );
   }
 
   puedeRevocarPermisos(usuario: UsuarioTabla): boolean {
-    return this.isDefaultAdmin() && 
-           usuario.roles.includes('ADMIN') && 
-           usuario.roles.includes('CAJERO') &&
-           usuario.nombre !== 'admin';
+    return (
+      this.isDefaultAdmin() &&
+      usuario.roles.includes('ADMIN') &&
+      usuario.roles.includes('CAJERO') &&
+      usuario.nombre !== 'admin'
+    );
   }
 
   puedeBorrarUsuario(usuario: UsuarioTabla): boolean {
-    return this.isExclusiveAdmin() && 
-           usuario.nombre !== 'admin' &&
-           usuario.activo; // Solo mostrar la opción para usuarios activos
-  }  otorgarPermisos(nombreUsuario: string): void {
+    return (
+      this.isExclusiveAdmin() && usuario.nombre !== 'admin' && usuario.activo
+    );
+  }
+  otorgarPermisos(nombreUsuario: string): void {
     this.usuarioService.otorgarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Permisos Otorgados',
           detail: 'Permisos de administrador otorgados exitosamente',
-          life: 4000
+          life: 4000,
         });
-        this.cargarUsuarios(); // Recargar lista
+        this.cargarUsuarios();
       },
       error: (error: any) => {
-        console.error('Error al otorgar permisos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error al Otorgar Permisos',
           detail: error.error || 'Error al otorgar permisos de administrador',
-          life: 5000
+          life: 5000,
         });
-      }
+      },
     });
   }
 
   revocarPermisos(nombreUsuario: string): void {
     this.usuarioService.revocarRolAdmin(nombreUsuario).subscribe({
       next: (response: any) => {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Permisos Revocados',
           detail: 'Permisos de administrador revocados exitosamente',
-          life: 4000
+          life: 4000,
         });
-        this.cargarUsuarios(); // Recargar lista
+        this.cargarUsuarios();
       },
       error: (error: any) => {
-        console.error('Error al revocar permisos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error al Revocar Permisos',
           detail: error.error || 'Error al revocar permisos de administrador',
-          life: 5000
+          life: 5000,
         });
-      }
+      },
     });
   }
 
@@ -201,25 +211,26 @@ export class PerfilComponent implements OnInit {
       accept: () => {
         this.usuarioService.eliminarUsuario(nombreUsuario).subscribe({
           next: (response: any) => {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'success',
               summary: 'Usuario Eliminado',
               detail: 'Usuario eliminado (desactivado) exitosamente',
-              life: 4000
+              life: 4000,
             });
-            this.cargarUsuarios(); // Recargar lista
+            this.cargarUsuarios();
           },
           error: (error: any) => {
-            console.error('Error al eliminar usuario:', error);
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error al Eliminar Usuario',
               detail: error.error || 'Error al eliminar el usuario',
-              life: 5000
+              life: 5000,
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -233,50 +244,45 @@ export class PerfilComponent implements OnInit {
             nombre: u.nombre,
             mail: u.mail,
             roles: u.roles.map((r: any) => r.nombre),
-            activo: u.activo
+            activo: u.activo,
           }));
           this.totalUsuarios = this.usuarios.length;
         }
       },
-      error: (error: any) => {
-        console.error('Error al cargar usuarios:', error);
-      }
+      error: (error: any) => {},
     });
   }
 
   ngOnInit(): void {
-    // Solo mostrar el perfil si el usuario está autenticado
     if (!this.securityService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    // Obtener el nombre de usuario del servicio de seguridad
     if (this.securityService.user) {
       const nombreUsuario = this.securityService.user.nombreUsuario;
-      
-      // Cargar los datos completos del usuario incluyendo sus ventas
+
       this.usuarioService.obtenerUsuarioPorNombre(nombreUsuario).subscribe({
         next: (userData: any) => {
-          // Actualizar datos del usuario
           this.usuario.nombreUsuario = userData.nombre;
           this.usuario.roles = userData.roles.map((r: any) => r.nombre);
           this.usuario.email = userData.mail;
-          
-          // Procesar las ventas
+
           if (userData.ventas) {
-            this.ventas = userData.ventas
-              .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
+            this.ventas = userData.ventas.sort(
+              (a: any, b: any) =>
+                new Date(b.fechaVenta).getTime() -
+                new Date(a.fechaVenta).getTime()
+            );
             this.totalVentas = this.ventas.length;
-          }          // Si es admin exclusivo, cargar la lista de usuarios
+          } // Si es admin exclusivo, cargar la lista de usuarios
           if (this.isExclusiveAdmin()) {
             this.cargarUsuarios();
           }
         },
         error: (error) => {
-          console.error('Error al cargar datos del usuario:', error);
           alert('Error al cargar los datos del perfil');
-        }
+        },
       });
     }
   }
@@ -315,35 +321,30 @@ export class PerfilComponent implements OnInit {
   isValidEmail(email: string): boolean {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
-  }  isValidForm(): boolean {
-    // Validate email
+  }
+  isValidForm(): boolean {
     if (!this.editForm.email || !this.isValidEmail(this.editForm.email)) {
       return false;
     }
-    
-    // Validate current password
+
     if (!this.editForm.currentPassword) {
       return false;
     }
-    
-    // Validate new password if provided
+
     if (this.editForm.newPassword) {
-      // Password must be at least 6 characters
       if (this.editForm.newPassword.length < 6) {
         return false;
       }
-      
-      // Passwords must match
+
       if (this.editForm.newPassword !== this.editForm.confirmPassword) {
         return false;
       }
-      
-      // New password cannot be the same as current password
+
       if (this.editForm.newPassword === this.editForm.currentPassword) {
         return false;
       }
     }
-    
+
     return true;
   }
   guardarCambios() {
@@ -351,107 +352,164 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    // Validación de contraseñas
-    if (this.editForm.newPassword && this.editForm.newPassword !== this.editForm.confirmPassword) {
+    if (
+      this.editForm.newPassword &&
+      this.editForm.newPassword !== this.editForm.confirmPassword
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'error',
         summary: 'Error de Validación',
         detail: 'Las contraseñas no coinciden',
-        life: 4000
+        life: 4000,
       });
       return;
     }
 
-    // Validación de nueva contraseña igual a la actual
-    if (this.editForm.newPassword && this.editForm.newPassword === this.editForm.currentPassword) {
+    if (
+      this.editForm.newPassword &&
+      this.editForm.newPassword === this.editForm.currentPassword
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Contraseña Duplicada',
         detail: 'La nueva contraseña debe ser diferente a la actual',
-        life: 4000
+        life: 4000,
       });
       return;
     }
 
     if (!this.editForm.currentPassword) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Campo Requerido',
         detail: 'Debe ingresar su contraseña actual',
-        life: 4000
+        life: 4000,
       });
       return;
     }
 
+    if (this.editForm.email !== this.usuario.email) {
+      this.loading = true;
+      this.securityService.checkEmail(this.editForm.email).subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          let responseData;
+          if (typeof response === 'string') {
+            responseData = JSON.parse(response);
+          } else {
+            responseData = response;
+          }
+          if (responseData.existe === true) {
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Email ya en uso',
+              detail:
+                'El email ingresado ya está siendo utilizado por otro usuario',
+              life: 5000,
+            });
+          } else {
+            this.procederConActualizacion();
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.messageService.clear();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error de verificación',
+            detail: 'Error al verificar el email',
+            life: 4000,
+          });
+        },
+      });
+    } else {
+      this.procederConActualizacion();
+    }
+  }
+
+  private procederConActualizacion() {
     const cambios = {
       email: this.editForm.email,
       currentPassword: this.editForm.currentPassword,
-      newPassword: this.editForm.newPassword || this.editForm.currentPassword
+      newPassword: this.editForm.newPassword || this.editForm.currentPassword,
     };
 
     this.loading = true;
-    this.usuarioService.modificarUsuario(this.usuario.nombreUsuario, cambios).subscribe({
-      next: (response: any) => {
-        if (typeof response === 'string' && response.includes('modificado')) {
-          this.usuario.email = this.editForm.email;
-          this.showEditDialog = false;
-          this.loading = false;
-          
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Perfil Actualizado',
-            detail: 'Los cambios se han guardado correctamente',
-            life: 4000
-          });
-          
-          // Actualizar datos del usuario en el servicio de seguridad
-          if (this.securityService.user) {
-            this.securityService.user.email = this.editForm.email;
-          }
-        } else {
-          this.loading = false;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error del Servidor',
-            detail: 'Respuesta inesperada del servidor',
-            life: 4000
-          });
-        }
-      },
-      error: (error) => {
-        this.loading = false;
-        console.error('Error al actualizar perfil:', error);
-        
-        let errorMessage = 'Error al actualizar el perfil';
-        let severity = 'error';
-        let summary = 'Error de Actualización';
-        
-        if (error.error && typeof error.error === 'string') {
-          if (error.error.includes('Contraseña actual incorrecta')) {
-            summary = 'Contraseña Incorrecta';
-            errorMessage = 'La contraseña actual que ingresaste no es correcta';
-            severity = 'warn';
+    this.usuarioService
+      .modificarUsuario(this.usuario.nombreUsuario, cambios)
+      .subscribe({
+        next: (response: any) => {
+          if (typeof response === 'string' && response.includes('modificado')) {
+            this.usuario.email = this.editForm.email;
+            this.showEditDialog = false;
+            this.loading = false;
+
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Perfil Actualizado',
+              detail: 'Los cambios se han guardado correctamente',
+              life: 4000,
+            });
+
+            if (this.securityService.user) {
+              this.securityService.user.email = this.editForm.email;
+            }
           } else {
-            errorMessage = error.error;
+            this.loading = false;
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error del Servidor',
+              detail: 'Respuesta inesperada del servidor',
+              life: 4000,
+            });
           }
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
+        },
+        error: (error) => {
+          this.loading = false;
+          let errorMessage = 'Error al actualizar el perfil';
+          let severity = 'error';
+          let summary = 'Error de Actualización';
+
+          if (error.error && typeof error.error === 'string') {
+            if (error.error.includes('Contraseña actual incorrecta')) {
+              summary = 'Contraseña Incorrecta';
+              errorMessage =
+                'La contraseña actual que ingresaste no es correcta';
+              severity = 'warn';
+            } else if (
+              error.error.includes('El email ya está siendo utilizado')
+            ) {
+              summary = 'Email ya en uso';
+              errorMessage =
+                'El email ingresado ya está siendo utilizado por otro usuario';
+              severity = 'error';
+            } else {
+              errorMessage = error.error;
+            }
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+          this.messageService.clear();
           this.messageService.add({
-          severity: severity,
-          summary: summary,
-          detail: errorMessage,
-          life: 5000
-        });
-      }
-    });
+            severity: severity,
+            summary: summary,
+            detail: errorMessage,
+            life: 5000,
+          });
+        },
+      });
   }
 
   cerrarDialog() {
     this.showEditDialog = false;
   }
   cerrarSesion() {
-    // Remove user data and navigate to login
     this.securityService.logout();
     this.router.navigate(['/login']);
   }
@@ -460,33 +518,35 @@ export class PerfilComponent implements OnInit {
     if (!id) return;
 
     this.confirmationService.confirm({
-      message: '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
+      message:
+        '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.ventaService.eliminarVenta(id).subscribe({
           next: (response) => {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Venta eliminada correctamente'
+              detail: 'Venta eliminada correctamente',
             });
-            // Recargar ventas del usuario
+
             if (this.securityService.user) {
               const nombreUsuario = this.securityService.user.nombreUsuario;
               this.cargarVentasUsuario(nombreUsuario);
             }
           },
           error: (error) => {
-            console.error('Error al eliminar venta:', error);
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al eliminar la venta'
+              detail: 'Error al eliminar la venta',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -495,36 +555,28 @@ export class PerfilComponent implements OnInit {
       next: (userData: any) => {
         if (userData.ventas) {
           this.ventas = userData.ventas
-            .filter((v: any) => v.activo) // Solo ventas activas
+            .filter((v: any) => v.activo)
             .map((v: any) => ({
               id: v.id,
               fechaVenta: new Date(v.fechaVenta),
               total: v.total,
-              formaPago: v.formaPago
+              formaPago: v.formaPago,
             }))
-            .sort((a: any, b: any) => new Date(b.fechaVenta).getTime() - new Date(a.fechaVenta).getTime());
+            .sort(
+              (a: any, b: any) =>
+                new Date(b.fechaVenta).getTime() -
+                new Date(a.fechaVenta).getTime()
+            );
           this.totalVentas = this.ventas.length;
         }
       },
-      error: (error) => {
-        console.error('Error al recargar ventas:', error);
-      }
+      error: (error) => {},
     });
   }
 
   verDetalleVenta(ventaId: number | null) {
     if (ventaId) {
-      this.ventaService.obtenerVenta(ventaId).subscribe({
-        next: (ventaDetalle) => {
-          // Aquí podrías mostrar un diálogo con los detalles de la venta
-          console.log('Detalles de la venta:', ventaDetalle);
-          alert(`Venta ID: ${ventaId}\nTotal: $${ventaDetalle.total}\nFecha: ${new Date(ventaDetalle.fechaVenta).toLocaleString()}`);
-        },
-        error: (error) => {
-          console.error('Error al obtener detalles de la venta:', error);
-          alert('Error al obtener los detalles de la venta');
-        }
-      });
+      this.router.navigate(['/verventa', ventaId]);
     }
   }
 }

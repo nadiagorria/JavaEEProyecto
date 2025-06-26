@@ -3,11 +3,11 @@ package ti.proyectojava.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ti.proyectojava.api.responses.ResponseListadoClientes;
 import ti.proyectojava.api.responses.ResponseListadoProveedores;
 import ti.proyectojava.business.entities.Cliente;
 import ti.proyectojava.business.entities.Credito;
 import ti.proyectojava.business.entities.Entidad;
+import ti.proyectojava.business.entities.Producto;
 import ti.proyectojava.business.entities.Proveedor;
 import ti.proyectojava.business.repositories.*;
 import ti.proyectojava.dtos.*;
@@ -29,71 +29,105 @@ public class EntidadService {
     private final ProveedorRepository proveedorRepository;
     private final MapsDtosEntityService mapsDtosEntityService;
 
-    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService){
+    private EntidadService(ClienteRepository clienteRepository, ProveedorRepository proveedorRepository, EntidadRepository entidadRepository, CreditoRepository creditoRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.entidadRepository = entidadRepository;
-        this.clienteRepository=clienteRepository;
-        this.proveedorRepository=proveedorRepository;
+        this.clienteRepository = clienteRepository;
+        this.proveedorRepository = proveedorRepository;
         this.creditoRepository = creditoRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
     }
 
     public Entidad seleccionarEntidad(Long id) {
-        // Compruebo si es Cliente
         Optional<Cliente> cliente = clienteRepository.findById(id);
         if (cliente.isPresent()) {
             return cliente.get();
         }
 
-        // Si no es cliente, probamos con proveedor
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
             return proveedor.get();
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
     }
 
     public Entidad eliminarPersona(Entidad entidad) {
         entidad.setActivo(false);
-        
 
-        if(entidad instanceof Cliente) {
+
+        if (entidad instanceof Cliente) {
             Cliente cliente = (Cliente) entidad;
-            if(cliente.getCredito() != null) {
+            if (cliente.getCredito() != null) {
                 Credito credito = cliente.getCredito();
                 credito.setActivo(false);
                 creditoRepository.save(credito);
             }
-        } 
+        } else if (entidad instanceof Proveedor) {
+
+            Proveedor proveedor = (Proveedor) entidad;
+            desvincularProductosDeProveedor(proveedor.getId());
+        }
+
         entidadRepository.save(entidad);
         return entidad;
     }
 
+    public String desvincularProductosDeProveedor(Long proveedorId) {
+        Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+        String response = null;
 
-    //////////////////////////////////CLIENTE////////////////////////////////////////
+        if (proveedorOpt.isPresent()) {
+            Proveedor proveedor = proveedorOpt.get();
 
-    /*public ResponseListadoClientes listadoClientes(){
-        ResponseListadoClientes response = new ResponseListadoClientes();
+            List<Producto> productos = proveedor.getProductos();
+            for (Producto producto : productos) {
+                producto.setProveedor(null);
+            }
 
-        List<ClienteDto> clientesActivos = clienteRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoCliente)
-                .toList();
+            proveedor.setProductos(new ArrayList<>());
 
-        response.setClientes(clientesActivos);
+            proveedorRepository.save(proveedor);
+            response = "Productos desvinculados correctamente del proveedor ID:" + proveedor.getId() + ", NOMBRE:" + proveedor.getNombre();
+        }
 
         return response;
-    }*/
-
-    public String crearCliente(ClienteDto clienteDto) {
-            return "Cliente creado. ID: " + clienteRepository.save(mapsDtosEntityService.mapToEntityCliente(clienteDto)).getId();
     }
+
+//  CLIENTE
+
 
     public String crearClienteCredito(ClienteCreditoDto clienteCreditoDto) {
 
+        if (clienteCreditoDto.getNombre() == null || clienteCreditoDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+
+        if (clienteCreditoDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del cliente no puede contener números");
+        }
+
+        if (clienteCreditoDto.getTelefono() == null || clienteCreditoDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
+        }
+
+        if (!clienteCreditoDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
+        if (clienteCreditoDto.getMinimo() < 0) {
+            throw new IllegalArgumentException("El crédito mínimo no puede ser negativo");
+        }
+
+        if (clienteCreditoDto.getMaximo() <= 0) {
+            throw new IllegalArgumentException("El crédito máximo debe ser mayor a 0");
+        }
+
+        if (clienteCreditoDto.getMaximo() <= clienteCreditoDto.getMinimo()) {
+            throw new IllegalArgumentException("El crédito máximo debe ser mayor que el crédito mínimo");
+        }
+
         ClienteDto clienteDto = new ClienteDto();
-        clienteDto.setNombre(clienteCreditoDto.getNombre());
-        clienteDto.setTelefono(clienteCreditoDto.getTelefono());
+        clienteDto.setNombre(clienteCreditoDto.getNombre().trim());
+        clienteDto.setTelefono(clienteCreditoDto.getTelefono().trim());
         clienteDto.setActivo(true);
 
         Cliente cliente = mapsDtosEntityService.mapToEntityCliente(clienteDto);
@@ -119,38 +153,49 @@ public class EntidadService {
 
 
     public String editarCliente(ClienteDto clienteDto) {
+
+        if (clienteDto.getNombre() == null || clienteDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+
+        if (clienteDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del cliente no puede contener números");
+        }
+
+        if (clienteDto.getTelefono() == null || clienteDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del cliente es obligatorio");
+        }
+
+        if (!clienteDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del cliente solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
         Optional<Cliente> optionalCliente = clienteRepository.findById(clienteDto.getId());
         if (optionalCliente.isPresent()) {
             Cliente cliente = optionalCliente.get();
-            cliente.setNombre(clienteDto.getNombre());
-            cliente.setTelefono(clienteDto.getTelefono());
+            cliente.setNombre(clienteDto.getNombre().trim());
+            cliente.setTelefono(clienteDto.getTelefono().trim());
             clienteRepository.save(cliente);
             return "Cliente actualizado con ID:" + cliente.getId();
         } else {
             return "Cliente no encontrado con ID:" + clienteDto.getId();
         }
-    }    
+    }
 
     public ClienteDto seleccionarCliente(Long id) {
-        // Compruebo si es Cliente
         Optional<Cliente> cliente = clienteRepository.findById(id);
         if (cliente.isPresent()) {
             return mapsDtosEntityService.mapToDtoCliente(cliente.get());
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ninguna entidad. ID:" + id);
     }
 
-    //////////////////////////////////PROVEEDOR///////////////////////////////////
+//  PROVEEDOR
 
-
-    public ResponseListadoProveedores listadoProveedores(){
+    public ResponseListadoProveedores listadoProveedores() {
         ResponseListadoProveedores response = new ResponseListadoProveedores();
 
-        List<ProveedorDto> proveedoresActivos = proveedorRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoProveedorSimple)
-                .toList();
+        List<ProveedorDto> proveedoresActivos = proveedorRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoProveedorSimple).toList();
 
         response.setProveedores(proveedoresActivos);
 
@@ -158,38 +203,87 @@ public class EntidadService {
     }
 
     public String crearProveedor(ProveedorDto proveedorDto) {
-            return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
+
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
+        }
+
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
+        }
+
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo del proveedor es obligatorio");
+        }
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            throw new IllegalArgumentException("El formato del correo electrónico no es válido");
+        }
+
+        proveedorDto.setNombre(proveedorDto.getNombre().trim());
+        proveedorDto.setTelefono(proveedorDto.getTelefono().trim());
+        proveedorDto.setCorreo(proveedorDto.getCorreo().trim());
+
+        return "Proveedor creado. ID:" + proveedorRepository.save(mapsDtosEntityService.mapToEntityProveedor(proveedorDto)).getId();
     }
 
     public String editarProveedor(ProveedorDto proveedorDto) {
+
+        if (proveedorDto.getNombre() == null || proveedorDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del proveedor es obligatorio");
+        }
+
+        if (proveedorDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del proveedor no puede contener números");
+        }
+
+        if (proveedorDto.getTelefono() == null || proveedorDto.getTelefono().trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono del proveedor es obligatorio");
+        }
+
+        if (!proveedorDto.getTelefono().matches("[0-9+\\s-]+")) {
+            throw new IllegalArgumentException("El teléfono del proveedor solo puede contener números, espacios, guiones y el símbolo +");
+        }
+
+        if (proveedorDto.getCorreo() == null || proveedorDto.getCorreo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo del proveedor es obligatorio");
+        }
+
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!proveedorDto.getCorreo().matches(emailRegex)) {
+            throw new IllegalArgumentException("El formato del correo electrónico no es válido");
+        }
+
         Optional<Proveedor> optionalProveedor = proveedorRepository.findById(proveedorDto.getId());
         if (optionalProveedor.isPresent()) {
             Proveedor proveedor = optionalProveedor.get();
-            proveedor.setNombre(proveedorDto.getNombre());
-            proveedor.setTelefono(proveedorDto.getTelefono());
-            proveedor.setCorreo(proveedorDto.getCorreo());
-            // No actualizamos ID ni relaciones por simplicidad
+            proveedor.setNombre(proveedorDto.getNombre().trim());
+            proveedor.setTelefono(proveedorDto.getTelefono().trim());
+            proveedor.setCorreo(proveedorDto.getCorreo().trim());
+
             proveedorRepository.save(proveedor);
-            return "Cliente actualizado. ID:" + proveedor.getId();
+            return "Proveedor actualizado. ID:" + proveedor.getId();
         } else {
-            return "Cliente no encontrado. ID:" + proveedorDto.getId();
+            return "Proveedor no encontrado. ID:" + proveedorDto.getId();
         }
-    }    
-    
+    }
+
     public ProveedorDto seleccionarProveedor(Long id) {
         Optional<Proveedor> proveedor = proveedorRepository.findById(id);
         if (proveedor.isPresent()) {
             return mapsDtosEntityService.mapToDtoProveedor(proveedor.get());
         }
-        // Si no existe la persona se lanza exepcion
         throw new NoSuchElementException("No se encontró ningun proveedor. ID:" + id);
-    }
-
-    public List<ProveedorDto> listarProveedores() {
-        List<Proveedor> proveedores = proveedorRepository.findByActivoTrue();
-        return proveedores.stream()
-                .map(mapsDtosEntityService::mapToDtoProveedor)
-                .collect(Collectors.toList());
     }
 
 

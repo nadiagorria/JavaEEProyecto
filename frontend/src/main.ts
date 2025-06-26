@@ -13,17 +13,66 @@ const themeConfig = {
       theme: {
         preset: Aura,
         options: {
-          darkModeSelector: false  // fuerza modo claro
-        }
-      }
-    })
-  ]
+          darkModeSelector: false,
+        },
+      },
+      translation: {
+        accept: 'Sí',
+        reject: 'No',
+
+        choose: 'Elegir',
+        upload: 'Subir',
+        cancel: 'Cancelar',
+        dayNames: [
+          'Domingo',
+          'Lunes',
+          'Martes',
+          'Miércoles',
+          'Jueves',
+          'Viernes',
+          'Sábado',
+        ],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        monthNames: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre',
+        ],
+        monthNamesShort: [
+          'Ene',
+          'Feb',
+          'Mar',
+          'Abr',
+          'May',
+          'Jun',
+          'Jul',
+          'Ago',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dic',
+        ],
+        today: 'Hoy',
+        clear: 'Limpiar',
+      },
+    }),
+  ],
 };
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     ...appConfig.providers,
-    ...themeConfig.providers  
-  ]
+    ...themeConfig.providers,
+  ],
 }).catch((err) => console.error(err));

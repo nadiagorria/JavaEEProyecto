@@ -1,4 +1,3 @@
-
 export * from './cantidad.dto';
 export * from './categoria.dto';
 export * from './cliente.dto';

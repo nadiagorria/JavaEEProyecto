@@ -26,20 +26,19 @@
   flex-wrap: wrap !important;
 }
 
-:host ::ng-deep .grid.no-gutters>div {
+:host ::ng-deep .grid.no-gutters > div {
   padding: 0.75rem !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
 }
 
-
-:host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-8 {
+:host ::ng-deep .grid.no-gutters > div.col-12.lg\\:col-8 {
   overflow: auto !important;
   flex: 0 0 66.666667% !important;
   max-width: 66.666667% !important;
 }
 
-:host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-4 {
+:host ::ng-deep .grid.no-gutters > div.col-12.lg\\:col-4 {
   overflow: visible !important;
   position: relative !important;
   contain: layout !important;
@@ -121,7 +120,8 @@
 
 :host ::ng-deep .p-autocomplete .p-autocomplete-input:focus {
   border-color: #6c757d !important;
-  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
   outline: none !important;
 }
 
@@ -155,17 +155,26 @@
   width: 6px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-track {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-track {
   background: #f8f9fa !important;
   border-radius: 3px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-thumb {
   background: #ced4da !important;
   border-radius: 3px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
   background: #adb5bd !important;
 }
 
@@ -294,8 +303,8 @@
     flex-direction: column !important;
   }
 
-  :host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-8,
-  :host ::ng-deep .grid.no-gutters>div.col-12.lg\\:col-4 {
+  :host ::ng-deep .grid.no-gutters > div.col-12.lg\\:col-8,
+  :host ::ng-deep .grid.no-gutters > div.col-12.lg\\:col-4 {
     flex: 1 1 100% !important;
     max-width: 100% !important;
   }
@@ -355,17 +364,26 @@
   width: 6px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-track {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-track {
   background: #f8f9fa !important;
   border-radius: 3px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-thumb {
   background: #ced4da !important;
   border-radius: 3px !important;
 }
 
-:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
+:host
+  ::ng-deep
+  .p-autocomplete-panel
+  .p-autocomplete-items::-webkit-scrollbar-thumb:hover {
   background: #adb5bd !important;
 }
 
@@ -462,13 +480,18 @@
 }
 
 :host ::ng-deep .finalizar-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   transition: left 0.5s;
 }
 
@@ -512,13 +535,18 @@
 }
 
 :host ::ng-deep .p-dialog-footer .confirm-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   transition: left 0.5s;
 }
 

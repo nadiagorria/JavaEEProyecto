@@ -15,7 +15,6 @@ public class ProjectoJavaEeApplication {
 
 	@PostConstruct
 	void started() {
-		// Configurar la zona horaria por defecto del sistema
 		TimeZone.setDefault(TimeZone.getTimeZone("America/Montevideo"));
 	}
 

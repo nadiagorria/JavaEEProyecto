@@ -1,4 +1,18 @@
-// Registration component styling matching the sobria gray/black design from login
+::ng-deep input:not(:focus),
+::ng-deep .p-password input:not(:focus) {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+}
+::ng-deep input:focus,
+::ng-deep .p-password input:focus {
+  border-color: #495057 !important;
+  box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1) !important;
+}
+::ng-deep .p-password.invalid input {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+
 .center-wrapper {
   display: flex;
   justify-content: center;
@@ -10,17 +24,23 @@
   box-sizing: border-box;
   position: relative;
 
-  // Subtle pattern overlay
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      radial-gradient(circle at 25% 25%, rgba(108, 117, 125, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(52, 58, 64, 0.03) 0%, transparent 50%);
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        rgba(108, 117, 125, 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(52, 58, 64, 0.03) 0%,
+        transparent 50%
+      );
     pointer-events: none;
   }
 }
@@ -31,9 +51,7 @@
   padding: 50px 40px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.05),
-    0 10px 25px rgba(0, 0, 0, 0.08),
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 25px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(0, 0, 0, 0.02);
   position: relative;
   z-index: 1;
@@ -42,9 +60,7 @@
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 
-      0 8px 15px rgba(0, 0, 0, 0.08),
-      0 15px 35px rgba(0, 0, 0, 0.12),
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08), 0 15px 35px rgba(0, 0, 0, 0.12),
       0 0 0 1px rgba(0, 0, 0, 0.03);
   }
 
@@ -72,7 +88,7 @@
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -15px;
     left: 50%;
@@ -101,7 +117,7 @@ form {
   width: 100%;
   position: relative;
 
-  input, 
+  input,
   ::ng-deep .p-password input {
     width: 100%;
     padding: 16px 20px;
@@ -143,7 +159,6 @@ form {
     background: transparent;
   }
 
-  // Floating label effect
   &:has(input:focus) label,
   &:has(input:not(:placeholder-shown)) label {
     top: -10px;
@@ -157,7 +172,7 @@ form {
 
   ::ng-deep .p-password {
     width: 100%;
-    
+
     .p-password-input {
       width: 100%;
     }
@@ -172,42 +187,34 @@ form {
       }
     }
   }
-
-  // Validation styles
   &.ng-invalid.ng-touched input,
   &.ng-invalid.ng-touched ::ng-deep .p-password input {
     border-color: #dc3545;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
   }
-
-  // Success validation
   &.ng-valid.ng-touched input,
   &.ng-valid.ng-touched ::ng-deep .p-password input {
-    border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    border-color: #dee2e6;
+    box-shadow: none;
   }
-
-  // Input validation states with visual feedback
-  input.valid,
-  ::ng-deep .p-password.valid input {
-    border-color: #28a745 !important;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
-  }
-
   input.invalid,
   ::ng-deep .p-password.invalid input {
     border-color: #dc3545 !important;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
   }
+  &.ng-valid.ng-touched ::ng-deep .p-password.invalid input,
+  &.ng-valid.ng-touched input.invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+  }
 }
 
-// Terms and conditions checkbox styling
 .terminos-field {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   margin: 8px 0;
-  
+
   .texto {
     font-family: "Source Sans 3", sans-serif;
     font-size: 15px;
@@ -215,14 +222,14 @@ form {
     line-height: 1.4;
     margin: 0;
     flex: 1;
-    
+
     a {
       color: #495057;
       text-decoration: none;
       font-weight: 600;
       border-bottom: 1px solid transparent;
       transition: all 0.3s ease;
-      
+
       &:hover {
         color: #212529;
         border-bottom-color: #212529;
@@ -239,7 +246,7 @@ form {
     border-radius: 4px;
     background: #ffffff;
     transition: all 0.3s ease;
-    
+
     &:hover {
       border-color: #495057;
     }
@@ -249,13 +256,13 @@ form {
     .p-checkbox-box {
       background: #495057 !important;
       border-color: #495057 !important;
-      
+
       .p-checkbox-icon {
         color: #ffffff;
         font-size: 14px;
       }
     }
-    
+
     &:hover .p-checkbox-box {
       background: #212529 !important;
       border-color: #212529 !important;
@@ -330,7 +337,7 @@ button[pButton] {
     &:hover {
       color: #212529;
       border-bottom-color: #212529;
-      
+
       i {
         transform: translateX(2px);
       }
@@ -343,7 +350,6 @@ button[pButton] {
   }
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -359,38 +365,36 @@ button[pButton] {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Responsive improvements */
 @media (max-width: 320px) {
   .registro-container {
     padding: 30px 20px;
   }
-  
+
   .titulo {
     font-size: 24px;
   }
-  
+
   .form-field input,
   .form-field ::ng-deep .p-password input {
     padding: 14px 16px;
     font-size: 15px;
   }
-  
+
   button[pButton] {
     padding: 14px 16px;
     font-size: 15px;
   }
-  
+
   .terminos-field .texto {
     font-size: 14px;
   }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .registro-container {
     border: 2px solid #000000;
   }
-  
+
   .form-field input:focus,
   .form-field ::ng-deep .p-password input:focus {
     border-color: #000000;
@@ -398,7 +402,6 @@ button[pButton] {
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .registro-container,
   .form-field input,
@@ -409,17 +412,16 @@ button[pButton] {
     transition: none;
     animation: none;
   }
-  
+
   .registro-container:hover {
     transform: none;
   }
-  
+
   button[pButton]:hover:not(:disabled) {
     transform: none;
   }
 }
 
-/* Username validation styles */
 .username-validation {
   margin-top: 8px;
   font-size: 14px;
@@ -432,7 +434,7 @@ button[pButton] {
     display: flex;
     align-items: center;
     gap: 6px;
-    
+
     i {
       font-size: 12px;
     }
@@ -443,7 +445,7 @@ button[pButton] {
     display: flex;
     align-items: center;
     gap: 6px;
-    
+
     i {
       font-size: 14px;
     }
@@ -454,14 +456,13 @@ button[pButton] {
     display: flex;
     align-items: center;
     gap: 6px;
-    
+
     i {
       font-size: 14px;
     }
   }
 }
 
-// Email validation styling
 .email-validation {
   margin-top: 8px;
   font-size: 13px;
@@ -516,14 +517,13 @@ button[pButton] {
     display: flex;
     align-items: center;
     gap: 6px;
-    
+
     i {
       font-size: 12px;
     }
   }
 }
 
-// Confirm password validation styling
 .confirm-password-validation {
   margin-top: 8px;
   font-size: 13px;
@@ -553,7 +553,6 @@ button[pButton] {
   }
 }
 
-/* Checkbox field styling */
 .checkbox-field {
   display: flex;
   align-items: center;
@@ -603,7 +602,6 @@ button[pButton] {
   }
 }
 
-// Password validation styling
 .password-validation {
   margin-top: 8px;
   font-size: 13px;
@@ -642,4 +640,57 @@ button[pButton] {
     opacity: 1;
     transform: translateY(0);
   }
+}
+::ng-deep .p-password.invalid .p-password-input {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+
+::ng-deep .p-password.valid .p-password-input {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+}
+::ng-deep .p-password.invalid.ng-valid .p-password-input,
+::ng-deep .p-password.invalid.ng-valid.ng-touched .p-password-input {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+::ng-deep .p-password.invalid .p-password-input:focus,
+::ng-deep .p-password.invalid.ng-valid .p-password-input:focus,
+::ng-deep .p-password.invalid.ng-valid.ng-touched .p-password-input:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+  outline: none !important;
+}
+::ng-deep .p-password.invalid .p-password-input.ng-valid,
+::ng-deep .p-password.invalid .p-password-input.ng-valid.ng-touched,
+::ng-deep .p-password.invalid .p-password-input.ng-valid:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+}
+::ng-deep .p-password.valid:not(.invalid) .p-password-input {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+}
+
+::ng-deep .p-password.valid:not(.invalid) .p-password-input:focus {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15) !important;
+}
+::ng-deep .p-password.invalid .p-password-input,
+::ng-deep input.invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+::ng-deep input:focus,
+::ng-deep .p-password .p-password-input:focus,
+::ng-deep .p-inputtext:enabled:focus {
+  border-color: #495057 !important;
+  box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1) !important;
+  outline: none !important;
+}
+::ng-deep .p-password.invalid .p-password-input:focus,
+::ng-deep input.invalid:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
 }

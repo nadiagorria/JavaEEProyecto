@@ -1,14 +1,20 @@
 <app-header></app-header>
 
 <div class="grid no-gutters">
-
   <!-- Lista de productos - Izquierda -->
   <div class="col-12 lg:col-8 p-3">
-    <p-table class="texto" [value]="cantidades" [paginator]="true" [rows]="5" [totalRecords]="totalRecords"
-      [rowsPerPageOptions]="[5, 10, 20]" paginatorPosition="bottom"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos" showGridlines
-      [responsive]="true">
-
+    <p-table
+      class="texto"
+      [value]="cantidades"
+      [paginator]="true"
+      [rows]="5"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      paginatorPosition="bottom"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
+      showGridlines
+      [responsive]="true"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th class="texto">Nombre</th>
@@ -23,7 +29,10 @@
         <tr>
           <td>
             <div>{{ cantidad.producto.nombre }}</div>
-            <div *ngIf="cantidad.tieneOferta" class="text-sm text-green-600 font-semibold">
+            <div
+              *ngIf="cantidad.tieneOferta"
+              class="text-sm text-green-600 font-semibold"
+            >
               <i class="pi pi-tag mr-1"></i>{{ cantidad.nombreOferta }}
             </div>
           </td>
@@ -37,7 +46,10 @@
                 {{ getPrecioFinal(cantidad) | currency }}
               </div>
               <div class="text-xs text-green-500">
-                Ahorro: {{ (cantidad.precioOriginal - getPrecioFinal(cantidad)) | currency }}
+                Ahorro:
+                {{
+                  cantidad.precioOriginal - getPrecioFinal(cantidad) | currency
+                }}
               </div>
             </div>
             <ng-template #sinOferta>
@@ -45,20 +57,34 @@
             </ng-template>
           </td>
           <td>
-            <div (click)="detectarClickIncremento($event, cantidad)" class="cantidad-container">
-              <p-inputNumber [(ngModel)]="cantidad.cantidad" [showButtons]="true" [min]="1"
-                [max]="getStockDisponible(cantidad.producto)" mode="decimal"
-                (onInput)="validarYAplicarOfertas($event, cantidad)" (onFocus)="guardarCantidadAnterior(cantidad)"
-                (onBlur)="verificarCambioManual(cantidad)" (keydown)="onInputKeydown($event, cantidad)">
+            <div
+              (click)="detectarClickIncremento($event, cantidad)"
+              class="cantidad-container"
+            >
+              <p-inputNumber
+                [(ngModel)]="cantidad.cantidad"
+                [showButtons]="true"
+                [min]="1"
+                [max]="getStockDisponible(cantidad.producto)"
+                mode="decimal"
+                (onInput)="validarYAplicarOfertas($event, cantidad)"
+                (onFocus)="guardarCantidadAnterior(cantidad)"
+                (onBlur)="verificarCambioManual(cantidad)"
+                (keydown)="onInputKeydown($event, cantidad)"
+              >
               </p-inputNumber>
             </div>
             <small class="text-muted" *ngIf="cantidad.producto.stockTotal">
-              Stock: {{cantidad.producto.stockTotal}}
+              Stock: {{ cantidad.producto.stockTotal }}
             </small>
           </td>
           <td>
-            <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"
-              (click)="eliminarProducto(cantidad)" pTooltip="Eliminar">
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-rounded p-button-text p-button-danger"
+              (click)="eliminarProducto(cantidad)"
+              pTooltip="Eliminar"
+            >
             </p-button>
           </td>
         </tr>
@@ -67,16 +93,20 @@
       <ng-template pTemplate="footer" *ngIf="cantidades.length > 0">
         <tr>
           <td colspan="2" class="text-right font-bold">
-            <div *ngIf="getTotalAhorro() > 0" class="text-sm text-green-600 mb-1">
+            <div
+              *ngIf="getTotalAhorro() > 0"
+              class="text-sm text-green-600 mb-1"
+            >
               Total ahorrado: {{ getTotalAhorro() | currency }}
             </div>
             <div>Total:</div>
           </td>
           <td class="texto font-bold">{{ calcularTotal() | currency }}</td>
-          <td class="texto font-bold" colspan="2">{{ calcularCantidadTotal() }}</td>
+          <td class="texto font-bold" colspan="2">
+            {{ calcularCantidadTotal() }}
+          </td>
         </tr>
       </ng-template>
-
     </p-table>
   </div>
 
@@ -85,30 +115,59 @@
     <div class="search-sidebar">
       <!-- Controles de búsqueda y escáner -->
       <div class="search-container">
-        <div class="search-controls mb-3"> 
+        <div class="search-controls mb-3">
           <!-- Botón del escáner físico -->
-          <button pButton type="button" [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
-            [severity]="escanerActivo ? 'danger' : 'info'" [outlined]="!escanerActivo" label="Escáner"
-            class="scanner-btn" (click)="toggleEscanerFisico()"
-            pTooltip="{{escanerActivo ? 'Detener escáner de códigos' : 'Activar escáner de códigos de barras'}}"
-            tooltipPosition="bottom">
-          </button>
+          <button
+            pButton
+            type="button"
+            [icon]="escanerActivo ? 'pi pi-stop' : 'pi pi-qrcode'"
+            [severity]="escanerActivo ? 'danger' : 'info'"
+            [outlined]="!escanerActivo"
+            label="Escáner"
+            class="scanner-btn"
+            (click)="toggleEscanerFisico()"
+            pTooltip="{{
+              escanerActivo
+                ? 'Detener escáner de códigos'
+                : 'Activar escáner de códigos de barras'
+            }}"
+            tooltipPosition="bottom"
+          ></button>
 
           <div class="flex-1">
-            <p-autoComplete class="texto w-full" [(ngModel)]="productoSeleccionado" [suggestions]="productosFiltrados"
-              (completeMethod)="filtrarProductos($event)" field="nombre" placeholder="Buscar producto..."
-              [dropdown]="false" (onSelect)="onProductoSelect($event)" scrollHeight="200px" appendTo="body">
+            <p-autoComplete
+              class="texto w-full"
+              [(ngModel)]="productoSeleccionado"
+              [suggestions]="productosFiltrados"
+              (completeMethod)="filtrarProductos($event)"
+              field="nombre"
+              placeholder="Buscar producto..."
+              [dropdown]="false"
+              (onSelect)="onProductoSelect($event)"
+              scrollHeight="200px"
+              appendTo="body"
+            >
               <ng-template let-producto pTemplate="item">
-                <div class="texto" [class.text-gray-400]="!tieneStock(producto)"
-                  [class.cursor-not-allowed]="!tieneStock(producto)">
+                <div
+                  class="texto"
+                  [class.text-gray-400]="!tieneStock(producto)"
+                  [class.cursor-not-allowed]="!tieneStock(producto)"
+                >
                   <div [class.line-through]="!tieneStock(producto)">
-                    {{producto.nombre}} - {{producto.codigoDeBarra}} - {{producto.precioVenta | currency}}
+                    {{ producto.nombre }} - {{ producto.codigoDeBarra }} -
+                    {{ producto.precioVenta | currency }}
                   </div>
-                  <div *ngIf="!tieneStock(producto)" class="text-xs text-red-500 font-semibold">
+                  <div
+                    *ngIf="!tieneStock(producto)"
+                    class="text-xs text-red-500 font-semibold"
+                  >
                     *Sin stock
                   </div>
-                  <div *ngIf="tieneStock(producto)" class="text-xs text-green-600">
-                    Stock: {{producto.stockTotal}}
+                  <div
+                    *ngIf="tieneStock(producto)"
+                    class="text-xs text-green-600"
+                  >
+                    Stock: {{ producto.stockTotal }}
                   </div>
                 </div>
               </ng-template>
@@ -134,55 +193,107 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <!-- Botones flotantes - posición fija -->
 <div class="fixed bottom-0 right-0 p-3 lg:pr-8 lg:pb-4 z-5">
   <div class="mb-3 p-3 border-round surface-card shadow-2">
-    <div *ngIf="getTotalAhorro() > 0" class="text-sm text-green-600 mb-1 text-right">
+    <div
+      *ngIf="getTotalAhorro() > 0"
+      class="text-sm text-green-600 mb-1 text-right"
+    >
       <i class="pi pi-tag mr-1"></i>Ahorrado: {{ getTotalAhorro() | currency }}
     </div>
     <span class="text-xl font-bold block text-right texto">
       Total: {{ calcularTotal() | currency }}
     </span>
-  </div> <button pButton type="button" [raised]="true" severity="contrast" label="Finalizar Venta"
-    icon="pi pi-shopping-cart" class="finalizar-btn texto" [disabled]="cantidades.length === 0"
-    (click)="finalizarVenta()"></button>
+  </div>
+  <button
+    pButton
+    type="button"
+    [raised]="true"
+    severity="contrast"
+    label="Finalizar Venta"
+    icon="pi pi-shopping-cart"
+    class="finalizar-btn texto"
+    [disabled]="cantidades.length === 0"
+    (click)="finalizarVenta()"
+  ></button>
 </div>
 
-<p-dialog header="Finalizar Venta" class="texto" [(visible)]="displayDialog" [style]="{width: '650px', height: '450px'}"
-  [modal]="true" [closable]="false" [draggable]="false" [resizable]="false"
-  [contentStyle]="{'padding': '0', 'overflow-y': 'auto'}">
+<p-dialog
+  header="Finalizar Venta"
+  class="texto"
+  [(visible)]="displayDialog"
+  [style]="{ width: '650px', height: '450px' }"
+  [modal]="true"
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [contentStyle]="{ padding: '0', 'overflow-y': 'auto' }"
+>
   <div class="modal-content p-fluid px-4 py-3">
     <!-- Row para forma de pago y cliente -->
     <div class="grid gap-3 mb-3">
       <div class="col-6">
-        <label for="formaPago" class="block text-sm font-medium text-900 mb-2">Forma de Pago *</label>
-        <p-dropdown id="formaPago" [(ngModel)]="formaPagoSeleccionada" [options]="formasPago" class="texto w-full"
-          optionLabel="label" optionValue="value" placeholder="Seleccione forma de pago"
-          (onChange)="onFormaPagoChange()" [required]="true">
+        <label for="formaPago" class="block text-sm font-medium text-900 mb-2"
+          >Forma de Pago *</label
+        >
+        <p-dropdown
+          id="formaPago"
+          [(ngModel)]="formaPagoSeleccionada"
+          [options]="formasPago"
+          class="texto w-full"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione forma de pago"
+          (onChange)="onFormaPagoChange()"
+          [required]="true"
+        >
         </p-dropdown>
       </div>
 
       <div class="col-6">
         <label for="cliente" class="block text-sm font-medium text-900 mb-2">
-          Cliente {{esPagoFiado() ? '*' : ''}}
+          Cliente {{ esPagoFiado() ? "*" : "" }}
         </label>
-        <p-dropdown id="cliente" class="texto w-full" [(ngModel)]="creditoSeleccionado" [options]="creditos"
-          optionLabel="cliente.nombre" placeholder="Seleccionar cliente..." [required]="esPagoFiado()" [filter]="true"
-          [disabled]="!esPagoFiado()" filterBy="cliente.nombre" [showClear]="true" scrollHeight="120px" appendTo="body">
+        <p-dropdown
+          id="cliente"
+          class="texto w-full"
+          [(ngModel)]="creditoSeleccionado"
+          [options]="creditos"
+          optionLabel="cliente.nombre"
+          placeholder="Seleccionar cliente..."
+          [required]="esPagoFiado()"
+          [filter]="true"
+          [disabled]="!esPagoFiado()"
+          filterBy="cliente.nombre"
+          [showClear]="true"
+          scrollHeight="120px"
+          appendTo="body"
+        >
           <ng-template let-credito pTemplate="item">
             <div class="texto">
-              <div class="font-semibold">{{credito.cliente.nombre}}</div>
+              <div class="font-semibold">{{ credito.cliente.nombre }}</div>
               <div class="text-sm text-500">
-                Disponible: {{calcularDineroDisponible(credito) | currency}}
-                <span [class]="puedeComprarConCredito(credito) ? 'text-green-600' : 'text-red-600'">
-                  {{puedeComprarConCredito(credito) ? '✓ Puede comprar' : '✗ No puede comprar'}}
+                Disponible: {{ calcularDineroDisponible(credito) | currency }}
+                <span
+                  [class]="
+                    puedeComprarConCredito(credito)
+                      ? 'text-green-600'
+                      : 'text-red-600'
+                  "
+                >
+                  {{
+                    puedeComprarConCredito(credito)
+                      ? "✓ Puede comprar"
+                      : "✗ No puede comprar"
+                  }}
                 </span>
               </div>
               <div class="text-xs text-500">
-                Mínimo: {{credito.minimo | currency}} | Máximo: {{credito.maximo | currency}}
+                Mínimo: {{ credito.minimo | currency }} | Máximo:
+                {{ credito.maximo | currency }}
               </div>
             </div>
           </ng-template>
@@ -191,61 +302,120 @@
     </div>
 
     <!-- Mensajes de validación -->
-    <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente && !puedeComprarConCredito(creditoSeleccionado)"
-      class="mt-3 p-3 border-round bg-red-50 border-red-200 border-1">
+    <div
+      *ngIf="
+        creditoSeleccionado &&
+        creditoSeleccionado.cliente &&
+        !puedeComprarConCredito(creditoSeleccionado)
+      "
+      class="mt-3 p-3 border-round bg-red-50 border-red-200 border-1"
+    >
       <div class="flex align-items-center text-red-800">
         <i class="pi pi-exclamation-triangle mr-2"></i>
         <div>
-          <div *ngIf="!superaCreditoMinimo(creditoSeleccionado)" class="font-semibold">
-            El total debe superar el mínimo de {{creditoSeleccionado.minimo | currency}}
+          <div
+            *ngIf="!superaCreditoMinimo(creditoSeleccionado)"
+            class="font-semibold"
+          >
+            El total debe superar el mínimo de
+            {{ creditoSeleccionado.minimo | currency }}
           </div>
-          <div *ngIf="superaCreditoMinimo(creditoSeleccionado) && !puedeRealizarCompra(creditoSeleccionado)"
-            class="font-semibold">
-            Límite excedido por {{(calcularTotal() - calcularDineroDisponible(creditoSeleccionado)) | currency}}
+          <div
+            *ngIf="
+              superaCreditoMinimo(creditoSeleccionado) &&
+              !puedeRealizarCompra(creditoSeleccionado)
+            "
+            class="font-semibold"
+          >
+            Límite excedido por
+            {{
+              calcularTotal() - calcularDineroDisponible(creditoSeleccionado)
+                | currency
+            }}
           </div>
         </div>
       </div>
     </div>
 
     <!-- Información del crédito del cliente seleccionado -->
-    <div *ngIf="creditoSeleccionado && creditoSeleccionado.cliente"
-      class="mt-3 p-3 border-round bg-blue-50 border-blue-200 border-1">
+    <div
+      *ngIf="creditoSeleccionado && creditoSeleccionado.cliente"
+      class="mt-3 p-3 border-round bg-blue-50 border-blue-200 border-1"
+    >
       <h6 class="text-blue-800 mt-0 mb-2">
         <i class="pi pi-info-circle mr-2"></i>Información del Crédito
       </h6>
       <div class="grid text-sm text-blue-800">
         <div class="col-6">
-          <div class="mb-2"><strong>Cliente:</strong> {{creditoSeleccionado.cliente.nombre}}</div>
-          <div class="mb-2"><strong>Límite mínimo:</strong> {{creditoSeleccionado.minimo | currency}}</div>
-          <div class="mb-2"><strong>Límite máximo:</strong> {{creditoSeleccionado.maximo | currency}}</div>
+          <div class="mb-2">
+            <strong>Cliente:</strong> {{ creditoSeleccionado.cliente.nombre }}
+          </div>
+          <div class="mb-2">
+            <strong>Límite mínimo:</strong>
+            {{ creditoSeleccionado.minimo | currency }}
+          </div>
+          <div class="mb-2">
+            <strong>Límite máximo:</strong>
+            {{ creditoSeleccionado.maximo | currency }}
+          </div>
         </div>
         <div class="col-6">
-          <div class="mb-2"><strong>Deuda actual:</strong> {{(creditoSeleccionado.precioTotal -
-            creditoSeleccionado.pagoHastaAhora) | currency}}</div>
-          <div class="mb-2"><strong>Disponible:</strong> {{calcularDineroDisponible(creditoSeleccionado) | currency}}
+          <div class="mb-2">
+            <strong>Deuda actual:</strong>
+            {{
+              creditoSeleccionado.precioTotal -
+                creditoSeleccionado.pagoHastaAhora | currency
+            }}
           </div>
-          <div class="mb-2"><strong>Total venta:</strong> {{calcularTotal() | currency}}</div>
+          <div class="mb-2">
+            <strong>Disponible:</strong>
+            {{ calcularDineroDisponible(creditoSeleccionado) | currency }}
+          </div>
+          <div class="mb-2">
+            <strong>Total venta:</strong> {{ calcularTotal() | currency }}
+          </div>
         </div>
       </div>
     </div>
-  </div> <ng-template pTemplate="footer">
+  </div>
+  <ng-template pTemplate="footer">
     <div class="flex justify-content-end gap-3">
-      <p-button label="Cancelar" icon="pi pi-times" [outlined]="true" severity="secondary"
-        (onClick)="displayDialog = false">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [outlined]="true"
+        severity="secondary"
+        (onClick)="displayDialog = false"
+      >
       </p-button>
-      <p-button label="Confirmar Venta" icon="pi pi-shopping-cart" severity="success" [raised]="true" size="large"
+      <p-button
+        label="Confirmar Venta"
+        icon="pi pi-shopping-cart"
+        severity="success"
+        [raised]="true"
+        size="large"
         styleClass="confirm-btn"
-        [disabled]="esPagoFiado() && (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado))"
-        (onClick)="confirmarVenta()">
+        [disabled]="
+          procesandoVenta ||
+          (esPagoFiado() &&
+          (!creditoSeleccionado || !puedeComprarConCredito(creditoSeleccionado)))
+        "
+        [loading]="procesandoVenta"
+        (onClick)="confirmarVenta()"
+      >
       </p-button>
     </div>
   </ng-template>
 </p-dialog>
 
 <!-- Diálogo de selección de productos duplicados -->
-<app-seleccion-producto-dialog [display]="displaySeleccionProducto" [productos]="productosDuplicados"
-  [codigoBarras]="codigoBarrasEscaneado" (productoSeleccionado)="onProductoSeleccionado($event)"
-  (dialogCerrado)="onDialogoSeleccionCerrado()">
+<app-seleccion-producto-dialog
+  [display]="displaySeleccionProducto"
+  [productos]="productosDuplicados"
+  [codigoBarras]="codigoBarrasEscaneado"
+  (productoSeleccionado)="onProductoSeleccionado($event)"
+  (dialogCerrado)="onDialogoSeleccionCerrado()"
+>
 </app-seleccion-producto-dialog>
 
 <!-- ConfirmDialog para el ConfirmationService -->

@@ -1,13 +1,7 @@
-html, body, main, app-header{
-  overflow-x: hidden;
-  font-family: "Montserrat", sans-serif;
-}
+@use "../../../styles/modal-styles.scss";
 
-main {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding-left: 5vw;
-  padding-right: 5vw;
+.texto {
+  font-family: "Source Sans 3", sans-serif;
 }
 
 .textoNegro {
@@ -17,44 +11,72 @@ main {
   font-size: 2rem;
 }
 
-// Contenedor principal de búsqueda y acciones
+@media (max-width: 768px) {
+  .search-and-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}
+::ng-deep .p-datatable-thead > tr > th {
+  background-color: #34495e;
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+::ng-deep .p-datatable-tbody > tr {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.textoNegro {
+  color: black;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
 .search-and-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   gap: 2rem;
-  
+
   .search-section {
     flex: 1;
     max-width: 400px;
-    
+
     .search-input {
       width: 100%;
-      
+
       input {
         border-radius: 8px 0 0 8px;
         border: 1px solid #ddd;
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
-        
+
         &:focus {
           border-color: #6c757d;
           box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
         }
       }
-      
+
       .p-inputgroup-addon {
         border-radius: 0 8px 8px 0;
         border: 1px solid #ddd;
         border-left: none;
         background: #f8f9fa;
-        
+
         .p-button {
           border: none;
           background: transparent;
           color: #6c757d;
-          
+
           &:hover {
             background: rgba(108, 117, 125, 0.1);
             color: #495057;
@@ -63,14 +85,13 @@ main {
       }
     }
   }
-  
+
   .actions-section {
     display: flex;
     align-items: center;
   }
 }
 
-// Estilos específicos para el botón personalizado
 ::ng-deep .custom-add-button {
   background-color: #64748b !important;
   border: 1px solid #64748b !important;
@@ -108,31 +129,23 @@ main {
   }
 }
 
-// Estilos para el formulario del modal
 .form-content {
   .form-group {
     margin-bottom: 1.5rem;
-    
     label {
       display: block;
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
       font-size: 0.95rem;
-      
+
       &::after {
         content: " *";
         color: #dc3545;
         font-weight: 400;
       }
-      
-      // Remover asterisco para campos opcionales
-      &[for="telefono"]::after,
-      &[for="correo"]::after {
-        content: "";
-      }
     }
-    
+
     input {
       border-radius: 6px;
       transition: all 0.2s ease;
@@ -140,74 +153,73 @@ main {
       border: 1px solid #ddd;
       padding: 0.75rem;
       font-size: 0.95rem;
-        &:focus {
+      &:focus {
         box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
         border-color: #64748b;
         outline: none;
       }
-      
+
       &::placeholder {
         color: #999;
         font-style: italic;
       }
     }
   }
-  
+
   .form-row {
     display: flex;
     gap: 1rem;
-    
+
     .form-col {
       flex: 1;
     }
   }
 }
 
-// Estilos para el diálogo
 ::ng-deep .form-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-bottom: 1px solid #dee2e6;
     border-radius: 8px 8px 0 0;
-    
+
     .p-dialog-title {
       font-weight: 700;
       color: #2c3e50;
       font-size: 1.25rem;
     }
   }
-  
+
   .p-dialog-content {
     padding: 2rem;
     background: white;
   }
-  
+
   .p-dialog-footer {
     padding: 1.5rem 2rem;
     background: #f8f9fa;
     border-top: 1px solid #dee2e6;
     border-radius: 0 0 8px 8px;
-    
+
     .p-button {
       border-radius: 6px;
       font-weight: 600;
       padding: 0.6rem 1.2rem;
-      
+
       &.p-button-text {
         color: #6c757d;
         border: 1px solid transparent;
-        
+
         &:hover {
           background: rgba(108, 117, 125, 0.1);
           color: #495057;
           border-color: rgba(108, 117, 125, 0.2);
         }
       }
-        &.p-button-success {
+      &.p-button-success {
         background-color: #64748b;
         border-color: #64748b;
         color: white;
-        
+
         &:hover {
           background-color: #475569;
           border-color: #475569;
@@ -217,27 +229,26 @@ main {
   }
 }
 
-// Responsive
 @media (max-width: 768px) {
   .search-and-actions {
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
-    
+
     .search-section {
       max-width: none;
     }
-    
+
     .actions-section {
       justify-content: center;
-      
+
       ::ng-deep .custom-add-button {
         width: 100%;
         justify-content: center;
       }
     }
   }
-  
+
   main {
     padding-left: 3vw;
     padding-right: 3vw;

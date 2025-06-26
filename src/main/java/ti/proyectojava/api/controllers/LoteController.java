@@ -22,23 +22,21 @@ public class LoteController {
         this.productoService = productoService;
     }
 
-    //solo puede usarlo un admin
     @PostMapping("/crear")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion crea una nuevo lote")
     public ResponseEntity<String> crearLote(@RequestBody LoteDto loteDto) {
-        
+
         productoService.ActualizarPrecioCompraYStockProducto(loteDto.getProducto().getId(), loteDto.getPrecioCompra(), loteDto.getStock());
         String response = loteService.crearLote(loteDto);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    //solo puede usarlo un admin
     @PutMapping("/{id}/eliminar")
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina un lote")
-    public ResponseEntity<String> borrarLote(@PathVariable Long id){
+    public ResponseEntity<String> borrarLote(@PathVariable Long id) {
         String lote = loteService.borrarLote(id);
 
         if (lote == null) {

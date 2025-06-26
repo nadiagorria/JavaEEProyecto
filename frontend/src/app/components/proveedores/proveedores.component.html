@@ -1,83 +1,198 @@
 <app-header></app-header>
-<main class="w-full">
-  <h1 class="w-full textoNegro">Proveedores</h1>
 
-  <article class="search-and-actions">
-    <div class="search-section">
-      <p-inputgroup class="search-input">
-        <input pInputText placeholder="Buscar por nombre" [(ngModel)]="busqueda" />
-        <p-inputgroup-addon>
-          <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="buscarProveedor()" />
-        </p-inputgroup-addon>
-      </p-inputgroup>
+<div class="grid">
+  <div class="col-12">
+    <div class="col-12 mb-3 pl-5">
+      <h2 class="texto">Proveedores</h2>
     </div>
-    <div class="actions-section" *ngIf="isAdmin()">
-      <p-button label="Añadir Nuevo" icon="pi pi-plus" styleClass="custom-add-button" (click)="mostarModal()">
-      </p-button>
+
+    <div class="col-12 flex justify-content-center mb-3">
+      <div
+        class="md:col-8 lg:col-11 flex justify-content-between align-items-center"
+      >
+        <div class="search-section">
+          <p-inputgroup class="search-input">
+            <input
+              pInputText
+              placeholder="Buscar por nombre"
+              [(ngModel)]="busqueda"
+            />
+            <p-inputgroup-addon>
+              <p-button
+                icon="pi pi-search"
+                severity="secondary"
+                variant="text"
+                (click)="buscarProveedor()"
+              />
+            </p-inputgroup-addon>
+          </p-inputgroup>
+        </div>
+        <div class="actions-section" *ngIf="isAdmin()">
+          <p-button
+            label="Añadir Nuevo"
+            icon="pi pi-plus"
+            styleClass="custom-add-button"
+            (click)="mostarModal()"
+          >
+          </p-button>
+        </div>
+      </div>
     </div>
-  </article> <!-- Modal de añadir proveedor --> <p-dialog header="Añadir Nuevo Proveedor" [(visible)]="visible"
-    [modal]="true" [style]="{width: '450px'}" [contentStyle]="{overflow: 'auto'}" [draggable]="false"
-    [resizable]="false" [closable]="true" styleClass="lote-dialog" appendTo="body">
-    <form class="form-content">
-      <div class="form-group">
-        <label for="nombre">Nombre del Proveedor *</label>
-        <input id="nombre" pInputText [(ngModel)]="nombre" name="nombre" class="w-full"
-          placeholder="Ingrese el nombre del proveedor" autocomplete="off" />
+    <!-- Modal de añadir proveedor -->
+    <p-dialog
+      header="Añadir Nuevo Proveedor"
+      [(visible)]="visible"
+      [modal]="true"
+      [style]="{ width: '500px' }"
+      [contentStyle]="{ overflow: 'auto' }"
+      [draggable]="false"
+      [resizable]="false"
+      [closable]="true"
+      styleClass="form-dialog"
+      appendTo="body"
+    >
+      <div class="modal-content">
+        <form class="form-content">
+          <!-- Información Básica -->
+          <div class="form-section">
+            <div class="section-title">Información del Proveedor</div>
+            <div class="form-group">
+              <label for="nombre">Nombre del Proveedor</label>
+              <input
+                id="nombre"
+                pInputText
+                [(ngModel)]="nombre"
+                name="nombre"
+                class="w-full"
+                placeholder="Ingrese el nombre del proveedor"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input
+                id="telefono"
+                pInputText
+                [(ngModel)]="telefono"
+                name="telefono"
+                class="w-full"
+                placeholder="Ej: +569 1234 5678"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="correo">Correo Electrónico</label>
+              <input
+                id="correo"
+                pInputText
+                [(ngModel)]="correo"
+                name="correo"
+                class="w-full"
+                placeholder="ejemplo@correo.com"
+                type="email"
+                autocomplete="off"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Campos obligatorios -->
+          <div class="campos-obligatorios">
+            <i class="pi pi-info-circle"></i>
+            <span
+              >Los campos marcados con <span style="color: red">*</span> son
+              obligatorios</span
+            >
+          </div>
+        </form>
       </div>
 
-      <div class="form-group">
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" pInputText [(ngModel)]="telefono" name="telefono" class="w-full"
-          placeholder="Ej: +569 1234 5678" autocomplete="off" />
-      </div>
-
-      <div class="form-group">
-        <label for="correo">Correo Electrónico</label>
-        <input id="correo" pInputText [(ngModel)]="correo" name="correo" class="w-full" placeholder="ejemplo@correo.com"
-          type="email" autocomplete="off" />
-      </div>
-    </form>
-
-    <ng-template pTemplate="footer">
-      <button pButton type="button" label="Cancelar" class="p-button-text" (click)="cerrarDialog()">
-      </button>
-      <button pButton type="button" label="Guardar Proveedor" class="p-button-success" (click)="saveProveedor()">
-      </button>
-    </ng-template>
-  </p-dialog>
-
-  <article class="w-full">
-    <p-table class="texto"
-      [value]="proveedoresFiltrados && proveedoresFiltrados.length > 0 ? proveedoresFiltrados : proveedores || []"
-      [paginator]="true" [rows]="5" [totalRecords]="totalRecords" [rowsPerPageOptions]="[5, 10, 20]"
-      paginatorPosition="bottom" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} proveedores"
-      showGridlines [responsive]="true"> <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre</th>
-          <th>Telefono</th>
-          <th>Correo</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template> <ng-template pTemplate="body" let-proveedor>
-        <tr>
-          <td>{{ proveedor.nombre }}</td>
-          <td>{{ proveedor.telefono }}</td>
-          <td>{{ proveedor.correo }}</td>
-          <td>
-            <p-button icon="pi pi-eye" severity="info" size="small" [text]="true"
-              (click)="mostrarDetalles(proveedor.id)" pTooltip="Ver proveedor" tooltipPosition="top"
-              styleClass="p-button-rounded p-button-text mr-2" >
-            </p-button>
-            <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true"
-              (click)="eliminarProveedor(proveedor.id)" pTooltip="Eliminar proveedor" tooltipPosition="top"
-              styleClass="p-button-rounded p-button-text"  *ngIf="isAdmin()">
-            </p-button>
-          </td>
-        </tr>
+      <ng-template pTemplate="footer">
+        <button
+          pButton
+          type="button"
+          label="Cancelar"
+          class="p-button-text"
+          (click)="cerrarDialog()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Guardar Proveedor"
+          class="p-button-success"
+          (click)="saveProveedor()"
+        ></button>
       </ng-template>
-    </p-table>
-  </article>
+    </p-dialog>
 
-</main>
+    <div class="col-12 flex justify-content-center">
+      <div class="md:col-8 lg:col-11">
+        <p-table
+          [value]="
+            proveedoresFiltrados && proveedoresFiltrados.length > 0
+              ? proveedoresFiltrados
+              : proveedores || []
+          "
+          [paginator]="true"
+          [rows]="5"
+          [totalRecords]="totalRecords"
+          [rowsPerPageOptions]="[5, 10, 20]"
+          paginatorPosition="bottom"
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} proveedores"
+          showGridlines
+          [responsive]="true"
+          class="texto"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Nombre</th>
+              <th>Telefono</th>
+              <th>Correo</th>
+              <th>Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-proveedor>
+            <tr>
+              <td>{{ proveedor.nombre }}</td>
+              <td>{{ proveedor.telefono }}</td>
+              <td>{{ proveedor.correo }}</td>
+              <td>
+                <p-button
+                  icon="pi pi-eye"
+                  severity="info"
+                  size="small"
+                  [text]="true"
+                  (click)="mostrarDetalles(proveedor.id)"
+                  pTooltip="Ver proveedor"
+                  tooltipPosition="top"
+                  styleClass="p-button-rounded p-button-text mr-2"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  [text]="true"
+                  (click)="eliminarProveedor(proveedor.id)"
+                  pTooltip="Eliminar proveedor"
+                  tooltipPosition="top"
+                  styleClass="p-button-rounded p-button-text"
+                  *ngIf="isAdmin()"
+                >
+                </p-button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <app-footer></app-footer>

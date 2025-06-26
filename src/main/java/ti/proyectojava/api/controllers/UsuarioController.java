@@ -12,6 +12,8 @@ import ti.proyectojava.dtos.UsuarioDto;
 import ti.proyectojava.dtos.RecuperacionPasswordDto;
 import ti.proyectojava.services.UsuarioService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "api/v1/usuarios")
 public class UsuarioController {
@@ -21,40 +23,37 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    // esto solo la puede hacer el admin
     @GetMapping
     @Secured({"ADMIN"})
-    public ResponseEntity<ResponseListadoUsuarios> getUsuarios(){
-            ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
-            return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<ResponseListadoUsuarios> getUsuarios() {
+        ResponseListadoUsuarios response = usuarioService.listadoUsuarios();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //esto lo puede hacer el admin
     @Operation(description = "Esta funcion modifica un usuario")
     @PutMapping("/{nombre}")
     @Secured({"ADMIN"})
-    public ResponseEntity<String> modificarUsuario(@PathVariable (name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario){
+    public ResponseEntity<String> modificarUsuario(@PathVariable(name = "nombre") String nombreUsuario, @RequestBody UsuarioDto usuario) {
         String response = usuarioService.modificarUsuario(nombreUsuario, usuario);
-        if (response == null){
+        if (response == null) {
             return new ResponseEntity<>("Error al modificar el usuario. NOMBRE:" + nombreUsuario, HttpStatus.BAD_REQUEST);
-        }else {
+        } else {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
 
-    //esta funcion solo la puede hacer el admin
     @Operation(description = "Esta funcion borra un usuario")
     @PutMapping("/eliminar/{nombre}")
     @Secured({"ADMIN"})
-    public ResponseEntity<Void> borrarUsuario(@PathVariable (name = "nombre") String nombreUsuario){
+    public ResponseEntity<Void> borrarUsuario(@PathVariable(name = "nombre") String nombreUsuario) {
         usuarioService.borrarUsuario(nombreUsuario);
         return new ResponseEntity<>(HttpStatus.OK);
-    }    
-    
+    }
+
     @Operation(description = "Obtiene el número total de usuarios registrados")
     @GetMapping("/cantidadUsuarios")
     @Secured({"ADMIN", "CAJERO"})
-    public ResponseEntity<Integer> getUsuariosTotales(){
+    public ResponseEntity<Integer> getUsuariosTotales() {
         Integer response = usuarioService.listadoUsuariosTotales();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -76,10 +75,9 @@ public class UsuarioController {
     @Secured({"ADMIN"})
     public ResponseEntity<String> otorgarRolAdmin(@PathVariable(name = "usuario") String usuarioDestino) {
         try {
-            // Obtener el usuario autenticado
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String adminUsuario = authentication.getName();
-            
+
             String response = usuarioService.otorgarRolAdmin(adminUsuario, usuarioDestino);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
@@ -92,18 +90,17 @@ public class UsuarioController {
     @Secured({"ADMIN"})
     public ResponseEntity<String> revocarRolAdmin(@PathVariable(name = "usuario") String usuarioDestino) {
         try {
-            // Obtener el usuario autenticado
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String adminUsuario = authentication.getName();
-            
+
             String response = usuarioService.revocarRolAdmin(adminUsuario, usuarioDestino);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-    }    
-    
-    
+    }
+
+
     @PostMapping("/solicitar-recuperacion")
     @Operation(description = "Solicita recuperación de contraseña por email")
     public ResponseEntity<String> solicitarRecuperacionPassword(@RequestBody RecuperacionPasswordDto request) {
@@ -119,14 +116,41 @@ public class UsuarioController {
     @Operation(description = "Restablece la contraseña usando el código de recuperación")
     public ResponseEntity<String> restablecerPassword(@RequestBody RecuperacionPasswordDto request) {
         try {
-            String response = usuarioService.restablecerPassword(
-                request.getEmail(), 
-                request.getCodigo(), 
-                request.getNuevaPassword()
-            );
+            String response = usuarioService.restablecerPassword(request.getEmail(), request.getCodigo(), request.getNuevaPassword());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verificar-password-actual")
+    @Operation(description = "Verifica si una contraseña es igual a la actual del usuario")
+    public ResponseEntity<Boolean> verificarPasswordActual(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String password = request.get("password");
+
+            if (email == null || password == null) {
+                return ResponseEntity.badRequest().body(false);
+            }
+
+            boolean esIgual = usuarioService.esPasswordIgualAActual(email, password);
+            return ResponseEntity.ok(esIgual);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
+    }
+
+    @PostMapping("/limpiar-codigos-expirados")
+    @Secured({"ADMIN"})
+    @Operation(description = "Ejecuta manualmente la limpieza de códigos de recuperación expirados")
+    public ResponseEntity<String> limpiarCodigosExpirados() {
+        try {
+            usuarioService.limpiarCodigosExpirados();
+            return ResponseEntity.ok("Códigos de recuperación expirados eliminados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al limpiar códigos expirados: " + e.getMessage());
         }
     }
 

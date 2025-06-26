@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ti.proyectojava.security;
 
 import org.springframework.context.annotation.Bean;
@@ -18,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 import org.springframework.security.config.Customizer;
+
 /**
  * @author Usuario
  */
@@ -28,11 +25,10 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http    .cors(Customizer.withDefaults())
+        http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(new FiltroJWTAutorizacion(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers(antMatcher("/**")).permitAll()
                         .requestMatchers(antMatcher("/api/v1/seguridad/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                         .requestMatchers(antMatcher("/webjars/**")).permitAll()
@@ -40,10 +36,8 @@ public class WebSecurityConfig {
                         .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(antMatcher("/configuration/**")).permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/solicitar-recuperacion").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/restablecer-password").permitAll()
-                        //.requestMatchers(antMatcher("/api/v1/entidad/**")).permitAll()
 
 
                         .anyRequest()
@@ -62,8 +56,8 @@ public class WebSecurityConfig {
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
-        }
-    };
+            }
+        };
     }
 
 }

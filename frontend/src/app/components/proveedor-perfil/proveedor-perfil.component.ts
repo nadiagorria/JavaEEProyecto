@@ -27,14 +27,27 @@ interface ComprasCliente {
 }
 
 @Component({
-  selector: 'app-proveedor-perfil',  
-  imports: [FormsModule, DialogModule, CommonModule, HeaderComponent, FooterComponent, ButtonModule, InputGroupModule, InputGroupAddonModule, TableModule, TooltipModule, ToastModule, InputTextModule, ConfirmDialogModule],
+  selector: 'app-proveedor-perfil',
+  imports: [
+    FormsModule,
+    DialogModule,
+    CommonModule,
+    HeaderComponent,
+    FooterComponent,
+    ButtonModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    TableModule,
+    TooltipModule,
+    ToastModule,
+    InputTextModule,
+    ConfirmDialogModule,
+  ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './proveedor-perfil.component.html',
-  styleUrl: './proveedor-perfil.component.scss'
+  styleUrl: './proveedor-perfil.component.scss',
 })
 export class ProveedorPerfilComponent {
-
   proveedor: ProveedorDto = {
     id: 0,
     nombre: '',
@@ -46,7 +59,8 @@ export class ProveedorPerfilComponent {
 
   totalRecords: number = 0;
 
-  visibleEditar: boolean = false;  constructor(
+  visibleEditar: boolean = false;
+  constructor(
     private route: ActivatedRoute,
     private entidadService: EntidadService,
     private router: Router,
@@ -58,12 +72,11 @@ export class ProveedorPerfilComponent {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.entidadService.getProveedor(id).subscribe(data => {
+    this.entidadService.getProveedor(id).subscribe((data) => {
       this.proveedor = data;
     });
   }
   showDialogEditar() {
-    // Inicializar los campos de edición con los valores actuales del proveedor
     this.nombreEdicion = this.proveedor.nombre;
     this.telefonoEdicion = this.proveedor.telefono;
     this.correoEdicion = this.proveedor.correo;
@@ -72,7 +85,7 @@ export class ProveedorPerfilComponent {
 
   cerrarDialogEditar() {
     this.visibleEditar = false;
-    // Resetear los campos a los valores originales
+
     this.nombreEdicion = '';
     this.telefonoEdicion = '';
     this.correoEdicion = '';
@@ -83,51 +96,95 @@ export class ProveedorPerfilComponent {
   correoEdicion: string = '';
 
   editarProveedor() {
-    if (!this.nombreEdicion || !this.telefonoEdicion || !this.correoEdicion) {
+    if (!this.nombreEdicion || this.nombreEdicion.trim() === '') {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Campos incompletos',
-        detail: 'Por favor, complete todos los campos obligatorios.'
+        summary: 'Campo requerido',
+        detail: 'El nombre del proveedor es obligatorio',
       });
       return;
     }
-    
-    this.proveedor.nombre = this.nombreEdicion;
-    
-    this.proveedor.telefono = this.telefonoEdicion;
+    if (/\d/.test(this.nombreEdicion)) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del proveedor no puede contener números',
+      });
+      return;
+    }
 
-    this.proveedor.correo = this.correoEdicion;
+    if (!this.telefonoEdicion || this.telefonoEdicion.trim() === '') {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del proveedor es obligatorio',
+      });
+      return;
+    }
+    if (!/^[0-9+\s-]+$/.test(this.telefonoEdicion)) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+      });
+      return;
+    }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.proveedor.correo)) {
+    if (!this.correoEdicion || this.correoEdicion.trim() === '') {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El correo del proveedor es obligatorio',
+      });
+      return;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.correoEdicion.trim())) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Email inválido',
-        detail: 'Por favor, ingrese un correo electrónico válido.'
+        detail: 'Por favor, ingrese un correo electrónico válido.',
       });
       return;
-    }    
+    }
+    this.proveedor.nombre = this.nombreEdicion.trim();
+    this.proveedor.telefono = this.telefonoEdicion.trim();
+    this.proveedor.correo = this.correoEdicion.trim();
 
     this.entidadService.editarProveedor(this.proveedor).subscribe({
       next: (data: any) => {
-        console.log('Proveedor editado:', data);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Proveedor actualizado',
-          detail: 'Los datos del proveedor se han actualizado correctamente.'
+          detail: 'Los datos del proveedor se han actualizado correctamente.',
         });
         this.visibleEditar = false;
       },
       error: (err: any) => {
-        console.error('Error al editar proveedor:', err);
+        let mensajeError =
+          'Ocurrió un error al actualizar los datos del proveedor.';
+        if (err.error && typeof err.error === 'string') {
+          mensajeError = err.error;
+        } else if (err.message) {
+          mensajeError = err.message;
+        }
+
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error al editar',
-          detail: 'Ocurrió un error al actualizar los datos del proveedor.'
+          detail: mensajeError,
         });
-      }
+      },
     });
-
   }
 
   verProducto(productoId: number) {
@@ -136,7 +193,6 @@ export class ProveedorPerfilComponent {
     }
   }
 
-  // Función para verificar si el usuario es admin
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
     if (!roles) {
@@ -144,19 +200,21 @@ export class ProveedorPerfilComponent {
     }
     return roles.includes('ADMIN');
   }
-  // Función para eliminar un producto (solo admin)
+
   eliminarProducto(productoId: number) {
     if (!this.isAdmin()) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Sin permisos',
-        detail: 'No tienes permisos para eliminar productos.'
+        detail: 'No tienes permisos para eliminar productos.',
       });
       return;
     }
 
     this.confirmationService.confirm({
-      message: '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
+      message:
+        '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -166,28 +224,31 @@ export class ProveedorPerfilComponent {
       accept: () => {
         this.productoService.eliminarProducto(productoId).subscribe({
           next: (response) => {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'success',
               summary: 'Producto eliminado',
-              detail: 'El producto ha sido eliminado correctamente.'
-            });            // Refrescar los datos del proveedor para actualizar la tabla
+              detail: 'El producto ha sido eliminado correctamente.',
+            });
             if (this.proveedor.id) {
-              this.entidadService.getProveedor(this.proveedor.id).subscribe(data => {
-                this.proveedor = data;
-              });
+              this.entidadService
+                .getProveedor(this.proveedor.id)
+                .subscribe((data) => {
+                  this.proveedor = data;
+                });
             }
           },
           error: (error) => {
-            console.error('Error al eliminar producto:', error);
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error al eliminar',
-              detail: 'Ocurrió un error al eliminar el producto. Intente nuevamente.'
+              detail:
+                'Ocurrió un error al eliminar el producto. Intente nuevamente.',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
-
 }

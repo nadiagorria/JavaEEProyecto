@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { VentaDto } from 'src/models';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { CalendarModule } from 'primeng/calendar';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -15,32 +17,44 @@ import { SecurityService } from '../../../services/security.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 
-
 @Component({
   selector: 'app-ventas',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     TableModule,
     CurrencyPipe,
     RouterModule,
     ButtonModule,
     TagModule,
     TooltipModule,
+    CalendarModule,
     ToastModule,
     ConfirmDialogModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ventas.component.html',
-  styleUrl: './ventas.component.scss'
+  styleUrl: './ventas.component.scss',
 })
 export class VentasComponent implements OnInit {
   ventas: VentaDto[] = [];
-  totalRecords: number = 0;
   selectedVenta: VentaDto | null = null;
   isAdmin: boolean = false;
+
+  // Propiedades para paginación
+  paginaActual: number = 0;
+  ventasPorPagina: number = 10;
+  totalElementos: number = 0;
+
+  // Propiedades para filtros de fecha
+  fechaDesde: Date | null = null;
+  fechaHasta: Date | null = null;
+  
+  // Variable para mostrar loading
+  cargando: boolean = false;
 
   constructor(
     private ventaService: VentaService,
@@ -48,35 +62,63 @@ export class VentasComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
-    this.totalRecords = this.ventas.length;
+    // Inicializar totalRecords en 0 para lazy loading
   }
   ngOnInit() {
-    // Verificar si el usuario es admin
     if (this.securityService.isLoggedIn() && this.securityService.user) {
-      this.isAdmin = this.securityService.user.roles?.includes('ADMIN') || false;
+      this.isAdmin =
+        this.securityService.user.roles?.includes('ADMIN') || false;
     }
-    this.cargarVentas();
+    // La carga inicial se manejará automáticamente por el lazy loading de PrimeNG
   }
-  cargarVentas() {
-    this.ventaService.listarVentas().subscribe({
+  private formatearFecha(fecha: Date): string {
+    return fecha.toISOString().split('T')[0];
+  }
+
+  aplicarFiltros() {
+    this.paginaActual = 0;
+    // Simular evento de lazy loading para reiniciar la tabla
+    const event = {
+      first: 0,
+      rows: this.ventasPorPagina
+    };
+    this.cargarVentasLazy(event);
+  }
+
+  limpiarFiltros() {
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.aplicarFiltros();
+  }
+
+  // Método para lazy loading de PrimeNG
+  cargarVentasLazy(event: any) {
+    this.cargando = true;
+    
+    // Calcular página basada en el first del evento
+    const pagina = Math.floor(event.first / event.rows);
+    const tamanoPagina = event.rows;
+    
+    const fechaDesdeStr = this.fechaDesde ? this.formatearFecha(this.fechaDesde) : undefined;
+    const fechaHastaStr = this.fechaHasta ? this.formatearFecha(this.fechaHasta) : undefined;
+
+    this.ventaService.listarVentasPaginadas(pagina, tamanoPagina, fechaDesdeStr, fechaHastaStr).subscribe({
       next: (response) => {
-        this.ventas = response.ventas;
-        // Ordenar por fecha descendente (más nueva primero)
-        this.ventas.sort((a, b) => {
-          const fechaA = new Date(a.fechaVenta);
-          const fechaB = new Date(b.fechaVenta);
-          return fechaB.getTime() - fechaA.getTime();
-        });
-        this.totalRecords = this.ventas.length;
+        this.ventas = response.content || [];
+        this.totalElementos = response.totalElements || 0;
+        this.paginaActual = pagina;
+        this.ventasPorPagina = tamanoPagina;
+        this.cargando = false;
       },
       error: (error) => {
-        console.error('Error al cargar ventas:', error);
+        this.cargando = false;
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar las ventas'
+          detail: 'Error al cargar las ventas',
         });
-      }
+      },
     });
   }
 
@@ -90,29 +132,36 @@ export class VentasComponent implements OnInit {
     if (!id) return;
 
     this.confirmationService.confirm({
-      message: '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
+      message:
+        '¿Está seguro que desea eliminar esta venta? Esta acción devolverá el stock de los productos.',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.ventaService.eliminarVenta(id).subscribe({
           next: (response) => {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Venta eliminada correctamente'
+              detail: 'Venta eliminada correctamente',
             });
-            this.cargarVentas(); // Recargar la lista
+            // Recargar usando lazy loading
+            const event = {
+              first: this.paginaActual * this.ventasPorPagina,
+              rows: this.ventasPorPagina
+            };
+            this.cargarVentasLazy(event);
           },
           error: (error) => {
-            console.error('Error al eliminar venta:', error);
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al eliminar la venta'
+              detail: 'Error al eliminar la venta',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 

@@ -1,4 +1,4 @@
-footer{
+footer {
   height: 350px;
   margin-top: 10px;
   color: black;
@@ -13,31 +13,45 @@ footer{
 }
 
 .papa {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* o center si querés centrar el contenido */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .titulos {
   font-weight: bold;
   font-size: 15px;
   margin-bottom: 20px;
-}
-
-.botones {
-
+  font-family: "Montserrat", sans-serif;
 }
 
 .textos {
-  font-family: "Source Sans 3", sans-serif;
+  font-family: "Montserrat", sans-serif;
   margin-bottom: 15px;
+  color: #27272a;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #3f3f46;
+  }
+}
+
+a.textos {
+  color: #27272a;
+  text-decoration: none;
+
+  &:hover {
+    color: #3f3f46;
+  }
 }
 
 a i {
   color: #27272a;
 }
 
-a:hover i{
+a:hover i {
   transition: color 0.3s ease;
   color: #3f3f46;
 }
@@ -46,5 +60,3 @@ a:hover i{
   display: flex;
   gap: 1vw;
 }
-
-

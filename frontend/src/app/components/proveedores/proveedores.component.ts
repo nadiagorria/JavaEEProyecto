@@ -6,26 +6,23 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
-import { clienteCreditoDto } from 'src/models/clienteCredito.dto';  
-import { CreditoDto } from 'src/models/credito.dto';
-import { CreditoService } from 'src/services/credito.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { EntidadService } from 'src/services/entidad.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProveedorDto } from 'src/models/proveedor.dto';
 import { SecurityService } from 'src/services/security.service';
 
-
 @Component({
-  selector: 'app-proveedores',  imports: [
+  selector: 'app-proveedores',
+  imports: [
     CommonModule,
-    FormsModule, 
+    FormsModule,
     HeaderComponent,
     FooterComponent,
     InputGroupModule,
@@ -36,29 +33,26 @@ import { SecurityService } from 'src/services/security.service';
     DialogModule,
     TooltipModule,
     ToastModule,
-    ],
-  providers: [MessageService],
+    ConfirmDialogModule,
+  ],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './proveedores.component.html',
-  styleUrl: './proveedores.component.scss'
+  styleUrl: './proveedores.component.scss',
 })
-
 export class ProveedoresComponent {
-
   proveedores: ProveedorDto[] = [];
   proveedoresFiltrados: ProveedorDto[] = [];
   totalRecords: number = 0;
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
-    private creditoService: CreditoService,
     private entidadService: EntidadService,
     private securityService: SecurityService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
     if (!this.securityService.isLoggedIn()) {
-      // Si no está autenticado, redirigir al login
       this.router.navigate(['/login']);
       return;
     }
@@ -68,51 +62,51 @@ export class ProveedoresComponent {
   cargarProveedores(): void {
     this.entidadService.listadoProveedores().subscribe({
       next: (data: any) => {
-        
         if (data && Array.isArray(data)) {
           this.proveedores = data;
-        } else if (data && data.proveedores && Array.isArray(data.proveedores)) {
-        
+        } else if (
+          data &&
+          data.proveedores &&
+          Array.isArray(data.proveedores)
+        ) {
           this.proveedores = data.proveedores;
         } else {
-          console.warn('La respuesta no tiene el formato esperado:', data);
           this.proveedores = [];
         }
         this.proveedoresFiltrados = [...this.proveedores];
         this.totalRecords = this.proveedores.length;
       },
       error: (err: any) => {
-        console.error('Error al listar proveedores:', err);
-        
         if (err.status === 403) {
-          // Error de autorización, probablemente la sesión expiró
-          alert('Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.');
+          alert(
+            'Sesión expirada o sin autorización. Por favor, inicie sesión nuevamente.'
+          );
           this.securityService.logout();
           return;
         }
-        
+
         alert('Error al listar proveedores: ' + (err.message || err.status));
         this.proveedores = [];
         this.proveedoresFiltrados = [];
         this.totalRecords = 0;
-      }
+      },
     });
   }
 
   visible: boolean = false;
 
-  mostarModal(){
+  mostarModal() {
     this.visible = true;
   }
 
   cerrarDialog() {
     this.visible = false;
-    // Limpiar los campos del formulario
+
     this.nombre = '';
     this.telefono = '';
     this.correo = '';
   }
-  //Proveedor
+
   nombre: string = '';
   telefono: string = '';
   correo: string = '';
@@ -121,28 +115,63 @@ export class ProveedoresComponent {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   }
-
   saveProveedor() {
-    // Validar campos requeridos
     if (!this.nombre || this.nombre.trim() === '') {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Campo requerido',
-        detail: 'El nombre del proveedor es obligatorio'
+        detail: 'El nombre del proveedor es obligatorio',
+      });
+      return;
+    }
+    if (/\d/.test(this.nombre)) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail: 'El nombre del proveedor no puede contener números',
       });
       return;
     }
 
-    // Validar email si se proporciona
-    if (this.correo && this.correo.trim() !== '') {
-      if (!this.validarEmail(this.correo)) {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Email inválido',
-          detail: 'Por favor ingrese un email válido (ejemplo@correo.com)'
-        });
-        return;
-      }
+    if (!this.telefono || this.telefono.trim() === '') {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El teléfono del proveedor es obligatorio',
+      });
+      return;
+    }
+    if (!/^[0-9+\s-]+$/.test(this.telefono)) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato inválido',
+        detail:
+          'El teléfono solo puede contener números, espacios, guiones y el símbolo +',
+      });
+      return;
+    }
+
+    if (!this.correo || this.correo.trim() === '') {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campo requerido',
+        detail: 'El correo del proveedor es obligatorio',
+      });
+      return;
+    }
+    if (!this.validarEmail(this.correo)) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Por favor ingrese un email válido (ejemplo@correo.com)',
+      });
+      return;
     }
 
     const proveedor: ProveedorDto = {
@@ -153,38 +182,38 @@ export class ProveedoresComponent {
       productosDto: [],
       activo: true,
     };
-        
+
     this.entidadService.crearProveedor(proveedor).subscribe({
       next: (data: any) => {
         this.visible = false;
         this.nombre = '';
         this.telefono = '';
-        this.correo = ''; 
-        
+        this.correo = '';
+
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Proveedor creado exitosamente'
+          detail: 'Proveedor creado exitosamente',
         });
-        
-        // Actualizar la lista de proveedores sin recargar la página
+
         this.cargarProveedores();
-      },      
+      },
       error: (err: any) => {
-        console.error('Error al crear proveedor:', err);
         let mensajeError = 'Error al crear proveedor';
         if (err.error && typeof err.error === 'string') {
           mensajeError = err.error;
         } else if (err.message) {
           mensajeError = err.message;
         }
-        
+
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: mensajeError
+          detail: mensajeError,
         });
-      }
+      },
     });
   }
   busqueda: string = '';
@@ -193,54 +222,71 @@ export class ProveedoresComponent {
     if (this.busqueda.trim() === '') {
       this.proveedoresFiltrados = [...this.proveedores];
     } else {
-      this.proveedoresFiltrados = this.proveedores.filter(proveedor => 
+      this.proveedoresFiltrados = this.proveedores.filter((proveedor) =>
         proveedor.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
       );
     }
     this.totalRecords = this.proveedoresFiltrados.length;
   }
-  
-  mostrarDetalles(id: number){
+
+  mostrarDetalles(id: number) {
     this.router.navigate(['/proveedor', id]);
   }
-
   eliminarProveedor(id: number) {
-    if (confirm('¿Está seguro que desea eliminar este proveedor?')) {
+    const proveedor = this.proveedores.find((p) => p.id === id);
 
-      const proveedor = this.proveedores.find(p => p.id === id);
+    this.confirmationService.confirm({
+      message: `¿Está seguro que desea eliminar el proveedor "${proveedor?.nombre}"? Esta acción no se puede deshacer.`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonStyleClass: 'p-button-text',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.entidadService.eliminarPersona(id).subscribe({
+          next: (data: any) => {
+            this.proveedores = this.proveedores.filter((p) => p.id !== id);
+            this.proveedoresFiltrados = this.proveedoresFiltrados.filter(
+              (p) => p.id !== id
+            );
+            this.totalRecords = this.proveedoresFiltrados.length;
 
-      this.entidadService.eliminarPersona(id).subscribe({
-        next: (data: any) => {
-          console.log('Proveedor eliminado exitosamente', data);
-          
-          // Actualizar la lista de proveedores sin recargar la página
-          this.proveedores = this.proveedores.filter(p => p.id !== id);
-          this.proveedoresFiltrados = this.proveedoresFiltrados.filter(p => p.id !== id);
-          this.totalRecords = this.proveedoresFiltrados.length;
-        },
-        error: (err: any) => {
-          console.error('Error al eliminar proveedor:', err);
-          let mensajeError = 'Error al eliminar proveedor';
-          if (err.error && typeof err.error === 'string') {
-            mensajeError += ': ' + err.error;
-          } else if (err.message) {
-            mensajeError += ': ' + err.message;
-          }
-          alert(mensajeError);
-        }
-      });
-    }
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Proveedor eliminado correctamente',
+            });
+          },
+          error: (err: any) => {
+            let mensajeError = 'Error al eliminar proveedor';
+            if (err.error && typeof err.error === 'string') {
+              mensajeError = err.error;
+            } else if (err.message) {
+              mensajeError = err.message;
+            }
+
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: mensajeError,
+            });
+          },
+        });
+      },
+    });
   }
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles) {
       return false;
     }
-    
+
     const hasAdminRole = roles.includes('ADMIN');
-    
+
     return hasAdminRole;
   }
 }

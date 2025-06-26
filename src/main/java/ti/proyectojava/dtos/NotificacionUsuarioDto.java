@@ -16,5 +16,4 @@ public class NotificacionUsuarioDto {
     private List<UsuarioDto> usuarios;
 
     private Boolean activo;
-
 }

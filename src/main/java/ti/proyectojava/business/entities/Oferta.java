@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -12,7 +13,8 @@ import java.time.LocalDate;
 public class Oferta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    @Column(name = "OFERTA_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "OFERTA_ID")
     private Long id;
 
     @Column(name = "OFERTA_DESCRIPCION")
@@ -29,4 +31,7 @@ public class Oferta {
 
     @Column(name = "OFERTA_FIN")
     private LocalDate fin;
+
+    @Column(name = "OFERTA_FECHA_ELIMINADO")
+    private LocalDateTime fechaEliminado;
 }

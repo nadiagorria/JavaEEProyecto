@@ -27,28 +27,22 @@ public class SeguridadController {
 
     @Autowired
     private SeguridadService seguridadService;
-    
+
     @Autowired
     private UsuarioService usuarioService;
 
     @PostMapping("/autenticacion")
     @Transactional(readOnly = true)
-    public ResponseEntity<?> autenticarUsuario(
-            @RequestParam("usuario") String usuario,
-            @RequestParam("password") String password
-    ) {
+    public ResponseEntity<?> autenticarUsuario(@RequestParam("usuario") String usuario, @RequestParam("password") String password) {
         try {
-            Usuario objUsuario = seguridadService
-                    .autenticarUsuario(usuario, password)
-                    .orElseThrow(() -> new RuntimeException("ERROR_SERVIDOR"));
+            Usuario objUsuario = seguridadService.autenticarUsuario(usuario, password).orElseThrow(() -> new RuntimeException("ERROR_SERVIDOR"));
             String token = generarToken(objUsuario);
-            UsuarioSecurityDto usuarioResponse = new UsuarioSecurityDto(objUsuario.getNombre(),
-                            token, seguridadService.listarRolesPorUsuario(objUsuario));
+            UsuarioSecurityDto usuarioResponse = new UsuarioSecurityDto(objUsuario.getNombre(), token, seguridadService.listarRolesPorUsuario(objUsuario));
             return new ResponseEntity<>(usuarioResponse, HttpStatus.OK);
         } catch (RuntimeException e) {
             String errorCode = e.getMessage();
             String errorMessage;
-            
+
             switch (errorCode) {
                 case "USUARIO_INCORRECTO":
                     errorMessage = "El nombre de usuario o la contraseña son incorrectos.";
@@ -62,76 +56,45 @@ public class SeguridadController {
                 default:
                     errorMessage = "Error interno del servidor";
                     errorCode = "ERROR_SERVIDOR";
-                    break;            }
-            
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
+                    break;
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
         }
     }
 
     private String generarToken(Usuario usuario) {
-        String clave = "@Z9@vQ3!pL8#wX7^tR2&nG6*yM4$eB1(dF0)sH5%"; // dinamico desde la BD
-        List<GrantedAuthority> grantedAuthorityList
-                = AuthorityUtils.createAuthorityList(
-                        seguridadService.listarRolesPorUsuario(usuario)
-                );
-        String token = Jwts
-                .builder()
-                .setId("@mY2#wL7^qK9@zT3!vX5&nR8*pG1$eD4(sF0)dH6%") // Dinámico desde BD
-                .setSubject(usuario.getNombre())
-                .claim("authorities",
-                        grantedAuthorityList.stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList())
-                )
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 8)))
-                .signWith(SignatureAlgorithm.HS512, clave.getBytes())
-                .compact();
+        String clave = "@Z9@vQ3!pL8#wX7^tR2&nG6*yM4$eB1(dF0)sH5%";
+        List<GrantedAuthority> grantedAuthorityList = AuthorityUtils.createAuthorityList(seguridadService.listarRolesPorUsuario(usuario));
+        String token = Jwts.builder().setId("@mY2#wL7^qK9@zT3!vX5&nR8*pG1$eD4(sF0)dH6%").setSubject(usuario.getNombre()).claim("authorities", grantedAuthorityList.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 8))).signWith(SignatureAlgorithm.HS512, clave.getBytes()).compact();
         return token;
     }
 
     @PostMapping("/registro")
-    public ResponseEntity<?> registrarUsuario(
-            @RequestParam("username") String username,
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
-    ) {
+    public ResponseEntity<?> registrarUsuario(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin) {
         try {
-            // Validar longitud mínima de contraseña
             if (password.length() < 6) {
-                return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"CONTRASENIA_CORTA\", \"message\": \"La contraseña debe tener al menos 6 caracteres\"}");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"CONTRASENIA_CORTA\", \"message\": \"La contraseña debe tener al menos 6 caracteres\"}");
             }
 
-            // Crear DTO del usuario
             UsuarioDto usuarioDto = new UsuarioDto();
             usuarioDto.setNombre(username);
             usuarioDto.setMail(email);
             usuarioDto.setContrasenia(password);
-            usuarioDto.setActivo(true); // Establecer usuario como activo al registrarse
-            
-            // Intentar crear el usuario con rol asignado
+            usuarioDto.setActivo(true);
+
             String resultado = usuarioService.crearUsuario(usuarioDto, isAdmin);
-            
+
             if (resultado != null) {
-                return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body("{\"success\": true, \"message\": \"Usuario registrado exitosamente\", \"username\": \"" + username + "\"}");
+                return ResponseEntity.status(HttpStatus.CREATED).body("{\"success\": true, \"message\": \"Usuario registrado exitosamente\", \"username\": \"" + username + "\"}");
             } else {
-                return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"ERROR_REGISTRO\", \"message\": \"Error al registrar usuario\"}");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"ERROR_REGISTRO\", \"message\": \"Error al registrar usuario\"}");
             }
-            
+
         } catch (RuntimeException e) {
-            // Manejar errores específicos del servicio
             String errorCode;
             String errorMessage;
-            
+
             switch (e.getMessage()) {
                 case "USUARIO_EXISTENTE":
                     errorCode = "USUARIO_EXISTENTE";
@@ -158,14 +121,10 @@ public class SeguridadController {
                     errorMessage = e.getMessage();
                     break;
             }
-            
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"" + errorCode + "\", \"message\": \"" + errorMessage + "\"}");
         } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error interno del servidor\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error interno del servidor\"}");
         }
     }
 
@@ -173,12 +132,9 @@ public class SeguridadController {
     public ResponseEntity<?> verificarUsuario(@PathVariable String username) {
         try {
             boolean existe = seguridadService.existeUsuario(username);
-            return ResponseEntity.ok()
-                .body("{\"existe\": " + existe + "}");
+            return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
         } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar usuario\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar usuario\"}");
         }
     }
 
@@ -186,12 +142,9 @@ public class SeguridadController {
     public ResponseEntity<?> verificarEmail(@PathVariable String email) {
         try {
             boolean existe = seguridadService.existeEmailActivo(email);
-            return ResponseEntity.ok()
-                .body("{\"existe\": " + existe + "}");
+            return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
         } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar email\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"ERROR_SERVIDOR\", \"message\": \"Error al verificar email\"}");
         }
     }
 

@@ -5,24 +5,28 @@ import { LoteDto } from '../models/lote.dto';
 import { UrlService } from './url.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoteService {
-  private endpoint: string = '/lote';  constructor(
-    private http: HttpClient,
-    private urlService: UrlService
-  ) {}  crearLote(lote: LoteDto): Observable<any> {
-    // Con LocalDate en el backend, ya no necesitamos formatear nada
-    // El backend automáticamente parsea strings ISO (YYYY-MM-DD)
-    console.log('🚀 SERVICIO - Payload completo:', lote);
-    
-    return this.http.post(`${this.urlService.baseUrl}${this.endpoint}/crear`, lote, { 
-      responseType: 'text' 
-    });
+  private endpoint: string = '/lote';
+  constructor(private http: HttpClient, private urlService: UrlService) {}
+
+  crearLote(lote: LoteDto): Observable<any> {
+    return this.http.post(
+      `${this.urlService.baseUrl}${this.endpoint}/crear`,
+      lote,
+      {
+        responseType: 'text',
+      }
+    );
   }
   eliminarLote(id: number): Observable<string> {
-    return this.http.put(`${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`, {}, {
-      responseType: 'text'
-    });
+    return this.http.put(
+      `${this.urlService.baseUrl}${this.endpoint}/${id}/eliminar`,
+      {},
+      {
+        responseType: 'text',
+      }
+    );
   }
 }

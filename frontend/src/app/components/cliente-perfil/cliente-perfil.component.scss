@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
 }
@@ -36,7 +37,6 @@ main {
   margin: 0;
 }
 
-// Estilos para el avatar del cliente - separado más de las cards
 .cliente-avatar {
   display: flex;
   align-items: center;
@@ -44,7 +44,7 @@ main {
   height: 280px;
   width: 25vw;
   margin-right: 5vw;
-  margin-left: 3rem; // Separación adicional de las cards
+  margin-left: 3rem;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -91,7 +91,7 @@ main {
 .numero1MiniCartel {
   height: 20px;
   margin-top: 12px;
-  font-size: 1.40rem;
+  font-size: 1.4rem;
 }
 
 .texito {
@@ -103,7 +103,7 @@ main {
   font-size: 0.9rem;
 }
 
-.papaBoton{
+.papaBoton {
   display: flex;
   justify-content: flex-end;
   padding-right: 1vw;
@@ -129,7 +129,7 @@ main {
 
 .cartelEditar {
   margin-top: 30px;
-  
+
   .p-button-outlined {
     border: 2px solid #17a2b8 !important;
     color: #17a2b8 !important;
@@ -138,76 +138,75 @@ main {
     border-radius: 6px !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
-    
+
     &:hover {
       background: #17a2b8 !important;
       color: white !important;
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3) !important;
     }
-    
+
     &:focus {
       box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5) !important;
     }
   }
 }
 
-// Mejorar estilos del modal de edición
 ::ng-deep .p-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-bottom: 1px solid #dee2e6;
     border-radius: 8px 8px 0 0;
-    
+
     .p-dialog-title {
       font-weight: 700;
       color: #2c3e50;
     }
   }
-  
+
   .p-dialog-content {
     padding: 2rem;
     background: white;
-    
+
     .field label {
       font-weight: 600;
       color: #2c3e50;
     }
-    
+
     input {
       border-radius: 6px;
       border: 1px solid #ddd;
       transition: all 0.2s ease;
-      
+
       &:focus {
         border-color: #64748b;
         box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.15);
       }
     }
   }
-  
+
   .p-dialog-footer {
     background: #f8f9fa;
     border-top: 1px solid #dee2e6;
     border-radius: 0 0 8px 8px;
-    
+
     .p-button {
       border-radius: 6px;
       font-weight: 600;
-      
+
       &.p-button-text {
         color: #6c757d;
-        
+
         &:hover {
           background: rgba(108, 117, 125, 0.1);
           color: #495057;
         }
       }
-      
+
       &[severity="secondary"] {
         background-color: #64748b;
         border-color: #64748b;
-        
+
         &:hover {
           background-color: #475569;
           border-color: #475569;
@@ -217,31 +216,34 @@ main {
   }
 }
 
-// Estilos para el modal de pago
 .form-payment {
   .deuda-info {
-    background: linear-gradient(135deg, rgba(100, 116, 139, 0.1) 0%, rgba(71, 85, 105, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(100, 116, 139, 0.1) 0%,
+      rgba(71, 85, 105, 0.05) 100%
+    );
     border-radius: 10px;
     padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
     border: 1px solid rgba(100, 116, 139, 0.15);
-    
+
     .deuda-info-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0.5rem 0;
-      
+
       &:not(:last-child) {
         border-bottom: 1px solid rgba(100, 116, 139, 0.1);
       }
-      
+
       .deuda-label {
         font-weight: 500;
         color: #475569;
         font-size: 0.95rem;
       }
-      
+
       .deuda-value {
         font-weight: 700;
         color: #2c3e50;
@@ -249,24 +251,24 @@ main {
       }
     }
   }
-  
+
   .form-group {
     margin-bottom: 1rem;
-    
+
     label {
       display: block;
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
       font-size: 0.95rem;
-      
+
       &::after {
         content: " *";
         color: #dc3545;
         font-weight: 400;
       }
     }
-    
+
     input {
       border-radius: 8px;
       transition: all 0.3s ease;
@@ -275,20 +277,20 @@ main {
       padding: 0.85rem;
       font-size: 1rem;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      
+
       &:focus {
         box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
         border-color: #64748b;
         outline: none;
         transform: translateY(-1px);
       }
-      
+
       &::placeholder {
         color: #adb5bd;
         font-style: italic;
       }
     }
-    
+
     .help-text {
       display: block;
       margin-top: 0.5rem;
@@ -300,7 +302,6 @@ main {
   }
 }
 
-// Estilo para el modal similar al de lote
 ::ng-deep .lote-dialog {
   .p-dialog-header {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
@@ -308,44 +309,44 @@ main {
     border: none;
     border-radius: 12px 12px 0 0;
     padding: 1.25rem 1.5rem;
-    
+
     .p-dialog-title {
       font-weight: 600;
       font-size: 1.25rem;
       color: white;
       letter-spacing: 0.5px;
     }
-    
+
     .p-dialog-header-icon {
       color: white;
       transition: all 0.2s ease;
-      
+
       &:hover {
         transform: rotate(90deg);
         background-color: rgba(255, 255, 255, 0.1);
       }
     }
   }
-  
+
   .p-dialog-content {
     padding: 1.75rem;
     border: none;
     overflow: auto;
     background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-    
+
     .field label {
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
       font-size: 0.95rem;
-      
+
       &::after {
         content: " *";
         color: #dc3545;
         font-weight: 400;
       }
     }
-    
+
     input {
       border-radius: 8px;
       border: 1px solid #ddd;
@@ -353,19 +354,19 @@ main {
       padding: 0.85rem;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
       font-size: 0.95rem;
-      
+
       &:focus {
         border-color: #64748b;
         box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
         transform: translateY(-1px);
       }
-      
+
       &::placeholder {
         color: #adb5bd;
         font-style: italic;
       }
     }
-    
+
     .help-text {
       display: block;
       margin-top: 0.5rem;
@@ -374,7 +375,7 @@ main {
       font-style: italic;
       padding-left: 0.25rem;
     }
-      .p-inputgroup {
+    .p-inputgroup {
       .p-inputgroup-addon {
         background-color: #f8f9fa;
         border-color: #ddd;
@@ -388,11 +389,11 @@ main {
         min-width: 45px;
         border-right: none;
       }
-      
+
       input {
         border-radius: 0 8px 8px 0 !important;
         border-left: none !important;
-        
+
         &:focus {
           border-color: #64748b !important;
           box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15) !important;
@@ -400,7 +401,7 @@ main {
       }
     }
   }
-  
+
   .p-dialog-footer {
     border: none;
     padding: 1.25rem 1.75rem;
@@ -410,63 +411,62 @@ main {
     justify-content: flex-end;
     gap: 0.75rem;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
-    
+
     .p-button {
       border-radius: 8px;
       font-weight: 500;
       padding: 0.85rem 1.5rem;
       transition: all 0.3s ease;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      
+
       &.p-button-text {
         box-shadow: none;
         color: #64748b;
-        
+
         &:hover {
           background: rgba(100, 116, 139, 0.1);
           color: #475569;
           transform: translateY(-1px);
         }
       }
-      
+
       &.p-button-success {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         border: none;
         box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-        
+
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
         }
-        
+
         &:active {
           transform: translateY(0);
         }
       }
-      
+
       &[severity="secondary"] {
         background: linear-gradient(135deg, #64748b 0%, #475569 100%);
         border: none;
         box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-        
+
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 15px rgba(100, 116, 139, 0.4);
         }
-        
+
         &:active {
           transform: translateY(0);
         }
       }
     }
   }
-  
-  // Animación para la apertura del modal
+
   &.p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
     backdrop-filter: blur(3px);
   }
-  
+
   &.p-dialog {
     animation: zoomIn 0.3s ease-out;
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
@@ -476,10 +476,13 @@ main {
   }
 }
 
-// Keyframes para animaciones
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInDown {
@@ -504,7 +507,6 @@ main {
   }
 }
 
-// Paginación
 .paginador {
   color: #2c3e50;
   height: 20px;
@@ -522,7 +524,6 @@ main {
   border-right: none !important;
 }
 
-// Responsive design
 @media (max-width: 768px) {
   main {
     margin-left: 5vw;
@@ -530,35 +531,34 @@ main {
     padding-left: 1vw;
     padding-right: 1vw;
   }
-  
+
   .miniCartel {
     width: 100%;
     margin-bottom: 1rem;
   }
-  
+
   .cliente-avatar {
     width: 100%;
     height: 200px;
     margin-right: 0;
     margin-top: 1rem;
   }
-  
+
   .cliente-icon {
     font-size: 4rem;
   }
-  
+
   article.flex {
     flex-direction: column;
   }
 }
 
-// Estilos para el modal de edición de cliente
 .cliente-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 1.5rem;
-  
+
   .cliente-info-avatar {
     width: 80px;
     height: 80px;
@@ -570,13 +570,13 @@ main {
     margin-bottom: 0.75rem;
     box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
     border: 3px solid white;
-    
+
     i {
       font-size: 2.5rem;
       color: white;
     }
   }
-  
+
   .cliente-info-id {
     font-size: 0.9rem;
     color: #6c757d;
@@ -588,7 +588,6 @@ main {
   }
 }
 
-// Estilos para los labels con iconos
 ::ng-deep .lote-dialog .p-dialog-content .field label {
   font-weight: 600;
   color: #2c3e50;
@@ -596,16 +595,13 @@ main {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   i {
     color: #64748b;
     font-size: 0.9rem;
   }
 }
 
-
-
-// Estilos para mejorar la alineación del símbolo $ en el input de pago
 ::ng-deep .p-inputgroup {
   .p-inputgroup-addon {
     background-color: #f8f9fa;
@@ -620,17 +616,14 @@ main {
     min-width: 45px;
     border-right: none;
   }
-  
+
   input {
     border-radius: 0 8px 8px 0 !important;
     border-left: none;
-    
+
     &:focus {
       border-color: #64748b;
       box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
     }
   }
 }
-
-
-

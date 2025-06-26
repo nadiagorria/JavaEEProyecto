@@ -14,11 +14,24 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { ProductoDto, VentaDto, ClienteDto, UsuarioDto, CantidadDto, CreditoDto, ComboDto, PromocionDto, DescuentoDto } from 'src/models';
+import {
+  ProductoDto,
+  VentaDto,
+  ClienteDto,
+  UsuarioDto,
+  CantidadDto,
+  CreditoDto,
+  ComboDto,
+  PromocionDto,
+  DescuentoDto,
+} from 'src/models';
 import { ProductoService } from '../../../services/producto.service';
 import { VentaService } from '../../../services/venta.service';
 import { CreditoService } from 'src/services/credito.service';
-import { OfertaService, ResponseListadoCombos } from 'src/services/oferta.service';
+import {
+  OfertaService,
+  ResponseListadoCombos,
+} from 'src/services/oferta.service';
 import { NotificacionService } from 'src/services/notificacion.service';
 import { HeaderComponent } from '../header/header.component';
 import { SeleccionProductoDialogComponent } from '../seleccion-producto-dialog/seleccion-producto-dialog.component';
@@ -27,7 +40,6 @@ import { Router, NavigationStart } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 
-// Interfaz para los items de la venta con información de ofertas
 interface ItemVenta extends CantidadDto {
   precioOriginal: number;
   precioConDescuento: number;
@@ -35,7 +47,10 @@ interface ItemVenta extends CantidadDto {
   tipoOferta?: 'combo' | 'promocion' | 'descuento';
   nombreOferta?: string;
   porcentajeDescuento?: number;
-  producto: Pick<ProductoDto, 'id' | 'nombre' | 'precioVenta' | 'codigoDeBarra' | 'stockTotal'>;
+  producto: Pick<
+    ProductoDto,
+    'id' | 'nombre' | 'precioVenta' | 'codigoDeBarra' | 'stockTotal'
+  >;
 }
 
 @Component({
@@ -54,44 +69,52 @@ interface ItemVenta extends CantidadDto {
     CommonModule,
     HeaderComponent,
     ConfirmDialogModule,
-    SeleccionProductoDialogComponent
+    SeleccionProductoDialogComponent,
   ],
   templateUrl: './nuevaventa.component.html',
   styleUrl: './nuevaventa.component.scss',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
 })
-export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class NuevaventaComponent
+  implements OnInit, OnDestroy, CanComponentDeactivate
+{
   productoSeleccionado: ProductoDto | null = null;
   cantidades: ItemVenta[] = [];
   productosFiltrados: ProductoDto[] = [];
   productos: ProductoDto[] = [];
-  // Control de navegación y confirmación
+
   mostrarDialogoConfirmacion: boolean = false;
   rutaNavegacionPendiente: string | null = null;
   navigationSubscription: Subscription | null = null;
 
-  // Variables para detectar cambios en cantidad
   private cantidadAnterior: Map<number, number> = new Map();
 
-  // Escáner físico USB
   escanerActivo: boolean = false;
   codigoBarrasBuffer: string = '';
   ultimoTiempo: number = 0;
-  private readonly TIEMPO_LIMITE_CARACTER = 50; // ms entre caracteres del escáner
-  // Ofertas disponibles
+  private readonly TIEMPO_LIMITE_CARACTER = 50;
   combos: ComboDto[] = [];
   promociones: PromocionDto[] = [];
   descuentos: DescuentoDto[] = [];
   displayDialog: boolean = false;
+  procesandoVenta: boolean = false;
 
-  // Variables para diálogo de selección de productos duplicados
   displaySeleccionProducto: boolean = false;
   productosDuplicados: ProductoDto[] = [];
   codigoBarrasEscaneado: string = '';
 
-  creditoSeleccionado: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'> | null = null;
-  creditos: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
-  creditosFiltrados: Pick<CreditoDto, 'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'>[] = [];
+  creditoSeleccionado: Pick<
+    CreditoDto,
+    'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'
+  > | null = null;
+  creditos: Pick<
+    CreditoDto,
+    'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'
+  >[] = [];
+  creditosFiltrados: Pick<
+    CreditoDto,
+    'id' | 'precioTotal' | 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora'
+  >[] = [];
   formaPagoSeleccionada: string = '';
   totalRecords: number = 0;
 
@@ -99,8 +122,9 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     { label: 'Efectivo', value: 'EFECTIVO' },
     { label: 'Crédito', value: 'CREDITO' },
     { label: 'Débito', value: 'DEBITO' },
-    { label: 'Fiado', value: 'FIADO' }
-  ]; constructor(
+    { label: 'Fiado', value: 'FIADO' },
+  ];
+  constructor(
     private productoService: ProductoService,
     private ventaService: VentaService,
     private creditoService: CreditoService,
@@ -109,25 +133,25 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router
-  ) { } ngOnInit() {
+  ) {}
+  ngOnInit() {
     this.cargarProductos();
     this.cargarOfertas();
     this.cargarCreditos();
   }
 
   ngOnDestroy() {
-    // Limpieza si es necesaria
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
   }
 
-  // Implementación del guard de navegación
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     if (this.hayProductosEnVenta()) {
       return new Promise<boolean>((resolve) => {
         this.confirmationService.confirm({
-          message: '¿Está seguro que desea salir? Si sale de esta página, perderá todos los productos agregados a la venta actual.',
+          message:
+            '¿Está seguro que desea salir? Si sale de esta página, perderá todos los productos agregados a la venta actual.',
           header: 'Confirmar salida',
           icon: 'pi pi-exclamation-triangle',
           acceptLabel: 'Sí, salir',
@@ -139,14 +163,13 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           },
           reject: () => {
             resolve(false);
-          }
+          },
         });
       });
     }
     return true;
   }
 
-  // Detector de cierre de ventana
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent) {
     if (this.hayProductosEnVenta()) {
@@ -157,12 +180,10 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return undefined;
   }
 
-  // Método para verificar si hay productos en la venta actual
   hayProductosEnVenta(): boolean {
     return this.cantidades.length > 0;
   }
 
-  // Método para confirmar la navegación
   confirmarNavegacion() {
     this.mostrarDialogoConfirmacion = false;
     if (this.rutaNavegacionPendiente) {
@@ -171,37 +192,37 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     }
   }
 
-  // Método para cancelar la navegación
   cancelarNavegacion() {
     this.mostrarDialogoConfirmacion = false;
     this.rutaNavegacionPendiente = null;
   }
 
-  // ==================== CARGA DE DATOS ====================
-
   cargarOfertas() {
-    // Cargar combos
     this.ofertaService.listarCombos().subscribe({
       next: (response) => {
-        this.combos = response.combos.filter(combo => this.esOfertaVigente(combo));
+        this.combos = response.combos.filter((combo) =>
+          this.esOfertaVigente(combo)
+        );
       },
-      error: (error) => console.error('Error al cargar combos:', error)
+      error: (error) => console.error('Error al cargar combos:', error),
     });
 
-    // Cargar promociones
     this.ofertaService.listarPromociones().subscribe({
       next: (response) => {
-        this.promociones = response.promociones.filter(promo => this.esOfertaVigente(promo));
+        this.promociones = response.promociones.filter((promo) =>
+          this.esOfertaVigente(promo)
+        );
       },
-      error: (error) => console.error('Error al cargar promociones:', error)
+      error: (error) => console.error('Error al cargar promociones:', error),
     });
 
-    // Cargar descuentos
     this.ofertaService.listarDescuentos().subscribe({
       next: (response) => {
-        this.descuentos = response.descuentos.filter(desc => this.esOfertaVigente(desc));
+        this.descuentos = response.descuentos.filter((desc) =>
+          this.esOfertaVigente(desc)
+        );
       },
-      error: (error) => console.error('Error al cargar descuentos:', error)
+      error: (error) => console.error('Error al cargar descuentos:', error),
     });
   }
 
@@ -212,13 +233,13 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         this.creditosFiltrados = [...this.creditos];
       },
       error: (error) => {
-        console.error('Error al cargar créditos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar los créditos'
+          detail: 'Error al cargar los créditos',
         });
-      }
+      },
     });
   }
 
@@ -228,17 +249,15 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
         this.productos = response.productos;
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar los productos'
+          detail: 'Error al cargar los productos',
         });
-      }
+      },
     });
   }
-
-  // ==================== LÓGICA DE OFERTAS ====================
 
   esOfertaVigente(oferta: ComboDto | PromocionDto | DescuentoDto): boolean {
     const ahora = new Date();
@@ -247,8 +266,7 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     return oferta.activo && ahora >= inicio && ahora <= fin;
   }
   aplicarOfertas() {
-    // Primero resetear todas las ofertas
-    this.cantidades.forEach(item => {
+    this.cantidades.forEach((item) => {
       item.precioOriginal = item.producto.precioVenta * item.cantidad;
       item.precioConDescuento = item.producto.precioVenta * item.cantidad;
       item.tieneOferta = false;
@@ -257,17 +275,19 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       item.porcentajeDescuento = undefined;
     });
 
-    // Aplicar ofertas en orden de prioridad
     this.aplicarDescuentos();
     this.aplicarPromociones();
     this.aplicarCombos();
   }
   aplicarDescuentos() {
-    this.cantidades.forEach(item => {
-      const descuento = this.descuentos.find(d => d.producto.id === item.producto.id);
+    this.cantidades.forEach((item) => {
+      const descuento = this.descuentos.find(
+        (d) => d.producto.id === item.producto.id
+      );
       if (descuento) {
         const precioUnitarioOriginal = item.producto.precioVenta;
-        const precioUnitarioConDescuento = precioUnitarioOriginal * (1 - descuento.descuento / 100);
+        const precioUnitarioConDescuento =
+          precioUnitarioOriginal * (1 - descuento.descuento / 100);
 
         item.precioOriginal = precioUnitarioOriginal * item.cantidad;
         item.precioConDescuento = precioUnitarioConDescuento * item.cantidad;
@@ -279,69 +299,79 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     });
   }
   aplicarPromociones() {
-    this.promociones.forEach(promocion => {
-      const itemsPromocion = this.cantidades.filter(item => item.producto.id === promocion.producto.id);
+    this.promociones.forEach((promocion) => {
+      const itemsPromocion = this.cantidades.filter(
+        (item) => item.producto.id === promocion.producto.id
+      );
 
-      itemsPromocion.forEach(item => {
+      itemsPromocion.forEach((item) => {
         if (item.cantidad >= promocion.descuento) {
-          // Número de grupos completos de la promoción (ej: para 3x2, cuántos grupos de 3 hay)
-          const gruposCompletos = Math.floor(item.cantidad / promocion.descuento);
-          // Productos sueltos que no forman un grupo completo
+          const gruposCompletos = Math.floor(
+            item.cantidad / promocion.descuento
+          );
+
           const productosRestantes = item.cantidad % promocion.descuento;
 
-          // En cada grupo completo, cobras (promocion.descuento - 1) productos
-          // Ejemplo: en 3x2, por cada grupo de 3 cobras 2
-          const productosCobrados = (gruposCompletos * (promocion.descuento - 1)) + productosRestantes;
+          const productosCobrados =
+            gruposCompletos * (promocion.descuento - 1) + productosRestantes;
           const precioPromo = productosCobrados * item.producto.precioVenta;
 
           item.precioOriginal = item.producto.precioVenta * item.cantidad;
           item.precioConDescuento = precioPromo;
           item.tieneOferta = true;
           item.tipoOferta = 'promocion';
-          item.nombreOferta = `Promoción ${promocion.descuento}x${promocion.descuento - 1}`;
+          item.nombreOferta = `Promoción ${promocion.descuento}x${
+            promocion.descuento - 1
+          }`;
         }
       });
     });
-  } aplicarCombos() {
-    // Obtener productos únicos en la venta
-    const productosUnicos = [...new Set(this.cantidades.map(item => item.producto.id!))];
+  }
+  aplicarCombos() {
+    const productosUnicos = [
+      ...new Set(this.cantidades.map((item) => item.producto.id!)),
+    ];
 
-    // Para cada producto único, verificar combos
-    productosUnicos.forEach(productoId => {
+    productosUnicos.forEach((productoId) => {
       this.ofertaService.getCombosByProducto(productoId).subscribe({
         next: (response: ResponseListadoCombos) => {
-          const combosDelProducto = response.combos.filter(combo => this.esOfertaVigente(combo));
+          const combosDelProducto = response.combos.filter((combo) =>
+            this.esOfertaVigente(combo)
+          );
 
           combosDelProducto.forEach((combo: ComboDto) => {
-            // Verificar si todos los productos del combo están en la venta
             const productosDelCombo = combo.productos.map((p: any) => p.id);
-            const productosEnVenta = this.cantidades.map(c => c.producto.id);
+            const productosEnVenta = this.cantidades.map((c) => c.producto.id);
 
-            const tieneeTodosLosProductos = productosDelCombo.every((idProducto: any) =>
-              productosEnVenta.includes(idProducto)
+            const tieneeTodosLosProductos = productosDelCombo.every(
+              (idProducto: any) => productosEnVenta.includes(idProducto)
             );
 
             if (tieneeTodosLosProductos) {
-              // Obtener todos los items del combo
-              const itemsDelCombo = this.cantidades.filter(c =>
+              const itemsDelCombo = this.cantidades.filter((c) =>
                 productosDelCombo.includes(c.producto.id)
               );
 
-              // Encontrar la cantidad mínima común para aplicar el combo
-              const cantidadMinima = Math.min(...itemsDelCombo.map(c => c.cantidad));
+              const cantidadMinima = Math.min(
+                ...itemsDelCombo.map((c) => c.cantidad)
+              );
 
               if (cantidadMinima > 0) {
-                // Aplicar descuento a todos los productos del combo
-                itemsDelCombo.forEach(item => {
+                itemsDelCombo.forEach((item) => {
                   const precioUnitarioOriginal = item.producto.precioVenta;
-                  const precioUnitarioConDescuento = precioUnitarioOriginal * (1 - combo.descuento / 100);
+                  const precioUnitarioConDescuento =
+                    precioUnitarioOriginal * (1 - combo.descuento / 100);
 
-                  const precioOriginalTotal = precioUnitarioOriginal * item.cantidad;
-                  const precioConCombo = (precioUnitarioConDescuento * cantidadMinima) +
-                    (precioUnitarioOriginal * (item.cantidad - cantidadMinima));
+                  const precioOriginalTotal =
+                    precioUnitarioOriginal * item.cantidad;
+                  const precioConCombo =
+                    precioUnitarioConDescuento * cantidadMinima +
+                    precioUnitarioOriginal * (item.cantidad - cantidadMinima);
 
-                  // Solo aplicar si es mejor que la oferta actual
-                  if (!item.tieneOferta || item.precioConDescuento > precioConCombo) {
+                  if (
+                    !item.tieneOferta ||
+                    item.precioConDescuento > precioConCombo
+                  ) {
                     item.precioOriginal = precioOriginalTotal;
                     item.precioConDescuento = precioConCombo;
                     item.tieneOferta = true;
@@ -354,12 +384,11 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
             }
           });
         },
-        error: (error: any) => console.error('Error al cargar combos del producto:', error)
+        error: (error: any) =>
+          console.error('Error al cargar combos del producto:', error),
       });
     });
   }
-
-  // ==================== FUNCIONES AUXILIARES ====================
 
   onFormaPagoChange() {
     if (this.formaPagoSeleccionada === 'FIADO') {
@@ -370,79 +399,77 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   getPrecioVenta(productoId: number): number | undefined {
-    return this.productos.find(p => p.id === productoId)?.precioVenta;
+    return this.productos.find((p) => p.id === productoId)?.precioVenta;
   }
   getPrecioFinal(item: ItemVenta): number {
-    return item.tieneOferta ? item.precioConDescuento : item.producto.precioVenta * item.cantidad;
+    return item.tieneOferta
+      ? item.precioConDescuento
+      : item.producto.precioVenta * item.cantidad;
   }
 
-  // ==================== LÓGICA DE CRÉDITOS ====================
-  /**
-   * Filtra los clientes basándose en el texto de búsqueda
-   */
   filtrarClientes(event: { query: string }) {
     const query = event.query.toLowerCase().trim();
 
     if (query === '') {
       this.creditosFiltrados = [...this.creditos];
     } else {
-      this.creditosFiltrados = this.creditos.filter(credito =>
+      this.creditosFiltrados = this.creditos.filter((credito) =>
         credito.cliente.nombre.toLowerCase().includes(query)
       );
     }
   }
 
-  /**
-   * Calcula el dinero disponible que puede gastar un cliente
-   */
-  calcularDineroDisponible(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): number {
+  calcularDineroDisponible(
+    credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>
+  ): number {
     const deudaActual = credito.precioTotal;
     return Math.max(0, credito.maximo - deudaActual);
   }
-  /**
-   * Verifica si el cliente puede realizar la compra sin superar su límite de crédito
-   */
-  puedeRealizarCompra(credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
+  puedeRealizarCompra(
+    credito: Pick<CreditoDto, 'maximo' | 'pagoHastaAhora' | 'precioTotal'>
+  ): boolean {
     const totalVenta = this.calcularTotal();
     const dineroDisponible = this.calcularDineroDisponible(credito);
     return totalVenta <= dineroDisponible;
   }
 
-  /**
-   * Verifica si el total de la venta supera el crédito mínimo requerido
-   */
   superaCreditoMinimo(credito: Pick<CreditoDto, 'minimo'>): boolean {
     const totalVenta = this.calcularTotal();
     return totalVenta >= credito.minimo;
   }
 
-  /**
-   * Verifica si el cliente puede realizar la compra (supera mínimo y no excede máximo)
-   */
-  puedeComprarConCredito(credito: Pick<CreditoDto, 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): boolean {
-    return this.puedeRealizarCompra(credito) && this.superaCreditoMinimo(credito);
+  puedeComprarConCredito(
+    credito: Pick<
+      CreditoDto,
+      'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'
+    >
+  ): boolean {
+    return (
+      this.puedeRealizarCompra(credito) && this.superaCreditoMinimo(credito)
+    );
   }
-  /**
-   * Obtiene el texto descriptivo del crédito disponible para mostrar en el dropdown
-   */
-  getTextoCredito(credito: Pick<CreditoDto, 'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'>): string {
+  getTextoCredito(
+    credito: Pick<
+      CreditoDto,
+      'cliente' | 'maximo' | 'minimo' | 'pagoHastaAhora' | 'precioTotal'
+    >
+  ): string {
     const dineroDisponible = this.calcularDineroDisponible(credito);
     const deudaActual = credito.precioTotal - credito.pagoHastaAhora;
-    return `${credito.cliente.nombre} - Disponible: $${dineroDisponible.toFixed(2)} (Deuda: $${deudaActual.toFixed(2)})`;
+    return `${credito.cliente.nombre} - Disponible: $${dineroDisponible.toFixed(
+      2
+    )} (Deuda: $${deudaActual.toFixed(2)})`;
   }
 
-  /**
-   * Verifica si la forma de pago es FIADO
-   */
   esPagoFiado(): boolean {
     return this.formaPagoSeleccionada === 'FIADO';
   }
   filtrarProductos(event: { query: string }) {
     const query = event.query.toLowerCase();
 
-    // Matches exactos de códigos de barras
-    const matchesExactos = this.productos.filter(producto =>
-      producto.codigoDeBarra.toLowerCase() === query && producto.activo
+    const matchesExactos = this.productos.filter(
+      (producto) =>
+        producto.codigoDeBarra.toLowerCase() === query && producto.activo
     );
 
     if (matchesExactos.length > 0) {
@@ -450,33 +477,27 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Sino, busca por inicio de código o nombre
-    this.productosFiltrados = this.productos.filter(producto =>
-      producto.activo && (
-        producto.codigoDeBarra.toLowerCase().startsWith(query) ||
-        producto.nombre.toLowerCase().includes(query)
-      )
+    this.productosFiltrados = this.productos.filter(
+      (producto) =>
+        producto.activo &&
+        (producto.codigoDeBarra.toLowerCase().startsWith(query) ||
+          producto.nombre.toLowerCase().includes(query))
     );
   }
 
-  /**
-   * Verifica si un producto tiene stock disponible
-   */
   tieneStock(producto: ProductoDto): boolean {
     return producto.stockTotal > 0;
   }
 
-  /**
-   * Evita que se seleccionen productos sin stock
-   */
   onProductoSelect(event: any): void {
     const producto = event.value;
     if (!this.tieneStock(producto)) {
       event.preventDefault();
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Sin stock',
-        detail: `El producto ${producto.nombre} no tiene stock disponible`
+        detail: `El producto ${producto.nombre} no tiene stock disponible`,
       });
       this.productoSeleccionado = null;
       return;
@@ -485,27 +506,29 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
   agregarALista(event: { value: ProductoDto }) {
     const producto = event.value;
-    const itemExistente = this.cantidades.find(c => c.producto.id === producto.id);
+    const itemExistente = this.cantidades.find(
+      (c) => c.producto.id === producto.id
+    );
 
     if (itemExistente) {
-      // Verificar stock disponible antes de incrementar
       const cantidadTotal = itemExistente.cantidad + 1;
       if (cantidadTotal > producto.stockTotal) {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'warn',
           summary: 'Stock insuficiente',
-          detail: `Solo quedan ${producto.stockTotal} unidades de ${producto.nombre} en stock`
+          detail: `Solo quedan ${producto.stockTotal} unidades de ${producto.nombre} en stock`,
         });
         return;
       }
       itemExistente.cantidad++;
     } else {
-      // Verificar stock disponible antes de agregar
       if (producto.stockTotal < 1) {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'warn',
           summary: 'Sin stock',
-          detail: `No hay stock disponible de ${producto.nombre}`
+          detail: `No hay stock disponible de ${producto.nombre}`,
         });
         return;
       }
@@ -522,18 +545,17 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           nombre: producto.nombre,
           precioVenta: producto.precioVenta,
           codigoDeBarra: producto.codigoDeBarra,
-          stockTotal: producto.stockTotal
+          stockTotal: producto.stockTotal,
         },
         venta: {
           id: null,
-          fechaVenta: ''
-        }
+          fechaVenta: '',
+        },
       };
       this.cantidades.push(nuevoItem);
       this.totalRecords++;
     }
 
-    // Aplicar ofertas después de agregar producto
     this.aplicarOfertas();
     this.productoSeleccionado = null;
   }
@@ -543,8 +565,9 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   calcularTotal(): number {
-    return this.cantidades.reduce((total, item) =>
-      total + this.getPrecioFinal(item), 0
+    return this.cantidades.reduce(
+      (total, item) => total + this.getPrecioFinal(item),
+      0
     );
   }
 
@@ -558,90 +581,108 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   eliminarProducto(item: ItemVenta) {
-    const index = this.cantidades.findIndex(c => c.producto.id === item.producto.id);
+    const index = this.cantidades.findIndex(
+      (c) => c.producto.id === item.producto.id
+    );
     if (index !== -1) {
       this.cantidades = this.cantidades.filter((_, i) => i !== index);
       this.totalRecords--;
-      // Reaplicar ofertas después de eliminar
+
       this.aplicarOfertas();
     }
   }
 
-  // ==================== VENTA ====================
-
   finalizarVenta() {
     if (this.cantidades.length === 0) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'No hay productos en la venta'
+        detail: 'No hay productos en la venta',
       });
       return;
     }
     this.displayDialog = true;
   }
   confirmarVenta() {
-    // Validación de forma de pago
+    if (this.procesandoVenta) {
+      return;
+    }
+
     if (!this.formaPagoSeleccionada) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Debe seleccionar una forma de pago'
+        detail: 'Debe seleccionar una forma de pago',
       });
       return;
     }
 
-    // Validación de productos en la venta
     if (this.cantidades.length === 0) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'No hay productos en la venta'
+        detail: 'No hay productos en la venta',
       });
       return;
-    }    // Validaciones específicas para pago FIADO
+    } // Validaciones específicas para pago FIADO
     if (this.formaPagoSeleccionada === 'FIADO') {
       if (!this.creditoSeleccionado) {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Debe seleccionar un cliente para el pago fiado'
+          detail: 'Debe seleccionar un cliente para el pago fiado',
         });
         return;
       }
 
-      // Verificar que el total supere el crédito mínimo
       if (!this.superaCreditoMinimo(this.creditoSeleccionado)) {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Monto insuficiente',
-          detail: `El total de la venta ($${this.calcularTotal().toFixed(2)}) debe ser mayor a $${this.creditoSeleccionado.minimo.toFixed(2)} para compras fiadas`
+          detail: `El total de la venta ($${this.calcularTotal().toFixed(
+            2
+          )}) debe ser mayor a $${this.creditoSeleccionado.minimo.toFixed(
+            2
+          )} para compras fiadas`,
         });
         return;
       }
 
-      // Verificar que el cliente puede realizar la compra sin superar su límite
       if (!this.puedeRealizarCompra(this.creditoSeleccionado)) {
-        const dineroDisponible = this.calcularDineroDisponible(this.creditoSeleccionado);
+        const dineroDisponible = this.calcularDineroDisponible(
+          this.creditoSeleccionado
+        );
         const totalVenta = this.calcularTotal();
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Límite de crédito excedido',
-          detail: `El cliente ${this.creditoSeleccionado.cliente.nombre} solo puede gastar $${dineroDisponible.toFixed(2)} pero el total de la venta es $${totalVenta.toFixed(2)}`
+          detail: `El cliente ${
+            this.creditoSeleccionado.cliente.nombre
+          } solo puede gastar $${dineroDisponible.toFixed(
+            2
+          )} pero el total de la venta es $${totalVenta.toFixed(2)}`,
         });
         return;
       }
     }
-    // Ya no es necesario crear o enviar la fecha, el backend se encargará de esto
 
     const venta: Partial<VentaDto> = {
-      // fechaVenta no se incluye, será establecida por el backend
       total: this.calcularTotal(),
       formaPago: this.formaPagoSeleccionada,
-      credito: this.formaPagoSeleccionada === 'FIADO' ? {
-        id: this.creditoSeleccionado!.id,
-        precioTotal: this.calcularTotal()
-      } : undefined, cantidades: this.cantidades.map(c => ({
+      credito:
+        this.formaPagoSeleccionada === 'FIADO'
+          ? {
+              id: this.creditoSeleccionado!.id,
+              precioTotal: this.calcularTotal(),
+            }
+          : undefined,
+      cantidades: this.cantidades.map((c) => ({
         id: null,
         cantidad: c.cantidad,
         precioActual: this.getPrecioFinal(c) / c.cantidad, // Precio unitario con descuento
@@ -649,97 +690,117 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
           id: c.producto.id,
           nombre: c.producto.nombre,
           precioVenta: c.producto.precioVenta,
-          codigoDeBarra: c.producto.codigoDeBarra
-        }
+          codigoDeBarra: c.producto.codigoDeBarra,
+        },
       })),
-      activo: true
-    }; this.ventaService.crearVenta(venta as VentaDto).subscribe({
-      next: (response) => {        // Verificar si la respuesta contiene un error
+      activo: true,
+    };
+
+    this.procesandoVenta = true;
+
+    this.ventaService.crearVenta(venta as VentaDto).subscribe({
+      next: (response) => {
         if (response && typeof response === 'object' && 'error' in response) {
           const errorCode = response.error;
           if (errorCode === -1) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Debe seleccionar un cliente válido para el pago fiado'
+              detail: 'Debe seleccionar un cliente válido para el pago fiado',
             });
           } else if (errorCode === -2) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Límite de crédito excedido',
-              detail: 'El cliente no puede realizar esta compra. Límite de crédito excedido'
+              detail:
+                'El cliente no puede realizar esta compra. Límite de crédito excedido',
             });
           } else if (errorCode === -3) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Monto insuficiente',
-              detail: 'El total de la venta no supera el mínimo requerido para compras fiadas'
+              detail:
+                'El total de la venta no supera el mínimo requerido para compras fiadas',
             });
           }
+          this.procesandoVenta = false;
           return;
-        } this.messageService.add({
+        }
+        this.messageService.clear();
+        this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Venta creada correctamente'
+          detail: 'Venta creada correctamente',
         });
 
-        // Refrescar notificaciones inmediatamente después de la venta
         this.notificacionService.refrescarPostVenta();
 
-        // Recargar productos para actualizar el stock
         this.cargarProductos();
 
         this.displayDialog = false;
         this.limpiarVenta();
+        this.procesandoVenta = false;
       },
       error: (error) => {
-        console.error('Error al crear la venta:', error);
-        // Manejar errores HTTP específicos
-        if (error.status === 400 && error.error && typeof error.error === 'object') {
+        if (
+          error.status === 400 &&
+          error.error &&
+          typeof error.error === 'object'
+        ) {
           if (error.error.error === -1) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Debe seleccionar un cliente válido para el pago fiado'
+              detail: 'Debe seleccionar un cliente válido para el pago fiado',
             });
           } else if (error.error.error === -2) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Límite de crédito excedido',
-              detail: 'El cliente no puede realizar esta compra. El monto excede el límite de crédito disponible'
+              detail:
+                'El cliente no puede realizar esta compra. El monto excede el límite de crédito disponible',
             });
           } else if (error.error.error === -3) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Monto insuficiente',
-              detail: 'El total de la venta no supera el mínimo requerido para compras fiadas'
+              detail:
+                'El total de la venta no supera el mínimo requerido para compras fiadas',
             });
           } else {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al crear la venta'
+              detail: 'Error al crear la venta',
             });
           }
         } else {
+          this.messageService.clear();
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Error al crear la venta'
+            detail: 'Error al crear la venta',
           });
         }
-      }
+        this.procesandoVenta = false;
+      },
     });
   }
-
   limpiarVenta() {
     this.cantidades = [];
     this.totalRecords = 0;
     this.creditoSeleccionado = null;
     this.formaPagoSeleccionada = '';
     this.productoSeleccionado = null;
+    this.procesandoVenta = false;
   }
-  // ==================== ESCÁNER FÍSICO USB ====================
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
@@ -747,14 +808,12 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
 
     const tiempoActual = Date.now();
 
-    // Si el tiempo entre caracteres es muy largo, reiniciar el buffer
     if (tiempoActual - this.ultimoTiempo > this.TIEMPO_LIMITE_CARACTER) {
       this.codigoBarrasBuffer = '';
     }
 
     this.ultimoTiempo = tiempoActual;
 
-    // Si es Enter, procesar el código de barras
     if (event.key === 'Enter') {
       event.preventDefault();
       if (this.codigoBarrasBuffer.length > 0) {
@@ -764,7 +823,6 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
 
-    // Agregar caracteres alfanuméricos al buffer
     if (event.key.length === 1 && /[a-zA-Z0-9]/.test(event.key)) {
       event.preventDefault();
       this.codigoBarrasBuffer += event.key;
@@ -774,246 +832,223 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
     this.escanerActivo = !this.escanerActivo;
 
     if (this.escanerActivo) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'info',
         summary: 'Escáner Activado',
         detail: 'Modo escáner USB activo. Escanee productos con su lector',
-        life: 3000
+        life: 3000,
       });
     } else {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'info',
         summary: '📱 Escáner Desactivado',
         detail: 'Modo escáner desactivado. Use la búsqueda manual',
-        life: 3000
+        life: 3000,
       });
       this.codigoBarrasBuffer = '';
     }
-  } private procesarCodigoBarras(codigoBarras: string) {
-    // Primero buscar todos los productos con ese código de barras
+  }
+  private procesarCodigoBarras(codigoBarras: string) {
     this.productoService.buscarTodosPorCodigoBarras(codigoBarras).subscribe({
       next: (productos) => {
         if (productos && productos.length > 0) {
-          // Filtrar productos con stock
-          const productosConStock = productos.filter(p => this.tieneStock(p));
+          const productosConStock = productos.filter((p) => this.tieneStock(p));
 
           if (productosConStock.length === 0) {
+            this.messageService.clear();
             this.messageService.add({
               severity: 'warn',
               summary: '⚠️ Sin Stock',
               detail: `No hay productos disponibles con stock para el código: ${codigoBarras}`,
-              life: 4000
+              life: 4000,
             });
             return;
           }
 
           if (productosConStock.length === 1) {
-            // Solo un producto con stock, agregar directamente
             const producto = productosConStock[0];
             this.agregarProductoDirectamente(producto);
           } else {
-            // Múltiples productos con stock, mostrar diálogo de selección
             this.mostrarDialogoSeleccion(productos, codigoBarras);
           }
         } else {
+          this.messageService.clear();
           this.messageService.add({
             severity: 'warn',
             summary: '❌ Producto No Encontrado',
             detail: `No se encontró producto con código: ${codigoBarras}`,
-            life: 4000
+            life: 4000,
           });
         }
       },
       error: (error) => {
-        console.error('Error al buscar productos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: '❌ Error de Conexión',
           detail: 'Error al buscar productos con el código escaneado',
-          life: 4000
+          life: 4000,
         });
-      }
+      },
     });
   }
 
-  // ==================== STOCK VALIDATION ====================
-
-  /**
-   * Valida el stock antes de aplicar ofertas
-   */
   validarYAplicarOfertas(event: any, item: ItemVenta) {
     const nuevaCantidad = event.value;
     const stockDisponible = this.getStockDisponible(item.producto);
 
     if (nuevaCantidad > stockDisponible) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Cantidad Excedida',
         detail: `${item.producto.nombre}: máximo ${stockDisponible} unidades disponibles (Stock: ${stockDisponible})`,
-        life: 3000
+        life: 3000,
       });
-      // Revertir a la cantidad máxima disponible
+
       item.cantidad = stockDisponible;
       return;
     }
 
-    // Validar cantidad mínima
     if (nuevaCantidad < 1) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Cantidad Inválida',
         detail: 'La cantidad mínima es 1 unidad',
-        life: 2000
+        life: 2000,
       });
       item.cantidad = 1;
       return;
     }
 
-    // Actualizar la cantidad anterior después de la validación
     this.cantidadAnterior.set(item.producto.id!, nuevaCantidad);
 
     this.aplicarOfertas();
   }
 
-  /**
-   * Obtiene el stock disponible para un producto
-   */
   getStockDisponible(producto: any): number {
-    // Buscar el producto completo en la lista para obtener el stock total actualizado
-    const productoCompleto = this.productos.find(p => p.id === producto.id);
-    return productoCompleto ? productoCompleto.stockTotal : (producto.stockTotal || 0);
+    const productoCompleto = this.productos.find((p) => p.id === producto.id);
+    return productoCompleto
+      ? productoCompleto.stockTotal
+      : producto.stockTotal || 0;
   }
 
-  /**
-   * Guarda la cantidad anterior al hacer focus en el input
-   */
   guardarCantidadAnterior(item: ItemVenta) {
     this.cantidadAnterior.set(item.producto.id!, item.cantidad);
   }
-  /**
-   * Verifica si hubo intento de incrementar cuando ya se alcanzó el stock máximo
-   */
   verificarCambioManual(item: ItemVenta) {
-    const cantidadPrevia = this.cantidadAnterior.get(item.producto.id!) || item.cantidad;
+    const cantidadPrevia =
+      this.cantidadAnterior.get(item.producto.id!) || item.cantidad;
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Si la cantidad sigue siendo el máximo y antes también era el máximo,
-    // significa que hubo un intento de incrementar pero fue bloqueado por [max]
-    if (item.cantidad === stockDisponible && cantidadPrevia === stockDisponible) {
-      // Agregar un pequeño delay para detectar clicks en los botones
+    if (
+      item.cantidad === stockDisponible &&
+      cantidadPrevia === stockDisponible
+    ) {
       setTimeout(() => {
         if (item.cantidad === stockDisponible) {
+          this.messageService.clear();
           this.messageService.add({
             severity: 'warn',
             summary: '⚠️ Stock Máximo Alcanzado',
             detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
-            life: 3000
+            life: 3000,
           });
         }
       }, 100);
     }
 
-    // Limpiar el valor guardado
     this.cantidadAnterior.delete(item.producto.id!);
   }
 
-  /**
-   * Detecta intentos de incremento manual con las teclas de flecha
-   */
   onInputKeydown(event: KeyboardEvent, item: ItemVenta) {
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Detectar intento de incrementar con flecha arriba cuando ya está en el máximo
     if (event.key === 'ArrowUp' && item.cantidad >= stockDisponible) {
       event.preventDefault();
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Stock Máximo Alcanzado',
         detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
-        life: 3000
+        life: 3000,
       });
     }
   }
-  /**
-   * Detecta clicks en los botones de incremento del p-inputNumber
-   */
   detectarClickIncremento(event: MouseEvent, item: ItemVenta) {
     const target = event.target as HTMLElement;
     const stockDisponible = this.getStockDisponible(item.producto);
 
-    // Verificar si el click fue en el botón de incremento
-    if (target && (target.classList.contains('p-inputnumber-button-up') ||
-      target.closest('.p-inputnumber-button-up'))) {
-
-      // Si ya está en el máximo, mostrar alerta
+    if (
+      target &&
+      (target.classList.contains('p-inputnumber-button-up') ||
+        target.closest('.p-inputnumber-button-up'))
+    ) {
       if (item.cantidad >= stockDisponible) {
         setTimeout(() => {
+          this.messageService.clear();
           this.messageService.add({
             severity: 'warn',
             summary: '⚠️ Stock Máximo Alcanzado',
             detail: `${item.producto.nombre} ya tiene la cantidad máxima disponible (${stockDisponible} unidades)`,
-            life: 3000
+            life: 3000,
           });
         }, 50);
       }
     }
   }
 
-  // ==================== MÉTODOS PARA MÚLTIPLES PRODUCTOS ====================
-
-  /**
-   * Muestra el diálogo de selección cuando hay múltiples productos con el mismo código
-   */
-  private mostrarDialogoSeleccion(productos: ProductoDto[], codigoBarras: string) {
+  private mostrarDialogoSeleccion(
+    productos: ProductoDto[],
+    codigoBarras: string
+  ) {
     this.productosDuplicados = productos;
     this.codigoBarrasEscaneado = codigoBarras;
     this.displaySeleccionProducto = true;
 
+    this.messageService.clear();
     this.messageService.add({
       severity: 'info',
       summary: '🔍 Múltiples Productos',
       detail: `Se encontraron ${productos.length} productos con el código ${codigoBarras}. Seleccione el correcto.`,
-      life: 4000
+      life: 4000,
     });
   }
 
-  /**
-   * Agrega un producto directamente cuando solo hay uno disponible
-   */
   private agregarProductoDirectamente(producto: ProductoDto) {
-    // Verificar si ya existe en la lista y si tiene stock suficiente
-    const itemExistente = this.cantidades.find(item => item.producto.id === producto.id);
+    const itemExistente = this.cantidades.find(
+      (item) => item.producto.id === producto.id
+    );
     if (itemExistente && itemExistente.cantidad >= producto.stockTotal) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: '⚠️ Stock Insuficiente',
         detail: `${producto.nombre} alcanzó el stock máximo disponible (${producto.stockTotal})`,
-        life: 3000
+        life: 3000,
       });
       return;
     }
 
     this.agregarALista({ value: producto });
 
+    this.messageService.clear();
     this.messageService.add({
       severity: 'success',
       summary: '✅ Producto Agregado',
       detail: `${producto.nombre} agregado a la venta`,
-      life: 2000
+      life: 2000,
     });
   }
 
-  /**
-   * Maneja la selección de un producto desde el diálogo
-   */
   onProductoSeleccionado(producto: ProductoDto) {
     this.displaySeleccionProducto = false;
     this.agregarProductoDirectamente(producto);
   }
 
-  /**
-   * Maneja el cierre del diálogo de selección
-   */
   onDialogoSeleccionCerrado() {
     this.displaySeleccionProducto = false;
     this.productosDuplicados = [];
@@ -1027,5 +1062,4 @@ export class NuevaventaComponent implements OnInit, OnDestroy, CanComponentDeact
   onClienteLimpiado() {
     this.creditoSeleccionado = null;
   }
-
 }

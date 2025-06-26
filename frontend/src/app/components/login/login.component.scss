@@ -1,4 +1,3 @@
-
 .center-wrapper {
   display: flex;
   justify-content: center;
@@ -10,17 +9,23 @@
   box-sizing: border-box;
   position: relative;
 
-  // Subtle pattern overlay
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      radial-gradient(circle at 25% 25%, rgba(108, 117, 125, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(52, 58, 64, 0.03) 0%, transparent 50%);
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        rgba(108, 117, 125, 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(52, 58, 64, 0.03) 0%,
+        transparent 50%
+      );
     pointer-events: none;
   }
 }
@@ -31,9 +36,7 @@
   padding: 50px 40px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.05),
-    0 10px 25px rgba(0, 0, 0, 0.08),
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 25px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(0, 0, 0, 0.02);
   position: relative;
   z-index: 1;
@@ -42,9 +45,7 @@
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 
-      0 8px 15px rgba(0, 0, 0, 0.08),
-      0 15px 35px rgba(0, 0, 0, 0.12),
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08), 0 15px 35px rgba(0, 0, 0, 0.12),
       0 0 0 1px rgba(0, 0, 0, 0.03);
   }
 
@@ -72,7 +73,7 @@
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -15px;
     left: 50%;
@@ -101,7 +102,7 @@ form {
   width: 100%;
   position: relative;
 
-  input, 
+  input,
   ::ng-deep .p-password input {
     width: 100%;
     padding: 16px 20px;
@@ -143,7 +144,6 @@ form {
     background: transparent;
   }
 
-  // Floating label effect
   &:has(input:focus) label,
   &:has(input:not(:placeholder-shown)) label {
     top: -10px;
@@ -157,7 +157,7 @@ form {
 
   ::ng-deep .p-password {
     width: 100%;
-    
+
     .p-password-input {
       width: 100%;
     }
@@ -173,11 +173,11 @@ form {
     }
   }
 
-  // Validation styles
   &.ng-invalid.ng-touched input,
   &.ng-invalid.ng-touched ::ng-deep .p-password input {
     border-color: #dc3545;
-    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);  }
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+  }
 }
 
 .forgot-password-section {
@@ -246,7 +246,6 @@ button[pButton] {
     box-shadow: none;
   }
 
-  // Loading state
   &[aria-label*="Loading"] {
     background: #6c757d;
     cursor: wait;
@@ -281,7 +280,6 @@ button[pButton] {
   }
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -297,34 +295,32 @@ button[pButton] {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Responsive improvements */
 @media (max-width: 320px) {
   .login-container {
     padding: 30px 20px;
   }
-  
+
   .titulo {
     font-size: 24px;
   }
-  
+
   .form-field input,
   .form-field ::ng-deep .p-password input {
     padding: 14px 16px;
     font-size: 15px;
   }
-  
+
   button[pButton] {
     padding: 14px 16px;
     font-size: 15px;
   }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   .login-container {
     border: 2px solid #000000;
   }
-  
+
   .form-field input:focus,
   .form-field ::ng-deep .p-password input:focus {
     border-color: #000000;
@@ -332,7 +328,6 @@ button[pButton] {
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .login-container,
   .form-field input,
@@ -342,11 +337,11 @@ button[pButton] {
     transition: none;
     animation: none;
   }
-  
+
   .login-container:hover {
     transform: none;
   }
-  
+
   button[pButton]:hover:not(:disabled) {
     transform: none;
   }

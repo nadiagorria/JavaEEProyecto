@@ -1,6 +1,5 @@
 package ti.proyectojava.business.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 

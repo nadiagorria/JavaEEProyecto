@@ -1,4 +1,3 @@
-
 <div class="center-wrapper">
   <div class="registro-container">
     <h1 class="titulo">Crear Cuenta</h1>
@@ -6,59 +5,86 @@
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
       <div class="form-field">
         <p-iftalabel>
-          <input 
-            pInputText 
-            id="username" 
-            formControlName="username" 
+          <input
+            pInputText
+            id="username"
+            formControlName="username"
             placeholder=" "
             autocomplete="username"
             [class.invalid]="usernameExists"
           />
           <label for="username">Nombre de Usuario</label>
         </p-iftalabel>
-        <div class="username-validation" *ngIf="formGroup.get('username')?.value?.length >= 3">
+        <div
+          class="username-validation"
+          *ngIf="formGroup.get('username')?.value?.length >= 3"
+        >
           <span *ngIf="isCheckingUsername" class="checking">
             <i class="pi pi-spin pi-spinner"></i> Verificando...
           </span>
-          <span *ngIf="!isCheckingUsername && usernameExists" class="username-taken">
-            <i class="pi pi-times-circle"></i> Este nombre de usuario ya está en uso
+          <span
+            *ngIf="!isCheckingUsername && usernameExists"
+            class="username-taken"
+          >
+            <i class="pi pi-times-circle"></i> Este nombre de usuario ya está en
+            uso
           </span>
-          <span *ngIf="!isCheckingUsername && !usernameExists" class="username-available">
+          <span
+            *ngIf="!isCheckingUsername && !usernameExists"
+            class="username-available"
+          >
             <i class="pi pi-check-circle"></i> Nombre de usuario disponible
           </span>
         </div>
-      </div>      <div class="form-field">
+      </div>
+      <div class="form-field">
         <p-iftalabel>
-          <input 
-            pInputText 
-            id="email" 
-            formControlName="email" 
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
             placeholder=" "
-            autocomplete="email"            
-            [class.invalid]="(formGroup.get('email')?.touched && formGroup.get('email')?.invalid) || emailExists"
-            [class.valid]="formGroup.get('email')?.touched && isValidEmail() && !emailExists && !isCheckingEmail"
+            autocomplete="email"
+            [class.invalid]="
+              (formGroup.get('email')?.touched &&
+                formGroup.get('email')?.invalid) ||
+              emailExists
+            "
           />
           <label for="email">Correo Electrónico</label>
-        </p-iftalabel>        
-        <div class="email-validation" *ngIf="formGroup.get('email')?.value && formGroup.get('email')?.value.length > 0">
+        </p-iftalabel>
+        <div
+          class="email-validation"
+          *ngIf="
+            formGroup.get('email')?.value &&
+            formGroup.get('email')?.value.length > 0
+          "
+        >
           <span *ngIf="formGroup.get('email')?.invalid" class="email-invalid">
             <i class="pi pi-times-circle"></i> Por favor ingresa un email válido
           </span>
           <span *ngIf="isValidEmail() && isCheckingEmail" class="checking">
             <i class="pi pi-spin pi-spinner"></i> Verificando disponibilidad...
           </span>
-          <span *ngIf="isValidEmail() && !isCheckingEmail && emailExists" class="email-taken">
+          <span
+            *ngIf="isValidEmail() && !isCheckingEmail && emailExists"
+            class="email-taken"
+          >
             <i class="pi pi-times-circle"></i> Este email ya está registrado
           </span>
-          <span *ngIf="isValidEmail() && !isCheckingEmail && !emailExists" class="email-available">
+          <span
+            *ngIf="isValidEmail() && !isCheckingEmail && !emailExists"
+            class="email-available"
+          >
             <i class="pi pi-check-circle"></i> Email disponible
           </span>
         </div>
-      </div>      <div class="form-field">
+      </div>
+      <div class="form-field">
         <p-iftalabel>
-          <p-password 
-            formControlName="password" 
-            inputId="password" 
+          <p-password
+            formControlName="password"
+            inputId="password"
             [toggleMask]="true"
             [feedback]="true"
             placeholder=" "
@@ -66,30 +92,53 @@
           />
           <label for="password">Contraseña</label>
         </p-iftalabel>
-        <div class="password-validation" *ngIf="formGroup.get('password')?.value && formGroup.get('password')?.value.length > 0">
-          <span *ngIf="formGroup.get('password')?.value.length < 6" class="password-weak">
-            <i class="pi pi-exclamation-triangle"></i> La contraseña debe tener al menos 6 caracteres
+        <div
+          class="password-validation"
+          *ngIf="
+            formGroup.get('password')?.value &&
+            formGroup.get('password')?.value.length > 0
+          "
+        >
+          <span
+            *ngIf="formGroup.get('password')?.value.length < 6"
+            class="password-weak"
+          >
+            <i class="pi pi-exclamation-triangle"></i> La contraseña debe tener
+            al menos 6 caracteres
           </span>
-          <span *ngIf="formGroup.get('password')?.value.length >= 6" class="password-valid">
+          <span
+            *ngIf="formGroup.get('password')?.value.length >= 6"
+            class="password-valid"
+          >
             <i class="pi pi-check-circle"></i> Contraseña válida
-          </span>        </div>
+          </span>
+        </div>
       </div>
-
       <div class="form-field">
         <p-iftalabel>
-          <p-password 
-            formControlName="confirmPassword" 
-            inputId="confirmPassword" 
+          <p-password
+            #confirmPasswordInput
+            formControlName="confirmPassword"
+            inputId="confirmPassword"
             [toggleMask]="true"
             [feedback]="false"
             placeholder=" "
             autocomplete="new-password"
-            [class.invalid]="formGroup.get('confirmPassword')?.touched && !passwordsMatch() && formGroup.get('confirmPassword')?.value"
-            [class.valid]="formGroup.get('confirmPassword')?.value && passwordsMatch()"
+            [ngClass]="{
+              invalid: isConfirmPasswordInvalid()
+            }"
+            (focus)="onConfirmPasswordFocus()"
+            (blur)="onConfirmPasswordBlur()"
           />
           <label for="confirmPassword">Confirmar Contraseña</label>
         </p-iftalabel>
-        <div class="confirm-password-validation" *ngIf="formGroup.get('confirmPassword')?.value && formGroup.get('confirmPassword')?.value.length > 0">
+        <div
+          class="confirm-password-validation"
+          *ngIf="
+            formGroup.get('confirmPassword')?.value &&
+            formGroup.get('confirmPassword')?.value.length > 0
+          "
+        >
           <span *ngIf="!passwordsMatch()" class="password-mismatch">
             <i class="pi pi-times-circle"></i> Las contraseñas no coinciden
           </span>
@@ -99,18 +148,25 @@
         </div>
       </div>
 
-<button
-        pButton 
-        type="submit" 
-        label="Registrar" 
+      <button
+        pButton
+        type="submit"
+        label="Registrar"
         [loading]="isLoading"
-        [disabled]="formGroup.invalid || isLoading || usernameExists || isCheckingUsername || emailExists || isCheckingEmail || !passwordsMatch()"
+        [disabled]="
+          formGroup.invalid ||
+          isLoading ||
+          usernameExists ||
+          isCheckingUsername ||
+          emailExists ||
+          isCheckingEmail ||
+          !passwordsMatch()
+        "
         icon="pi pi-user-plus"
         iconPos="right"
-      >
-      </button>
+      ></button>
     </form>
-      <div class="sesion">
+    <div class="sesion">
       ¿Ya tienes una cuenta?
       <a routerLink="/login" class="login-link">
         <i class="pi pi-sign-in"></i>

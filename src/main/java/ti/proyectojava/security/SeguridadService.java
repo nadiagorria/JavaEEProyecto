@@ -15,31 +15,27 @@ public class SeguridadService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
     private PasswordService passwordService;
 
-    public Optional<Usuario> autenticarUsuario(String usuario,
-                                               String password) {
-        // Buscar usuario por nombre (sin verificar contraseña en la consulta)
+    public Optional<Usuario> autenticarUsuario(String usuario, String password) {
         Optional<Usuario> objUsuario = usuarioRepository.findByNombreIgnoreCase(usuario);
-        
+
         if (objUsuario.isEmpty()) {
             throw new RuntimeException("USUARIO_INCORRECTO");
         }
-        
+
         Usuario usuarioEncontrado = objUsuario.get();
-        
-        // Verificar si el usuario está activo
+
         if (!usuarioEncontrado.getActivo()) {
             throw new RuntimeException("USUARIO_INACTIVO");
         }
-        
-        // Verificar la contraseña usando BCrypt
+
         if (!passwordService.matchPassword(password, usuarioEncontrado.getContrasenia())) {
             throw new RuntimeException("CONTRASENIA_INCORRECTA");
         }
-        
+
         return objUsuario;
     }
 
@@ -49,7 +45,9 @@ public class SeguridadService {
             lisRoles[i] = usuario.getRoles().get(i).getNombre();
         }
         return lisRoles;
-    }    public boolean existeUsuario(String nombreUsuario) {
+    }
+
+    public boolean existeUsuario(String nombreUsuario) {
         return usuarioRepository.findByNombreIgnoreCase(nombreUsuario).isPresent();
     }
 

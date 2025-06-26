@@ -22,11 +22,17 @@ import { ProductoService } from '../../../services/producto.service';
 import { SecurityService } from '../../../services/security.service';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../models';
+import {
+  PromocionDto,
+  ComboDto,
+  DescuentoDto,
+  ProductoDto,
+} from '../../../models';
 
 @Component({
   selector: 'app-ofertas',
-  standalone: true, imports: [
+  standalone: true,
+  imports: [
     CommonModule,
     FormsModule,
     DialogModule,
@@ -43,33 +49,29 @@ import { PromocionDto, ComboDto, DescuentoDto, ProductoDto } from '../../../mode
     ToastModule,
     ConfirmDialogModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ofertas.component.html',
-  styleUrl: './ofertas.component.scss'
+  styleUrl: './ofertas.component.scss',
 })
 export class OfertasComponent implements OnInit, AfterViewInit {
-
-  // Arrays para las tablas
   promociones: PromocionDto[] = [];
   combos: ComboDto[] = [];
   descuentos: DescuentoDto[] = [];
   productos: ProductoDto[] = [];
 
-  // Modales
   mostrarModalPromocion: boolean = false;
   mostrarModalCombo: boolean = false;
   mostrarModalDescuento: boolean = false;
 
-  // Formularios
   nuevaPromocion: Partial<PromocionDto> = {
     descripcion: '',
     descuento: 0,
     activo: true,
     inicio: this.getTodayISOString(),
     fin: this.getTomorrowISOString(),
-    producto: { id: 0, nombre: '' }
+    producto: { id: 0, nombre: '' },
   };
 
   nuevoCombo: Partial<ComboDto> = {
@@ -78,7 +80,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     activo: true,
     inicio: this.getTodayISOString(),
     fin: this.getTomorrowISOString(),
-    productos: []
+    productos: [],
   };
 
   nuevoDescuento: Partial<DescuentoDto> = {
@@ -87,10 +89,9 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     activo: true,
     inicio: this.getTodayISOString(),
     fin: this.getTomorrowISOString(),
-    producto: { id: 0, nombre: '' }
+    producto: { id: 0, nombre: '' },
   };
 
-  // Variables para los formularios
   productoSeleccionadoPromocion: number = 0;
   productoSeleccionadoDescuento: number = 0;
   productosSeleccionadosCombo: number[] = [];
@@ -102,8 +103,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router
-  ) { }
-
+  ) {}
 
   private getTodayISOString(): string {
     return new Date().toISOString().split('T')[0];
@@ -111,13 +111,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
 
   isAdmin(): boolean {
     const roles = this.securityService.getUserRoles();
-    
+
     if (!roles) {
       return false;
     }
-    
+
     const hasAdminRole = roles.includes('ADMIN');
-    
+
     return hasAdminRole;
   }
 
@@ -182,13 +182,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.promociones = response.promociones;
       },
       error: (error) => {
-        console.error('Error al cargar promociones:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar las promociones'
+          detail: 'Error al cargar las promociones',
         });
-      }
+      },
     });
   }
 
@@ -198,13 +198,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.combos = response.combos;
       },
       error: (error) => {
-        console.error('Error al cargar combos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar los combos'
+          detail: 'Error al cargar los combos',
         });
-      }
+      },
     });
   }
 
@@ -214,13 +214,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.descuentos = response.descuentos;
       },
       error: (error) => {
-        console.error('Error al cargar descuentos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar los descuentos'
+          detail: 'Error al cargar los descuentos',
         });
-      }
+      },
     });
   }
 
@@ -230,17 +230,16 @@ export class OfertasComponent implements OnInit, AfterViewInit {
         this.productos = response.productos;
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar los productos'
+          detail: 'Error al cargar los productos',
         });
-      }
+      },
     });
   }
 
-  // ==================== PROMOCIONES ====================
   abrirModalPromocion() {
     this.nuevaPromocion = {
       descripcion: '',
@@ -248,7 +247,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: true,
       inicio: this.getTodayISOString(),
       fin: this.getTomorrowISOString(),
-      producto: { id: 0, nombre: '' }
+      producto: { id: 0, nombre: '' },
     };
     this.productoSeleccionadoPromocion = 0;
     this.mostrarModalPromocion = true;
@@ -259,11 +258,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const productoSeleccionado = this.productos.find(p => p.id === this.productoSeleccionadoPromocion);
+    const productoSeleccionado = this.productos.find(
+      (p) => p.id === this.productoSeleccionadoPromocion
+    );
     if (productoSeleccionado && productoSeleccionado.id !== null) {
       this.nuevaPromocion.producto = {
         id: productoSeleccionado.id,
-        nombre: productoSeleccionado.nombre || ''
+        nombre: productoSeleccionado.nombre || '',
       };
     }
     const promocion: PromocionDto = {
@@ -273,26 +274,21 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: this.nuevaPromocion.activo || true,
       inicio: this.nuevaPromocion.inicio || this.getTodayISOString(),
       fin: this.nuevaPromocion.fin || this.getTomorrowISOString(),
-      producto: this.nuevaPromocion.producto || { id: 0, nombre: '' }
+      producto: this.nuevaPromocion.producto || { id: 0, nombre: '' },
     };
 
     this.ofertaService.crearPromocion(promocion).subscribe({
       next: (response) => {
-        console.log('Promoción creada exitosamente:', response);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Promoción creada correctamente'
+          detail: 'Promoción creada correctamente',
         });
         this.mostrarModalPromocion = false;
         this.cargarPromociones();
       },
       error: (error) => {
-        console.error('Error al crear promoción:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
         let errorMessage = 'Error al crear la promoción';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -300,39 +296,50 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage
+          detail: errorMessage,
         });
-      }
+      },
     });
   }
 
   validarPromocion(): boolean {
-    if (!this.nuevaPromocion.descripcion || this.nuevaPromocion.descripcion.trim() === '') {
+    if (
+      !this.nuevaPromocion.descripcion ||
+      this.nuevaPromocion.descripcion.trim() === ''
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'La descripción es requerida'
+        detail: 'La descripción es requerida',
       });
       return false;
     }
 
-    if (!this.productoSeleccionadoPromocion || this.productoSeleccionadoPromocion === 0) {
+    if (
+      !this.productoSeleccionadoPromocion ||
+      this.productoSeleccionadoPromocion === 0
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'Debe seleccionar un producto'
+        detail: 'Debe seleccionar un producto',
       });
       return false;
     }
 
-    if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento <= 0) {
+    if (!this.nuevaPromocion.descuento || this.nuevaPromocion.descuento < 2) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'La cantidad de unidades debe ser mayor a 0'
+        detail:
+          'La cantidad de unidades mínima debe ser 2 (para promociones tipo 2x1, 3x2, etc.)',
       });
       return false;
     }
@@ -340,7 +347,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== COMBOS ====================
   abrirModalCombo() {
     this.nuevoCombo = {
       descripcion: '',
@@ -348,7 +354,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: true,
       inicio: this.getTodayISOString(),
       fin: this.getTomorrowISOString(),
-      productos: []
+      productos: [],
     };
     this.productosSeleccionadosCombo = [];
     this.mostrarModalCombo = true;
@@ -359,14 +365,15 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       return;
     }
 
-
-    const productosCombo = this.productosSeleccionadosCombo.map((id: number) => {
-      const producto = this.productos.find((p: ProductoDto) => p.id === id);
-      return {
-        id: producto?.id || 0,
-        nombre: producto?.nombre || ''
-      };
-    }).filter((p: { id: number; nombre: string }) => p.id !== 0);
+    const productosCombo = this.productosSeleccionadosCombo
+      .map((id: number) => {
+        const producto = this.productos.find((p: ProductoDto) => p.id === id);
+        return {
+          id: producto?.id || 0,
+          nombre: producto?.nombre || '',
+        };
+      })
+      .filter((p: { id: number; nombre: string }) => p.id !== 0);
     const combo: ComboDto = {
       id: 0,
       descripcion: this.nuevoCombo.descripcion || '',
@@ -374,27 +381,21 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: this.nuevoCombo.activo || true,
       inicio: this.nuevoCombo.inicio || this.getTodayISOString(),
       fin: this.nuevoCombo.fin || this.getTomorrowISOString(),
-      productos: productosCombo
+      productos: productosCombo,
     };
-
 
     this.ofertaService.crearCombo(combo).subscribe({
       next: (response) => {
-        console.log('Combo creado exitosamente:', response);
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Combo creado correctamente'
+          detail: 'Combo creado correctamente',
         });
         this.mostrarModalCombo = false;
         this.cargarCombos();
       },
       error: (error) => {
-        console.error('Error al crear combo:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
         let errorMessage = 'Error al crear el combo';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -402,38 +403,52 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage
+          detail: errorMessage,
         });
-      }
+      },
     });
   }
   validarCombo(): boolean {
-    if (!this.nuevoCombo.descripcion || this.nuevoCombo.descripcion.trim() === '') {
+    if (
+      !this.nuevoCombo.descripcion ||
+      this.nuevoCombo.descripcion.trim() === ''
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'La descripción es requerida'
+        detail: 'La descripción es requerida',
       });
       return false;
     }
 
-    if (!this.productosSeleccionadosCombo || this.productosSeleccionadosCombo.length < 2) {
+    if (
+      !this.productosSeleccionadosCombo ||
+      this.productosSeleccionadosCombo.length < 2
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'Debe seleccionar al menos 2 productos'
+        detail: 'Debe seleccionar al menos 2 productos',
       });
       return false;
     }
 
-    if (!this.nuevoCombo.descuento || this.nuevoCombo.descuento <= 0 || this.nuevoCombo.descuento >= 100) {
+    if (
+      !this.nuevoCombo.descuento ||
+      this.nuevoCombo.descuento <= 0 ||
+      this.nuevoCombo.descuento >= 100
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'El descuento debe ser mayor a 0% y menor a 100%'
+        detail: 'El descuento debe ser mayor a 0% y menor a 100%',
       });
       return false;
     }
@@ -441,7 +456,6 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== DESCUENTOS ====================
   abrirModalDescuento() {
     this.nuevoDescuento = {
       descripcion: '',
@@ -449,7 +463,7 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: true,
       inicio: this.getTodayISOString(),
       fin: this.getTomorrowISOString(),
-      producto: { id: 0, nombre: '' }
+      producto: { id: 0, nombre: '' },
     };
     this.productoSeleccionadoDescuento = 0;
     this.mostrarModalDescuento = true;
@@ -460,11 +474,13 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const productoSeleccionado = this.productos.find((p: ProductoDto) => p.id === this.productoSeleccionadoDescuento);
+    const productoSeleccionado = this.productos.find(
+      (p: ProductoDto) => p.id === this.productoSeleccionadoDescuento
+    );
     if (productoSeleccionado && productoSeleccionado.id !== null) {
       this.nuevoDescuento.producto = {
         id: productoSeleccionado.id,
-        nombre: productoSeleccionado.nombre || ''
+        nombre: productoSeleccionado.nombre || '',
       };
     }
     const descuento: DescuentoDto = {
@@ -474,27 +490,21 @@ export class OfertasComponent implements OnInit, AfterViewInit {
       activo: this.nuevoDescuento.activo || true,
       inicio: this.nuevoDescuento.inicio || this.getTodayISOString(),
       fin: this.nuevoDescuento.fin || this.getTomorrowISOString(),
-      producto: this.nuevoDescuento.producto || { id: 0, nombre: '' }
+      producto: this.nuevoDescuento.producto || { id: 0, nombre: '' },
     };
-
 
     this.ofertaService.crearDescuento(descuento).subscribe({
       next: (response) => {
+        this.messageService.clear();
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Descuento creado correctamente'
+          detail: 'Descuento creado correctamente',
         });
         this.mostrarModalDescuento = false;
         this.cargarDescuentos();
       },
       error: (error) => {
-        console.error('Error al crear descuento:', error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('Error completo:', error);
-
-        // Extraer el mensaje específico del error
         let errorMessage = 'Error al crear el descuento';
         if (error.error && typeof error.error === 'string') {
           errorMessage = error.error;
@@ -502,39 +512,53 @@ export class OfertasComponent implements OnInit, AfterViewInit {
           errorMessage = error.message;
         }
 
+        this.messageService.clear();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage
+          detail: errorMessage,
         });
-      }
+      },
     });
-  } 
-  
+  }
+
   validarDescuento(): boolean {
-    if (!this.nuevoDescuento.descripcion || this.nuevoDescuento.descripcion.trim() === '') {
+    if (
+      !this.nuevoDescuento.descripcion ||
+      this.nuevoDescuento.descripcion.trim() === ''
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'La descripción es requerida'
+        detail: 'La descripción es requerida',
       });
       return false;
     }
 
-    if (!this.productoSeleccionadoDescuento || this.productoSeleccionadoDescuento === 0) {
+    if (
+      !this.productoSeleccionadoDescuento ||
+      this.productoSeleccionadoDescuento === 0
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'Debe seleccionar un producto'
+        detail: 'Debe seleccionar un producto',
       });
       return false;
     }
 
-    if (!this.nuevoDescuento.descuento || this.nuevoDescuento.descuento <= 0 || this.nuevoDescuento.descuento >= 100) {
+    if (
+      !this.nuevoDescuento.descuento ||
+      this.nuevoDescuento.descuento <= 0 ||
+      this.nuevoDescuento.descuento >= 100
+    ) {
+      this.messageService.clear();
       this.messageService.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: 'El descuento debe ser mayor a 0% y menor a 100%'
+        detail: 'El descuento debe ser mayor a 0% y menor a 100%',
       });
       return false;
     }
@@ -542,30 +566,38 @@ export class OfertasComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // ==================== UTILIDADES ====================
-
   onProductoChange(event: any, tipo: 'promocion' | 'descuento') {
-    const producto = this.productos.find((p: ProductoDto) => p.id === event.value);
+    const producto = this.productos.find(
+      (p: ProductoDto) => p.id === event.value
+    );
     if (producto && producto.id !== null) {
       if (tipo === 'promocion') {
         this.productoSeleccionadoPromocion = producto.id;
-        this.nuevaPromocion.producto = { id: producto.id, nombre: producto.nombre || '' };
+        this.nuevaPromocion.producto = {
+          id: producto.id,
+          nombre: producto.nombre || '',
+        };
       } else {
         this.productoSeleccionadoDescuento = producto.id;
-        this.nuevoDescuento.producto = { id: producto.id, nombre: producto.nombre || '' };
+        this.nuevoDescuento.producto = {
+          id: producto.id,
+          nombre: producto.nombre || '',
+        };
       }
     }
   }
 
   onProductosComboChange(event: any) {
     this.productosSeleccionadosCombo = event.value;
-    this.nuevoCombo.productos = event.value.map((id: number) => {
-      const producto = this.productos.find((p: ProductoDto) => p.id === id);
-      return {
-        id: producto?.id || 0,
-        nombre: producto?.nombre || ''
-      };
-    }).filter((p: { id: number; nombre: string }) => p.id !== 0);
+    this.nuevoCombo.productos = event.value
+      .map((id: number) => {
+        const producto = this.productos.find((p: ProductoDto) => p.id === id);
+        return {
+          id: producto?.id || 0,
+          nombre: producto?.nombre || '',
+        };
+      })
+      .filter((p: { id: number; nombre: string }) => p.id !== 0);
   }
 
   formatearFecha(fecha: string): string {
@@ -573,22 +605,30 @@ export class OfertasComponent implements OnInit, AfterViewInit {
   }
 
   formatearProductos(productos: Pick<ProductoDto, 'id' | 'nombre'>[]): string {
-    return productos.map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre).join(', ');
+    return productos
+      .map((p: Pick<ProductoDto, 'id' | 'nombre'>) => p.nombre)
+      .join(', ');
   }
 
-  // ==================== ELIMINAR OFERTAS ====================
   eliminarOferta(id: number, tipo: 'promocion' | 'combo' | 'descuento') {
+    const articulo = tipo === 'promocion' ? 'esta' : 'este';
+
     this.confirmationService.confirm({
-      message: `¿Está seguro que desea eliminar esta ${tipo}?`,
+      message: `¿Está seguro que desea eliminar ${articulo} ${tipo}?`,
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.ofertaService.eliminarOferta(id).subscribe({
           next: (response) => {
+            const articuloEliminado =
+              tipo === 'promocion' ? 'eliminada' : 'eliminado';
+            this.messageService.clear();
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} eliminada correctamente`
+              detail: `${
+                tipo.charAt(0).toUpperCase() + tipo.slice(1)
+              } ${articuloEliminado} correctamente`,
             });
 
             switch (tipo) {
@@ -604,15 +644,16 @@ export class OfertasComponent implements OnInit, AfterViewInit {
             }
           },
           error: (error) => {
-            console.error(`Error al eliminar ${tipo}:`, error);
+            const articuloError = tipo === 'promocion' ? 'la' : 'el';
+            this.messageService.clear();
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `Error al eliminar la ${tipo}`
+              detail: `Error al eliminar ${articuloError} ${tipo}`,
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 }

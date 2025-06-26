@@ -5,27 +5,28 @@ import { UsuarioDto } from '../models';
 import { UrlService } from './url.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class UsuarioService {
   private endpoint: string = '/usuarios';
 
-  constructor(
-    private http: HttpClient,
-    private urlService: UrlService
-  ) { }
+  constructor(private http: HttpClient, private urlService: UrlService) {}
 
   getUsuariosTotales(): Observable<number> {
-    return this.http.get<number>(`${this.urlService.baseUrl}${this.endpoint}/cantidadUsuarios`);
-  }  
-  
-  modificarUsuario(username: string, cambios: { email: string, currentPassword: string, newPassword: string }): Observable<any> {
+    return this.http.get<number>(
+      `${this.urlService.baseUrl}${this.endpoint}/cantidadUsuarios`
+    );
+  }
+
+  modificarUsuario(
+    username: string,
+    cambios: { email: string; currentPassword: string; newPassword: string }
+  ): Observable<any> {
     const userData = {
       mail: cambios.email,
       nombre: username,
-      contrasenia: cambios.currentPassword, // Enviamos la contraseña actual para verificación
-      nuevaContrasenia: cambios.newPassword // Nueva propiedad para la nueva contraseña
+      contrasenia: cambios.currentPassword,
+      nuevaContrasenia: cambios.newPassword,
     };
 
     return this.http.put(
@@ -34,12 +35,17 @@ export class UsuarioService {
       { responseType: 'text' }
     );
   }
+
   obtenerUsuarioPorNombre(username: string): Observable<UsuarioDto> {
-    return this.http.get<UsuarioDto>(`${this.urlService.baseUrl}${this.endpoint}/${username}`);
+    return this.http.get<UsuarioDto>(
+      `${this.urlService.baseUrl}${this.endpoint}/${username}`
+    );
   }
 
   obtenerTodosLosUsuarios(): Observable<UsuarioDto[]> {
-    return this.http.get<UsuarioDto[]>(`${this.urlService.baseUrl}${this.endpoint}`);
+    return this.http.get<UsuarioDto[]>(
+      `${this.urlService.baseUrl}${this.endpoint}`
+    );
   }
 
   otorgarRolAdmin(usuarioDestino: string): Observable<string> {
@@ -66,15 +72,31 @@ export class UsuarioService {
     );
   }
 
-  restablecerPassword(email: string, codigo: string, nuevaPassword: string): Observable<string> {
+  restablecerPassword(
+    email: string,
+    codigo: string,
+    nuevaPassword: string
+  ): Observable<string> {
     return this.http.post(
       `${this.urlService.baseUrl}${this.endpoint}/restablecer-password`,
-      { 
+      {
         email: email,
         codigo: codigo,
-        nuevaPassword: nuevaPassword
+        nuevaPassword: nuevaPassword,
       },
       { responseType: 'text' }
+    );
+  }
+  verificarPasswordActual(
+    email: string,
+    password: string
+  ): Observable<boolean> {
+    return this.http.post<boolean>(
+      `${this.urlService.baseUrl}${this.endpoint}/verificar-password-actual`,
+      {
+        email: email,
+        password: password,
+      }
     );
   }
 
@@ -85,5 +107,4 @@ export class UsuarioService {
       { responseType: 'text' }
     );
   }
-
 }

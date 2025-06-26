@@ -1,58 +1,64 @@
 <header xmlns="http://www.w3.org/1999/html" class="w-full">
-    <nav class="w-full">
-      <div class="header-container">
-        <p-menubar class="header w-full">
-          <ng-template pTemplate="start">
-            <div class="flex align-items-center">
-              <!-- Menú hamburguesa -->
-              <p-button 
-                icon="pi pi-bars" 
-                class="mr-3 colorTexto" 
-                severity="secondary" 
-                [text]="true"
-                (click)="menuPanel.toggle($event)"
-                [style]="{'color': 'inherit'}"
-                pTooltip="Menú principal"
-                tooltipPosition="bottom">
-              </p-button>
-            </div>
-          </ng-template>
+  <nav class="w-full">
+    <div class="header-container">
+      <p-menubar class="header w-full">
+        <ng-template pTemplate="start">
+          <div class="flex align-items-center">
+            <!-- Menú hamburguesa -->
+            <p-button
+              icon="pi pi-bars"
+              class="mr-3 colorTexto"
+              severity="secondary"
+              [text]="true"
+              (click)="menuPanel.toggle($event)"
+              [style]="{ color: 'inherit' }"
+              pTooltip="Menú principal"
+              tooltipPosition="bottom"
+            >
+            </p-button>
+          </div>
+        </ng-template>
 
-          <ng-template pTemplate="end">
-            <div class="header-actions">
-              <p-button 
-                icon="pi pi-user" 
-                class="p-mr-2 colorTexto" 
-                severity="secondary" 
-                [text]="true"
-                (click)="navegarA('/perfil')"
-                pTooltip="Perfil"
-                tooltipPosition="bottom">
-              </p-button>
-                <p-button
-                icon="pi pi-sign-out" 
-                class="p-mr-2 colorTexto" 
-                severity="secondary" 
-                [text]="true"
-                (click)="cerrarSesion()"
-                pTooltip="Cerrar sesión"
-                tooltipPosition="bottom">
-              </p-button>
-              
-              <app-notificaciones></app-notificaciones>
-            </div>
-          </ng-template>
-        </p-menubar>
-        
-        <!-- Saludo centrado usando posición absoluta -->
-        <div class="saludo-centrado" *ngIf="estaAutenticado">
-          <span class="texto colorTexto">¡Hola, {{ nombreUsuario }}!</span>
-        </div>
+        <ng-template pTemplate="end">
+          <div class="header-actions">
+            <p-button
+              icon="pi pi-user"
+              class="p-mr-2 colorTexto"
+              severity="secondary"
+              [text]="true"
+              (click)="navegarA('/perfil')"
+              pTooltip="Perfil"
+              tooltipPosition="bottom"
+            >
+            </p-button>
+            <p-button
+              icon="pi pi-sign-out"
+              class="p-mr-2 colorTexto"
+              severity="secondary"
+              [text]="true"
+              (click)="cerrarSesion()"
+              pTooltip="Cerrar sesión"
+              tooltipPosition="bottom"
+            >
+            </p-button>
+
+            <app-notificaciones></app-notificaciones>
+          </div>
+        </ng-template>
+      </p-menubar>
+
+      <!-- Saludo centrado usando posición absoluta -->
+      <div class="saludo-centrado" *ngIf="estaAutenticado">
+        <span class="texto colorTexto">¡Hola, {{ nombreUsuario }}!</span>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <!-- Panel del menú -->
-    <p-overlayPanel #menuPanel [style]="{'width': '250px'}">
-      <p-menu [model]="menuItems" [style]="{'width': '100%', 'border': 'none'}"></p-menu>
-    </p-overlayPanel>
+  <!-- Panel del menú -->
+  <p-overlayPanel #menuPanel [style]="{ width: '250px' }">
+    <p-menu
+      [model]="menuItems"
+      [style]="{ width: '100%', border: 'none' }"
+    ></p-menu>
+  </p-overlayPanel>
 </header>

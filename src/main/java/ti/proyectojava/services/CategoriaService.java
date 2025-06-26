@@ -1,9 +1,7 @@
 package ti.proyectojava.services;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ti.proyectojava.api.responses.ResponseListadoCategorias;
-import ti.proyectojava.api.responses.ResponseListadoUsuarios;
 import ti.proyectojava.business.entities.*;
 import ti.proyectojava.business.repositories.CantidadRepository;
 import ti.proyectojava.business.repositories.CategoriaRepository;
@@ -19,8 +17,7 @@ public class CategoriaService {
     private final MapsDtosEntityService mapsDtosEntityService;
     private final CantidadRepository cantidadRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository, MapsDtosEntityService mapsDtosEntityService, CantidadRepository cantidadRepository)
-    {
+    public CategoriaService(CategoriaRepository categoriaRepository, MapsDtosEntityService mapsDtosEntityService, CantidadRepository cantidadRepository) {
         this.categoriaRepository = categoriaRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
         this.cantidadRepository = cantidadRepository;
@@ -29,10 +26,7 @@ public class CategoriaService {
     public ResponseListadoCategorias listadoCategorias() {
         ResponseListadoCategorias response = new ResponseListadoCategorias();
 
-        List<CategoriaDto> categoriasActivas = categoriaRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoCategoria)
-                .toList();
+        List<CategoriaDto> categoriasActivas = categoriaRepository.findByActivoTrue().stream().map(mapsDtosEntityService::mapToDtoCategoria).sorted((c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre())).toList();
 
         response.setCategorias(categoriasActivas);
 
@@ -49,39 +43,36 @@ public class CategoriaService {
         return response;
     }
 
-    public String borrarCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
-        String response = null;
+
+    public String borrarCategoria(Long id) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
 
         if (categoriaOpt.isPresent()) {
             Categoria categoria = categoriaOpt.get();
             categoria.setActivo(false);
             categoriaRepository.save(categoria);
-            response = "Categoría eliminada correctamente. NOMBRE:" + categoria.getNombre();
+            return "Categoría eliminada correctamente";
         }
 
-        return response;
-    }    
-    
-    public String desvincularProductosDeCategoria(String nombreCategoria) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findByNombre(nombreCategoria);
+        return "No se encontró la categoría con ID: " + id;
+    }
+
+    public String desvincularProductosDeCategoria(Long id) {
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
         String response = null;
 
         if (categoriaOpt.isPresent()) {
             Categoria categoria = categoriaOpt.get();
-            
-            // Obtener la lista de productos y desvincularlos
+
             List<Producto> productos = categoria.getProductos();
             for (Producto producto : productos) {
                 producto.setCategoria(null);
             }
-            
-            // La categoría ya no tiene productos asociados
+
             categoria.setProductos(new ArrayList<>());
-            
-            // Guardar los cambios
+
             categoriaRepository.save(categoria);
-            response = "Productos desvinculados correctamente de la categoría: " + categoria.getNombre();
+            response = "Productos desvinculados correctamente de la categoría ID:" + categoria.getId() + ", NOMBRE:" + categoria.getNombre();
         }
 
         return response;
@@ -91,13 +82,10 @@ public class CategoriaService {
         ResponseListadoCategorias response = new ResponseListadoCategorias();
 
         List<Object[]> topResults = cantidadRepository.findTopBestSellingCategories();
-        List<CategoriaDto> topCategoriasVendidas = topResults.stream()
-                .limit(n)
-                .map(result -> {
-                    Categoria categoria = (Categoria) result[0];
-                    return mapsDtosEntityService.mapToDtoCategoria(categoria);
-                })
-                .collect(java.util.stream.Collectors.toList());
+        List<CategoriaDto> topCategoriasVendidas = topResults.stream().limit(n).map(result -> {
+            Categoria categoria = (Categoria) result[0];
+            return mapsDtosEntityService.mapToDtoCategoria(categoria);
+        }).collect(java.util.stream.Collectors.toList());
 
         response.setCategorias(topCategoriasVendidas);
 

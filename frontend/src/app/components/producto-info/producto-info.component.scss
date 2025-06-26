@@ -1,4 +1,3 @@
-// Estilos optimizados para carga rápida
 .main-content {
   min-height: calc(100vh - 120px);
   background-color: #f8f9fa;
@@ -15,12 +14,11 @@
   margin: 0;
 }
 
-// Card del producto simplificado
 .producto-card {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   .imagen-container {
     width: 100%;
     height: 250px;
@@ -30,49 +28,49 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     .producto-imagen {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
   }
-  
+
   .producto-nombre {
     color: #2c3e50;
     font-weight: 600;
     margin-bottom: 1rem;
   }
-  
+
   .detalles-lista .detalle-item {
     margin-bottom: 0.75rem;
-    
+
     strong {
       color: #495057;
       margin-right: 0.5rem;
     }
   }
-  
+
   .precio-section {
     padding: 1rem;
     background-color: #e9ecef;
     border-radius: 6px;
-    
+
     .precio-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      
+
       .precio-label {
         font-weight: 500;
         color: #495057;
       }
-      
+
       .precio-valor {
         font-size: 1.5rem;
         font-weight: 700;
         color: #2c3e50;
-        
+
         &.precio-compra {
           color: #6c757d;
           font-size: 1.2rem;
@@ -82,13 +80,12 @@
   }
 }
 
-// Sección de lotes simplificada
 .lotes-section {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  
+
   h4 {
     color: #2c3e50;
     font-weight: 600;
@@ -96,10 +93,18 @@
   }
 }
 
-// Stock badges optimizados
-.stock-alto { background-color: #d4edda; color: #155724; }
-.stock-medio { background-color: #fff3cd; color: #856404; }
-.stock-bajo { background-color: #f8d7da; color: #721c24; }
+.stock-alto {
+  background-color: #d4edda;
+  color: #155724;
+}
+.stock-medio {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.stock-bajo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
 .stock-badge {
   padding: 0.25rem 0.5rem;
@@ -108,100 +113,108 @@
   font-weight: 500;
 }
 
-// Clases de fecha
-.fecha-vencida { color: #dc3545; font-weight: 600; }
-.fecha-proxima { color: #fd7e14; font-weight: 600; }
-.fecha-advertencia { color: #ffc107; font-weight: 500; }
-.fecha-normal { color: #28a745; }
-.fecha-sin-vencimiento { color: #6c757d; font-style: italic; font-size: 0.9rem; }
-
-// Responsive básico
-@media (max-width: 768px) {
-  .container { padding: 0.5rem; }
-  .producto-card .imagen-container { height: 200px; }
+.fecha-vencida {
+  color: #dc3545;
+  font-weight: 600;
+}
+.fecha-proxima {
+  color: #fd7e14;
+  font-weight: 600;
+}
+.fecha-advertencia {
+  color: #ffc107;
+  font-weight: 500;
+}
+.fecha-normal {
+  color: #28a745;
+}
+.fecha-sin-vencimiento {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
 }
 
-// Estilos para el formulario del modal
-.lote-form {
-  .form-group {
-    margin-bottom: 1rem;
-    
-    label {
-      display: block;
-      font-weight: 500;
-      color: #495057;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+  .producto-card .imagen-container {
+    height: 200px;
   }
 }
 
-// Estilos para el modal de editar producto
-.producto-form {
+.producto-form,
+.lote-form {
   .form-group {
     margin-bottom: 1.5rem;
-    
+
     label {
       display: block;
       font-weight: 600;
       color: #2c3e50;
       margin-bottom: 0.75rem;
       font-size: 0.95rem;
-      
+
       &::after {
         content: " *";
         color: #dc3545;
         font-weight: 400;
       }
-      
+      &[for="fechaVencimiento"]::after,
+      &[for="imagen"]::after,
       &[for="categoria"]::after,
       &[for="proveedor"]::after {
         content: "";
       }
     }
-    
-    input, .p-dropdown {
+
+    input,
+    .p-dropdown {
       border-radius: 6px;
       transition: all 0.2s ease;
       width: 100%;
-      
-      &:focus, &.p-focus {
+
+      &:focus,
+      &.p-focus {
         box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
         border-color: #6c757d;
       }
     }
-    
+
     .p-dropdown {
       &.p-dropdown-clearable .p-dropdown-label {
         padding-right: 2rem;
       }
     }
+
+    .help-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.5rem;
+      display: block;
+    }
   }
-  
-  // Styling para inputs específicos
+
   input[type="number"] {
     padding-right: 2rem;
   }
-}
 
-// Contenedor del modal con mejor espaciado
-.modal-editar-content {
   .form-row {
     display: flex;
     gap: 1rem;
-    
+
     .form-col {
       flex: 1;
     }
   }
-  
+
   .form-section {
     background: #f8f9fa;
     border-radius: 8px;
     padding: 1.25rem;
     margin-bottom: 1rem;
     border-left: 4px solid #6c757d;
-    
+
     .section-title {
       font-size: 0.9rem;
       font-weight: 600;
@@ -211,15 +224,27 @@
       letter-spacing: 0.5px;
     }
   }
+
+  .campos-obligatorios {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+
+    i {
+      color: #dc3545;
+    }
+  }
 }
-.producto-dialog {
+.producto-dialog,
+.producto_dialog {
   .p-dialog-content {
     overflow: auto !important;
     max-height: 80vh;
   }
 }
 
-// Estilos globales para PrimeNG
 ::ng-deep {
   .p-datatable {
     .p-datatable-thead > tr > th {
@@ -229,41 +254,41 @@
       font-weight: 600;
       padding: 0.75rem;
     }
-    
+
     .p-datatable-tbody > tr > td {
       padding: 0.75rem;
       border-color: #dee2e6;
     }
-    
+
     .p-datatable-tbody > tr:hover {
       background: #f8f9fa;
     }
   }
-    .p-dialog {
+  .p-dialog {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     overflow: visible;
-    
+
     .p-dialog-header {
       background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
       color: white;
       border: none;
       border-radius: 8px 8px 0 0;
-      
+
       .p-dialog-title {
         font-weight: 600;
       }
-      
+
       .p-dialog-header-icon {
         color: white;
       }
     }
-      .p-dialog-content {
+    .p-dialog-content {
       padding: 1.5rem;
       border: none;
       overflow: auto;
     }
-    
+
     .p-dialog-footer {
       border: none;
       padding: 1.25rem 1.5rem;
@@ -271,17 +296,17 @@
       border-radius: 0 0 8px 8px;
       display: flex;
       justify-content: flex-end;
-      
+
       .p-button {
         border-radius: 6px;
         font-weight: 500;
         padding: 0.75rem 1.5rem;
-        
+
         &.p-button-success {
           background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
           border: none;
           box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-          
+
           &:hover {
             transform: translateY(-1px);
           }
@@ -289,78 +314,77 @@
       }
     }
   }
-  
-  // Animación para la apertura del modal
+
   .p-dialog-mask {
     animation: fadeIn 0.3s ease-out;
   }
-  
+
   .p-dialog {
     animation: slideInDown 0.3s ease-out;
   }
-  
-  // Estilos mejorados para inputs y dropdowns
+
   .p-inputtext {
     padding: 0.75rem;
     border: 2px solid #e9ecef;
     border-radius: 6px;
     transition: all 0.2s ease;
-    
+
     &:focus {
       box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
       border-color: #6c757d;
     }
-    
+
     &::placeholder {
       color: #adb5bd;
       font-style: italic;
     }
   }
-  
+
   .p-dropdown {
     border: 2px solid #e9ecef;
     border-radius: 6px;
     transition: all 0.2s ease;
-    
+
     &.p-focus {
       box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
       border-color: #6c757d;
     }
-    
+
     .p-dropdown-label {
       padding: 0.75rem;
-      
+
       &.p-placeholder {
         color: #adb5bd;
         font-style: italic;
       }
     }
-    
+
     .p-dropdown-trigger {
       color: #6c757d;
-    }    .p-dropdown-panel {
+    }
+    .p-dropdown-panel {
       border-radius: 6px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       max-width: 100%;
       overflow: hidden;
-      
+
       .p-dropdown-items-wrapper {
         max-height: 200px;
-          .p-dropdown-item {
+        .p-dropdown-item {
           padding: 0.75rem 1rem;
           transition: background-color 0.2s;
           white-space: normal;
           word-break: break-word;
-          height: 45.5px; /* Altura fija para cada elemento del dropdown */
+          height: 45.5px;
           overflow: hidden;
           text-overflow: ellipsis;
           display: flex;
           align-items: center;
-          
+
           &:hover {
             background-color: #f8f9fa;
           }
-          
+
           &.p-highlight {
             background-color: #e9ecef;
             color: #495057;
@@ -372,61 +396,60 @@
   }
 }
 
-// Estilos para asegurar que los dropdowns se muestren correctamente
 ::ng-deep {
-  // Estilos generales para dropdown
   .p-dropdown {
     width: 100%;
   }
-    // Estilos para el panel del dropdown cuando está abierto
+
   .p-dropdown-panel {
-    position: fixed !important; // Permite que el dropdown se posicione sin restricciones
+    position: fixed !important;
     max-width: 100% !important;
     min-width: 100% !important;
     width: auto !important;
-    z-index: 10000 !important; // Asegura que siempre esté por encima de otros elementos
+    z-index: 10000 !important;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
     border-radius: 6px !important;
   }
-    // Estilos para el wrapper de elementos dentro del panel
+
   .p-dropdown-items-wrapper {
-    max-height: 182px !important; // Altura para mostrar 4 elementos (4 * 45.5px)
+    max-height: 182px !important;
   }
-  
+
   .p-dropdown-items {
     padding: 0.5rem 0;
   }
-    // Estilos para los elementos individuales del dropdown
+
   .p-dropdown-item {
-    height: 45.5px !important; // Altura fija para cada elemento
+    height: 45.5px !important;
     display: flex !important;
     align-items: center !important;
-    white-space: normal !important; // Permite que el texto se ajuste en múltiples líneas
-    word-wrap: break-word !important; // Asegura que las palabras largas se rompan correctamente
+    white-space: normal !important;
+    word-wrap: break-word !important;
     overflow-wrap: break-word !important;
     padding: 0.75rem 1rem !important;
     font-size: 0.9rem;
   }
-  
-  // Estilos específicos para el diálogo
+
   .producto-dialog {
     .p_dialog-content {
       max-height: 80vh !important;
-      overflow: auto !important; // Permite scroll en el contenido del diálogo
+      overflow: auto !important;
     }
-    
-    // Configurar posición para los dropdowns dentro del diálogo
+
     .p-dropdown-panel {
-      position: fixed !important; // Permite que el dropdown se posicione sin restricciones
+      position: fixed !important;
     }
   }
 }
 
-// Keyframes para animaciones
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInDown {
@@ -440,16 +463,14 @@
   }
 }
 
-/* Asegurar que el diálogo tiene scroll interno */
 ::ng-deep .producto-dialog .p-dialog-content {
   max-height: 80vh !important;
   overflow: auto !important;
 }
 
-// Date input styling to match ofertas component with gray theme
 .form-group {
   margin-bottom: 20px;
-  
+
   input[type="date"] {
     width: 100%;
     padding: 12px 15px;
@@ -463,7 +484,7 @@
     border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
-    
+
     &:focus {
       color: #495057;
       background-color: #fff;
@@ -471,12 +492,11 @@
       outline: 0;
       box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
     }
-    
+
     &:hover {
       border-color: #6c757d;
     }
-    
-    // Style the calendar icon
+
     &::-webkit-calendar-picker-indicator {
       color: #7f8c8d;
       background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%237f8c8d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
@@ -487,39 +507,36 @@
       margin-left: 8px;
       cursor: pointer;
       transition: opacity 0.3s ease;
-      
+
       &:hover {
         opacity: 0.7;
       }
     }
-    
-    // Style the date text
+
     &::-webkit-datetime-edit {
       font-family: "Source Sans 3", sans-serif;
       font-size: 14px;
       color: #495057;
     }
-    
+
     &::-webkit-datetime-edit-fields-wrapper {
       padding: 0;
     }
-    
-    // When focused, highlight the border and icon
+
     &:focus {
       &::-webkit-calendar-picker-indicator {
         color: #6c757d;
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236c757d"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>');
       }
     }
-    
-    // Style for Firefox
+
     &::-moz-calendar-picker-indicator {
       background-color: #7f8c8d;
       border-radius: 2px;
       cursor: pointer;
     }
   }
-  
+
   label {
     display: inline-block;
     margin-bottom: 8px;
@@ -527,5 +544,348 @@
     color: #2c3e50;
     font-family: "Source Sans 3", sans-serif;
     font-size: 14px;
+  }
+}
+
+::ng-deep .stock-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #ff6b6b, #ff4757);
+    color: white;
+    border-bottom: none;
+
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+}
+
+.modal-stock-content {
+  .alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+
+    .alert-icon {
+      flex-shrink: 0;
+
+      i {
+        font-size: 1.5rem;
+        color: #f39c12;
+      }
+    }
+
+    .alert-content {
+      h4 {
+        margin: 0 0 0.5rem 0;
+        color: #d35400;
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin: 0 0 0.5rem 0;
+        color: #8b4513;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      ul {
+        margin: 0.5rem 0;
+        padding-left: 1.2rem;
+
+        li {
+          color: #8b4513;
+          font-size: 0.9rem;
+          margin-bottom: 0.25rem;
+          line-height: 1.3;
+        }
+      }
+
+      strong {
+        color: #d35400;
+      }
+    }
+  }
+
+  .stock-info {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 1rem;
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .info-value {
+        font-weight: 500;
+
+        &.stock-actual {
+          background: #e3f2fd;
+          color: #1976d2;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.25);
+        outline: none;
+      }
+
+      &.error {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25);
+      }
+    }
+
+    .help-text {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+  }
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+  min-width: 180px;
+  justify-content: center;
+
+  &:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+
+  span {
+    font-family: "Source Sans 3", sans-serif;
+    letter-spacing: 0.25px;
+  }
+}
+
+.file-name {
+  font-size: 0.85rem;
+  color: #28a745;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background: #d4edda;
+  border-radius: 4px;
+  display: inline-block;
+  border-left: 3px solid #28a745;
+
+  &::before {
+    content: "📎 ";
+    margin-right: 0.25rem;
+  }
+}
+
+::ng-deep .delete-lote-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #ff6b6b, #ff4757);
+    color: white;
+    border: none;
+    border-radius: 8px 8px 0 0;
+
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .p-dialog-footer {
+    border: none;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    .p-button {
+      border-radius: 6px;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+
+      &.p-button-danger {
+        background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        border: none;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+        }
+      }
+    }
+  }
+}
+
+.modal-delete-lote-content {
+  .question-section {
+    margin-bottom: 1.5rem;
+
+    h4 {
+      margin: 0 0 0.5rem 0;
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .action-warning {
+      margin: 0;
+      color: #6c757d;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+  }
+
+  .alert-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+
+    .alert-icon {
+      flex-shrink: 0;
+
+      i {
+        font-size: 1.5rem;
+        color: #f39c12;
+        animation: pulse 2s infinite;
+      }
+    }
+
+    .alert-content {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 0.75rem 0;
+        color: #d35400;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      p {
+        margin: 0 0 0.5rem 0;
+        color: #8b4513;
+        font-size: 0.9rem;
+        line-height: 1.5;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          color: #d35400;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }

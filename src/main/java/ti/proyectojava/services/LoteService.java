@@ -15,24 +15,11 @@ import java.util.Optional;
 public class LoteService {
 
     private final LoteRepository loteRepository;
-    private  final MapsDtosEntityService mapsDtosEntityService;
+    private final MapsDtosEntityService mapsDtosEntityService;
 
     public LoteService(LoteRepository loteRepository, MapsDtosEntityService mapsDtosEntityService) {
         this.loteRepository = loteRepository;
         this.mapsDtosEntityService = mapsDtosEntityService;
-    }
-
-    public ResponseListadoLotes listadoLotes() {
-        ResponseListadoLotes response = new ResponseListadoLotes();
-
-        List<LoteDto> lotesActivos = loteRepository.findByActivoTrue()
-                .stream()
-                .map(mapsDtosEntityService::mapToDtoLote)
-                .toList();
-
-        response.setLotes(lotesActivos);
-
-        return response;
     }
 
     public String crearLote(LoteDto loteDto) {
@@ -42,7 +29,7 @@ public class LoteService {
     public String borrarLote(Long id) {
         String response = null;
         Optional<Lote> aux = loteRepository.findById(id);
-        if(aux.isPresent()){
+        if (aux.isPresent()) {
             Lote lote = aux.get();
             lote.setActivo(false);
             loteRepository.save(lote);
@@ -50,9 +37,6 @@ public class LoteService {
         }
         return response;
     }
-
-
-
 
 
 }

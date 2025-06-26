@@ -1,10 +1,7 @@
 package ti.proyectojava.business.entities;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.ArrayList;
 @Table(name = "PROVEEDOR")
 public class Proveedor extends Entidad {
 
-    @Column(name = "PROVEEDOR_CORREO", unique = true)
+    @Column(name = "PROVEEDOR_CORREO")
     private String correo;
 
     @OneToMany(mappedBy = "proveedor")
