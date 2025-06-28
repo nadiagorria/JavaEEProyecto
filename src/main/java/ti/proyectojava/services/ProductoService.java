@@ -188,8 +188,14 @@ public class ProductoService {
     public Page<ProductoDto> listadoProductosPageConFiltros(Integer pagina, Integer cantidad, String busqueda, Long categoriaId) {
         PageRequest pageRequest = PageRequest.of(pagina, cantidad);
         Sort sort = Sort.by(Sort.Direction.ASC, "nombre");
-        return productoRepository.findByActivoTrueWithFilters(busqueda, categoriaId, pageRequest.withSort(sort))
-                .map(mapsDtosEntityService::mapToDtoProducto);
+        
+        if (categoriaId == null) {
+            return productoRepository.findByActivoTrueWithTextSearch(busqueda, pageRequest.withSort(sort))
+                    .map(mapsDtosEntityService::mapToDtoProducto);
+        } else {
+            return productoRepository.findByActivoTrueWithFilters(busqueda, categoriaId, pageRequest.withSort(sort))
+                    .map(mapsDtosEntityService::mapToDtoProducto);
+        }
     }
 
 }

@@ -101,6 +101,8 @@ export class ClientePerfilComponent {
       });
       return;
     }
+    const montoAPagar = this.pago;
+    
     this.creditoService
       .pagarCredito(this.cliente.credito.id, this.pago)
       .subscribe(
@@ -111,9 +113,11 @@ export class ClientePerfilComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Pago exitoso',
-              detail: `Pago de $${this.pago} realizado correctamente.`,
+              detail: `Pago de $${montoAPagar} realizado correctamente.`,
             });
           });
+          this.visible = false;
+          this.pago = 0;
         },
         (error) => {
           this.messageService.clear();
@@ -122,10 +126,10 @@ export class ClientePerfilComponent {
             summary: 'Error en el pago',
             detail: 'Ocurrió un error al procesar el pago. Intente nuevamente.',
           });
+          this.visible = false;
+          this.pago = 0;
         }
       );
-    this.visible = false;
-    this.pago = 0;
   }
 
   nombreEdicion: string = '';

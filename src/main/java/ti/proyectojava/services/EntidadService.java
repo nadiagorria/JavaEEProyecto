@@ -61,13 +61,13 @@ public class EntidadService {
                 credito.setActivo(false);
                 creditoRepository.save(credito);
             }
+            clienteRepository.save(cliente);
         } else if (entidad instanceof Proveedor) {
-
             Proveedor proveedor = (Proveedor) entidad;
             desvincularProductosDeProveedor(proveedor.getId());
+            proveedorRepository.save(proveedor);
         }
 
-        entidadRepository.save(entidad);
         return entidad;
     }
 

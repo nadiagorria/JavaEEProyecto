@@ -2,6 +2,7 @@ package ti.proyectojava.api.controllers;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -14,6 +15,7 @@ import ti.proyectojava.services.EntidadService;
 
 @RestController
 @RequestMapping(value = "api/v1/entidad")
+@Slf4j
 public class EntidadController {
 
     private final EntidadService entidadService;
@@ -28,9 +30,15 @@ public class EntidadController {
     @Secured({"ADMIN"})
     @Operation(description = "Esta Funcion elimina una Persona")
     public ResponseEntity<String> eliminarPersona(@RequestBody Long id) {
-        Entidad entidad = entidadService.seleccionarEntidad(id);
-        entidad = entidadService.eliminarPersona(entidad);
-        return ResponseEntity.ok("Persona eliminado correctamente. ID:" + entidad.getId());
+        try {
+            Entidad entidad = entidadService.seleccionarEntidad(id);
+            entidad = entidadService.eliminarPersona(entidad);
+            String mensaje = "Persona eliminada correctamente. ID:" + entidad.getId();
+            return ResponseEntity.ok(mensaje);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar la persona: " + e.getMessage());
+        }
     }
 
 //  CLIENTE
