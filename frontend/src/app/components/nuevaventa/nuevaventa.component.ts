@@ -12,6 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import {
@@ -66,6 +67,7 @@ interface ItemVenta extends CantidadDto {
     DropdownModule,
     PaginatorModule,
     TooltipModule,
+    ToastModule,
     CommonModule,
     HeaderComponent,
     ConfirmDialogModule,
@@ -884,13 +886,24 @@ export class NuevaventaComponent
         }
       },
       error: (error) => {
-        this.messageService.clear();
-        this.messageService.add({
-          severity: 'error',
-          summary: '❌ Error de Conexión',
-          detail: 'Error al buscar productos con el código escaneado',
-          life: 4000,
-        });
+        
+        if (error.status === 404) {
+          this.messageService.clear();
+          this.messageService.add({
+            severity: 'warn',
+            summary: '❌ Producto No Encontrado',
+            detail: `No se encontró producto con código: ${codigoBarras}`,
+            life: 4000,
+          });
+        } else {
+          this.messageService.clear();
+          this.messageService.add({
+            severity: 'error',
+            summary: '❌ Error de Conexión',
+            detail: 'Error al buscar productos con el código escaneado',
+            life: 4000,
+          });
+        }
       },
     });
   }
