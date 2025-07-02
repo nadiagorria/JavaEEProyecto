@@ -97,8 +97,8 @@ main {
 }
 
 .article-1 {
-  height: auto;
-  min-height: 180px;
+  display: flex;
+  align-items: stretch;
   padding: 0 4vw;
   margin: 3rem 0;
   gap: 6vw;
@@ -115,7 +115,7 @@ main {
 }
 
 .miniCartel {
-  height: 100%;
+  flex: 1;
   min-height: 180px;
   width: 28vw;
   max-width: 420px;
@@ -125,8 +125,9 @@ main {
   border-radius: var(--border-radius-lg);
   color: var(--text-primary);
   position: relative;
-  overflow: hidden;
   word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
   
   @media (max-width: 1200px) {
     width: calc(50% - 1rem);
@@ -155,6 +156,11 @@ main {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
 
 .textoMiniCartel {
@@ -167,11 +173,29 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  
+  @media (max-width: 1200px) {
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+    white-space: normal;
+    text-overflow: unset;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+  }
 }
 
 .logoMiniCartel {
   font-size: 2.5rem;
   color: var(--text-secondary);
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
 }
 
 .icon-accent {
@@ -179,8 +203,7 @@ main {
 }
 
 .papaNumeros {
-  height: auto;
-  min-height: 87px;
+  flex: 1;
   display: flex;
   align-items: center;
 }
