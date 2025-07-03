@@ -18,6 +18,7 @@ import { ProductoDto } from 'src/models/producto.dto';
 import { ProveedorDto } from 'src/models/proveedor.dto';
 import { CategoriaDto } from 'src/models/categoria.dto';
 import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-productos',
@@ -31,6 +32,7 @@ import { HeaderComponent } from '../header/header.component';
     InputTextModule,
     HeaderComponent,
     ToastModule,
+    FooterComponent
   ],
   providers: [MessageService],
   templateUrl: './productos.component.html',
