@@ -86,6 +86,8 @@ export class ClientesCreditoComponent {
           this.creditos = [];
         }
 
+        this.creditos.sort((a, b) => a.cliente.nombre.localeCompare(b.cliente.nombre));
+
         this.creditosFiltrados = [...this.creditos];
         this.totalRecords = this.creditos.length;
         console.log('Créditos cargados:', this.creditos);
@@ -257,6 +259,9 @@ export class ClientesCreditoComponent {
           .includes(this.busqueda.toLowerCase())
       );
     }
+
+    this.creditosFiltrados.sort((a, b) => a.cliente.nombre.localeCompare(b.cliente.nombre));
+
     this.totalRecords = this.creditosFiltrados.length;
   }
 

@@ -73,6 +73,9 @@ export class ProveedoresComponent {
         } else {
           this.proveedores = [];
         }
+        
+        this.proveedores.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
         this.proveedoresFiltrados = [...this.proveedores];
         this.totalRecords = this.proveedores.length;
       },
