@@ -40,6 +40,7 @@ import { SecurityService } from 'src/services/security.service';
   styleUrl: './proveedores.component.scss',
 })
 export class ProveedoresComponent {
+  busqueda: string = '';
   proveedores: ProveedorDto[] = [];
   proveedoresFiltrados: ProveedorDto[] = [];
   totalRecords: number = 0;
@@ -73,7 +74,7 @@ export class ProveedoresComponent {
         } else {
           this.proveedores = [];
         }
-        
+
         this.proveedores.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
         this.proveedoresFiltrados = [...this.proveedores];
@@ -219,7 +220,6 @@ export class ProveedoresComponent {
       },
     });
   }
-  busqueda: string = '';
 
   buscarProveedor() {
     if (this.busqueda.trim() === '') {
@@ -229,6 +229,9 @@ export class ProveedoresComponent {
         proveedor.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
       );
     }
+
+    this.proveedoresFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
     this.totalRecords = this.proveedoresFiltrados.length;
   }
 
@@ -291,5 +294,15 @@ export class ProveedoresComponent {
     const hasAdminRole = roles.includes('ADMIN');
 
     return hasAdminRole;
+  }
+
+  onBusquedaChange(event: any) {
+    this.busqueda = event.target.value;
+  }
+
+  onBusquedaKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.buscarProveedor();
+    }
   }
 }

@@ -86,7 +86,9 @@ export class ClientesCreditoComponent {
           this.creditos = [];
         }
 
-        this.creditos.sort((a, b) => a.cliente.nombre.localeCompare(b.cliente.nombre));
+        this.creditos.sort((a, b) =>
+          a.cliente.nombre.localeCompare(b.cliente.nombre)
+        );
 
         this.creditosFiltrados = [...this.creditos];
         this.totalRecords = this.creditos.length;
@@ -260,7 +262,9 @@ export class ClientesCreditoComponent {
       );
     }
 
-    this.creditosFiltrados.sort((a, b) => a.cliente.nombre.localeCompare(b.cliente.nombre));
+    this.creditosFiltrados.sort((a, b) =>
+      a.cliente.nombre.localeCompare(b.cliente.nombre)
+    );
 
     this.totalRecords = this.creditosFiltrados.length;
   }
@@ -321,5 +325,15 @@ export class ClientesCreditoComponent {
     const hasAdminRole = roles.includes('ADMIN');
 
     return hasAdminRole;
+  }
+
+  onBusquedaChange(event: any) {
+    this.busqueda = event.target.value;
+  }
+
+  onBusquedaKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.buscarCliente();
+    }
   }
 }

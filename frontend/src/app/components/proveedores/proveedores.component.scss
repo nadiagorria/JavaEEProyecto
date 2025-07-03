@@ -49,38 +49,76 @@
 
   .search-section {
     flex: 1;
-    max-width: 400px;
+    max-width: 500px;
 
-    .search-input {
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       width: 100%;
 
-      input {
-        border-radius: 8px 0 0 8px;
-        border: 1px solid #ddd;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
+      .search-input-wrapper {
+        position: relative;
+        flex: 1;
 
-        &:focus {
-          border-color: #6c757d;
-          box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+        .search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #8c8c8c;
+          font-size: 16px;
+          z-index: 1;
+        }
+
+        .search-input {
+          width: 100%;
+          padding: 12px 12px 12px 45px;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 14px;
+          background-color: #fafafa;
+          transition: all 0.2s ease;
+          box-sizing: border-box;
+
+          &:focus {
+            outline: none;
+            border-color: #34495e;
+            background-color: white;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+          }
+
+          &::placeholder {
+            color: #bfbfbf;
+          }
         }
       }
 
-      .p-inputgroup-addon {
-        border-radius: 0 8px 8px 0;
-        border: 1px solid #ddd;
-        border-left: none;
-        background: #f8f9fa;
+      .btn-buscar {
+        background: #34495e;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
 
-        .p-button {
-          border: none;
-          background: transparent;
-          color: #6c757d;
+        &:hover {
+          background: #2f4153;
+        }
 
-          &:hover {
-            background: rgba(108, 117, 125, 0.1);
-            color: #495057;
-          }
+        &:active {
+          background: #34495e;
+        }
+
+        i {
+          font-size: 14px;
         }
       }
     }
