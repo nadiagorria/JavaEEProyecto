@@ -68,16 +68,16 @@ export class PerfilComponent implements OnInit {
   };
 
   private avatarColors = [
-    '#6366f1', // Indigo
-    '#8b5cf6', // Violet
-    '#06b6d4', // Cyan
-    '#10b981', // Emerald
-    '#f59e0b', // Amber
-    '#ef4444', // Red
-    '#ec4899', // Pink
-    '#84cc16', // Lime
-    '#f97316', // Orange
-    '#3b82f6', // Blue
+    '#6366f1',
+    '#8b5cf6',
+    '#06b6d4',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#ec4899',
+    '#84cc16',
+    '#f97316',
+    '#3b82f6',
   ];
   ventas: VentaPerfil[] = [];
   totalVentas = 0;

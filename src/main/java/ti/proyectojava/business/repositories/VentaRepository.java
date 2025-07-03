@@ -27,7 +27,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Query("SELECT COUNT(v.id) as ventasTotales FROM Venta v")
     int cantidadVentas();
 
-    // Consultas con filtros de fecha usando LocalDateTime
     @Query("SELECT v FROM Venta v WHERE v.activo = true " +
            "AND v.fechaVenta >= :fechaDesde AND v.fechaVenta <= :fechaHasta")
     Page<Venta> findByActivoTrueAndFechaVentaBetween(@Param("fechaDesde") LocalDateTime fechaDesde, 

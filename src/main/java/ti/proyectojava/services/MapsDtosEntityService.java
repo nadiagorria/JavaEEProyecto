@@ -960,7 +960,7 @@ public class MapsDtosEntityService {
         }
 
         return dto;
-    }    // descuento sin producto
+    }   
 
     public DescuentoDto mapToDtoDescuentoSinProducto(Descuento descuento) {
         if (descuento == null) {

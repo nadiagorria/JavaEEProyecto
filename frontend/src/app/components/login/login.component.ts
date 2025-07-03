@@ -61,7 +61,7 @@ export class LoginComponent {
           const userStr = JSON.stringify({
             nombreUsuario: response.nombreUsuario,
             roles: response.roles,
-            email: response.email, // Incluir el email en los datos guardados
+            email: response.email,
           });
           const encryptedUser = this.securityService.convertText(
             'encrypt',
@@ -72,7 +72,7 @@ export class LoginComponent {
           this.securityService.user = {
             nombreUsuario: response.nombreUsuario,
             roles: response.roles,
-            email: response.email, // Incluir el email en el objeto user del servicio
+            email: response.email, 
           };
 
           this.messageService.clear();

@@ -629,7 +629,9 @@ export class NuevaventaComponent
         detail: 'No hay productos en la venta',
       });
       return;
-    } // Validaciones específicas para pago FIADO
+    } 
+    
+    // Validaciones específicas para pago FIADO
     if (this.formaPagoSeleccionada === 'FIADO') {
       if (!this.creditoSeleccionado) {
         this.messageService.clear();
